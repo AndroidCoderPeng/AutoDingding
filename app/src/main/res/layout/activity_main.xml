@@ -28,9 +28,11 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_centerInParent="true"
-        android:background="#CCC"
+        android:background="#0094FF"
         android:gravity="center"
-        android:text="上班时间9:00，下班时间17:30" />
+        android:text="上班时间9:00，下班时间17:30"
+        android:textColor="#FFF"
+        android:textSize="20sp" />
 
     <Button
         android:id="@+id/endTimeBtn"
@@ -44,8 +46,8 @@
         android:id="@+id/mTextViewEnd"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
         android:layout_alignParentStart="true"
+        android:layout_alignParentBottom="true"
         android:layout_marginBottom="110dp"
         android:gravity="center"
         android:textSize="35sp" />

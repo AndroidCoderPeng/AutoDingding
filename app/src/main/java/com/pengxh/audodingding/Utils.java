@@ -7,8 +7,17 @@ import android.content.Intent;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
-import android.util.Log;
+import android.graphics.Bitmap;
+import android.net.Uri;
+import android.os.Environment;
+import android.provider.MediaStore;
 
+import com.pengxh.app.multilib.widget.EasyToast;
+
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -23,6 +32,9 @@ import java.util.List;
  */
 public class Utils {
     private static final String TAG = "Utils";
+    @SuppressLint("SimpleDateFormat")
+    private static final SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+    public String sdCardDir = Environment.getExternalStorageDirectory() + "/ScreenShot/";
 
     /**
      * 检查手机上是否安装了指定的软件
@@ -72,32 +84,29 @@ public class Utils {
     /**
      * 时间戳转时间
      */
-    @SuppressLint("SimpleDateFormat")
     public static String timestampToDate(long millSeconds) {
-        Log.d(TAG, "timestampToDate: " + millSeconds);
-        SimpleDateFormat sf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-        Date d = new Date(millSeconds);
-        return sf.format(d);
+        return dateFormat.format(new Date(millSeconds));
+    }
+
+    /**
+     * 时间转时间戳
+     */
+    public static long DateToTimestamp(String date) throws ParseException {
+        return dateFormat.parse(date).getTime();
     }
 
     /**
      * 计算时间差
      *
-     * @param current 开始时间
-     * @param end     结束时间
+     * @param fixedTime 结束时间
      */
-    public static long deltaTime(long current, String end) {
-        Log.d(TAG, "current: " + current);
-        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-        long l = 0;
-        try {
-            long endTime = format.parse(end).getTime();
-            Log.d(TAG, "endTime: " + endTime);
-            l = endTime - current;
-        } catch (ParseException e) {
-            e.printStackTrace();
+    public static long deltaTime(long fixedTime) {
+        long currentTime = (System.currentTimeMillis() / 1000);
+        if (fixedTime > currentTime) {
+            return (fixedTime - currentTime);
+        } else {
+            EasyToast.showToast("时间设置异常", EasyToast.WARING);
         }
-        Log.d(TAG, "deltaTime: " + l);
-        return l;
+        return 0L;
     }
 }
