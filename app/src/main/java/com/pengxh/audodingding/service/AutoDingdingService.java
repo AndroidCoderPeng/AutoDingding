@@ -4,13 +4,22 @@ import android.app.Service;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.net.Uri;
 import android.os.CountDownTimer;
+import android.os.Environment;
 import android.os.IBinder;
+import android.provider.MediaStore;
 import android.util.Log;
 
 import com.pengxh.app.multilib.utils.BroadcastManager;
 import com.pengxh.audodingding.utils.BroadcastAction;
 import com.pengxh.audodingding.utils.Utils;
+
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
 
 /**
  * @description: TODO
@@ -33,14 +42,15 @@ public class AutoDingdingService extends Service {
             public void onReceive(final Context context, Intent intent) {
                 //上班参数设置广播
                 String action = intent.getAction();
-                if (action != null) {
+                if (action != null && action.equals(BroadcastAction.ACTION_KAOQIN_AM)) {
                     String data = intent.getStringExtra("data");
                     long deltaTime = Long.parseLong(data) * 1000;
                     new CountDownTimer(deltaTime, 1000) {
                         @Override
                         public void onTick(long l) {
                             int tickTime = (int) (l / 1000);
-                            Log.d(TAG, "onTick: " + tickTime);
+                            //更新UI
+                            broadcastManager.sendBroadcast(BroadcastAction.ACTION_UPDATE_AM, String.valueOf(tickTime));
                         }
 
                         @Override
@@ -56,14 +66,15 @@ public class AutoDingdingService extends Service {
             public void onReceive(final Context context, Intent intent) {
                 //下班参数设置广播
                 String action = intent.getAction();
-                if (action != null) {
+                if (action != null && action.equals(BroadcastAction.ACTION_KAOQIN_PM)) {
                     String data = intent.getStringExtra("data");
                     long deltaTime = Long.parseLong(data) * 1000;
                     new CountDownTimer(deltaTime, 1000) {
                         @Override
                         public void onTick(long l) {
                             int tickTime = (int) (l / 1000);
-
+                            //更新UI
+                            broadcastManager.sendBroadcast(BroadcastAction.ACTION_UPDATE_PM, String.valueOf(tickTime));
                         }
 
                         @Override

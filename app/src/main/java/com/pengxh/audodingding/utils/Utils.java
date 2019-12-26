@@ -102,4 +102,39 @@ public class Utils {
         }
         return 0L;
     }
+
+//    private void startScreenShot() {
+//        String shotCmd = "screencap -p " + sdCardDir + "temp.jpg" + " \n";
+//        try {
+//            Runtime.getRuntime().exec(shotCmd);
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//        }
+//    }
+//
+//    /**
+//     * 保存文件
+//     */
+//
+//    private void saveBitmap(Bitmap bitmap) {
+//        try {
+//            File dirFile = new File(sdCardDir);
+//            if (!dirFile.exists()) {              //如果不存在，那就建立这个文件夹
+//                dirFile.mkdirs();
+//            }
+//            File file = new File(sdCardDir, "temp.jpg");
+//            FileOutputStream fos = new FileOutputStream(file);
+//            bitmap.compress(Bitmap.CompressFormat.JPEG, 100, fos);
+//            fos.flush();
+//            fos.close();
+//        } catch (FileNotFoundException e) {
+//            e.printStackTrace();
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//        }
+//        // 把文件插入到系统图库
+//        MediaStore.Images.Media.insertImage(this.getContentResolver(), bitmap, "temp.jpg", null);
+//        // 通知图库更新
+//        sendBroadcast(new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE, Uri.parse("file://" + "/sdcard/namecard/")));
+//    }
 }

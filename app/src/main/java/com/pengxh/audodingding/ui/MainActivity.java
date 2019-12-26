@@ -1,6 +1,8 @@
 package com.pengxh.audodingding.ui;
 
 import android.annotation.SuppressLint;
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.net.Uri;
@@ -73,7 +75,6 @@ public class MainActivity extends BaseNormalActivity implements View.OnClickList
     @Override
     public void initEvent() {
         if (Utils.isAppAvailable(this, BroadcastAction.DINGDING)) {
-            //后期优化到服务里面执行倒计时任务
             startService(new Intent(this, AutoDingdingService.class));
         } else {
             alertView = new AlertView("温馨提示", "手机没有安装钉钉软件，无法自动打卡",
@@ -87,6 +88,30 @@ public class MainActivity extends BaseNormalActivity implements View.OnClickList
                     }).setCancelable(false);
             alertView.show();
         }
+        broadcastManager.addAction(BroadcastAction.ACTION_UPDATE_AM, new BroadcastReceiver() {
+            @SuppressLint("SetTextI18n")
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                //更新UI
+                String action = intent.getAction();
+                if (action != null && action.equals(BroadcastAction.ACTION_UPDATE_AM)) {
+                    String data = intent.getStringExtra("data");
+                    mTextViewStart.setText("倒计时：" + data + "秒");
+                }
+            }
+        });
+        broadcastManager.addAction(BroadcastAction.ACTION_UPDATE_PM, new BroadcastReceiver() {
+            @SuppressLint("SetTextI18n")
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                //更新UI
+                String action = intent.getAction();
+                if (action != null && action.equals(BroadcastAction.ACTION_UPDATE_PM)) {
+                    String data = intent.getStringExtra("data");
+                    mTextViewEnd.setText("倒计时：" + data + "秒");
+                }
+            }
+        });
     }
 
     @OnClick({R.id.startTimeBtn, R.id.endTimeBtn})
@@ -125,7 +150,6 @@ public class MainActivity extends BaseNormalActivity implements View.OnClickList
                                 Log.d(TAG, "onDateSet: " + pmKaoQin);
                                 SaveKeyValues.putValue("pmKaoQin", pmKaoQin);
                                 endTimeBtn.setText(pmKaoQin);
-                                broadcastManager.sendBroadcast(BroadcastAction.ACTION_KAOQIN_PM, pmKaoQin);
                                 //计算时间差
                                 long deltaTime = Utils.deltaTime(millSeconds / 1000);
                                 if (deltaTime == 0) {
@@ -139,66 +163,9 @@ public class MainActivity extends BaseNormalActivity implements View.OnClickList
         builder.build().show(getSupportFragmentManager(), "month_day_hour_minute");
     }
 
-    @SuppressLint("HandlerLeak")
-    private Handler handler = new Handler() {
-        @SuppressLint({"SetTextI18n", "WrongConstant"})
-        @Override
-        public void handleMessage(Message msg) {
-            switch (msg.what) {
-                case 100:
-                    mTextViewStart.setText("倒计时：" + msg.obj + "秒");
-                    break;
-                case 101:
-                    mTextViewEnd.setText("倒计时：" + msg.obj + "秒");
-                    break;
-                case 102:
-                    EasyToast.showToast("开始截屏", EasyToast.DEFAULT);
-                    //截屏后将图片发送到指定邮箱
-                    if (Build.VERSION.SDK_INT >= 21) {
-                        startScreenShot();
-                    } else {
-                        Log.e(TAG, "版本过低,无法截屏");
-                    }
-                    break;
-                default:
-                    break;
-            }
-        }
-    };
-
-    private void startScreenShot() {
-        String shotCmd = "screencap -p " + sdCardDir + "temp.jpg" + " \n";
-        try {
-            Runtime.getRuntime().exec(shotCmd);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
-    /**
-     * 保存文件
-     */
-    public String sdCardDir = Environment.getExternalStorageDirectory() + "/ScreenShot/";
-
-    private void saveBitmap(Bitmap bitmap) {
-        try {
-            File dirFile = new File(sdCardDir);
-            if (!dirFile.exists()) {              //如果不存在，那就建立这个文件夹
-                dirFile.mkdirs();
-            }
-            File file = new File(sdCardDir, "temp.jpg");
-            FileOutputStream fos = new FileOutputStream(file);
-            bitmap.compress(Bitmap.CompressFormat.JPEG, 100, fos);
-            fos.flush();
-            fos.close();
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        // 把文件插入到系统图库
-        MediaStore.Images.Media.insertImage(this.getContentResolver(), bitmap, "temp.jpg", null);
-        // 通知图库更新
-        sendBroadcast(new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE, Uri.parse("file://" + "/sdcard/namecard/")));
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        broadcastManager.destroy(BroadcastAction.ACTION_UPDATE_AM, BroadcastAction.ACTION_UPDATE_PM);
     }
 }
