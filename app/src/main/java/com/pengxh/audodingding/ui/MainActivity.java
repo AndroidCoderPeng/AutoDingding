@@ -1,11 +1,10 @@
-package com.pengxh.audodingding;
+package com.pengxh.audodingding.ui;
 
 import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Build;
-import android.os.CountDownTimer;
 import android.os.Environment;
 import android.os.Handler;
 import android.os.Message;
@@ -21,9 +20,14 @@ import com.jzxiang.pickerview.TimePickerDialog;
 import com.jzxiang.pickerview.data.Type;
 import com.jzxiang.pickerview.listener.OnDateSetListener;
 import com.pengxh.app.multilib.base.BaseNormalActivity;
+import com.pengxh.app.multilib.utils.BroadcastManager;
 import com.pengxh.app.multilib.utils.ColorUtil;
 import com.pengxh.app.multilib.utils.SaveKeyValues;
 import com.pengxh.app.multilib.widget.EasyToast;
+import com.pengxh.audodingding.R;
+import com.pengxh.audodingding.service.AutoDingdingService;
+import com.pengxh.audodingding.utils.BroadcastAction;
+import com.pengxh.audodingding.utils.Utils;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -36,9 +40,6 @@ import butterknife.OnClick;
 public class MainActivity extends BaseNormalActivity implements View.OnClickListener {
 
     private static final String TAG = "MainActivity";
-    //钉钉包名：com.alibaba.android.rimet
-    //打卡页面类名：com.alibaba.lightapp.runtime.activity.CommonWebViewActivity
-    private static final String DINGDING = "com.alibaba.android.rimet";
     private AlertView alertView;
 
     @BindView(R.id.startTimeBtn)
@@ -49,6 +50,7 @@ public class MainActivity extends BaseNormalActivity implements View.OnClickList
     TextView mTextViewStart;
     @BindView(R.id.mTextViewEnd)
     TextView mTextViewEnd;
+    private BroadcastManager broadcastManager;
 
     @Override
     public void initView() {
@@ -57,20 +59,22 @@ public class MainActivity extends BaseNormalActivity implements View.OnClickList
 
     @Override
     public void initData() {
-        String startTime = (String) SaveKeyValues.getValue("startTime", "");
-        String endTime = (String) SaveKeyValues.getValue("endTime", "");
-        if (!startTime.equals("")) {
-            startTimeBtn.setText(startTime);
+        broadcastManager = BroadcastManager.getInstance(this);
+        String amKaoQin = (String) SaveKeyValues.getValue("amKaoQin", "");
+        String pmKaoQin = (String) SaveKeyValues.getValue("pmKaoQin", "");
+        if (!amKaoQin.equals("")) {
+            startTimeBtn.setText(amKaoQin);
         }
-        if (!endTime.equals("")) {
-            endTimeBtn.setText(endTime);
+        if (!pmKaoQin.equals("")) {
+            endTimeBtn.setText(pmKaoQin);
         }
     }
 
     @Override
     public void initEvent() {
-        if (Utils.isAppAvilible(this, DINGDING)) {
+        if (Utils.isAppAvailable(this, BroadcastAction.DINGDING)) {
             //后期优化到服务里面执行倒计时任务
+            startService(new Intent(this, AutoDingdingService.class));
         } else {
             alertView = new AlertView("温馨提示", "手机没有安装钉钉软件，无法自动打卡",
                     null, new String[]{"确定"}, null, this, AlertView.Style.Alert,
@@ -97,32 +101,16 @@ public class MainActivity extends BaseNormalActivity implements View.OnClickList
                         .setCallBack(new OnDateSetListener() {
                             @Override
                             public void onDateSet(TimePickerDialog timePickerView, long millSeconds) {
-                                String startTime = Utils.timestampToDate(millSeconds);
-                                Log.d(TAG, "onDateSet: " + startTime);
-                                SaveKeyValues.putValue("startTime", startTime);
-                                startTimeBtn.setText(startTime);
+                                String amKaoQin = Utils.timestampToDate(millSeconds);
+                                Log.d(TAG, "onDateSet: " + amKaoQin);
+                                SaveKeyValues.putValue("amKaoQin", amKaoQin);
+                                startTimeBtn.setText(amKaoQin);
                                 //计算时间差
                                 long deltaTime = Utils.deltaTime(millSeconds / 1000);
                                 if (deltaTime == 0) {
                                     return;
                                 }
-                                new CountDownTimer(deltaTime * 1000, 1000) {
-                                    @Override
-                                    public void onTick(long l) {
-                                        int tickTime = (int) (l / 1000);
-                                        Message message = handler.obtainMessage();
-                                        message.what = 100;
-                                        message.obj = tickTime;
-                                        handler.sendMessage(message);
-                                    }
-
-                                    @Override
-                                    public void onFinish() {
-                                        Utils.openDingding(MainActivity.this, DINGDING);
-                                        //10秒后开始截屏
-                                        handler.sendEmptyMessageDelayed(102, 5 * 1000);
-                                    }
-                                }.start();
+                                broadcastManager.sendBroadcast(BroadcastAction.ACTION_KAOQIN_AM, String.valueOf(deltaTime));
                             }
                         });
                 break;
@@ -133,31 +121,17 @@ public class MainActivity extends BaseNormalActivity implements View.OnClickList
                         .setCallBack(new OnDateSetListener() {
                             @Override
                             public void onDateSet(TimePickerDialog timePickerView, long millSeconds) {
-                                String endTime = Utils.timestampToDate(millSeconds);
-                                Log.d(TAG, "onDateSet: " + endTime);
-                                SaveKeyValues.putValue("endTime", endTime);
-                                endTimeBtn.setText(endTime);
+                                String pmKaoQin = Utils.timestampToDate(millSeconds);
+                                Log.d(TAG, "onDateSet: " + pmKaoQin);
+                                SaveKeyValues.putValue("pmKaoQin", pmKaoQin);
+                                endTimeBtn.setText(pmKaoQin);
+                                broadcastManager.sendBroadcast(BroadcastAction.ACTION_KAOQIN_PM, pmKaoQin);
                                 //计算时间差
                                 long deltaTime = Utils.deltaTime(millSeconds / 1000);
                                 if (deltaTime == 0) {
                                     return;
                                 }
-                                new CountDownTimer(deltaTime * 1000, 1000) {
-                                    @Override
-                                    public void onTick(long l) {
-                                        int tickTime = (int) (l / 1000);
-                                        Message message = handler.obtainMessage();
-                                        message.what = 101;
-                                        message.obj = tickTime;
-                                        handler.sendMessage(message);
-                                    }
-
-                                    @Override
-                                    public void onFinish() {
-                                        Utils.openDingding(MainActivity.this, DINGDING);
-                                        handler.sendEmptyMessageDelayed(102, 5 * 1000);
-                                    }
-                                }.start();
+                                broadcastManager.sendBroadcast(BroadcastAction.ACTION_KAOQIN_PM, String.valueOf(deltaTime));
                             }
                         });
                 break;

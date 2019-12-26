@@ -1,4 +1,4 @@
-package com.pengxh.audodingding;
+package com.pengxh.audodingding.ui;
 
 import android.Manifest;
 import android.annotation.SuppressLint;

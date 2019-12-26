@@ -1,4 +1,4 @@
-package com.pengxh.audodingding;
+package com.pengxh.audodingding.utils;
 
 import android.annotation.SuppressLint;
 import android.content.ComponentName;
@@ -7,17 +7,10 @@ import android.content.Intent;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
-import android.graphics.Bitmap;
-import android.net.Uri;
 import android.os.Environment;
-import android.provider.MediaStore;
 
 import com.pengxh.app.multilib.widget.EasyToast;
 
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -42,7 +35,7 @@ public class Utils {
      * @param context     上下文
      * @param packageName 应用包名
      */
-    public static boolean isAppAvilible(Context context, String packageName) {
+    public static boolean isAppAvailable(Context context, String packageName) {
         PackageManager packageManager = context.getPackageManager();
         //获取所有已安装程序的包信息
         List<PackageInfo> packageInfos = packageManager.getInstalledPackages(0);
