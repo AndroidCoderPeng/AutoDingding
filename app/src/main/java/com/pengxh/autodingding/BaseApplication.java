@@ -1,4 +1,4 @@
-package com.pengxh.audodingding;
+package com.pengxh.autodingding;
 
 import android.app.Application;
 

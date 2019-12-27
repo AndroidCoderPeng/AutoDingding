@@ -1,55 +1,70 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".MainActivity">
+    android:background="#F3F7FF"
+    android:gravity="center"
+    android:orientation="vertical"
+    tools:context=".ui.MainActivity">
 
-    <TextView
-        android:id="@+id/mTextViewStart"
+    <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignParentStart="true"
-        android:layout_alignParentTop="true"
-        android:layout_marginTop="115dp"
-        android:gravity="center"
-        android:textSize="35sp" />
+        android:layout_height="0dp"
+        android:layout_weight="1">
 
-    <Button
-        android:id="@+id/startTimeBtn"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_above="@id/v"
-        android:layout_centerHorizontal="true"
-        android:text="设置" />
+        <TextView
+            android:id="@+id/amTime"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_above="@id/startTimeBtn"
+            android:layout_centerHorizontal="true"
+            android:layout_marginBottom="10dp" />
+
+        <Button
+            android:id="@+id/startTimeBtn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:background="@drawable/bg_button_blue"
+            android:text="上班设置"
+            android:textColor="@color/white" />
+
+
+    </RelativeLayout>
 
     <TextView
         android:id="@+id/v"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_centerInParent="true"
         android:background="#0094FF"
         android:gravity="center"
         android:text="上班时间9:00，下班时间17:30"
         android:textColor="#FFF"
         android:textSize="20sp" />
 
-    <Button
-        android:id="@+id/endTimeBtn"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/v"
-        android:layout_centerHorizontal="true"
-        android:text="设置" />
-
-    <TextView
-        android:id="@+id/mTextViewEnd"
+    <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignParentStart="true"
-        android:layout_alignParentBottom="true"
-        android:layout_marginBottom="110dp"
-        android:gravity="center"
-        android:textSize="35sp" />
+        android:layout_height="0dp"
+        android:layout_weight="1">
 
-</RelativeLayout>
+        <TextView
+            android:id="@+id/pmTime"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_above="@id/endTimeBtn"
+            android:layout_centerHorizontal="true"
+            android:layout_marginBottom="10dp" />
+
+        <Button
+            android:id="@+id/endTimeBtn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:background="@drawable/bg_button_blue"
+            android:text="下班设置"
+            android:textColor="@color/white" />
+
+
+    </RelativeLayout>
+</LinearLayout>

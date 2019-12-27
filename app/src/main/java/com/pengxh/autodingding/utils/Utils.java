@@ -1,4 +1,4 @@
-package com.pengxh.audodingding.utils;
+package com.pengxh.autodingding.utils;
 
 import android.annotation.SuppressLint;
 import android.content.ComponentName;
