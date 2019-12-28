@@ -9,7 +9,9 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.Button;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.aihook.alertview.library.AlertView;
@@ -44,10 +46,15 @@ public class MainActivity extends DoubleClickExitActivity implements View.OnClic
     TextView amTime;
     @BindView(R.id.pmTime)
     TextView pmTime;
+    @BindView(R.id.startProgressBar)
+    ProgressBar startProgressBar;
+    @BindView(R.id.endProgressBar)
+    ProgressBar endProgressBar;
     private BroadcastManager broadcastManager;
 
     @Override
     public void initView() {
+        getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);//手机常亮
         setContentView(R.layout.activity_main);
     }
 
@@ -72,6 +79,42 @@ public class MainActivity extends DoubleClickExitActivity implements View.OnClic
     public void initEvent() {
         if (Utils.isAppAvailable(this, BroadcastAction.DINGDING)) {
             startService(new Intent(this, AutoDingdingService.class));
+
+            broadcastManager.addAction(BroadcastAction.ACTIONS, new BroadcastReceiver() {
+                @SuppressLint("SetTextI18n")
+                @Override
+                public void onReceive(Context context, Intent intent) {
+                    //更新UI
+                    String action = intent.getAction();
+                    if (action != null) {
+                        if (action.equals(BroadcastAction.ACTIONS[2])) {
+                            String data = intent.getStringExtra("data");
+                            startTimeBtn.setText(data + "s");
+                            startProgressBar.setProgress(Integer.parseInt(data));
+                            if (startProgressBar.getProgress() == 0) {
+                                //重置所有状态
+                                amTime.setText("上班打卡时间未设置");
+                                startTimeBtn.setText("上班设置");
+                                startProgressBar.setVisibility(View.GONE);
+                                SaveKeyValues.clearAll();
+                            }
+                        } else if (action.equals(BroadcastAction.ACTIONS[3])) {
+                            String data = intent.getStringExtra("data");
+                            endTimeBtn.setText(data + "s");
+                            endProgressBar.setProgress(Integer.parseInt(data));
+                            if (endProgressBar.getProgress() == 0) {
+                                //重置所有状态
+                                pmTime.setText("下班打卡时间未设置");
+                                endTimeBtn.setText("下班设置");
+                                endProgressBar.setVisibility(View.GONE);
+                                SaveKeyValues.clearAll();
+                            }
+                        }
+                    } else {
+                        Log.e(TAG, "onReceive: ", new Throwable());
+                    }
+                }
+            });
         } else {
             alertView = new AlertView("温馨提示", "手机没有安装钉钉软件，无法自动打卡",
                     null, new String[]{"确定"}, null, this, AlertView.Style.Alert,
@@ -84,30 +127,6 @@ public class MainActivity extends DoubleClickExitActivity implements View.OnClic
                     }).setCancelable(false);
             alertView.show();
         }
-        broadcastManager.addAction(BroadcastAction.ACTION_UPDATE_AM, new BroadcastReceiver() {
-            @SuppressLint("SetTextI18n")
-            @Override
-            public void onReceive(Context context, Intent intent) {
-                //更新UI
-                String action = intent.getAction();
-                if (action != null && action.equals(BroadcastAction.ACTION_UPDATE_AM)) {
-                    String data = intent.getStringExtra("data");
-//                    mTextViewStart.setText("倒计时：" + data + "秒");
-                }
-            }
-        });
-        broadcastManager.addAction(BroadcastAction.ACTION_UPDATE_PM, new BroadcastReceiver() {
-            @SuppressLint("SetTextI18n")
-            @Override
-            public void onReceive(Context context, Intent intent) {
-                //更新UI
-                String action = intent.getAction();
-                if (action != null && action.equals(BroadcastAction.ACTION_UPDATE_PM)) {
-                    String data = intent.getStringExtra("data");
-//                    mTextViewEnd.setText("倒计时：" + data + "秒");
-                }
-            }
-        });
     }
 
     @OnClick({R.id.startTimeBtn, R.id.endTimeBtn})
@@ -131,7 +150,9 @@ public class MainActivity extends DoubleClickExitActivity implements View.OnClic
                                 if (deltaTime == 0) {
                                     return;
                                 }
-                                broadcastManager.sendBroadcast(BroadcastAction.ACTION_KAOQIN_AM, String.valueOf(deltaTime));
+                                startProgressBar.setMax((int) deltaTime);
+                                startProgressBar.setVisibility(View.VISIBLE);
+                                broadcastManager.sendBroadcast(BroadcastAction.ACTIONS[0], String.valueOf(deltaTime));
                             }
                         });
                 break;
@@ -151,7 +172,9 @@ public class MainActivity extends DoubleClickExitActivity implements View.OnClic
                                 if (deltaTime == 0) {
                                     return;
                                 }
-                                broadcastManager.sendBroadcast(BroadcastAction.ACTION_KAOQIN_PM, String.valueOf(deltaTime));
+                                endProgressBar.setMax((int) deltaTime);
+                                endProgressBar.setVisibility(View.VISIBLE);
+                                broadcastManager.sendBroadcast(BroadcastAction.ACTIONS[1], String.valueOf(deltaTime));
                             }
                         });
                 break;
@@ -200,6 +223,6 @@ public class MainActivity extends DoubleClickExitActivity implements View.OnClic
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        broadcastManager.destroy(BroadcastAction.ACTION_UPDATE_AM, BroadcastAction.ACTION_UPDATE_PM);
+        broadcastManager.destroy(BroadcastAction.ACTIONS);
     }
 }

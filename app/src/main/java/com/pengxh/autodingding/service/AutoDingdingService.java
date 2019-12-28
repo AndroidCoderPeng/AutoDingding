@@ -1,5 +1,6 @@
 package com.pengxh.autodingding.service;
 
+import android.annotation.SuppressLint;
 import android.app.Service;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -28,51 +29,48 @@ public class AutoDingdingService extends Service {
         super.onCreate();
         Log.d(TAG, "onCreate: 自动打卡服务已启动");
         broadcastManager = BroadcastManager.getInstance(this);
-        broadcastManager.addAction(BroadcastAction.ACTION_KAOQIN_AM, new BroadcastReceiver() {
+        broadcastManager.addAction(BroadcastAction.ACTIONS, new BroadcastReceiver() {
+            @SuppressLint("SetTextI18n")
             @Override
             public void onReceive(final Context context, Intent intent) {
-                //上班参数设置广播
+                //更新UI
                 String action = intent.getAction();
-                if (action != null && action.equals(BroadcastAction.ACTION_KAOQIN_AM)) {
-                    String data = intent.getStringExtra("data");
-                    long deltaTime = Long.parseLong(data) * 1000;
-                    new CountDownTimer(deltaTime, 1000) {
-                        @Override
-                        public void onTick(long l) {
-                            int tickTime = (int) (l / 1000);
-                            //更新UI
-                            broadcastManager.sendBroadcast(BroadcastAction.ACTION_UPDATE_AM, String.valueOf(tickTime));
-                        }
+                if (action != null) {
+                    if (action.equals(BroadcastAction.ACTIONS[0])) {
+                        String data = intent.getStringExtra("data");
+                        long deltaTime = Long.parseLong(data) * 1000;
+                        new CountDownTimer(deltaTime, 1000) {
+                            @Override
+                            public void onTick(long l) {
+                                int tickTime = (int) (l / 1000);
+                                //更新UI
+                                broadcastManager.sendBroadcast(BroadcastAction.ACTIONS[2], String.valueOf(tickTime));
+                            }
 
-                        @Override
-                        public void onFinish() {
-                            Utils.openDingding(context, BroadcastAction.DINGDING);
-                        }
-                    }.start();
-                }
-            }
-        });
-        broadcastManager.addAction(BroadcastAction.ACTION_KAOQIN_PM, new BroadcastReceiver() {
-            @Override
-            public void onReceive(final Context context, Intent intent) {
-                //下班参数设置广播
-                String action = intent.getAction();
-                if (action != null && action.equals(BroadcastAction.ACTION_KAOQIN_PM)) {
-                    String data = intent.getStringExtra("data");
-                    long deltaTime = Long.parseLong(data) * 1000;
-                    new CountDownTimer(deltaTime, 1000) {
-                        @Override
-                        public void onTick(long l) {
-                            int tickTime = (int) (l / 1000);
-                            //更新UI
-                            broadcastManager.sendBroadcast(BroadcastAction.ACTION_UPDATE_PM, String.valueOf(tickTime));
-                        }
+                            @Override
+                            public void onFinish() {
+                                Utils.openDingding(context, BroadcastAction.DINGDING);
+                            }
+                        }.start();
+                    } else if (action.equals(BroadcastAction.ACTIONS[1])) {
+                        String data = intent.getStringExtra("data");
+                        long deltaTime = Long.parseLong(data) * 1000;
+                        new CountDownTimer(deltaTime, 1000) {
+                            @Override
+                            public void onTick(long l) {
+                                int tickTime = (int) (l / 1000);
+                                //更新UI
+                                broadcastManager.sendBroadcast(BroadcastAction.ACTIONS[3], String.valueOf(tickTime));
+                            }
 
-                        @Override
-                        public void onFinish() {
-                            Utils.openDingding(context, BroadcastAction.DINGDING);
-                        }
-                    }.start();
+                            @Override
+                            public void onFinish() {
+                                Utils.openDingding(context, BroadcastAction.DINGDING);
+                            }
+                        }.start();
+                    }
+                } else {
+                    Log.e(TAG, "onReceive: ", new Throwable());
                 }
             }
         });
@@ -81,7 +79,7 @@ public class AutoDingdingService extends Service {
     @Override
     public void onDestroy() {
         super.onDestroy();
-        broadcastManager.destroy(BroadcastAction.ACTION_KAOQIN_AM, BroadcastAction.ACTION_KAOQIN_PM);
+        broadcastManager.destroy(BroadcastAction.ACTIONS);
     }
 
     @Override

@@ -30,7 +30,15 @@
             android:text="上班设置"
             android:textColor="@color/white" />
 
-
+        <ProgressBar
+            android:id="@+id/startProgressBar"
+            style="@android:style/Widget.ProgressBar.Horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/startTimeBtn"
+            android:layout_gravity="center_horizontal"
+            android:layout_margin="30dp"
+            android:visibility="gone" />
     </RelativeLayout>
 
     <TextView
@@ -65,6 +73,14 @@
             android:text="下班设置"
             android:textColor="@color/white" />
 
-
+        <ProgressBar
+            android:id="@+id/endProgressBar"
+            style="@android:style/Widget.ProgressBar.Horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/endTimeBtn"
+            android:layout_gravity="center_horizontal"
+            android:layout_margin="30dp"
+            android:visibility="gone" />
     </RelativeLayout>
 </LinearLayout>

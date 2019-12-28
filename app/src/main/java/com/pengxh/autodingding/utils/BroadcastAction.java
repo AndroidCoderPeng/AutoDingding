@@ -11,9 +11,7 @@ public class BroadcastAction {
     //打卡页面类名：com.alibaba.lightapp.runtime.activity.CommonWebViewActivity
     public static final String DINGDING = "com.alibaba.android.rimet";
 
-    public static final String ACTION_KAOQIN_AM = "action.startWork.am";
-    public static final String ACTION_KAOQIN_PM = "action.endWork.pm";
-
-    public static final String ACTION_UPDATE_AM = "action.update.am";
-    public static final String ACTION_UPDATE_PM = "action.update.pm";
+    public static final String[] ACTIONS = {
+            "action.startWork.am", "action.endWork.pm",
+            "action.update.am", "action.update.pm"};
 }
