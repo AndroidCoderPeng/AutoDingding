@@ -7,8 +7,10 @@ import android.content.Intent;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
+import android.os.CountDownTimer;
 import android.os.Environment;
 
+import com.pengxh.app.multilib.utils.BroadcastManager;
 import com.pengxh.app.multilib.widget.EasyToast;
 
 import java.text.ParseException;
@@ -50,31 +52,6 @@ public class Utils {
     }
 
     /**
-     * 打开指定包名的apk
-     *
-     * @param context     上下文
-     * @param packageName 应用包名
-     */
-
-    public static void openDingding(Context context, String packageName) {
-        PackageManager packageManager = context.getPackageManager();
-        Intent resolveIntent = new Intent(Intent.ACTION_MAIN, null);
-        resolveIntent.addCategory(Intent.CATEGORY_LAUNCHER);
-        resolveIntent.setPackage(packageName);
-        List<ResolveInfo> apps = packageManager.queryIntentActivities(resolveIntent, 0);
-        ResolveInfo resolveInfo = apps.iterator().next();
-        if (resolveInfo != null) {
-            String className = resolveInfo.activityInfo.name;
-            Intent intent = new Intent(Intent.ACTION_MAIN);
-            intent.addCategory(Intent.CATEGORY_LAUNCHER);
-            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-            ComponentName cn = new ComponentName(packageName, className);
-            intent.setComponent(cn);
-            context.startActivity(intent);
-        }
-    }
-
-    /**
      * 时间戳转时间
      */
     public static String timestampToDate(long millSeconds) {
@@ -101,6 +78,47 @@ public class Utils {
             EasyToast.showToast("时间设置异常", EasyToast.WARING);
         }
         return 0L;
+    }
+
+    public static void countDownTimer(final Context context, long deltaTime, final String action, final BroadcastManager broadcastReceiver) {
+        new CountDownTimer(deltaTime, 1000) {
+            @Override
+            public void onTick(long l) {
+                int tickTime = (int) (l / 1000);
+                //更新UI
+                broadcastReceiver.sendBroadcast(action, String.valueOf(tickTime));
+            }
+
+            @Override
+            public void onFinish() {
+                openDingding(context, BroadcastAction.DINGDING);
+            }
+        }.start();
+    }
+
+    /**
+     * 打开指定包名的apk
+     *
+     * @param context     上下文
+     * @param packageName 应用包名
+     */
+
+    public static void openDingding(Context context, String packageName) {
+        PackageManager packageManager = context.getPackageManager();
+        Intent resolveIntent = new Intent(Intent.ACTION_MAIN, null);
+        resolveIntent.addCategory(Intent.CATEGORY_LAUNCHER);
+        resolveIntent.setPackage(packageName);
+        List<ResolveInfo> apps = packageManager.queryIntentActivities(resolveIntent, 0);
+        ResolveInfo resolveInfo = apps.iterator().next();
+        if (resolveInfo != null) {
+            String className = resolveInfo.activityInfo.name;
+            Intent intent = new Intent(Intent.ACTION_MAIN);
+            intent.addCategory(Intent.CATEGORY_LAUNCHER);
+            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            ComponentName cn = new ComponentName(packageName, className);
+            intent.setComponent(cn);
+            context.startActivity(intent);
+        }
     }
 
 //    private void startScreenShot() {

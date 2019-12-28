@@ -6,7 +6,6 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.os.CountDownTimer;
 import android.os.IBinder;
 import android.telephony.SmsMessage;
 import android.util.Log;
@@ -34,42 +33,18 @@ public class AutoDingdingService extends Service {
         broadcastManager.addAction(BroadcastAction.ACTIONS, new BroadcastReceiver() {
             @SuppressLint("SetTextI18n")
             @Override
-            public void onReceive(final Context context, Intent intent) {
+            public void onReceive(Context context, Intent intent) {
                 //更新UI
                 String action = intent.getAction();
                 if (action != null) {
                     if (action.equals(BroadcastAction.ACTIONS[0])) {
                         String data = intent.getStringExtra("data");
                         long deltaTime = Long.parseLong(data) * 1000;
-                        new CountDownTimer(deltaTime, 1000) {
-                            @Override
-                            public void onTick(long l) {
-                                int tickTime = (int) (l / 1000);
-                                //更新UI
-                                broadcastManager.sendBroadcast(BroadcastAction.ACTIONS[2], String.valueOf(tickTime));
-                            }
-
-                            @Override
-                            public void onFinish() {
-                                Utils.openDingding(context, BroadcastAction.DINGDING);
-                            }
-                        }.start();
+                        Utils.countDownTimer(context, deltaTime, BroadcastAction.ACTIONS[2], broadcastManager);
                     } else if (action.equals(BroadcastAction.ACTIONS[1])) {
                         String data = intent.getStringExtra("data");
                         long deltaTime = Long.parseLong(data) * 1000;
-                        new CountDownTimer(deltaTime, 1000) {
-                            @Override
-                            public void onTick(long l) {
-                                int tickTime = (int) (l / 1000);
-                                //更新UI
-                                broadcastManager.sendBroadcast(BroadcastAction.ACTIONS[3], String.valueOf(tickTime));
-                            }
-
-                            @Override
-                            public void onFinish() {
-                                Utils.openDingding(context, BroadcastAction.DINGDING);
-                            }
-                        }.start();
+                        Utils.countDownTimer(context, deltaTime, BroadcastAction.ACTIONS[3], broadcastManager);
                     } else if (action.equals(BroadcastAction.ACTIONS[4])) {
                         //短信监听
                         StringBuilder content = new StringBuilder();//用于存储短信内容
