@@ -13,5 +13,6 @@ public class BroadcastAction {
 
     public static final String[] ACTIONS = {
             "action.startWork.am", "action.endWork.pm",
-            "action.update.am", "action.update.pm"};
+            "action.update.am", "action.update.pm",
+            "android.provider.Telephony.SMS_RECEIVED"};
 }

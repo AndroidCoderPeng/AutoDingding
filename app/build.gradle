@@ -3,8 +3,8 @@ apply plugin: 'com.android.application'
 android {
     compileSdkVersion 28
     defaultConfig {
-        applicationId "com.pengxh.audodingding"
-        minSdkVersion 21
+        applicationId "com.pengxh.autodingding"
+        minSdkVersion 23
         targetSdkVersion 28
         versionCode 1
         versionName "1.0"
