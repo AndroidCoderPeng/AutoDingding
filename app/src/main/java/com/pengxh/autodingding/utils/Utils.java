@@ -1,17 +1,22 @@
 package com.pengxh.autodingding.utils;
 
 import android.annotation.SuppressLint;
+import android.app.Notification;
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
-import android.os.CountDownTimer;
-import android.os.Environment;
+import android.os.Build;
+import android.util.Log;
 
-import com.pengxh.app.multilib.utils.BroadcastManager;
 import com.pengxh.app.multilib.widget.EasyToast;
+import com.pengxh.autodingding.R;
+import com.pengxh.autodingding.ui.MainActivity;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -29,7 +34,7 @@ public class Utils {
     private static final String TAG = "Utils";
     @SuppressLint("SimpleDateFormat")
     private static final SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-    public String sdCardDir = Environment.getExternalStorageDirectory() + "/ScreenShot/";
+    private static final int NOTIFICATION_ID = 10000;
 
     /**
      * 检查手机上是否安装了指定的软件
@@ -80,22 +85,6 @@ public class Utils {
         return 0L;
     }
 
-    public static void countDownTimer(final Context context, long deltaTime, final String action, final BroadcastManager broadcastReceiver) {
-        new CountDownTimer(deltaTime, 1000) {
-            @Override
-            public void onTick(long l) {
-                int tickTime = (int) (l / 1000);
-                //更新UI
-                broadcastReceiver.sendBroadcast(action, String.valueOf(tickTime));
-            }
-
-            @Override
-            public void onFinish() {
-                openDingding(context, BroadcastAction.DINGDING);
-            }
-        }.start();
-    }
-
     /**
      * 打开指定包名的apk
      *
@@ -121,38 +110,43 @@ public class Utils {
         }
     }
 
-//    private void startScreenShot() {
-//        String shotCmd = "screencap -p " + sdCardDir + "temp.jpg" + " \n";
-//        try {
-//            Runtime.getRuntime().exec(shotCmd);
-//        } catch (IOException e) {
-//            e.printStackTrace();
-//        }
-//    }
-//
-//    /**
-//     * 保存文件
-//     */
-//
-//    private void saveBitmap(Bitmap bitmap) {
-//        try {
-//            File dirFile = new File(sdCardDir);
-//            if (!dirFile.exists()) {              //如果不存在，那就建立这个文件夹
-//                dirFile.mkdirs();
-//            }
-//            File file = new File(sdCardDir, "temp.jpg");
-//            FileOutputStream fos = new FileOutputStream(file);
-//            bitmap.compress(Bitmap.CompressFormat.JPEG, 100, fos);
-//            fos.flush();
-//            fos.close();
-//        } catch (FileNotFoundException e) {
-//            e.printStackTrace();
-//        } catch (IOException e) {
-//            e.printStackTrace();
-//        }
-//        // 把文件插入到系统图库
-//        MediaStore.Images.Media.insertImage(this.getContentResolver(), bitmap, "temp.jpg", null);
-//        // 通知图库更新
-//        sendBroadcast(new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE, Uri.parse("file://" + "/sdcard/namecard/")));
-//    }
+    public static void createNotification(Context context) {
+        Log.d(TAG, "createNotification");
+        NotificationManager manager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
+
+        Intent intent = new Intent(context, MainActivity.class);
+        PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, intent, 0);
+
+        //Android8.0以上必须添加 渠道 才能显示通知栏
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            //创建渠道
+            String id = "n_channel_1";
+            String name = "ding_notify";
+            NotificationChannel mChannel = new NotificationChannel(id, name, NotificationManager.IMPORTANCE_LOW);
+            manager.createNotificationChannel(mChannel);
+
+            Notification.Builder builder = new Notification.Builder(context, id);
+            builder.setContentTitle("钉钉自动打卡")
+                    .setContentText("钉钉打卡服务监控")
+                    .setTicker("钉钉打卡服务监控")
+                    .setWhen(System.currentTimeMillis())
+                    .setSmallIcon(R.mipmap.logo)
+                    .setAutoCancel(true);
+            builder.setContentIntent(pendingIntent);
+            Notification notification = builder.build();
+            manager.notify(NOTIFICATION_ID, notification);
+        } else {
+            //设置图片,通知标题,发送时间,提示方式等属性
+            Notification.Builder builder = new Notification.Builder(context);
+            builder.setContentTitle("钉钉自动打卡")
+                    .setContentText("钉钉打卡服务监控")
+                    .setTicker("钉钉打卡服务监控")
+                    .setWhen(System.currentTimeMillis())
+                    .setSmallIcon(R.mipmap.logo)
+                    .setAutoCancel(true);
+            builder.setContentIntent(pendingIntent);
+            Notification notification = builder.build();
+            manager.notify(NOTIFICATION_ID, notification);
+        }
+    }
 }

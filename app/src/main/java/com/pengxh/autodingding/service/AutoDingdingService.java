@@ -6,13 +6,21 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.CountDownTimer;
+import android.os.Environment;
+import android.os.Handler;
 import android.os.IBinder;
+import android.os.Message;
 import android.telephony.SmsMessage;
 import android.util.Log;
 
 import com.pengxh.app.multilib.utils.BroadcastManager;
+import com.pengxh.app.multilib.widget.EasyToast;
 import com.pengxh.autodingding.utils.BroadcastAction;
 import com.pengxh.autodingding.utils.Utils;
+
+import java.util.Timer;
+import java.util.TimerTask;
 
 /**
  * @description: TODO
@@ -23,6 +31,7 @@ import com.pengxh.autodingding.utils.Utils;
 public class AutoDingdingService extends Service {
 
     private static final String TAG = "AutoDingdingService";
+    private String sdCardDir = Environment.getExternalStorageDirectory() + "/ScreenShot/";
     private BroadcastManager broadcastManager;
 
     @Override
@@ -33,18 +42,45 @@ public class AutoDingdingService extends Service {
         broadcastManager.addAction(BroadcastAction.ACTIONS, new BroadcastReceiver() {
             @SuppressLint("SetTextI18n")
             @Override
-            public void onReceive(Context context, Intent intent) {
+            public void onReceive(final Context context, Intent intent) {
                 //更新UI
                 String action = intent.getAction();
                 if (action != null) {
+                    Utils.createNotification(context);
                     if (action.equals(BroadcastAction.ACTIONS[0])) {
                         String data = intent.getStringExtra("data");
                         long deltaTime = Long.parseLong(data) * 1000;
-                        Utils.countDownTimer(context, deltaTime, BroadcastAction.ACTIONS[2], broadcastManager);
+                        new CountDownTimer(deltaTime, 1000) {
+                            @Override
+                            public void onTick(long l) {
+                                int tickTime = (int) (l / 1000);
+                                //更新UI
+                                broadcastManager.sendBroadcast(BroadcastAction.ACTIONS[2], String.valueOf(tickTime));
+                            }
+
+                            @Override
+                            public void onFinish() {
+                                Utils.openDingding(context, BroadcastAction.DINGDING);
+                                captureHandler.sendEmptyMessage(1);
+                            }
+                        }.start();
                     } else if (action.equals(BroadcastAction.ACTIONS[1])) {
                         String data = intent.getStringExtra("data");
                         long deltaTime = Long.parseLong(data) * 1000;
-                        Utils.countDownTimer(context, deltaTime, BroadcastAction.ACTIONS[3], broadcastManager);
+                        new CountDownTimer(deltaTime, 1000) {
+                            @Override
+                            public void onTick(long l) {
+                                int tickTime = (int) (l / 1000);
+                                //更新UI
+                                broadcastManager.sendBroadcast(BroadcastAction.ACTIONS[3], String.valueOf(tickTime));
+                            }
+
+                            @Override
+                            public void onFinish() {
+                                Utils.openDingding(context, BroadcastAction.DINGDING);
+                                captureHandler.sendEmptyMessage(1);
+                            }
+                        }.start();
                     } else if (action.equals(BroadcastAction.ACTIONS[4])) {
                         //短信监听
                         StringBuilder content = new StringBuilder();//用于存储短信内容
@@ -60,6 +96,7 @@ public class AutoDingdingService extends Service {
                             Log.d(TAG, "收到短信: " + sms);
                             if (sms.equals("签到打卡")) {
                                 Utils.openDingding(context, BroadcastAction.DINGDING);
+                                captureHandler.sendEmptyMessage(1);
                             }
                         }
                     }
@@ -68,6 +105,26 @@ public class AutoDingdingService extends Service {
                 }
             }
         });
+    }
+
+    @SuppressLint("HandlerLeak")
+    private Handler captureHandler = new Handler() {
+        @Override
+        public void handleMessage(Message msg) {
+            if (msg.what == 1) {
+                EasyToast.showToast("开始截屏", EasyToast.DEFAULT);
+                new Timer().schedule(new TimerTask() {
+                    @Override
+                    public void run() {
+                        captureBitmap();
+                    }
+                }, 10 * 1000);
+            }
+        }
+    };
+
+    private void captureBitmap() {
+
     }
 
     @Override
