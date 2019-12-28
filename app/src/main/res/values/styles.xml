@@ -21,4 +21,12 @@
         <!-- 设置弹出菜单文字颜色 -->
         <item name="android:textColor">@color/white</item>
     </style>
+
+    <style name="PopupAnimation">
+        <item name="android:windowEnterAnimation">@anim/popup_show</item>
+        <!-- 指定显示的动画xml -->
+
+        <item name="android:windowExitAnimation">@anim/popup_hide</item>
+        <!-- 指定消失的动画xml -->
+    </style>
 </resources>

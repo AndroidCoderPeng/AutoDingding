@@ -6,12 +6,12 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.util.Log;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.ProgressBar;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.aihook.alertview.library.AlertView;
@@ -29,6 +29,10 @@ import com.pengxh.autodingding.R;
 import com.pengxh.autodingding.service.AutoDingdingService;
 import com.pengxh.autodingding.utils.BroadcastAction;
 import com.pengxh.autodingding.utils.Utils;
+import com.pengxh.autodingding.widgets.EasyPopupWindow;
+
+import java.util.Arrays;
+import java.util.List;
 
 import butterknife.BindView;
 import butterknife.OnClick;
@@ -36,8 +40,14 @@ import butterknife.OnClick;
 public class MainActivity extends DoubleClickExitActivity implements View.OnClickListener {
 
     private static final String TAG = "MainActivity";
-    private AlertView alertView;
+    private static final List<String> items = Arrays.asList("邮箱设置");
 
+    @BindView(R.id.titleLayout)
+    RelativeLayout titleLayout;
+    @BindView(R.id.textViewTitle)
+    TextView textViewTitle;
+    @BindView(R.id.imageViewTitleRight)
+    ImageView imageViewTitleRight;
     @BindView(R.id.startTimeBtn)
     Button startTimeBtn;
     @BindView(R.id.endTimeBtn)
@@ -50,6 +60,8 @@ public class MainActivity extends DoubleClickExitActivity implements View.OnClic
     ProgressBar startProgressBar;
     @BindView(R.id.endProgressBar)
     ProgressBar endProgressBar;
+
+    private AlertView alertView;
     private BroadcastManager broadcastManager;
 
     @Override
@@ -61,6 +73,7 @@ public class MainActivity extends DoubleClickExitActivity implements View.OnClic
     @Override
     public void initData() {
         broadcastManager = BroadcastManager.getInstance(this);
+        String qqEmail = (String) SaveKeyValues.getValue("email", "");
         String amKaoQin = (String) SaveKeyValues.getValue("amKaoQin", "");
         String pmKaoQin = (String) SaveKeyValues.getValue("pmKaoQin", "");
         if (!amKaoQin.equals("")) {
@@ -72,6 +85,9 @@ public class MainActivity extends DoubleClickExitActivity implements View.OnClic
             pmTime.setText("将在" + pmKaoQin + "自动打卡");
         } else {
             pmTime.setText("下班打卡时间未设置");
+        }
+        if (!qqEmail.equals("")) {
+            textViewTitle.setText("自动打卡邮箱：" + qqEmail);
         }
     }
 
@@ -129,14 +145,13 @@ public class MainActivity extends DoubleClickExitActivity implements View.OnClic
         }
     }
 
-    @OnClick({R.id.startTimeBtn, R.id.endTimeBtn})
+    @OnClick({R.id.startTimeBtn, R.id.endTimeBtn, R.id.imageViewTitleRight})
     @Override
     public void onClick(View v) {
-        TimePickerDialog.Builder builder = new TimePickerDialog.Builder();
         switch (v.getId()) {
             case R.id.startTimeBtn:
                 //设置上班时间
-                builder.setThemeColor(ColorUtil.getRandomColor())
+                new TimePickerDialog.Builder().setThemeColor(ColorUtil.getRandomColor())
                         .setType(Type.MONTH_DAY_HOUR_MIN)
                         .setCallBack(new OnDateSetListener() {
                             @Override
@@ -154,11 +169,11 @@ public class MainActivity extends DoubleClickExitActivity implements View.OnClic
                                 startProgressBar.setVisibility(View.VISIBLE);
                                 broadcastManager.sendBroadcast(BroadcastAction.ACTIONS[0], String.valueOf(deltaTime));
                             }
-                        });
+                        }).build().show(getSupportFragmentManager(), "month_day_hour_minute");
                 break;
             case R.id.endTimeBtn:
                 //设置下班时间
-                builder.setThemeColor(ColorUtil.getRandomColor())
+                new TimePickerDialog.Builder().setThemeColor(ColorUtil.getRandomColor())
                         .setType(Type.MONTH_DAY_HOUR_MIN)
                         .setCallBack(new OnDateSetListener() {
                             @Override
@@ -176,47 +191,43 @@ public class MainActivity extends DoubleClickExitActivity implements View.OnClic
                                 endProgressBar.setVisibility(View.VISIBLE);
                                 broadcastManager.sendBroadcast(BroadcastAction.ACTIONS[1], String.valueOf(deltaTime));
                             }
-                        });
+                        }).build().show(getSupportFragmentManager(), "month_day_hour_minute");
                 break;
-        }
-        builder.build().show(getSupportFragmentManager(), "month_day_hour_minute");
-    }
+            case R.id.imageViewTitleRight:
+                //邮箱设置
+                EasyPopupWindow easyPopupWindow = new EasyPopupWindow(this, items);
+                easyPopupWindow.setPopupWindowClickListener(new EasyPopupWindow.PopupWindowClickListener() {
+                    @Override
+                    public void popupWindowClick(int position) {
+                        new InputDialog.Builder().setContext(MainActivity.this)
+                                .setTitle("设置邮箱")
+                                .setNegativeButton("取消")
+                                .setPositiveButton("确定")
+                                .setOnDialogClickListener(new InputDialog.onDialogClickListener() {
+                                    @Override
+                                    public void onConfirmClick(Dialog dialog, String input) {
+                                        if (!input.isEmpty()) {
+                                            if (input.endsWith("@qq.com")) {
+                                                SaveKeyValues.putValue("email", input);
+                                                textViewTitle.setText("自动打卡邮箱：" + input);
+                                            } else {
+                                                EasyToast.showToast("邮箱设置失败，暂时只支持QQ邮箱！", EasyToast.WARING);
+                                            }
+                                            dialog.dismiss();
+                                        } else {
+                                            EasyToast.showToast("什么都还没输入呢！", EasyToast.ERROR);
+                                        }
+                                    }
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.main, menu);
-        return super.onCreateOptionsMenu(menu);
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        if (item.getItemId() == R.id.menu_setting) {
-            new InputDialog.Builder().setContext(this)
-                    .setTitle("设置邮箱")
-                    .setNegativeButton("取消")
-                    .setPositiveButton("确定")
-                    .setCancelable(false)
-                    .setOnDialogClickListener(new InputDialogClickListener())
-                    .build().show();
-        }
-        return super.onOptionsItemSelected(item);
-    }
-
-    class InputDialogClickListener implements InputDialog.onDialogClickListener {
-
-        @Override
-        public void onConfirmClick(Dialog dialog, String input) {
-            if (!input.isEmpty()) {
-                EasyToast.showToast(input, EasyToast.SUCCESS);
-                dialog.dismiss();
-            } else {
-                EasyToast.showToast("什么都还没输入呢", EasyToast.ERROR);
-            }
-        }
-
-        @Override
-        public void onCancelClick(Dialog dialog) {
-            dialog.dismiss();
+                                    @Override
+                                    public void onCancelClick(Dialog dialog) {
+                                        dialog.dismiss();
+                                    }
+                                }).build().show();
+                    }
+                });
+                easyPopupWindow.showAsDropDown(titleLayout, titleLayout.getWidth(), 0);
+                break;
         }
     }
 
