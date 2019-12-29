@@ -7,7 +7,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.CountDownTimer;
-import android.os.Environment;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.Message;
@@ -15,15 +14,12 @@ import android.telephony.SmsMessage;
 import android.util.Log;
 
 import com.pengxh.app.multilib.utils.BroadcastManager;
-import com.pengxh.app.multilib.widget.EasyToast;
+import com.pengxh.autodingding.ui.AssistantActivity;
 import com.pengxh.autodingding.utils.BroadcastAction;
 import com.pengxh.autodingding.utils.Utils;
 
-import java.util.Timer;
-import java.util.TimerTask;
-
 /**
- * @description: TODO
+ * @description: TODO 钉钉自动打卡服务
  * @author: Pengxh
  * @email: 290677893@qq.com
  * @date: 2019/12/25 23:17
@@ -31,7 +27,6 @@ import java.util.TimerTask;
 public class AutoDingdingService extends Service {
 
     private static final String TAG = "AutoDingdingService";
-    private String sdCardDir = Environment.getExternalStorageDirectory() + "/ScreenShot/";
     private BroadcastManager broadcastManager;
 
     @Override
@@ -60,7 +55,7 @@ public class AutoDingdingService extends Service {
                             @Override
                             public void onFinish() {
                                 Utils.openDingding(BroadcastAction.DINGDING);
-                                captureHandler.sendEmptyMessage(1);
+                                handler.sendEmptyMessageDelayed(1, 30 * 1000);
                             }
                         }.start();
                     } else if (action.equals(BroadcastAction.ACTIONS[1])) {
@@ -77,7 +72,7 @@ public class AutoDingdingService extends Service {
                             @Override
                             public void onFinish() {
                                 Utils.openDingding(BroadcastAction.DINGDING);
-                                captureHandler.sendEmptyMessage(1);
+                                handler.sendEmptyMessageDelayed(1, 30 * 1000);
                             }
                         }.start();
                     } else if (action.equals(BroadcastAction.ACTIONS[4])) {
@@ -95,7 +90,7 @@ public class AutoDingdingService extends Service {
                             Log.d(TAG, "收到短信: " + sms);
                             if (sms.equals("签到打卡")) {
                                 Utils.openDingding(BroadcastAction.DINGDING);
-                                captureHandler.sendEmptyMessage(1);
+                                handler.sendEmptyMessageDelayed(1, 30 * 1000);
                             }
                         }
                     }
@@ -107,24 +102,15 @@ public class AutoDingdingService extends Service {
     }
 
     @SuppressLint("HandlerLeak")
-    private Handler captureHandler = new Handler() {
+    private Handler handler = new Handler() {
         @Override
         public void handleMessage(Message msg) {
             if (msg.what == 1) {
-                EasyToast.showToast("开始截屏", EasyToast.DEFAULT);
-                new Timer().schedule(new TimerTask() {
-                    @Override
-                    public void run() {
-                        captureBitmap();
-                    }
-                }, 10 * 1000);
+                Log.d(TAG, "onReceive: 启动帮助页");
+                startActivity(new Intent(getApplicationContext(), AssistantActivity.class));
             }
         }
     };
-
-    private void captureBitmap() {
-
-    }
 
     @Override
     public void onDestroy() {

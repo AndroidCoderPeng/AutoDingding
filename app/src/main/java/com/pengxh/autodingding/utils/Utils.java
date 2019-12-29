@@ -13,6 +13,7 @@ import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
 import android.os.Build;
+import android.os.Environment;
 import android.os.PowerManager;
 import android.util.Log;
 
@@ -38,6 +39,7 @@ public class Utils {
     private static final String TAG = "Utils";
     @SuppressLint("SimpleDateFormat")
     private static final SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+    private static String sdCardDir = Environment.getExternalStorageDirectory() + "/ScreenShot/";
     private static final int NOTIFICATION_ID = 10000;
     @SuppressLint("StaticFieldLeak")
     private static Context mContext;
@@ -113,7 +115,7 @@ public class Utils {
     }
 
     /**
-     * 欢迎屏幕并解锁
+     * 唤醒屏幕并解锁
      */
     @SuppressLint("InvalidWakeLockTag")
     private static void wakeUpAndUnlock() {
