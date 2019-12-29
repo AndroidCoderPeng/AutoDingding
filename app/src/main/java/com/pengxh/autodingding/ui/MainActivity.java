@@ -1,7 +1,6 @@
 package com.pengxh.autodingding.ui;
 
 import android.annotation.SuppressLint;
-import android.app.Dialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -24,7 +23,6 @@ import com.pengxh.app.multilib.utils.BroadcastManager;
 import com.pengxh.app.multilib.utils.ColorUtil;
 import com.pengxh.app.multilib.utils.SaveKeyValues;
 import com.pengxh.app.multilib.widget.EasyToast;
-import com.pengxh.app.multilib.widget.dialog.InputDialog;
 import com.pengxh.autodingding.R;
 import com.pengxh.autodingding.service.AutoDingdingService;
 import com.pengxh.autodingding.utils.BroadcastAction;
@@ -40,7 +38,7 @@ import butterknife.OnClick;
 public class MainActivity extends DoubleClickExitActivity implements View.OnClickListener {
 
     private static final String TAG = "MainActivity";
-    private static final List<String> items = Arrays.asList("邮箱设置");
+    private static final List<String> items = Arrays.asList("邮箱设置", "功能介绍");
 
     @BindView(R.id.titleLayout)
     RelativeLayout titleLayout;
@@ -133,7 +131,8 @@ public class MainActivity extends DoubleClickExitActivity implements View.OnClic
             });
         } else {
             alertView = new AlertView("温馨提示", "手机没有安装钉钉软件，无法自动打卡",
-                    null, new String[]{"确定"}, null, this, AlertView.Style.Alert,
+                    null, new String[]{"确定"}, null,
+                    this, AlertView.Style.Alert,
                     new OnItemClickListener() {
                         @Override
                         public void onItemClick(Object o, int position) {
@@ -199,39 +198,65 @@ public class MainActivity extends DoubleClickExitActivity implements View.OnClic
                 easyPopupWindow.setPopupWindowClickListener(new EasyPopupWindow.PopupWindowClickListener() {
                     @Override
                     public void popupWindowClick(int position) {
-                        //TODO 截屏需要手机已Root
-                        EasyToast.showToast("截屏需要手机已Root！", EasyToast.WARING);
-
-//                        new InputDialog.Builder().setContext(MainActivity.this)
-//                                .setTitle("设置邮箱")
-//                                .setNegativeButton("取消")
-//                                .setPositiveButton("确定")
-//                                .setOnDialogClickListener(new InputDialog.onDialogClickListener() {
-//                                    @Override
-//                                    public void onConfirmClick(Dialog dialog, String input) {
-//                                        if (!input.isEmpty()) {
-//                                            if (input.endsWith("@qq.com")) {
-//                                                SaveKeyValues.putValue("email", input);
-//                                                textViewTitle.setText("自动打卡邮箱：" + input);
-//                                            } else {
-//                                                EasyToast.showToast("邮箱设置失败，暂时只支持QQ邮箱！", EasyToast.WARING);
-//                                            }
-//                                            dialog.dismiss();
-//                                        } else {
-//                                            EasyToast.showToast("什么都还没输入呢！", EasyToast.ERROR);
-//                                        }
-//                                    }
-//
-//                                    @Override
-//                                    public void onCancelClick(Dialog dialog) {
-//                                        dialog.dismiss();
-//                                    }
-//                                }).build().show();
+                        switch (position) {
+                            case 0:
+                                setEmailAddress();
+                                break;
+                            case 1:
+                                showAboutDialog();
+                                break;
+                            default:
+                                break;
+                        }
                     }
                 });
                 easyPopupWindow.showAsDropDown(titleLayout, titleLayout.getWidth(), 0);
                 break;
         }
+    }
+
+    private void showAboutDialog() {
+        alertView = new AlertView("功能介绍", getResources().getString(R.string.about),
+                null, new String[]{"确定"}, null,
+                this, AlertView.Style.Alert,
+                new OnItemClickListener() {
+                    @Override
+                    public void onItemClick(Object o, int position) {
+                        alertView.dismiss();
+                    }
+                }).setCancelable(false);
+        alertView.show();
+    }
+
+    private void setEmailAddress() {
+        //TODO 截屏需要手机已Root
+        EasyToast.showToast("截屏功能需要手机已Root！", EasyToast.WARING);
+//        new InputDialog.Builder()
+//                .setContext(this)
+//                .setTitle("设置邮箱")
+//                .setNegativeButton("取消")
+//                .setPositiveButton("确定")
+//                .setOnDialogClickListener(new InputDialog.onDialogClickListener() {
+//                    @Override
+//                    public void onConfirmClick(Dialog dialog, String input) {
+//                        if (!input.isEmpty()) {
+//                            if (input.endsWith("@qq.com")) {
+//                                SaveKeyValues.putValue("email", input);
+//                                textViewTitle.setText("自动打卡邮箱：" + input);
+//                            } else {
+//                                EasyToast.showToast("邮箱设置失败，暂时只支持QQ邮箱！", EasyToast.WARING);
+//                            }
+//                            dialog.dismiss();
+//                        } else {
+//                            EasyToast.showToast("什么都还没输入呢！", EasyToast.ERROR);
+//                        }
+//                    }
+//
+//                    @Override
+//                    public void onCancelClick(Dialog dialog) {
+//                        dialog.dismiss();
+//                    }
+//                }).build().show();
     }
 
     @Override

@@ -9,6 +9,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.pengxh.autodingding.R;
+import com.pengxh.autodingding.utils.Constant;
 
 import java.util.List;
 
@@ -21,12 +22,10 @@ import java.util.List;
 public class PopupAdapter extends BaseAdapter {
 
     private List<String> itemList;
-    private Context mContext;
     private LayoutInflater inflater;
 
     public PopupAdapter(Context mContext, List<String> stringList) {
         this.itemList = stringList;
-        this.mContext = mContext;
         inflater = LayoutInflater.from(mContext);
     }
 
@@ -66,7 +65,7 @@ public class PopupAdapter extends BaseAdapter {
         private TextView itemName;
 
         void bindData(String s, int index) {
-            itemIcon.setImageResource(R.drawable.settings);
+            itemIcon.setImageResource(Constant.images[index]);
             itemName.setText(s);
         }
     }

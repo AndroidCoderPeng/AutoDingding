@@ -8,6 +8,8 @@
         android:id="@+id/popupListView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:divider="@drawable/popup_list_divider"
+        android:dividerHeight="1px"
         android:scrollbars="none" />
 
 </RelativeLayout>
