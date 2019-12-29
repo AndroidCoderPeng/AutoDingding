@@ -42,11 +42,10 @@ public class AutoDingdingService extends Service {
         broadcastManager.addAction(BroadcastAction.ACTIONS, new BroadcastReceiver() {
             @SuppressLint("SetTextI18n")
             @Override
-            public void onReceive(final Context context, Intent intent) {
+            public void onReceive(Context context, Intent intent) {
                 //更新UI
                 String action = intent.getAction();
                 if (action != null) {
-                    Utils.createNotification(context);
                     if (action.equals(BroadcastAction.ACTIONS[0])) {
                         String data = intent.getStringExtra("data");
                         long deltaTime = Long.parseLong(data) * 1000;
@@ -60,7 +59,7 @@ public class AutoDingdingService extends Service {
 
                             @Override
                             public void onFinish() {
-                                Utils.openDingding(context, BroadcastAction.DINGDING);
+                                Utils.openDingding(BroadcastAction.DINGDING);
                                 captureHandler.sendEmptyMessage(1);
                             }
                         }.start();
@@ -77,7 +76,7 @@ public class AutoDingdingService extends Service {
 
                             @Override
                             public void onFinish() {
-                                Utils.openDingding(context, BroadcastAction.DINGDING);
+                                Utils.openDingding(BroadcastAction.DINGDING);
                                 captureHandler.sendEmptyMessage(1);
                             }
                         }.start();
@@ -95,7 +94,7 @@ public class AutoDingdingService extends Service {
                             String sms = content.toString();
                             Log.d(TAG, "收到短信: " + sms);
                             if (sms.equals("签到打卡")) {
-                                Utils.openDingding(context, BroadcastAction.DINGDING);
+                                Utils.openDingding(BroadcastAction.DINGDING);
                                 captureHandler.sendEmptyMessage(1);
                             }
                         }

@@ -1,6 +1,7 @@
 package com.pengxh.autodingding.utils;
 
 import android.annotation.SuppressLint;
+import android.app.KeyguardManager;
 import android.app.Notification;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
@@ -12,6 +13,7 @@ import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
 import android.os.Build;
+import android.os.PowerManager;
 import android.util.Log;
 
 import com.pengxh.app.multilib.widget.EasyToast;
@@ -24,6 +26,8 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import static android.content.Context.KEYGUARD_SERVICE;
+
 /**
  * @author: Pengxh
  * @email: 290677893@qq.com
@@ -35,15 +39,20 @@ public class Utils {
     @SuppressLint("SimpleDateFormat")
     private static final SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
     private static final int NOTIFICATION_ID = 10000;
+    @SuppressLint("StaticFieldLeak")
+    private static Context mContext;
+
+    public static void init(Context context) {
+        Utils.mContext = context.getApplicationContext();//获取全局上下文，最长生命周期
+    }
 
     /**
      * 检查手机上是否安装了指定的软件
      *
-     * @param context     上下文
      * @param packageName 应用包名
      */
-    public static boolean isAppAvailable(Context context, String packageName) {
-        PackageManager packageManager = context.getPackageManager();
+    public static boolean isAppAvailable(String packageName) {
+        PackageManager packageManager = mContext.getPackageManager();
         //获取所有已安装程序的包信息
         List<PackageInfo> packageInfos = packageManager.getInstalledPackages(0);
         List<String> packageNames = new ArrayList<>();
@@ -64,13 +73,6 @@ public class Utils {
     }
 
     /**
-     * 时间转时间戳
-     */
-    public static long DateToTimestamp(String date) throws ParseException {
-        return dateFormat.parse(date).getTime();
-    }
-
-    /**
      * 计算时间差
      *
      * @param fixedTime 结束时间
@@ -88,12 +90,12 @@ public class Utils {
     /**
      * 打开指定包名的apk
      *
-     * @param context     上下文
      * @param packageName 应用包名
      */
 
-    public static void openDingding(Context context, String packageName) {
-        PackageManager packageManager = context.getPackageManager();
+    public static void openDingding(String packageName) {
+        wakeUpAndUnlock();
+        PackageManager packageManager = mContext.getPackageManager();
         Intent resolveIntent = new Intent(Intent.ACTION_MAIN, null);
         resolveIntent.addCategory(Intent.CATEGORY_LAUNCHER);
         resolveIntent.setPackage(packageName);
@@ -106,16 +108,43 @@ public class Utils {
             intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             ComponentName cn = new ComponentName(packageName, className);
             intent.setComponent(cn);
-            context.startActivity(intent);
+            mContext.startActivity(intent);
         }
     }
 
-    public static void createNotification(Context context) {
-        Log.d(TAG, "createNotification");
-        NotificationManager manager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
+    /**
+     * 欢迎屏幕并解锁
+     */
+    @SuppressLint("InvalidWakeLockTag")
+    private static void wakeUpAndUnlock() {
+        Log.d(TAG, "wakeUpAndUnlock: 亮屏解锁");
+        PowerManager powerManager = (PowerManager) mContext.getSystemService(Context.POWER_SERVICE);
+        boolean screenOn = powerManager.isScreenOn();
+        if (!screenOn) {
+            //唤醒屏幕
+            PowerManager.WakeLock wakeLock = powerManager.newWakeLock(PowerManager.ACQUIRE_CAUSES_WAKEUP | PowerManager.SCREEN_BRIGHT_WAKE_LOCK, "bright");
+            wakeLock.acquire(10000);
+            wakeLock.release();
+        }
+        //解锁屏幕
+        KeyguardManager keyguardManager = (KeyguardManager) mContext.getSystemService(KEYGUARD_SERVICE);
+        KeyguardManager.KeyguardLock keyguardLock = keyguardManager.newKeyguardLock("unLock");
+        keyguardLock.disableKeyguard();
+    }
 
-        Intent intent = new Intent(context, MainActivity.class);
-        PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, intent, 0);
+    /**
+     * 时间转时间戳
+     */
+    public static long DateToTimestamp(String date) throws ParseException {
+        return dateFormat.parse(date).getTime();
+    }
+
+    public static void createNotification() {
+        Log.d(TAG, "createNotification");
+        NotificationManager manager = (NotificationManager) mContext.getSystemService(Context.NOTIFICATION_SERVICE);
+
+        Intent intent = new Intent(mContext, MainActivity.class);
+        PendingIntent pendingIntent = PendingIntent.getActivity(mContext, 0, intent, 0);
 
         //Android8.0以上必须添加 渠道 才能显示通知栏
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
@@ -125,7 +154,7 @@ public class Utils {
             NotificationChannel mChannel = new NotificationChannel(id, name, NotificationManager.IMPORTANCE_LOW);
             manager.createNotificationChannel(mChannel);
 
-            Notification.Builder builder = new Notification.Builder(context, id);
+            Notification.Builder builder = new Notification.Builder(mContext, id);
             builder.setContentTitle("钉钉自动打卡")
                     .setContentText("钉钉打卡服务监控")
                     .setTicker("钉钉打卡服务监控")
@@ -137,7 +166,7 @@ public class Utils {
             manager.notify(NOTIFICATION_ID, notification);
         } else {
             //设置图片,通知标题,发送时间,提示方式等属性
-            Notification.Builder builder = new Notification.Builder(context);
+            Notification.Builder builder = new Notification.Builder(mContext);
             builder.setContentTitle("钉钉自动打卡")
                     .setContentText("钉钉打卡服务监控")
                     .setTicker("钉钉打卡服务监控")

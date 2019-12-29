@@ -93,7 +93,7 @@ public class MainActivity extends DoubleClickExitActivity implements View.OnClic
 
     @Override
     public void initEvent() {
-        if (Utils.isAppAvailable(this, BroadcastAction.DINGDING)) {
+        if (Utils.isAppAvailable(BroadcastAction.DINGDING)) {
             startService(new Intent(this, AutoDingdingService.class));
 
             broadcastManager.addAction(BroadcastAction.ACTIONS, new BroadcastReceiver() {
@@ -199,31 +199,34 @@ public class MainActivity extends DoubleClickExitActivity implements View.OnClic
                 easyPopupWindow.setPopupWindowClickListener(new EasyPopupWindow.PopupWindowClickListener() {
                     @Override
                     public void popupWindowClick(int position) {
-                        new InputDialog.Builder().setContext(MainActivity.this)
-                                .setTitle("设置邮箱")
-                                .setNegativeButton("取消")
-                                .setPositiveButton("确定")
-                                .setOnDialogClickListener(new InputDialog.onDialogClickListener() {
-                                    @Override
-                                    public void onConfirmClick(Dialog dialog, String input) {
-                                        if (!input.isEmpty()) {
-                                            if (input.endsWith("@qq.com")) {
-                                                SaveKeyValues.putValue("email", input);
-                                                textViewTitle.setText("自动打卡邮箱：" + input);
-                                            } else {
-                                                EasyToast.showToast("邮箱设置失败，暂时只支持QQ邮箱！", EasyToast.WARING);
-                                            }
-                                            dialog.dismiss();
-                                        } else {
-                                            EasyToast.showToast("什么都还没输入呢！", EasyToast.ERROR);
-                                        }
-                                    }
+                        //TODO 截屏需要手机已Root
+                        EasyToast.showToast("截屏需要手机已Root！", EasyToast.WARING);
 
-                                    @Override
-                                    public void onCancelClick(Dialog dialog) {
-                                        dialog.dismiss();
-                                    }
-                                }).build().show();
+//                        new InputDialog.Builder().setContext(MainActivity.this)
+//                                .setTitle("设置邮箱")
+//                                .setNegativeButton("取消")
+//                                .setPositiveButton("确定")
+//                                .setOnDialogClickListener(new InputDialog.onDialogClickListener() {
+//                                    @Override
+//                                    public void onConfirmClick(Dialog dialog, String input) {
+//                                        if (!input.isEmpty()) {
+//                                            if (input.endsWith("@qq.com")) {
+//                                                SaveKeyValues.putValue("email", input);
+//                                                textViewTitle.setText("自动打卡邮箱：" + input);
+//                                            } else {
+//                                                EasyToast.showToast("邮箱设置失败，暂时只支持QQ邮箱！", EasyToast.WARING);
+//                                            }
+//                                            dialog.dismiss();
+//                                        } else {
+//                                            EasyToast.showToast("什么都还没输入呢！", EasyToast.ERROR);
+//                                        }
+//                                    }
+//
+//                                    @Override
+//                                    public void onCancelClick(Dialog dialog) {
+//                                        dialog.dismiss();
+//                                    }
+//                                }).build().show();
                     }
                 });
                 easyPopupWindow.showAsDropDown(titleLayout, titleLayout.getWidth(), 0);

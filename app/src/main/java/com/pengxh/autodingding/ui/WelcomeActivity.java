@@ -22,7 +22,9 @@ public class WelcomeActivity extends AppCompatActivity {
             Manifest.permission.WRITE_EXTERNAL_STORAGE,
             Manifest.permission.READ_EXTERNAL_STORAGE,
             Manifest.permission.RECEIVE_SMS,
-            Manifest.permission.READ_SMS};
+            Manifest.permission.READ_SMS,
+            Manifest.permission.WAKE_LOCK,
+            Manifest.permission.DISABLE_KEYGUARD};
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {

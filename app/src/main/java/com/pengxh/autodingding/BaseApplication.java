@@ -4,6 +4,7 @@ import android.app.Application;
 
 import com.pengxh.app.multilib.utils.SaveKeyValues;
 import com.pengxh.app.multilib.widget.EasyToast;
+import com.pengxh.autodingding.utils.Utils;
 
 /**
  * @author: Pengxh
@@ -15,6 +16,7 @@ public class BaseApplication extends Application {
     @Override
     public void onCreate() {
         super.onCreate();
+        Utils.init(this);
         EasyToast.init(this);
         SaveKeyValues.initSharedPreferences(this);
     }
