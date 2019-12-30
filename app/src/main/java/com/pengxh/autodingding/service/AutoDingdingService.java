@@ -14,7 +14,7 @@ import android.telephony.SmsMessage;
 import android.util.Log;
 
 import com.pengxh.app.multilib.utils.BroadcastManager;
-import com.pengxh.autodingding.ui.AssistantActivity;
+import com.pengxh.autodingding.ui.MainActivity;
 import com.pengxh.autodingding.utils.BroadcastAction;
 import com.pengxh.autodingding.utils.Utils;
 
@@ -106,8 +106,7 @@ public class AutoDingdingService extends Service {
         @Override
         public void handleMessage(Message msg) {
             if (msg.what == 1) {
-                Log.d(TAG, "onReceive: 启动帮助页");
-                startActivity(new Intent(getApplicationContext(), AssistantActivity.class));
+                startActivity(new Intent(getApplicationContext(), MainActivity.class));
             }
         }
     };

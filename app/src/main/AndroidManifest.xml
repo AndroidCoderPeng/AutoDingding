@@ -30,7 +30,6 @@
         <activity
             android:name=".ui.MainActivity"
             android:launchMode="singleTask" />
-        <activity android:name=".ui.AssistantActivity" />
 
         <service android:name=".service.AutoDingdingService" />
     </application>
