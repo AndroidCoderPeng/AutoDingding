@@ -106,6 +106,7 @@ public class MainActivity extends BaseNormalActivity implements View.OnClickList
                             String data = intent.getStringExtra("data");
                             startTimeBtn.setText(data + "s");
                             startProgressBar.setProgress(Integer.parseInt(data));
+                            SaveKeyValues.putValue("progress", Integer.parseInt(data));
                             if (startProgressBar.getProgress() == 0) {
                                 //重置所有状态
                                 amTime.setText("上班打卡时间未设置");
@@ -117,6 +118,7 @@ public class MainActivity extends BaseNormalActivity implements View.OnClickList
                             String data = intent.getStringExtra("data");
                             endTimeBtn.setText(data + "s");
                             endProgressBar.setProgress(Integer.parseInt(data));
+                            SaveKeyValues.putValue("progress", Integer.parseInt(data));
                             if (endProgressBar.getProgress() == 0) {
                                 //重置所有状态
                                 pmTime.setText("下班打卡时间未设置");
@@ -156,22 +158,23 @@ public class MainActivity extends BaseNormalActivity implements View.OnClickList
                         .setCallBack(new OnDateSetListener() {
                             @Override
                             public void onDateSet(TimePickerDialog timePickerView, long millSeconds) {
-                                String amKaoQin = Utils.timestampToDate(millSeconds);
-                                Log.d(TAG, "onDateSet: " + amKaoQin);
-                                SaveKeyValues.putValue("amKaoQin", amKaoQin);
-                                amTime.setText("将在" + amKaoQin + "自动打卡");
                                 //计算时间差
                                 long deltaTime = Utils.deltaTime(millSeconds / 1000);
                                 if (deltaTime == 0) {
-                                    return;
-                                }
-                                int currentPro = startProgressBar.getProgress();
-                                if (currentPro != 0) {
-                                    EasyToast.showToast("当前已有定时任务，无法重复设置", EasyToast.ERROR);
+                                    Log.w(TAG, "onDateSet: ", new Throwable());
                                 } else {
-                                    startProgressBar.setMax((int) deltaTime);
-                                    startProgressBar.setVisibility(View.VISIBLE);
-                                    broadcastManager.sendBroadcast(BroadcastAction.ACTIONS[0], String.valueOf(deltaTime));
+                                    String amKaoQin = Utils.timestampToDate(millSeconds);
+                                    Log.d(TAG, "onDateSet: " + amKaoQin);
+                                    amTime.setText("将在" + amKaoQin + "自动打卡");
+                                    SaveKeyValues.putValue("amKaoQin", amKaoQin);
+                                    int currentPro = startProgressBar.getProgress();
+                                    if (currentPro != 0) {
+                                        EasyToast.showToast("当前已有定时任务，无法重复设置", EasyToast.ERROR);
+                                    } else {
+                                        startProgressBar.setMax((int) deltaTime);
+                                        startProgressBar.setVisibility(View.VISIBLE);
+                                        broadcastManager.sendBroadcast(BroadcastAction.ACTIONS[0], String.valueOf(deltaTime));
+                                    }
                                 }
                             }
                         }).build().show(getSupportFragmentManager(), "year_month_day_hour_minute");
@@ -183,22 +186,23 @@ public class MainActivity extends BaseNormalActivity implements View.OnClickList
                         .setCallBack(new OnDateSetListener() {
                             @Override
                             public void onDateSet(TimePickerDialog timePickerView, long millSeconds) {
-                                String pmKaoQin = Utils.timestampToDate(millSeconds);
-                                Log.d(TAG, "onDateSet: " + pmKaoQin);
-                                SaveKeyValues.putValue("pmKaoQin", pmKaoQin);
-                                pmTime.setText("将在" + pmKaoQin + "自动打卡");
                                 //计算时间差
                                 long deltaTime = Utils.deltaTime(millSeconds / 1000);
                                 if (deltaTime == 0) {
-                                    return;
-                                }
-                                int currentPro = endProgressBar.getProgress();
-                                if (currentPro != 0) {
-                                    EasyToast.showToast("当前已有定时任务，无法重复设置", EasyToast.ERROR);
+                                    Log.w(TAG, "onDateSet: ", new Throwable());
                                 } else {
-                                    endProgressBar.setMax((int) deltaTime);
-                                    endProgressBar.setVisibility(View.VISIBLE);
-                                    broadcastManager.sendBroadcast(BroadcastAction.ACTIONS[1], String.valueOf(deltaTime));
+                                    String pmKaoQin = Utils.timestampToDate(millSeconds);
+                                    Log.d(TAG, "onDateSet: " + pmKaoQin);
+                                    pmTime.setText("将在" + pmKaoQin + "自动打卡");
+                                    SaveKeyValues.putValue("pmKaoQin", pmKaoQin);
+                                    int currentPro = endProgressBar.getProgress();
+                                    if (currentPro != 0) {
+                                        EasyToast.showToast("当前已有定时任务，无法重复设置", EasyToast.ERROR);
+                                    } else {
+                                        endProgressBar.setMax((int) deltaTime);
+                                        endProgressBar.setVisibility(View.VISIBLE);
+                                        broadcastManager.sendBroadcast(BroadcastAction.ACTIONS[1], String.valueOf(deltaTime));
+                                    }
                                 }
                             }
                         }).build().show(getSupportFragmentManager(), "year_month_day_hour_minute");
@@ -214,7 +218,10 @@ public class MainActivity extends BaseNormalActivity implements View.OnClickList
                                 setEmailAddress();
                                 break;
                             case 1:
-                                showAboutDialog();
+                                new AlertView("功能介绍", getResources().getString(R.string.about),
+                                        null, new String[]{"确定"}, null,
+                                        MainActivity.this, AlertView.Style.Alert,
+                                        null).setCancelable(false).show();
                                 break;
                             default:
                                 break;
@@ -224,13 +231,6 @@ public class MainActivity extends BaseNormalActivity implements View.OnClickList
                 easyPopupWindow.showAsDropDown(titleLayout, titleLayout.getWidth(), 0);
                 break;
         }
-    }
-
-    private void showAboutDialog() {
-        new AlertView("功能介绍", getResources().getString(R.string.about),
-                null, new String[]{"确定"}, null,
-                this, AlertView.Style.Alert,
-                null).setCancelable(false).show();
     }
 
     private void setEmailAddress() {
@@ -267,11 +267,10 @@ public class MainActivity extends BaseNormalActivity implements View.OnClickList
     //TODO 屏蔽返回键，未完
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
-        Log.d(TAG, "onKeyDown--keyCode :" + keyCode);
         if (keyCode == KeyEvent.KEYCODE_BACK) {
-            int startProgressBarProgress = startProgressBar.getProgress();
-            int endProgressBarProgress = endProgressBar.getProgress();
-            if (startProgressBarProgress == 0 || endProgressBarProgress == 0) {
+            int startProgress = (int) SaveKeyValues.getValue("progress", 0);
+            int endProgress = (int) SaveKeyValues.getValue("progress", 0);
+            if (startProgress == 0 || endProgress == 0) {
                 finish();
             } else {
                 new AlertView("温馨提示", "当前有正在进行中的任务...",
