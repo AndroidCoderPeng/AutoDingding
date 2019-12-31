@@ -274,7 +274,7 @@ public class MainActivity extends BaseNormalActivity implements View.OnClickList
                 finish();
             } else {
                 new AlertView("温馨提示", "当前有正在进行中的任务...",
-                        "取消", null, null,
+                        null, new String[]{"确定"}, null,
                         this, AlertView.Style.Alert, null).setCancelable(false).show();
             }
             return true;
