@@ -5,6 +5,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.Button;
@@ -18,7 +19,7 @@ import com.aihook.alertview.library.OnItemClickListener;
 import com.jzxiang.pickerview.TimePickerDialog;
 import com.jzxiang.pickerview.data.Type;
 import com.jzxiang.pickerview.listener.OnDateSetListener;
-import com.pengxh.app.multilib.base.DoubleClickExitActivity;
+import com.pengxh.app.multilib.base.BaseNormalActivity;
 import com.pengxh.app.multilib.utils.BroadcastManager;
 import com.pengxh.app.multilib.utils.ColorUtil;
 import com.pengxh.app.multilib.utils.SaveKeyValues;
@@ -35,7 +36,7 @@ import java.util.List;
 import butterknife.BindView;
 import butterknife.OnClick;
 
-public class MainActivity extends DoubleClickExitActivity implements View.OnClickListener {
+public class MainActivity extends BaseNormalActivity implements View.OnClickListener {
 
     private static final String TAG = "MainActivity";
     private static final List<String> items = Arrays.asList("邮箱设置", "功能介绍");
@@ -151,7 +152,7 @@ public class MainActivity extends DoubleClickExitActivity implements View.OnClic
             case R.id.startTimeBtn:
                 //设置上班时间
                 new TimePickerDialog.Builder().setThemeColor(ColorUtil.getRandomColor())
-                        .setType(Type.MONTH_DAY_HOUR_MIN)
+                        .setType(Type.ALL)
                         .setCallBack(new OnDateSetListener() {
                             @Override
                             public void onDateSet(TimePickerDialog timePickerView, long millSeconds) {
@@ -164,16 +165,21 @@ public class MainActivity extends DoubleClickExitActivity implements View.OnClic
                                 if (deltaTime == 0) {
                                     return;
                                 }
-                                startProgressBar.setMax((int) deltaTime);
-                                startProgressBar.setVisibility(View.VISIBLE);
-                                broadcastManager.sendBroadcast(BroadcastAction.ACTIONS[0], String.valueOf(deltaTime));
+                                int currentPro = startProgressBar.getProgress();
+                                if (currentPro != 0) {
+                                    EasyToast.showToast("当前已有定时任务，无法重复设置", EasyToast.ERROR);
+                                } else {
+                                    startProgressBar.setMax((int) deltaTime);
+                                    startProgressBar.setVisibility(View.VISIBLE);
+                                    broadcastManager.sendBroadcast(BroadcastAction.ACTIONS[0], String.valueOf(deltaTime));
+                                }
                             }
-                        }).build().show(getSupportFragmentManager(), "month_day_hour_minute");
+                        }).build().show(getSupportFragmentManager(), "year_month_day_hour_minute");
                 break;
             case R.id.endTimeBtn:
                 //设置下班时间
                 new TimePickerDialog.Builder().setThemeColor(ColorUtil.getRandomColor())
-                        .setType(Type.MONTH_DAY_HOUR_MIN)
+                        .setType(Type.ALL)
                         .setCallBack(new OnDateSetListener() {
                             @Override
                             public void onDateSet(TimePickerDialog timePickerView, long millSeconds) {
@@ -186,11 +192,16 @@ public class MainActivity extends DoubleClickExitActivity implements View.OnClic
                                 if (deltaTime == 0) {
                                     return;
                                 }
-                                endProgressBar.setMax((int) deltaTime);
-                                endProgressBar.setVisibility(View.VISIBLE);
-                                broadcastManager.sendBroadcast(BroadcastAction.ACTIONS[1], String.valueOf(deltaTime));
+                                int currentPro = endProgressBar.getProgress();
+                                if (currentPro != 0) {
+                                    EasyToast.showToast("当前已有定时任务，无法重复设置", EasyToast.ERROR);
+                                } else {
+                                    endProgressBar.setMax((int) deltaTime);
+                                    endProgressBar.setVisibility(View.VISIBLE);
+                                    broadcastManager.sendBroadcast(BroadcastAction.ACTIONS[1], String.valueOf(deltaTime));
+                                }
                             }
-                        }).build().show(getSupportFragmentManager(), "month_day_hour_minute");
+                        }).build().show(getSupportFragmentManager(), "year_month_day_hour_minute");
                 break;
             case R.id.imageViewTitleRight:
                 //邮箱设置
@@ -216,16 +227,10 @@ public class MainActivity extends DoubleClickExitActivity implements View.OnClic
     }
 
     private void showAboutDialog() {
-        alertView = new AlertView("功能介绍", getResources().getString(R.string.about),
+        new AlertView("功能介绍", getResources().getString(R.string.about),
                 null, new String[]{"确定"}, null,
                 this, AlertView.Style.Alert,
-                new OnItemClickListener() {
-                    @Override
-                    public void onItemClick(Object o, int position) {
-                        alertView.dismiss();
-                    }
-                }).setCancelable(false);
-        alertView.show();
+                null).setCancelable(false).show();
     }
 
     private void setEmailAddress() {
@@ -257,6 +262,25 @@ public class MainActivity extends DoubleClickExitActivity implements View.OnClic
 //                        dialog.dismiss();
 //                    }
 //                }).build().show();
+    }
+
+    //TODO 屏蔽返回键，未完
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+        Log.d(TAG, "onKeyDown--keyCode :" + keyCode);
+        if (keyCode == KeyEvent.KEYCODE_BACK) {
+            int startProgressBarProgress = startProgressBar.getProgress();
+            int endProgressBarProgress = endProgressBar.getProgress();
+            if (startProgressBarProgress == 0 || endProgressBarProgress == 0) {
+                finish();
+            } else {
+                new AlertView("温馨提示", "当前有正在进行中的任务...",
+                        "取消", null, null,
+                        this, AlertView.Style.Alert, null).setCancelable(false).show();
+            }
+            return true;
+        }
+        return false;
     }
 
     @Override
