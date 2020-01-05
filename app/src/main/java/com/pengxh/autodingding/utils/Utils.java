@@ -2,24 +2,17 @@ package com.pengxh.autodingding.utils;
 
 import android.annotation.SuppressLint;
 import android.app.KeyguardManager;
-import android.app.Notification;
-import android.app.NotificationChannel;
-import android.app.NotificationManager;
-import android.app.PendingIntent;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
-import android.os.Build;
 import android.os.Environment;
 import android.os.PowerManager;
 import android.util.Log;
 
 import com.pengxh.app.multilib.widget.EasyToast;
-import com.pengxh.autodingding.R;
-import com.pengxh.autodingding.ui.MainActivity;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -39,8 +32,7 @@ public class Utils {
     private static final String TAG = "Utils";
     @SuppressLint("SimpleDateFormat")
     private static final SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-    private static String sdCardDir = Environment.getExternalStorageDirectory() + "/ScreenShot/";
-    private static final int NOTIFICATION_ID = 10000;
+    private static String sdCardDir = Environment.getExternalStorageDirectory() + "/DingDingLogs/";
     @SuppressLint("StaticFieldLeak")
     private static Context mContext;
 
@@ -139,45 +131,5 @@ public class Utils {
      */
     public static long DateToTimestamp(String date) throws ParseException {
         return dateFormat.parse(date).getTime();
-    }
-
-    public static void createNotification() {
-        Log.d(TAG, "createNotification");
-        NotificationManager manager = (NotificationManager) mContext.getSystemService(Context.NOTIFICATION_SERVICE);
-
-        Intent intent = new Intent(mContext, MainActivity.class);
-        PendingIntent pendingIntent = PendingIntent.getActivity(mContext, 0, intent, 0);
-
-        //Android8.0以上必须添加 渠道 才能显示通知栏
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            //创建渠道
-            String id = "n_channel_1";
-            String name = "ding_notify";
-            NotificationChannel mChannel = new NotificationChannel(id, name, NotificationManager.IMPORTANCE_LOW);
-            manager.createNotificationChannel(mChannel);
-
-            Notification.Builder builder = new Notification.Builder(mContext, id);
-            builder.setContentTitle("钉钉自动打卡")
-                    .setContentText("钉钉打卡服务监控")
-                    .setTicker("钉钉打卡服务监控")
-                    .setWhen(System.currentTimeMillis())
-                    .setSmallIcon(R.mipmap.logo)
-                    .setAutoCancel(true);
-            builder.setContentIntent(pendingIntent);
-            Notification notification = builder.build();
-            manager.notify(NOTIFICATION_ID, notification);
-        } else {
-            //设置图片,通知标题,发送时间,提示方式等属性
-            Notification.Builder builder = new Notification.Builder(mContext);
-            builder.setContentTitle("钉钉自动打卡")
-                    .setContentText("钉钉打卡服务监控")
-                    .setTicker("钉钉打卡服务监控")
-                    .setWhen(System.currentTimeMillis())
-                    .setSmallIcon(R.mipmap.logo)
-                    .setAutoCancel(true);
-            builder.setContentIntent(pendingIntent);
-            Notification notification = builder.build();
-            manager.notify(NOTIFICATION_ID, notification);
-        }
     }
 }

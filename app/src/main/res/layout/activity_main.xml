@@ -10,6 +10,21 @@
 
     <include layout="@layout/include_title" />
 
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="#FFF" />
+
+    <TextView
+        android:id="@+id/v"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="#0094FF"
+        android:gravity="center"
+        android:padding="5dp"
+        android:text="上班时间9:00，下班时间17:30"
+        android:textColor="#FFF" />
+
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"
@@ -44,14 +59,12 @@
     </RelativeLayout>
 
     <TextView
-        android:id="@+id/v"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="#0094FF"
-        android:gravity="center"
-        android:text="上班时间9:00，下班时间17:30"
-        android:textColor="#FFF"
-        android:textSize="20sp" />
+        android:padding="5dp"
+        android:text="提醒：\n跳转到“钉钉”之后无需手动回到本辅助软件，10s后会自动跳回到倒计时界面"
+        android:textColor="#FFF" />
 
     <RelativeLayout
         android:layout_width="match_parent"

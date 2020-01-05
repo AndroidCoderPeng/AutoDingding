@@ -5,12 +5,10 @@ import android.app.Service;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
-import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.Message;
-import android.telephony.SmsMessage;
 import android.util.Log;
 
 import com.pengxh.app.multilib.utils.BroadcastManager;
@@ -55,7 +53,7 @@ public class AutoDingdingService extends Service {
                             @Override
                             public void onFinish() {
                                 Utils.openDingding(BroadcastAction.DINGDING);
-                                handler.sendEmptyMessageDelayed(1, 30 * 1000);
+                                handler.sendEmptyMessageDelayed(1, 10 * 1000);
                             }
                         }.start();
                     } else if (action.equals(BroadcastAction.ACTIONS[1])) {
@@ -72,27 +70,9 @@ public class AutoDingdingService extends Service {
                             @Override
                             public void onFinish() {
                                 Utils.openDingding(BroadcastAction.DINGDING);
-                                handler.sendEmptyMessageDelayed(1, 30 * 1000);
+                                handler.sendEmptyMessageDelayed(1, 10 * 1000);
                             }
                         }.start();
-                    } else if (action.equals(BroadcastAction.ACTIONS[4])) {
-                        //短信监听
-                        StringBuilder content = new StringBuilder();//用于存储短信内容
-                        Bundle bundle = intent.getExtras();//获取短信内容
-                        String format = intent.getStringExtra("format");
-                        if (bundle != null) {
-                            Object[] pduObjects = (Object[]) bundle.get("pdus");//根据pdus关键字获取短信字节数组，数组内的每个元素都是一条短信
-                            for (Object object : pduObjects) {
-                                SmsMessage message = SmsMessage.createFromPdu((byte[]) object, format);//将字节数组转化为Message对象
-                                content.append(message.getMessageBody());//获取短信内容
-                            }
-                            String sms = content.toString();
-                            Log.d(TAG, "收到短信: " + sms);
-                            if (sms.equals("签到打卡")) {
-                                Utils.openDingding(BroadcastAction.DINGDING);
-                                handler.sendEmptyMessageDelayed(1, 30 * 1000);
-                            }
-                        }
                     }
                 } else {
                     Log.e(TAG, "onReceive: ", new Throwable());

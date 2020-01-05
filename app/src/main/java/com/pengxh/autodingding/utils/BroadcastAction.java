@@ -11,8 +11,8 @@ public class BroadcastAction {
     //打卡页面类名：com.alibaba.lightapp.runtime.activity.CommonWebViewActivity
     public static final String DINGDING = "com.alibaba.android.rimet";
 
+    //广播action统一监听
     public static final String[] ACTIONS = {
             "action.startWork.am", "action.endWork.pm",
-            "action.update.am", "action.update.pm",
-            "android.provider.Telephony.SMS_RECEIVED"};
+            "action.update.am", "action.update.pm"};
 }

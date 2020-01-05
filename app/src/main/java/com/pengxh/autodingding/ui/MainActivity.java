@@ -30,7 +30,7 @@ import com.pengxh.autodingding.utils.BroadcastAction;
 import com.pengxh.autodingding.utils.Utils;
 import com.pengxh.autodingding.widgets.EasyPopupWindow;
 
-import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 import butterknife.BindView;
@@ -39,7 +39,7 @@ import butterknife.OnClick;
 public class MainActivity extends BaseNormalActivity implements View.OnClickListener {
 
     private static final String TAG = "MainActivity";
-    private static final List<String> items = Arrays.asList("邮箱设置", "功能介绍");
+    private static final List<String> items = Collections.singletonList("功能介绍");
 
     @BindView(R.id.titleLayout)
     RelativeLayout titleLayout;
@@ -72,7 +72,6 @@ public class MainActivity extends BaseNormalActivity implements View.OnClickList
     @Override
     public void initData() {
         broadcastManager = BroadcastManager.getInstance(this);
-        String qqEmail = (String) SaveKeyValues.getValue("email", "");
         String amKaoQin = (String) SaveKeyValues.getValue("amKaoQin", "");
         String pmKaoQin = (String) SaveKeyValues.getValue("pmKaoQin", "");
         if (!amKaoQin.equals("")) {
@@ -85,9 +84,6 @@ public class MainActivity extends BaseNormalActivity implements View.OnClickList
         } else {
             pmTime.setText("下班打卡时间未设置");
         }
-        if (!qqEmail.equals("")) {
-            textViewTitle.setText("自动打卡邮箱：" + qqEmail);
-        }
     }
 
     @Override
@@ -95,11 +91,11 @@ public class MainActivity extends BaseNormalActivity implements View.OnClickList
         if (Utils.isAppAvailable(BroadcastAction.DINGDING)) {
             startService(new Intent(this, AutoDingdingService.class));
 
+            //监听AutoDingdingService返回来的消息，更新UI
             broadcastManager.addAction(BroadcastAction.ACTIONS, new BroadcastReceiver() {
                 @SuppressLint("SetTextI18n")
                 @Override
                 public void onReceive(Context context, Intent intent) {
-                    //更新UI
                     String action = intent.getAction();
                     if (action != null) {
                         if (action.equals(BroadcastAction.ACTIONS[2])) {
@@ -128,7 +124,7 @@ public class MainActivity extends BaseNormalActivity implements View.OnClickList
                             }
                         }
                     } else {
-                        Log.e(TAG, "onReceive: ", new Throwable());
+                        Log.e(TAG, "", new Throwable());
                     }
                 }
             });
@@ -160,11 +156,11 @@ public class MainActivity extends BaseNormalActivity implements View.OnClickList
                             public void onDateSet(TimePickerDialog timePickerView, long millSeconds) {
                                 //计算时间差
                                 long deltaTime = Utils.deltaTime(millSeconds / 1000);
+                                Log.d(TAG, "amKaoQin: " + deltaTime);
                                 if (deltaTime == 0) {
-                                    Log.w(TAG, "onDateSet: ", new Throwable());
+                                    Log.w(TAG, "", new Throwable());
                                 } else {
                                     String amKaoQin = Utils.timestampToDate(millSeconds);
-                                    Log.d(TAG, "onDateSet: " + amKaoQin);
                                     amTime.setText("将在" + amKaoQin + "自动打卡");
                                     SaveKeyValues.putValue("amKaoQin", amKaoQin);
                                     int currentPro = startProgressBar.getProgress();
@@ -188,11 +184,11 @@ public class MainActivity extends BaseNormalActivity implements View.OnClickList
                             public void onDateSet(TimePickerDialog timePickerView, long millSeconds) {
                                 //计算时间差
                                 long deltaTime = Utils.deltaTime(millSeconds / 1000);
+                                Log.d(TAG, "pmKaoQin: " + deltaTime);
                                 if (deltaTime == 0) {
-                                    Log.w(TAG, "onDateSet: ", new Throwable());
+                                    Log.w(TAG, "", new Throwable());
                                 } else {
                                     String pmKaoQin = Utils.timestampToDate(millSeconds);
-                                    Log.d(TAG, "onDateSet: " + pmKaoQin);
                                     pmTime.setText("将在" + pmKaoQin + "自动打卡");
                                     SaveKeyValues.putValue("pmKaoQin", pmKaoQin);
                                     int currentPro = endProgressBar.getProgress();
@@ -208,23 +204,15 @@ public class MainActivity extends BaseNormalActivity implements View.OnClickList
                         }).build().show(getSupportFragmentManager(), "year_month_day_hour_minute");
                 break;
             case R.id.imageViewTitleRight:
-                //邮箱设置
                 EasyPopupWindow easyPopupWindow = new EasyPopupWindow(this, items);
                 easyPopupWindow.setPopupWindowClickListener(new EasyPopupWindow.PopupWindowClickListener() {
                     @Override
                     public void popupWindowClick(int position) {
-                        switch (position) {
-                            case 0:
-                                setEmailAddress();
-                                break;
-                            case 1:
-                                new AlertView("功能介绍", getResources().getString(R.string.about),
-                                        null, new String[]{"确定"}, null,
-                                        MainActivity.this, AlertView.Style.Alert,
-                                        null).setCancelable(false).show();
-                                break;
-                            default:
-                                break;
+                        if (position == 0) {
+                            new AlertView("功能介绍", getResources().getString(R.string.about),
+                                    null, new String[]{"确定"}, null,
+                                    MainActivity.this, AlertView.Style.Alert,
+                                    null).setCancelable(false).show();
                         }
                     }
                 });
@@ -233,44 +221,13 @@ public class MainActivity extends BaseNormalActivity implements View.OnClickList
         }
     }
 
-    private void setEmailAddress() {
-        //TODO 截屏需要手机已Root
-        EasyToast.showToast("截屏功能需要手机已Root！", EasyToast.WARING);
-//        new InputDialog.Builder()
-//                .setContext(this)
-//                .setTitle("设置邮箱")
-//                .setNegativeButton("取消")
-//                .setPositiveButton("确定")
-//                .setOnDialogClickListener(new InputDialog.onDialogClickListener() {
-//                    @Override
-//                    public void onConfirmClick(Dialog dialog, String input) {
-//                        if (!input.isEmpty()) {
-//                            if (input.endsWith("@qq.com")) {
-//                                SaveKeyValues.putValue("email", input);
-//                                textViewTitle.setText("自动打卡邮箱：" + input);
-//                            } else {
-//                                EasyToast.showToast("邮箱设置失败，暂时只支持QQ邮箱！", EasyToast.WARING);
-//                            }
-//                            dialog.dismiss();
-//                        } else {
-//                            EasyToast.showToast("什么都还没输入呢！", EasyToast.ERROR);
-//                        }
-//                    }
-//
-//                    @Override
-//                    public void onCancelClick(Dialog dialog) {
-//                        dialog.dismiss();
-//                    }
-//                }).build().show();
-    }
-
-    //TODO 屏蔽返回键，未完
+    //屏蔽返回键
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
         if (keyCode == KeyEvent.KEYCODE_BACK) {
             int startProgress = (int) SaveKeyValues.getValue("progress", 0);
             int endProgress = (int) SaveKeyValues.getValue("progress", 0);
-            if (startProgress == 0 || endProgress == 0) {
+            if (startProgress <= 1 || endProgress <= 1) {
                 finish();
             } else {
                 new AlertView("温馨提示", "当前有正在进行中的任务...",
