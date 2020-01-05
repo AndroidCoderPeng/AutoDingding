@@ -2,19 +2,22 @@ package com.pengxh.autodingding.service;
 
 import android.annotation.SuppressLint;
 import android.app.Service;
-import android.content.BroadcastReceiver;
-import android.content.Context;
+import android.arch.lifecycle.MutableLiveData;
+import android.arch.lifecycle.Observer;
 import android.content.Intent;
 import android.os.CountDownTimer;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.Message;
+import android.support.annotation.Nullable;
 import android.util.Log;
 
-import com.pengxh.app.multilib.utils.BroadcastManager;
 import com.pengxh.autodingding.ui.MainActivity;
-import com.pengxh.autodingding.utils.BroadcastAction;
+import com.pengxh.autodingding.utils.Constant;
+import com.pengxh.autodingding.utils.LiveDataBus;
 import com.pengxh.autodingding.utils.Utils;
+
+import java.util.Arrays;
 
 /**
  * @description: TODO 钉钉自动打卡服务
@@ -25,60 +28,80 @@ import com.pengxh.autodingding.utils.Utils;
 public class AutoDingdingService extends Service {
 
     private static final String TAG = "AutoDingdingService";
-    private BroadcastManager broadcastManager;
+    private Observer<Long> amKaoQinObserver, pmKaoQinObserver;
+    private MutableLiveData<Long> amKaoQinLiveData, pmKaoQinLiveData;
+    private Observer<String> notificationObserver;
+    private MutableLiveData<String> notifyMessageLiveData;
 
     @Override
     public void onCreate() {
         super.onCreate();
         Log.d(TAG, "onCreate: 自动打卡服务已启动");
-        broadcastManager = BroadcastManager.getInstance(this);
-        broadcastManager.addAction(BroadcastAction.ACTIONS, new BroadcastReceiver() {
-            @SuppressLint("SetTextI18n")
+        amKaoQinLiveData = LiveDataBus.get().with("amKaoQin", Long.class);
+        pmKaoQinLiveData = LiveDataBus.get().with("pmKaoQin", Long.class);
+        notifyMessageLiveData = LiveDataBus.get().with("notifyMessage", String.class);
+    }
+
+    @Override
+    public int onStartCommand(Intent intent, int flags, int startId) {
+        amKaoQinObserver = new Observer<Long>() {
             @Override
-            public void onReceive(Context context, Intent intent) {
-                //更新UI
-                String action = intent.getAction();
-                if (action != null) {
-                    if (action.equals(BroadcastAction.ACTIONS[0])) {
-                        String data = intent.getStringExtra("data");
-                        long deltaTime = Long.parseLong(data) * 1000;
-                        new CountDownTimer(deltaTime, 1000) {
-                            @Override
-                            public void onTick(long l) {
-                                int tickTime = (int) (l / 1000);
-                                //更新UI
-                                broadcastManager.sendBroadcast(BroadcastAction.ACTIONS[2], String.valueOf(tickTime));
-                            }
-
-                            @Override
-                            public void onFinish() {
-                                Utils.openDingding(BroadcastAction.DINGDING);
-                                handler.sendEmptyMessageDelayed(1, 10 * 1000);
-                            }
-                        }.start();
-                    } else if (action.equals(BroadcastAction.ACTIONS[1])) {
-                        String data = intent.getStringExtra("data");
-                        long deltaTime = Long.parseLong(data) * 1000;
-                        new CountDownTimer(deltaTime, 1000) {
-                            @Override
-                            public void onTick(long l) {
-                                int tickTime = (int) (l / 1000);
-                                //更新UI
-                                broadcastManager.sendBroadcast(BroadcastAction.ACTIONS[3], String.valueOf(tickTime));
-                            }
-
-                            @Override
-                            public void onFinish() {
-                                Utils.openDingding(BroadcastAction.DINGDING);
-                                handler.sendEmptyMessageDelayed(1, 10 * 1000);
-                            }
-                        }.start();
+            public void onChanged(@Nullable Long aLong) {
+                new CountDownTimer(aLong * 1000, 1000) {
+                    @Override
+                    public void onTick(long l) {
+                        int tickTime = (int) (l / 1000);
+                        //更新UI
+                        LiveDataBus.get().with("amUpdate").setValue(tickTime);
                     }
+
+                    @Override
+                    public void onFinish() {
+                        Utils.openDingding(Constant.DINGDING);
+                        handler.sendEmptyMessageDelayed(1, 10 * 1000);
+                    }
+                }.start();
+            }
+        };
+        amKaoQinLiveData.observeForever(amKaoQinObserver);
+
+        pmKaoQinObserver = new Observer<Long>() {
+
+            @Override
+            public void onChanged(@Nullable Long aLong) {
+                new CountDownTimer(aLong * 1000, 1000) {
+                    @Override
+                    public void onTick(long l) {
+                        int tickTime = (int) (l / 1000);
+                        //更新UI
+                        LiveDataBus.get().with("pmUpdate").setValue(tickTime);
+                    }
+
+                    @Override
+                    public void onFinish() {
+                        Utils.openDingding(Constant.DINGDING);
+                        handler.sendEmptyMessageDelayed(1, 10 * 1000);
+                    }
+                }.start();
+            }
+        };
+        pmKaoQinLiveData.observeForever(pmKaoQinObserver);
+
+        notificationObserver = new Observer<String>() {
+            @Override
+            public void onChanged(String s) {
+                String[] split = s.split(",");
+                Log.d(TAG, "onReceive: " + Arrays.toString(split));
+                if (split[1].contains("上班打卡") || split[1].contains("下班打卡")) {
+                    Utils.openDingding(Constant.DINGDING);
+                    handler.sendEmptyMessageDelayed(1, 10 * 1000);
                 } else {
-                    Log.e(TAG, "onReceive: ", new Throwable());
+                    Log.i(TAG, "onReceive: 普通消息，不处理");
                 }
             }
-        });
+        };
+        notifyMessageLiveData.observeForever(notificationObserver);
+        return super.onStartCommand(intent, flags, startId);
     }
 
     @SuppressLint("HandlerLeak")
@@ -94,7 +117,9 @@ public class AutoDingdingService extends Service {
     @Override
     public void onDestroy() {
         super.onDestroy();
-        broadcastManager.destroy(BroadcastAction.ACTIONS);
+        amKaoQinLiveData.removeObserver(amKaoQinObserver);
+        pmKaoQinLiveData.removeObserver(pmKaoQinObserver);
+        notifyMessageLiveData.removeObserver(notificationObserver);
     }
 
     @Override
