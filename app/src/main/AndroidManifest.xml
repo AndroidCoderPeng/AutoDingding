@@ -26,6 +26,12 @@
             android:name=".ui.MainActivity"
             android:launchMode="singleTask" />
 
+        <activity
+            android:name=".ui.DingdingClockActivity"
+            android:launchMode="singleTask" />
+        <activity android:name=".ui.AddClockActivity" />
+        <activity android:name=".ui.RepeatActivity" />
+
         <service android:name=".service.AutoDingdingService" />
 
         <service

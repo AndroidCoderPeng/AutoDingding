@@ -46,7 +46,8 @@ public class WelcomeActivity extends AppCompatActivity {
     }
 
     private void startMainActivity() {
-        startActivity(new Intent(this, MainActivity.class));
+        startActivity(new Intent(this, DingdingClockActivity.class));
+//        startActivity(new Intent(this, MainActivity.class));
         finish();
     }
 
