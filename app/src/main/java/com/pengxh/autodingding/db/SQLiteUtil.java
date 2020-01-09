@@ -91,17 +91,23 @@ public class SQLiteUtil {
         return list;
     }
 
-    public void updateClock(ClockBean clockBean) {
-        if (clockBean != null) {
+    public void updateClockStatus(String uuid, int status) {
+        if (uuid != null) {
             ContentValues values = new ContentValues();
-            String clockTime = clockBean.getClockTime();
-            int clockStatus = clockBean.getClockStatus();
-            Log.d(TAG, "准备插入数据库：" + clockTime + "," + clockStatus);
+            values.put("clockStatus", status);
 
-            values.put("clockTime", clockTime);
-            values.put("clockStatus", clockStatus);
+            sqlLiteDatabase.update("ClockTable", values, "uuid = ?", new String[]{uuid});
+            Log.d(TAG, uuid + "更新状态");
+        }
+    }
 
-            Log.d(TAG, clockTime + "更新状态");
+    public void updateClockTime(String uuid, String time) {
+        if (uuid != null) {
+            ContentValues values = new ContentValues();
+            values.put("clockTime", time);
+
+            sqlLiteDatabase.update("ClockTable", values, "uuid = ?", new String[]{uuid});
+            Log.d(TAG, uuid + "更新状态");
         }
     }
 }

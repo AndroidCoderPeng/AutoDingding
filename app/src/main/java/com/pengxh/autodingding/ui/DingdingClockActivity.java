@@ -12,6 +12,7 @@ import android.widget.TextView;
 import com.gyf.immersionbar.ImmersionBar;
 import com.pengxh.app.multilib.base.BaseNormalActivity;
 import com.pengxh.app.multilib.utils.DensityUtil;
+import com.pengxh.app.multilib.utils.SaveKeyValues;
 import com.pengxh.app.multilib.widget.swipemenu.SwipeMenuItem;
 import com.pengxh.app.multilib.widget.swipemenu.SwipeMenuListView;
 import com.pengxh.autodingding.R;
@@ -91,12 +92,16 @@ public class DingdingClockActivity extends BaseNormalActivity implements View.On
                     menu.addMenuItem(deleteItem);
                 });
                 clockListView.setOnMenuItemClickListener((position, menu, index) -> {
+                    String uuid = clockBeanList.get(position).getUuid();
                     switch (index) {
                         case 0:
-                            startActivity(new Intent(DingdingClockActivity.this, AddClockActivity.class));
+                            SaveKeyValues.putValue("update", uuid);
+                            Intent intent = new Intent(DingdingClockActivity.this, AddClockActivity.class);
+                            intent.putExtra("uuid", uuid);
+                            startActivity(intent);
                             break;
                         case 1:
-                            sqLiteUtil.deleteClockByUUid(clockBeanList.get(position).getUuid());
+                            sqLiteUtil.deleteClockByUUid(uuid);
                             clockBeanList.remove(position);
                             adapter.notifyDataSetChanged();
                             LiveDataBus.get().with("notifyDataSetChanged").setValue("");

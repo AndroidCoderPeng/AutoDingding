@@ -11,6 +11,7 @@ import android.widget.TimePicker;
 
 import com.gyf.immersionbar.ImmersionBar;
 import com.pengxh.app.multilib.base.BaseNormalActivity;
+import com.pengxh.app.multilib.utils.SaveKeyValues;
 import com.pengxh.autodingding.R;
 import com.pengxh.autodingding.bean.ClockBean;
 import com.pengxh.autodingding.db.SQLiteUtil;
@@ -89,11 +90,19 @@ public class AddClockActivity extends BaseNormalActivity implements View.OnClick
                 String clockTime = hour + ":" + minute;
                 Log.d(TAG, "当前时间" + clockTime);
 
-                ClockBean clockBean = new ClockBean();
-                clockBean.setUuid(Utils.uuid());
-                clockBean.setClockTime(clockTime);
-                clockBean.setClockStatus(0);
-                SQLiteUtil.getInstance().saveClock(clockBean);
+                String value = (String) SaveKeyValues.getValue("update", "");
+                if (!value.equals("update")) {
+                    Log.d(TAG, "更新时间: ");
+                    String uuid = getIntent().getStringExtra("uuid");
+                    SQLiteUtil.getInstance().updateClockTime(uuid, clockTime);
+                } else {
+                    Log.d(TAG, "保存新闹钟: ");
+                    ClockBean clockBean = new ClockBean();
+                    clockBean.setUuid(Utils.uuid());
+                    clockBean.setClockTime(clockTime);
+                    clockBean.setClockStatus(1);
+                    SQLiteUtil.getInstance().saveClock(clockBean);
+                }
                 LiveDataBus.get().with("notifyDataSetChanged").setValue("");
                 finish();
                 break;

@@ -1,7 +1,6 @@
 package com.pengxh.autodingding.adapter;
 
 import android.content.Context;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,7 +11,6 @@ import com.pengxh.app.multilib.widget.swipemenu.BaseSwipListAdapter;
 import com.pengxh.autodingding.R;
 import com.pengxh.autodingding.bean.ClockBean;
 import com.pengxh.autodingding.db.SQLiteUtil;
-import com.pengxh.autodingding.utils.Utils;
 
 import java.util.List;
 
@@ -69,23 +67,17 @@ public class ClockAdapter extends BaseSwipListAdapter {
 
         void bindHolder(ClockBean clockBean) {
             clockText.setText(clockBean.getClockTime());
-            mSwitch.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    boolean checked = mSwitch.isChecked();
-                    Log.d("mSwitch", "onClick: " + checked);
-                    int status;
-                    if (checked) {
-                        status = 1;
-                    } else {
-                        status = 0;
-                    }
-//                    ClockBean clockBean = new ClockBean();
-//                    clockBean.setUuid(Utils.uuid());
-//                    clockBean.setClockTime(clockTime);
-//                    clockBean.setClockStatus(status);
-//                    SQLiteUtil.getInstance().saveClock(clockBean);
+            mSwitch.setChecked((clockBean.getClockStatus() == 1));
+            //修改状态
+            mSwitch.setOnClickListener(v -> {
+                boolean checked = mSwitch.isChecked();
+                int status;
+                if (checked) {
+                    status = 1;
+                } else {
+                    status = 0;
                 }
+                SQLiteUtil.getInstance().updateClockStatus(clockBean.getUuid(), status);
             });
         }
     }
