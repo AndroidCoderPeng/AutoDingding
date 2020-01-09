@@ -8,6 +8,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.util.Log;
 
 import com.pengxh.autodingding.bean.ClockBean;
+import com.pengxh.autodingding.bean.WorkDayBean;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -49,7 +50,7 @@ public class SQLiteUtil {
     }
 
     /**
-     * 保存报警信息
+     * 保存闹钟
      */
     public void saveClock(ClockBean clockBean) {
         if (clockBean != null) {
@@ -73,7 +74,7 @@ public class SQLiteUtil {
     }
 
     /**
-     * 加载所有报警信息
+     * 加载所有闹钟
      */
     public List<ClockBean> loadAllClock() {
         List<ClockBean> list = new ArrayList<>();
@@ -109,5 +110,76 @@ public class SQLiteUtil {
             sqlLiteDatabase.update("ClockTable", values, "uuid = ?", new String[]{uuid});
             Log.d(TAG, uuid + "更新状态");
         }
+    }
+
+    /*****************保存工作日*************************************************/
+    /**
+     * 保存星期
+     */
+    public void saveWeek(WorkDayBean workDayBean) {
+        if (workDayBean != null) {
+            ContentValues values = new ContentValues();
+            String week = workDayBean.getWeek();
+            int state = workDayBean.getState();
+            Log.d(TAG, "准备插入数据库：" + week + "," + state);
+
+            values.put("week", week);
+            values.put("state", state);
+            if (isWeekExist(week)) {
+                Log.d(TAG, "重复数据");
+                return;
+            }
+            sqlLiteDatabase.insert("WeekTable", null, values);
+            Log.d(TAG, week + "插入数据库");
+        }
+    }
+
+    /**
+     * 查询
+     *
+     * @param week 需要查询的参数
+     */
+    private boolean isWeekExist(String week) {
+        boolean result = false;
+        Cursor cursor = null;
+        try {
+            cursor = sqlLiteDatabase.query("WeekTable", null, "week = ?", new String[]{week}, null, null, null);
+            result = null != cursor && cursor.moveToFirst();
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            if (null != cursor && !cursor.isClosed()) {
+                cursor.close();
+            }
+        }
+        return result;
+    }
+
+    /**
+     * 加载所有工作日
+     */
+    public List<WorkDayBean> loadAllWeekDay() {
+        List<WorkDayBean> list = new ArrayList<>();
+        Cursor cursor = sqlLiteDatabase
+                .query("WeekTable", null, "state = ?", new String[]{String.valueOf(1)}, null, null, null);
+        if (cursor.moveToFirst()) {
+            do {
+                WorkDayBean workDayBean = new WorkDayBean();
+                workDayBean.setWeek(cursor.getString(cursor.getColumnIndex("week")));
+                workDayBean.setState(cursor.getInt(cursor.getColumnIndex("state")));
+                list.add(workDayBean);
+            } while (cursor.moveToNext());
+        }
+        return list;
+    }
+
+    public void deleteWeek() {
+        sqlLiteDatabase.delete("WeekTable", null, null);
+        Log.d(TAG, "删除WeekTable");
+    }
+
+    public void deleteWeekByWeek(String week) {
+        sqlLiteDatabase.delete("WeekTable", "week = ?", new String[]{week});
+        Log.d(TAG, "删除" + week);
     }
 }

@@ -1,6 +1,5 @@
 package com.pengxh.autodingding.ui;
 
-import android.util.Log;
 import android.view.KeyEvent;
 import android.widget.ListView;
 
@@ -9,7 +8,6 @@ import com.pengxh.app.multilib.base.BaseNormalActivity;
 import com.pengxh.autodingding.R;
 import com.pengxh.autodingding.adapter.WeekdaysAdapter;
 import com.pengxh.autodingding.utils.LiveDataBus;
-import com.pengxh.autodingding.utils.OnCheckedListener;
 
 import java.util.Arrays;
 import java.util.List;
@@ -22,14 +20,12 @@ import butterknife.BindView;
  * @description: TODO
  * @date: 2020/1/8 13:21
  */
-public class RepeatActivity extends BaseNormalActivity implements OnCheckedListener {
+public class RepeatActivity extends BaseNormalActivity {
 
-    private static final String TAG = "RepeatActivity";
     private static final List<String> WEEKDAYS = Arrays.asList("每周一", "每周二", "每周三", "每周四", "每周五");
 
     @BindView(R.id.repeatList)
     ListView repeatList;
-    private List<String> clockList;
 
     @Override
     public void initView() {
@@ -43,27 +39,16 @@ public class RepeatActivity extends BaseNormalActivity implements OnCheckedListe
 
     @Override
     public void initEvent() {
-        WeekdaysAdapter adapter = new WeekdaysAdapter(this, WEEKDAYS);
-        adapter.setOnCheckedListener(this);
-        repeatList.setAdapter(adapter);
+        repeatList.setAdapter(new WeekdaysAdapter(this, WEEKDAYS));
     }
 
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
         if (keyCode == KeyEvent.KEYCODE_BACK) {
-            Log.d(TAG, "onKeyDown: " + clockList);
-            LiveDataBus.get().with("clockList").setValue(clockList);
+            LiveDataBus.get().with("updateWeek").setValue("");
             finish();
             return true;
         }
         return false;
-    }
-
-    @Override
-    public void getDataList(List<String> list) {
-        if (list == null || list.size() == 0) {
-            return;
-        }
-        this.clockList = list;
     }
 }

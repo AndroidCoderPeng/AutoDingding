@@ -9,10 +9,9 @@ import android.widget.TextView;
 
 import com.pengxh.app.multilib.widget.SmoothCheckBox;
 import com.pengxh.autodingding.R;
-import com.pengxh.autodingding.utils.OnCheckedListener;
+import com.pengxh.autodingding.bean.WorkDayBean;
+import com.pengxh.autodingding.db.SQLiteUtil;
 
-import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
 
 /**
@@ -24,16 +23,12 @@ import java.util.List;
 public class WeekdaysAdapter extends BaseAdapter {
     private List<String> weekdays;
     private LayoutInflater layoutInflater;
-    private OnCheckedListener checkedListener;
-    private HashSet<String> hashSet = new HashSet<>();//利用HashSet直接去重
-
-    public void setOnCheckedListener(OnCheckedListener listener) {
-        this.checkedListener = listener;
-    }
+    private SQLiteUtil sqLiteUtil;
 
     public WeekdaysAdapter(Context context, List<String> strings) {
         this.weekdays = strings;
         layoutInflater = LayoutInflater.from(context);
+        sqLiteUtil = SQLiteUtil.getInstance();
     }
 
     @Override
@@ -75,14 +70,16 @@ public class WeekdaysAdapter extends BaseAdapter {
             weekItemView.setText(s);
             weekCheckBox.setOnClickListener(view -> {
                 boolean checked = weekCheckBox.isChecked();
-                if (checked) {
-                    weekCheckBox.setChecked(false);
-                    hashSet.remove(s);
-                } else {
+                if (!checked) {
+                    WorkDayBean workDayBean = new WorkDayBean();
+                    workDayBean.setWeek(s);
+                    workDayBean.setState(1);
+                    sqLiteUtil.saveWeek(workDayBean);
                     weekCheckBox.setChecked(true);
-                    hashSet.add(s);
+                } else {
+                    sqLiteUtil.deleteWeekByWeek(s);
+                    weekCheckBox.setChecked(false);
                 }
-                checkedListener.getDataList(new ArrayList<>(hashSet));
             });
         }
     }

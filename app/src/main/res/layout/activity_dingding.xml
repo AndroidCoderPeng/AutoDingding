@@ -20,10 +20,10 @@
 
         <ImageView
             android:id="@+id/dingdingTitleRight"
-            android:layout_width="84px"
-            android:layout_height="84px"
+            android:layout_width="72px"
+            android:layout_height="72px"
             android:layout_alignParentEnd="true"
-            android:background="@drawable/about" />
+            android:background="@drawable/add" />
     </RelativeLayout>
 
     <View

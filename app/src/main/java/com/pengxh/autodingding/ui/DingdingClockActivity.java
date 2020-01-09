@@ -10,7 +10,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.gyf.immersionbar.ImmersionBar;
-import com.pengxh.app.multilib.base.BaseNormalActivity;
+import com.pengxh.app.multilib.base.DoubleClickExitActivity;
 import com.pengxh.app.multilib.utils.DensityUtil;
 import com.pengxh.app.multilib.utils.SaveKeyValues;
 import com.pengxh.app.multilib.widget.swipemenu.SwipeMenuItem;
@@ -32,7 +32,7 @@ import butterknife.OnClick;
  * @description: TODO
  * @date: 2020/1/8 12:37
  */
-public class DingdingClockActivity extends BaseNormalActivity implements View.OnClickListener {
+public class DingdingClockActivity extends DoubleClickExitActivity implements View.OnClickListener {
 
     private static final String TAG = "DingdingClockActivity";
     @BindView(R.id.dingdingTitleRight)
@@ -102,6 +102,7 @@ public class DingdingClockActivity extends BaseNormalActivity implements View.On
                             break;
                         case 1:
                             sqLiteUtil.deleteClockByUUid(uuid);
+//                            sqLiteUtil.deleteWeek();
                             clockBeanList.remove(position);
                             adapter.notifyDataSetChanged();
                             LiveDataBus.get().with("notifyDataSetChanged").setValue("");

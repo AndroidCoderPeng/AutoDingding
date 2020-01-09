@@ -14,12 +14,15 @@ import com.pengxh.app.multilib.base.BaseNormalActivity;
 import com.pengxh.app.multilib.utils.SaveKeyValues;
 import com.pengxh.autodingding.R;
 import com.pengxh.autodingding.bean.ClockBean;
+import com.pengxh.autodingding.bean.WorkDayBean;
 import com.pengxh.autodingding.db.SQLiteUtil;
 import com.pengxh.autodingding.utils.LiveDataBus;
 import com.pengxh.autodingding.utils.Utils;
 
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import butterknife.BindView;
@@ -47,8 +50,9 @@ public class AddClockActivity extends BaseNormalActivity implements View.OnClick
     TimePicker mTimePicker;
 
     private NumberFormat numberFormat = new DecimalFormat("00");
-    private Observer<Object> clockListObserver;
-    private MutableLiveData<Object> clockListLiveData;
+    private Observer<String> weekObserver;
+    private MutableLiveData<String> weekLiveData;
+    private List<String> weeks = new ArrayList<>();
 
     @Override
     public void initView() {
@@ -62,19 +66,37 @@ public class AddClockActivity extends BaseNormalActivity implements View.OnClick
 
     @Override
     public void initEvent() {
-        clockListLiveData = LiveDataBus.get().with("clockList", Object.class);
-        clockListObserver = o -> {
-            List<String> clockList = (List<String>) o;
-            if (clockList.size() == 5) {
+        weekLiveData = LiveDataBus.get().with("updateWeek", String.class);
+        weekObserver = s -> {
+            //加载数据库
+            List<WorkDayBean> workDayBeans = SQLiteUtil.getInstance().loadAllWeekDay();
+            for (WorkDayBean dayBean : workDayBeans) {
+                String week = dayBean.getWeek();
+                if (weeks.contains(week)) {
+                    return;
+                }
+                weeks.add(week);
+            }
+            if (weeks.size() == 0) {
+                return;
+            }
+            String string = Arrays.toString(weeks.toArray());
+            if (weeks.size() == 5) {
                 repeatView.setText("每天（不包括周末）");
             } else {
-                repeatView.setText(clockList.toString());
+                repeatView.setText(string);
             }
         };
-        clockListLiveData.observeForever(clockListObserver);
+        weekLiveData.observeForever(weekObserver);
 
         mTimePicker.setIs24HourView(true);
         mTimePicker.setDescendantFocusability(TimePicker.FOCUS_BLOCK_DESCENDANTS);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        LiveDataBus.get().with("updateWeek").setValue("");
     }
 
     @OnClick({R.id.addTitleLeft, R.id.addTitleRight, R.id.repeatLayout})
@@ -91,12 +113,12 @@ public class AddClockActivity extends BaseNormalActivity implements View.OnClick
                 Log.d(TAG, "当前时间" + clockTime);
 
                 String value = (String) SaveKeyValues.getValue("update", "");
-                if (!value.equals("update")) {
-                    Log.d(TAG, "更新时间: ");
+                if (value.equals("update")) {
+                    Log.d(TAG, "更新时间");
                     String uuid = getIntent().getStringExtra("uuid");
                     SQLiteUtil.getInstance().updateClockTime(uuid, clockTime);
                 } else {
-                    Log.d(TAG, "保存新闹钟: ");
+                    Log.d(TAG, "保存新闹钟");
                     ClockBean clockBean = new ClockBean();
                     clockBean.setUuid(Utils.uuid());
                     clockBean.setClockTime(clockTime);
@@ -117,6 +139,6 @@ public class AddClockActivity extends BaseNormalActivity implements View.OnClick
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        clockListLiveData.removeObserver(clockListObserver);
+        weekLiveData.removeObserver(weekObserver);
     }
 }
