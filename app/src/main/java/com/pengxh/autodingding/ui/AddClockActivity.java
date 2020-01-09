@@ -3,6 +3,7 @@ package com.pengxh.autodingding.ui;
 import android.arch.lifecycle.MutableLiveData;
 import android.arch.lifecycle.Observer;
 import android.content.Intent;
+import android.util.Log;
 import android.view.View;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -67,20 +68,22 @@ public class AddClockActivity extends BaseNormalActivity implements View.OnClick
 
         mTimePicker.setIs24HourView(true);
         mTimePicker.setDescendantFocusability(TimePicker.FOCUS_BLOCK_DESCENDANTS);
-        mTimePicker.setOnTimeChangedListener(new TimePicker.OnTimeChangedListener() {  //获取当前选择的时间
-            @Override
-            public void onTimeChanged(TimePicker view, int hourOfDay, int minute) {
-
-            }
-        });
     }
 
     @OnClick({R.id.addTitleLeft, R.id.addTitleRight, R.id.repeatLayout})
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
-
-
+            case R.id.addTitleLeft:
+                finish();
+                break;
+            case R.id.addTitleRight:
+                String hour = String.valueOf(mTimePicker.getHour());
+                String minute = String.valueOf(mTimePicker.getMinute());
+                Log.d(TAG, "当前时间" + hour + ":" + minute);
+                LiveDataBus.get().with("addClock").setValue(hour + ":" + minute);
+                finish();
+                break;
             case R.id.repeatLayout:
                 startActivity(new Intent(this, RepeatActivity.class));
                 break;
