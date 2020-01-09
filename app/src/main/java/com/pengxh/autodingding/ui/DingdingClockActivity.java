@@ -5,7 +5,6 @@ import android.arch.lifecycle.Observer;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
-import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -17,9 +16,10 @@ import com.pengxh.app.multilib.widget.swipemenu.SwipeMenuItem;
 import com.pengxh.app.multilib.widget.swipemenu.SwipeMenuListView;
 import com.pengxh.autodingding.R;
 import com.pengxh.autodingding.adapter.ClockAdapter;
+import com.pengxh.autodingding.bean.ClockBean;
+import com.pengxh.autodingding.db.SQLiteUtil;
 import com.pengxh.autodingding.utils.LiveDataBus;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.BindView;
@@ -42,7 +42,7 @@ public class DingdingClockActivity extends BaseNormalActivity implements View.On
     SwipeMenuListView clockListView;
     private MutableLiveData<String> addClock;
     private Observer<String> addClockObserver;
-    private List<String> clockList;
+    private SQLiteUtil sqLiteUtil;
 
     @Override
     public void initView() {
@@ -52,41 +52,58 @@ public class DingdingClockActivity extends BaseNormalActivity implements View.On
     @Override
     public void initData() {
         ImmersionBar.with(this).fitsSystemWindows(true).statusBarColor(R.color.colorAppTheme).init();
+        sqLiteUtil = SQLiteUtil.getInstance();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        LiveDataBus.get().with("notifyDataSetChanged").setValue("");
     }
 
     @Override
     public void initEvent() {
-        clockList = new ArrayList<>();
-        addClock = LiveDataBus.get().with("addClock", String.class);
+        addClock = LiveDataBus.get().with("notifyDataSetChanged", String.class);
         addClockObserver = s -> {
-            Log.d(TAG, "onChanged: " + s);
-            if (s == null) {
-                Log.e(TAG, "", new Throwable());
-                return;
-            }
-            if (!s.isEmpty()) {
+            List<ClockBean> clockBeanList = sqLiteUtil.loadAllClock();
+            if (clockBeanList == null || clockBeanList.size() == 0) {
+                emptyView.setVisibility(View.VISIBLE);
+            } else {
                 emptyView.setVisibility(View.GONE);
-                clockList.add(s);
 
-                ClockAdapter adapter = new ClockAdapter(DingdingClockActivity.this, clockList);
+                ClockAdapter adapter = new ClockAdapter(DingdingClockActivity.this, clockBeanList);
                 clockListView.setAdapter(adapter);
                 clockListView.setMenuCreator(menu -> {
-                    SwipeMenuItem openItem = new SwipeMenuItem(getApplicationContext());
-                    openItem.setBackground(new ColorDrawable(Color.rgb(255, 0, 0)));
-                    openItem.setWidth(DensityUtil.dp2px(getApplicationContext(), 90.0f));
-                    openItem.setTitle("删除");
-                    openItem.setTitleSize(18);
-                    openItem.setTitleColor(Color.WHITE);
-                    menu.addMenuItem(openItem);
+                    SwipeMenuItem updateItem = new SwipeMenuItem(getApplicationContext());
+                    updateItem.setBackground(new ColorDrawable(Color.rgb(0, 255, 0)));
+                    updateItem.setWidth(DensityUtil.dp2px(getApplicationContext(), 80.0f));
+                    updateItem.setTitle("修改");
+                    updateItem.setTitleSize(18);
+                    updateItem.setTitleColor(Color.WHITE);
+                    menu.addMenuItem(updateItem);
+
+                    SwipeMenuItem deleteItem = new SwipeMenuItem(getApplicationContext());
+                    deleteItem.setBackground(new ColorDrawable(Color.rgb(255, 0, 0)));
+                    deleteItem.setWidth(DensityUtil.dp2px(getApplicationContext(), 80.0f));
+                    deleteItem.setTitle("删除");
+                    deleteItem.setTitleSize(18);
+                    deleteItem.setTitleColor(Color.WHITE);
+                    menu.addMenuItem(deleteItem);
                 });
                 clockListView.setOnMenuItemClickListener((position, menu, index) -> {
                     switch (index) {
                         case 0:
-                            clockList.remove(position);
-                            adapter.notifyDataSetChanged();
+                            startActivity(new Intent(DingdingClockActivity.this, AddClockActivity.class));
                             break;
+                        case 1:
+                            sqLiteUtil.deleteClockByUUid(clockBeanList.get(position).getUuid());
+                            clockBeanList.remove(position);
+                            adapter.notifyDataSetChanged();
+                            LiveDataBus.get().with("notifyDataSetChanged").setValue("");
+                            break;
+
                     }
-                    return true;
+                    return false;//不拦截滑动事件
                 });
             }
         };

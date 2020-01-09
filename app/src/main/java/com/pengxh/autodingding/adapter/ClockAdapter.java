@@ -1,6 +1,7 @@
 package com.pengxh.autodingding.adapter;
 
 import android.content.Context;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -9,6 +10,9 @@ import android.widget.TextView;
 
 import com.pengxh.app.multilib.widget.swipemenu.BaseSwipListAdapter;
 import com.pengxh.autodingding.R;
+import com.pengxh.autodingding.bean.ClockBean;
+import com.pengxh.autodingding.db.SQLiteUtil;
+import com.pengxh.autodingding.utils.Utils;
 
 import java.util.List;
 
@@ -20,10 +24,10 @@ import java.util.List;
  */
 public class ClockAdapter extends BaseSwipListAdapter {
 
-    private List<String> clockList;
+    private List<ClockBean> clockList;
     private LayoutInflater inflater;
 
-    public ClockAdapter(Context context, List<String> list) {
+    public ClockAdapter(Context context, List<ClockBean> list) {
         this.clockList = list;
         inflater = LayoutInflater.from(context);
     }
@@ -63,8 +67,26 @@ public class ClockAdapter extends BaseSwipListAdapter {
         private TextView clockText;
         private Switch mSwitch;
 
-        void bindHolder(String clock) {
-            clockText.setText(clock);
+        void bindHolder(ClockBean clockBean) {
+            clockText.setText(clockBean.getClockTime());
+            mSwitch.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    boolean checked = mSwitch.isChecked();
+                    Log.d("mSwitch", "onClick: " + checked);
+                    int status;
+                    if (checked) {
+                        status = 1;
+                    } else {
+                        status = 0;
+                    }
+//                    ClockBean clockBean = new ClockBean();
+//                    clockBean.setUuid(Utils.uuid());
+//                    clockBean.setClockTime(clockTime);
+//                    clockBean.setClockStatus(status);
+//                    SQLiteUtil.getInstance().saveClock(clockBean);
+                }
+            });
         }
     }
 }

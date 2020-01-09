@@ -12,8 +12,13 @@ import android.widget.TimePicker;
 import com.gyf.immersionbar.ImmersionBar;
 import com.pengxh.app.multilib.base.BaseNormalActivity;
 import com.pengxh.autodingding.R;
+import com.pengxh.autodingding.bean.ClockBean;
+import com.pengxh.autodingding.db.SQLiteUtil;
 import com.pengxh.autodingding.utils.LiveDataBus;
+import com.pengxh.autodingding.utils.Utils;
 
+import java.text.DecimalFormat;
+import java.text.NumberFormat;
 import java.util.List;
 
 import butterknife.BindView;
@@ -40,6 +45,7 @@ public class AddClockActivity extends BaseNormalActivity implements View.OnClick
     @BindView(R.id.mTimePicker)
     TimePicker mTimePicker;
 
+    private NumberFormat numberFormat = new DecimalFormat("00");
     private Observer<Object> clockListObserver;
     private MutableLiveData<Object> clockListLiveData;
 
@@ -78,10 +84,17 @@ public class AddClockActivity extends BaseNormalActivity implements View.OnClick
                 finish();
                 break;
             case R.id.addTitleRight:
-                String hour = String.valueOf(mTimePicker.getHour());
-                String minute = String.valueOf(mTimePicker.getMinute());
-                Log.d(TAG, "当前时间" + hour + ":" + minute);
-                LiveDataBus.get().with("addClock").setValue(hour + ":" + minute);
+                String hour = numberFormat.format(mTimePicker.getHour());
+                String minute = numberFormat.format(mTimePicker.getMinute());
+                String clockTime = hour + ":" + minute;
+                Log.d(TAG, "当前时间" + clockTime);
+
+                ClockBean clockBean = new ClockBean();
+                clockBean.setUuid(Utils.uuid());
+                clockBean.setClockTime(clockTime);
+                clockBean.setClockStatus(0);
+                SQLiteUtil.getInstance().saveClock(clockBean);
+                LiveDataBus.get().with("notifyDataSetChanged").setValue("");
                 finish();
                 break;
             case R.id.repeatLayout:

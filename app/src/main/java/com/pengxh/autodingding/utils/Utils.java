@@ -19,6 +19,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Random;
 
 import static android.content.Context.KEYGUARD_SERVICE;
 
@@ -131,5 +132,16 @@ public class Utils {
      */
     public static long DateToTimestamp(String date) throws ParseException {
         return dateFormat.parse(date).getTime();
+    }
+
+    public static String uuid() {
+        String str = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+        Random random = new Random();
+        StringBuffer sb = new StringBuffer();
+        for (int i = 0; i < 11; i++) {
+            int number = random.nextInt(62);
+            sb.append(str.charAt(number));
+        }
+        return sb.toString();
     }
 }

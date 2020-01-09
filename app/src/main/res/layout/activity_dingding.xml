@@ -40,4 +40,11 @@
         android:textColor="#FFF"
         android:textSize="26sp" />
 
+    <com.pengxh.app.multilib.widget.swipemenu.SwipeMenuListView
+        android:id="@+id/clockListView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/colorListItem"
+        android:divider="@drawable/list_divider"
+        android:dividerHeight="1px" />
 </LinearLayout>
