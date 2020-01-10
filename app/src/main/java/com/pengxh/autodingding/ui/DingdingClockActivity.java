@@ -12,7 +12,6 @@ import android.widget.TextView;
 import com.gyf.immersionbar.ImmersionBar;
 import com.pengxh.app.multilib.base.DoubleClickExitActivity;
 import com.pengxh.app.multilib.utils.DensityUtil;
-import com.pengxh.app.multilib.utils.SaveKeyValues;
 import com.pengxh.app.multilib.widget.swipemenu.SwipeMenuItem;
 import com.pengxh.app.multilib.widget.swipemenu.SwipeMenuListView;
 import com.pengxh.autodingding.R;
@@ -75,18 +74,11 @@ public class DingdingClockActivity extends DoubleClickExitActivity implements Vi
                 ClockAdapter adapter = new ClockAdapter(DingdingClockActivity.this, clockBeanList);
                 clockListView.setAdapter(adapter);
                 clockListView.setMenuCreator(menu -> {
-                    SwipeMenuItem updateItem = new SwipeMenuItem(getApplicationContext());
-                    updateItem.setBackground(new ColorDrawable(Color.rgb(0, 255, 0)));
-                    updateItem.setWidth(DensityUtil.dp2px(getApplicationContext(), 80.0f));
-                    updateItem.setTitle("修改");
-                    updateItem.setTitleSize(18);
-                    updateItem.setTitleColor(Color.WHITE);
-                    menu.addMenuItem(updateItem);
-
                     SwipeMenuItem deleteItem = new SwipeMenuItem(getApplicationContext());
                     deleteItem.setBackground(new ColorDrawable(Color.rgb(255, 0, 0)));
                     deleteItem.setWidth(DensityUtil.dp2px(getApplicationContext(), 80.0f));
                     deleteItem.setTitle("删除");
+                    deleteItem.setIcon(R.drawable.delete);
                     deleteItem.setTitleSize(18);
                     deleteItem.setTitleColor(Color.WHITE);
                     menu.addMenuItem(deleteItem);
@@ -95,19 +87,11 @@ public class DingdingClockActivity extends DoubleClickExitActivity implements Vi
                     String uuid = clockBeanList.get(position).getUuid();
                     switch (index) {
                         case 0:
-                            SaveKeyValues.putValue("update", uuid);
-                            Intent intent = new Intent(DingdingClockActivity.this, AddClockActivity.class);
-                            intent.putExtra("uuid", uuid);
-                            startActivity(intent);
-                            break;
-                        case 1:
                             sqLiteUtil.deleteClockByUUid(uuid);
-//                            sqLiteUtil.deleteWeek();
                             clockBeanList.remove(position);
                             adapter.notifyDataSetChanged();
                             LiveDataBus.get().with("notifyDataSetChanged").setValue("");
                             break;
-
                     }
                     return false;//不拦截滑动事件
                 });

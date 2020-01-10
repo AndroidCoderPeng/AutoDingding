@@ -15,7 +15,6 @@ public class SQLiteUtilHelper extends SQLiteOpenHelper {
     @Override
     public void onCreate(SQLiteDatabase db) {
         db.execSQL("create table ClockTable(id integer primary key autoincrement,uuid integer,clockTime text,clockStatus integer)");
-        db.execSQL("create table WeekTable(id integer primary key autoincrement,week text,state integer)");
         Log.d(TAG, "数据库创建成功");
     }
 

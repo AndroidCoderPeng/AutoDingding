@@ -50,38 +50,11 @@
         android:background="@color/white"
         android:scaleX="1"
         android:scaleY="1"
-        android:timePickerMode="spinner" />
+        android:timePickerMode="clock" />
 
     <View
         android:layout_width="match_parent"
         android:layout_height="1dp"
         android:background="@color/colorLine" />
 
-    <RelativeLayout
-        android:id="@+id/repeatLayout"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:padding="5dp">
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="重复"
-            android:textColor="#FFF"
-            android:textSize="18sp" />
-
-        <TextView
-            android:id="@+id/repeatView"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentEnd="true"
-            android:text="永不"
-            android:textColor="#FFF"
-            android:textSize="18sp" />
-    </RelativeLayout>
-
-    <View
-        android:layout_width="match_parent"
-        android:layout_height="1dp"
-        android:background="@color/colorLine" />
 </LinearLayout>

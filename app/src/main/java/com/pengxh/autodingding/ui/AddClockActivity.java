@@ -1,29 +1,20 @@
 package com.pengxh.autodingding.ui;
 
-import android.arch.lifecycle.MutableLiveData;
-import android.arch.lifecycle.Observer;
-import android.content.Intent;
 import android.util.Log;
 import android.view.View;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.TimePicker;
 
 import com.gyf.immersionbar.ImmersionBar;
 import com.pengxh.app.multilib.base.BaseNormalActivity;
-import com.pengxh.app.multilib.utils.SaveKeyValues;
 import com.pengxh.autodingding.R;
 import com.pengxh.autodingding.bean.ClockBean;
-import com.pengxh.autodingding.bean.WorkDayBean;
 import com.pengxh.autodingding.db.SQLiteUtil;
 import com.pengxh.autodingding.utils.LiveDataBus;
 import com.pengxh.autodingding.utils.Utils;
 
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 
 import butterknife.BindView;
 import butterknife.OnClick;
@@ -37,22 +28,15 @@ import butterknife.OnClick;
 public class AddClockActivity extends BaseNormalActivity implements View.OnClickListener {
 
     private static final String TAG = "AddClockActivity";
-
     @BindView(R.id.addTitleLeft)
     TextView addTitleLeft;
     @BindView(R.id.addTitleRight)
     TextView addTitleRight;
-    @BindView(R.id.repeatView)
-    TextView repeatView;
-    @BindView(R.id.repeatLayout)
-    RelativeLayout repeatLayout;
     @BindView(R.id.mTimePicker)
     TimePicker mTimePicker;
 
     private NumberFormat numberFormat = new DecimalFormat("00");
-    private Observer<String> weekObserver;
-    private MutableLiveData<String> weekLiveData;
-    private List<String> weeks = new ArrayList<>();
+    private SQLiteUtil sqLiteUtil = SQLiteUtil.getInstance();
 
     @Override
     public void initView() {
@@ -66,40 +50,10 @@ public class AddClockActivity extends BaseNormalActivity implements View.OnClick
 
     @Override
     public void initEvent() {
-        weekLiveData = LiveDataBus.get().with("updateWeek", String.class);
-        weekObserver = s -> {
-            //加载数据库
-            List<WorkDayBean> workDayBeans = SQLiteUtil.getInstance().loadAllWeekDay();
-            for (WorkDayBean dayBean : workDayBeans) {
-                String week = dayBean.getWeek();
-                if (weeks.contains(week)) {
-                    return;
-                }
-                weeks.add(week);
-            }
-            if (weeks.size() == 0) {
-                return;
-            }
-            String string = Arrays.toString(weeks.toArray());
-            if (weeks.size() == 5) {
-                repeatView.setText("每天（不包括周末）");
-            } else {
-                repeatView.setText(string);
-            }
-        };
-        weekLiveData.observeForever(weekObserver);
-
         mTimePicker.setIs24HourView(true);
-        mTimePicker.setDescendantFocusability(TimePicker.FOCUS_BLOCK_DESCENDANTS);
     }
 
-    @Override
-    protected void onResume() {
-        super.onResume();
-        LiveDataBus.get().with("updateWeek").setValue("");
-    }
-
-    @OnClick({R.id.addTitleLeft, R.id.addTitleRight, R.id.repeatLayout})
+    @OnClick({R.id.addTitleLeft, R.id.addTitleRight})
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
@@ -110,35 +64,24 @@ public class AddClockActivity extends BaseNormalActivity implements View.OnClick
                 String hour = numberFormat.format(mTimePicker.getHour());
                 String minute = numberFormat.format(mTimePicker.getMinute());
                 String clockTime = hour + ":" + minute;
-                Log.d(TAG, "当前时间" + clockTime);
 
-                String value = (String) SaveKeyValues.getValue("update", "");
-                if (value.equals("update")) {
-                    Log.d(TAG, "更新时间");
-                    String uuid = getIntent().getStringExtra("uuid");
-                    SQLiteUtil.getInstance().updateClockTime(uuid, clockTime);
+                String uuid = getIntent().getStringExtra("uuid");
+                if (uuid != null && !uuid.equals("")) {
+                    Log.d(TAG, "更新时间,当前时间" + clockTime);
+                    sqLiteUtil.updateClockTime(uuid, clockTime);
                 } else {
-                    Log.d(TAG, "保存新闹钟");
+                    Log.d(TAG, "保存新闹钟,当前时间" + clockTime);
                     ClockBean clockBean = new ClockBean();
                     clockBean.setUuid(Utils.uuid());
                     clockBean.setClockTime(clockTime);
                     clockBean.setClockStatus(1);
-                    SQLiteUtil.getInstance().saveClock(clockBean);
+                    sqLiteUtil.saveClock(clockBean);
                 }
                 LiveDataBus.get().with("notifyDataSetChanged").setValue("");
                 finish();
                 break;
-            case R.id.repeatLayout:
-                startActivity(new Intent(this, RepeatActivity.class));
-                break;
             default:
                 break;
         }
-    }
-
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        weekLiveData.removeObserver(weekObserver);
     }
 }
