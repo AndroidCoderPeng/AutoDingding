@@ -40,6 +40,11 @@
                 <action android:name="android.service.notification.NotificationListenerService" />
             </intent-filter>
         </service>
-    </application>
 
+        <receiver android:name=".utils.AlarmReceiver">
+            <intent-filter>
+                <action android:name="action.alarmWakeUp" />
+            </intent-filter>
+        </receiver>
+    </application>
 </manifest>

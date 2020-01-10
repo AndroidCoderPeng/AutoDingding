@@ -50,7 +50,7 @@
         android:background="@color/white"
         android:scaleX="1"
         android:scaleY="1"
-        android:timePickerMode="clock" />
+        android:timePickerMode="spinner" />
 
     <View
         android:layout_width="match_parent"

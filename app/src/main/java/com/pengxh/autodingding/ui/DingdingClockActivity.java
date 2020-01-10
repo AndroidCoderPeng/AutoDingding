@@ -10,7 +10,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.gyf.immersionbar.ImmersionBar;
-import com.pengxh.app.multilib.base.DoubleClickExitActivity;
+import com.pengxh.app.multilib.base.BaseNormalActivity;
 import com.pengxh.app.multilib.utils.DensityUtil;
 import com.pengxh.app.multilib.widget.swipemenu.SwipeMenuItem;
 import com.pengxh.app.multilib.widget.swipemenu.SwipeMenuListView;
@@ -31,9 +31,8 @@ import butterknife.OnClick;
  * @description: TODO
  * @date: 2020/1/8 12:37
  */
-public class DingdingClockActivity extends DoubleClickExitActivity implements View.OnClickListener {
+public class DingdingClockActivity extends BaseNormalActivity implements View.OnClickListener {
 
-    private static final String TAG = "DingdingClockActivity";
     @BindView(R.id.dingdingTitleRight)
     ImageView dingdingTitleRight;
     @BindView(R.id.emptyView)

@@ -74,7 +74,7 @@ public class AddClockActivity extends BaseNormalActivity implements View.OnClick
                     ClockBean clockBean = new ClockBean();
                     clockBean.setUuid(Utils.uuid());
                     clockBean.setClockTime(clockTime);
-                    clockBean.setClockStatus(1);
+                    clockBean.setClockStatus(0);
                     sqLiteUtil.saveClock(clockBean);
                 }
                 LiveDataBus.get().with("notifyDataSetChanged").setValue("");
