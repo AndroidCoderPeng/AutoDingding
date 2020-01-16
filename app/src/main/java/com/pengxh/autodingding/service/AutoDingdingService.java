@@ -12,9 +12,11 @@ import android.os.Message;
 import android.support.annotation.Nullable;
 import android.util.Log;
 
+import com.pengxh.app.multilib.utils.SaveKeyValues;
 import com.pengxh.autodingding.ui.MainActivity;
 import com.pengxh.autodingding.utils.Constant;
 import com.pengxh.autodingding.utils.LiveDataBus;
+import com.pengxh.autodingding.utils.SendMailUtil;
 import com.pengxh.autodingding.utils.Utils;
 
 import java.util.Arrays;
@@ -110,6 +112,14 @@ public class AutoDingdingService extends Service {
         public void handleMessage(Message msg) {
             if (msg.what == 1) {
                 startActivity(new Intent(getApplicationContext(), MainActivity.class));
+
+                //发送打卡成功的邮件
+                String qqEmail = (String) SaveKeyValues.getValue("email", "290677893@qq.com");
+                Log.d(TAG, "handleMessage: " + qqEmail);
+                if (qqEmail.equals("")) {
+                    return;
+                }
+                SendMailUtil.send(qqEmail);
             }
         }
     };

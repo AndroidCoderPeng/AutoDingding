@@ -1,6 +1,7 @@
 package com.pengxh.autodingding.ui;
 
 import android.annotation.SuppressLint;
+import android.app.Dialog;
 import android.arch.lifecycle.MutableLiveData;
 import android.arch.lifecycle.Observer;
 import android.content.ActivityNotFoundException;
@@ -20,6 +21,7 @@ import android.widget.TextView;
 
 import com.aihook.alertview.library.AlertView;
 import com.aihook.alertview.library.OnItemClickListener;
+import com.gyf.immersionbar.ImmersionBar;
 import com.jzxiang.pickerview.TimePickerDialog;
 import com.jzxiang.pickerview.data.Type;
 import com.jzxiang.pickerview.listener.OnDateSetListener;
@@ -27,9 +29,9 @@ import com.pengxh.app.multilib.base.BaseNormalActivity;
 import com.pengxh.app.multilib.utils.ColorUtil;
 import com.pengxh.app.multilib.utils.SaveKeyValues;
 import com.pengxh.app.multilib.widget.EasyToast;
+import com.pengxh.app.multilib.widget.dialog.InputDialog;
 import com.pengxh.autodingding.R;
 import com.pengxh.autodingding.service.AutoDingdingService;
-import com.pengxh.autodingding.service.NotificationService;
 import com.pengxh.autodingding.utils.Constant;
 import com.pengxh.autodingding.utils.LiveDataBus;
 import com.pengxh.autodingding.utils.Utils;
@@ -44,7 +46,7 @@ import butterknife.OnClick;
 public class MainActivity extends BaseNormalActivity implements View.OnClickListener {
 
     private static final String TAG = "MainActivity";
-    private static final List<String> items = Arrays.asList("功能介绍", "通知监听");
+    private static final List<String> items = Arrays.asList("功能介绍", "邮箱设置");
 
     @BindView(R.id.titleLayout)
     RelativeLayout titleLayout;
@@ -73,12 +75,14 @@ public class MainActivity extends BaseNormalActivity implements View.OnClickList
     public void initView() {
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);//手机常亮
         setContentView(R.layout.activity_main);
+        ImmersionBar.with(this).fitsSystemWindows(true).statusBarColor(R.color.colorAppThemeLight).init();
     }
 
     @Override
     public void initData() {
         amUpdateLiveData = LiveDataBus.get().with("amUpdate", int.class);
         pmUpdateLiveData = LiveDataBus.get().with("pmUpdate", int.class);
+        String qqEmail = (String) SaveKeyValues.getValue("email", "");
         String amKaoQin = (String) SaveKeyValues.getValue("amKaoQin", "");
         String pmKaoQin = (String) SaveKeyValues.getValue("pmKaoQin", "");
         if (!amKaoQin.equals("")) {
@@ -90,6 +94,9 @@ public class MainActivity extends BaseNormalActivity implements View.OnClickList
             pmTime.setText("将在" + pmKaoQin + "自动打卡");
         } else {
             pmTime.setText("下班打卡时间未设置");
+        }
+        if (!qqEmail.equals("")) {
+            textViewTitle.setText("打卡通知邮箱：" + qqEmail);
         }
     }
 
@@ -220,12 +227,13 @@ public class MainActivity extends BaseNormalActivity implements View.OnClickList
                                     MainActivity.this, AlertView.Style.Alert,
                                     null).setCancelable(false).show();
                         } else if (position == 1) {
-                            if (!isNotificationServiceEnable()) {
-                                openNotificationAccessSetting();
-                            } else {
-                                EasyToast.showToast("通知监听权限已打开", EasyToast.SUCCESS);
-                            }
-                            startService(new Intent(MainActivity.this, NotificationService.class));
+//                            if (!isNotificationServiceEnable()) {
+//                                openNotificationAccessSetting();
+//                            } else {
+//                                EasyToast.showToast("通知监听权限已打开", EasyToast.SUCCESS);
+//                            }
+//                            startService(new Intent(MainActivity.this, NotificationService.class));
+                            setEmailAddress();
                         }
                     }
                 });
@@ -234,6 +242,34 @@ public class MainActivity extends BaseNormalActivity implements View.OnClickList
         }
     }
 
+    private void setEmailAddress() {
+        new InputDialog.Builder()
+                .setContext(this)
+                .setTitle("设置邮箱")
+                .setNegativeButton("取消")
+                .setPositiveButton("确定")
+                .setOnDialogClickListener(new InputDialog.onDialogClickListener() {
+                    @Override
+                    public void onConfirmClick(Dialog dialog, String input) {
+                        if (!input.isEmpty()) {
+                            if (input.endsWith("@qq.com")) {
+                                SaveKeyValues.putValue("email", input);
+                                textViewTitle.setText("打卡通知邮箱：" + input);
+                            } else {
+                                EasyToast.showToast("邮箱设置失败，暂时只支持QQ邮箱！", EasyToast.WARING);
+                            }
+                            dialog.dismiss();
+                        } else {
+                            EasyToast.showToast("什么都还没输入呢！", EasyToast.ERROR);
+                        }
+                    }
+
+                    @Override
+                    public void onCancelClick(Dialog dialog) {
+                        dialog.dismiss();
+                    }
+                }).build().show();
+    }
 
     private boolean isNotificationServiceEnable() {
         boolean enable = false;

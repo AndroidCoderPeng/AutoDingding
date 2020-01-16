@@ -8,4 +8,5 @@
     <color name="colorListItem">#171717</color>
     <color name="colorText">#FFB508</color>
     <color name="colorLine">#313131</color>
+    <color name="colorAppThemeLight">#0094FF</color>
 </resources>

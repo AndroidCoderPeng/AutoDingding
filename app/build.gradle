@@ -15,9 +15,19 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
+    packagingOptions {
+        pickFirst 'META-INF/LICENSE.txt' // picks the JavaMail license file
+    }
     compileOptions {
         targetCompatibility 1.8
         sourceCompatibility 1.8
+    }
+}
+
+repositories {
+    jcenter()
+    maven {
+        url "https://maven.java.net/content/groups/public/"
     }
 }
 
@@ -39,4 +49,6 @@ dependencies {
     implementation 'com.jzxiang.pickerview:TimePickerDialog:1.0.1'
     //沉浸式状态栏。基础依赖包，必须要依赖
     implementation 'com.gyf.immersionbar:immersionbar:3.0.0'
+    implementation 'com.sun.mail:android-mail:1.5.5'
+    implementation 'com.sun.mail:android-activation:1.5.5'
 }

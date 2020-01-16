@@ -20,7 +20,8 @@ public class WelcomeActivity extends AppCompatActivity {
     private static final int PERMISSIONS_CODE = 999;
     private static final String[] USER_PERMISSIONS = {
             Manifest.permission.WAKE_LOCK,
-            Manifest.permission.DISABLE_KEYGUARD};
+            Manifest.permission.DISABLE_KEYGUARD,
+            Manifest.permission.WRITE_EXTERNAL_STORAGE};
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -46,8 +47,8 @@ public class WelcomeActivity extends AppCompatActivity {
     }
 
     private void startMainActivity() {
-        startActivity(new Intent(this, DingdingClockActivity.class));
-//        startActivity(new Intent(this, MainActivity.class));
+//        startActivity(new Intent(this, DingdingClockActivity.class));
+        startActivity(new Intent(this, MainActivity.class));
         finish();
     }
 
