@@ -5,6 +5,7 @@
     android:layout_height="match_parent"
     android:background="#F3F7FF"
     android:gravity="center"
+    android:keepScreenOn="true"
     android:orientation="vertical"
     tools:context=".ui.MainActivity">
 

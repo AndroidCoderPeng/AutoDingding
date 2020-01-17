@@ -4,10 +4,7 @@ import android.annotation.SuppressLint;
 import android.app.Dialog;
 import android.arch.lifecycle.MutableLiveData;
 import android.arch.lifecycle.Observer;
-import android.content.ActivityNotFoundException;
-import android.content.ComponentName;
 import android.content.Intent;
-import android.provider.Settings;
 import android.support.annotation.Nullable;
 import android.util.Log;
 import android.view.KeyEvent;
@@ -73,7 +70,6 @@ public class MainActivity extends BaseNormalActivity implements View.OnClickList
 
     @Override
     public void initView() {
-        getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);//手机常亮
         setContentView(R.layout.activity_main);
         ImmersionBar.with(this).fitsSystemWindows(true).statusBarColor(R.color.colorAppThemeLight).init();
     }
@@ -227,12 +223,6 @@ public class MainActivity extends BaseNormalActivity implements View.OnClickList
                                     MainActivity.this, AlertView.Style.Alert,
                                     null).setCancelable(false).show();
                         } else if (position == 1) {
-//                            if (!isNotificationServiceEnable()) {
-//                                openNotificationAccessSetting();
-//                            } else {
-//                                EasyToast.showToast("通知监听权限已打开", EasyToast.SUCCESS);
-//                            }
-//                            startService(new Intent(MainActivity.this, NotificationService.class));
                             setEmailAddress();
                         }
                     }
@@ -269,38 +259,6 @@ public class MainActivity extends BaseNormalActivity implements View.OnClickList
                         dialog.dismiss();
                     }
                 }).build().show();
-    }
-
-    private boolean isNotificationServiceEnable() {
-        boolean enable = false;
-        String packageName = getPackageName();
-        String flat = Settings.Secure.getString(getContentResolver(), "enabled_notification_listeners");
-        if (flat != null) {
-            enable = flat.contains(packageName);
-        }
-        return enable;
-    }
-
-    //打开通知监听权限
-    private void openNotificationAccessSetting() {
-        try {
-            Intent intent = new Intent("android.settings.ACTION_NOTIFICATION_LISTENER_SETTINGS");
-            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-            startActivity(intent);
-        } catch (ActivityNotFoundException e) {//普通情况下找不到的时候需要再特殊处理找一次
-            try {
-                Intent intent = new Intent();
-                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                ComponentName cn = new ComponentName("com.android.settings", "com.android.settings.Settings$NotificationAccessSettingsActivity");
-                intent.setComponent(cn);
-                intent.putExtra(":settings:show_fragment", "NotificationAccessSettings");
-                startActivity(intent);
-            } catch (Exception e1) {
-                e1.printStackTrace();
-            }
-            EasyToast.showToast("对不起，您的手机暂不支持", EasyToast.ERROR);
-            e.printStackTrace();
-        }
     }
 
     //屏蔽返回键

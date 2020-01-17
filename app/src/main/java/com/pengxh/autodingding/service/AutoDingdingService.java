@@ -18,8 +18,6 @@ import com.pengxh.autodingding.utils.LiveDataBus;
 import com.pengxh.autodingding.utils.SendMailUtil;
 import com.pengxh.autodingding.utils.Utils;
 
-import java.util.Arrays;
-
 /**
  * @description: TODO 钉钉自动打卡服务
  * @author: Pengxh
@@ -31,8 +29,6 @@ public class AutoDingdingService extends Service {
     private static final String TAG = "AutoDingdingService";
     private Observer<Long> amKaoQinObserver, pmKaoQinObserver;
     private MutableLiveData<Long> amKaoQinLiveData, pmKaoQinLiveData;
-    private Observer<String> notificationObserver;
-    private MutableLiveData<String> notifyMessageLiveData;
 
     @Override
     public void onCreate() {
@@ -40,7 +36,6 @@ public class AutoDingdingService extends Service {
         Log.d(TAG, "onCreate: 自动打卡服务已启动");
         amKaoQinLiveData = LiveDataBus.get().with("amKaoQin", Long.class);
         pmKaoQinLiveData = LiveDataBus.get().with("pmKaoQin", Long.class);
-        notifyMessageLiveData = LiveDataBus.get().with("notifyMessage", String.class);
     }
 
     @Override
@@ -87,21 +82,6 @@ public class AutoDingdingService extends Service {
             }
         };
         pmKaoQinLiveData.observeForever(pmKaoQinObserver);
-
-        notificationObserver = new Observer<String>() {
-            @Override
-            public void onChanged(String s) {
-                String[] split = s.split(",");
-                Log.d(TAG, "onReceive: " + Arrays.toString(split));
-                if (split[1].contains("上班打卡") || split[1].contains("下班打卡")) {
-                    Utils.openDingding(Constant.DINGDING);
-                    handler.sendEmptyMessageDelayed(1, 10 * 1000);
-                } else {
-                    Log.i(TAG, "onReceive: 普通消息，不处理");
-                }
-            }
-        };
-        notifyMessageLiveData.observeForever(notificationObserver);
         return super.onStartCommand(intent, flags, startId);
     }
 
@@ -130,7 +110,6 @@ public class AutoDingdingService extends Service {
         super.onDestroy();
         amKaoQinLiveData.removeObserver(amKaoQinObserver);
         pmKaoQinLiveData.removeObserver(pmKaoQinObserver);
-        notifyMessageLiveData.removeObserver(notificationObserver);
     }
 
     @Override
