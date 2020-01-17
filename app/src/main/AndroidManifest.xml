@@ -28,17 +28,6 @@
             android:name=".ui.MainActivity"
             android:launchMode="singleTask" />
 
-        <activity
-            android:name=".ui.DingdingClockActivity"
-            android:launchMode="singleTask" />
-        <activity android:name=".ui.AddClockActivity" />
-
         <service android:name=".service.AutoDingdingService" />
-
-        <receiver android:name=".utils.AlarmReceiver">
-            <intent-filter>
-                <action android:name="action.alarmWakeUp" />
-            </intent-filter>
-        </receiver>
     </application>
 </manifest>

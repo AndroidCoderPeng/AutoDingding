@@ -4,7 +4,6 @@ import android.app.Application;
 
 import com.pengxh.app.multilib.utils.SaveKeyValues;
 import com.pengxh.app.multilib.widget.EasyToast;
-import com.pengxh.autodingding.db.SQLiteUtil;
 import com.pengxh.autodingding.utils.Utils;
 
 /**
@@ -19,7 +18,6 @@ public class BaseApplication extends Application {
         super.onCreate();
         Utils.init(this);
         EasyToast.init(this);
-        SQLiteUtil.initDataBase(this);
         SaveKeyValues.initSharedPreferences(this);
     }
 }

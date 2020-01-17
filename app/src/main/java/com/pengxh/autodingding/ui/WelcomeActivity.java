@@ -46,7 +46,6 @@ public class WelcomeActivity extends AppCompatActivity implements EasyPermission
     }
 
     private void startMainActivity() {
-//        startActivity(new Intent(this, DingdingClockActivity.class));
         startActivity(new Intent(this, MainActivity.class));
         finish();
     }

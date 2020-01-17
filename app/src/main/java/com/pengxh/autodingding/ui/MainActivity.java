@@ -29,7 +29,6 @@ import com.pengxh.app.multilib.widget.dialog.InputDialog;
 import com.pengxh.autodingding.R;
 import com.pengxh.autodingding.service.AutoDingdingService;
 import com.pengxh.autodingding.utils.Constant;
-import com.pengxh.autodingding.utils.HttpCallbackListener;
 import com.pengxh.autodingding.utils.LiveDataBus;
 import com.pengxh.autodingding.utils.TimeOrDateUtil;
 import com.pengxh.autodingding.utils.Utils;
@@ -95,18 +94,6 @@ public class MainActivity extends BaseNormalActivity implements View.OnClickList
         if (!qqEmail.equals("")) {
             textViewTitle.setText("打卡通知邮箱：" + qqEmail);
         }
-
-        Utils.doHttpRequest(Constant.BASE_URL + "2020-01-01", new HttpCallbackListener() {
-            @Override
-            public void onError(Exception e) {
-                Log.d(TAG, "onError: " + e);
-            }
-
-            @Override
-            public void onSuccess(String response) {
-                Log.d(TAG, "onSuccess: " + response);
-            }
-        });
     }
 
     @Override
