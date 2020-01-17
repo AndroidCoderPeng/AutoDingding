@@ -12,7 +12,11 @@ import android.os.Environment;
 import android.os.PowerManager;
 import android.util.Log;
 
-import com.pengxh.app.multilib.widget.EasyToast;
+import com.squareup.okhttp.Call;
+import com.squareup.okhttp.Callback;
+import com.squareup.okhttp.OkHttpClient;
+import com.squareup.okhttp.Request;
+import com.squareup.okhttp.Response;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -22,12 +26,17 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import java.util.Random;
+
+import io.reactivex.Observable;
+import io.reactivex.ObservableOnSubscribe;
+import io.reactivex.Observer;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.disposables.CompositeDisposable;
+import io.reactivex.disposables.Disposable;
+import io.reactivex.schedulers.Schedulers;
 
 import static android.content.Context.KEYGUARD_SERVICE;
 
@@ -39,8 +48,6 @@ import static android.content.Context.KEYGUARD_SERVICE;
  */
 public class Utils {
     private static final String TAG = "Utils";
-    @SuppressLint("SimpleDateFormat")
-    private static final SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
     private static String filePath = Environment.getExternalStorageDirectory().getAbsolutePath() + "/AutoDingding/";
     private static String fileName = "emailAddress.txt";
     @SuppressLint("StaticFieldLeak")
@@ -76,28 +83,6 @@ public class Utils {
             }
         }
         return packageNames.contains(packageName);
-    }
-
-    /**
-     * 时间戳转时间
-     */
-    public static String timestampToDate(long millSeconds) {
-        return dateFormat.format(new Date(millSeconds));
-    }
-
-    /**
-     * 计算时间差
-     *
-     * @param fixedTime 结束时间
-     */
-    public static long deltaTime(long fixedTime) {
-        long currentTime = (System.currentTimeMillis() / 1000);
-        if (fixedTime > currentTime) {
-            return (fixedTime - currentTime);
-        } else {
-            EasyToast.showToast("时间设置异常", EasyToast.WARING);
-        }
-        return 0L;
     }
 
     /**
@@ -143,13 +128,6 @@ public class Utils {
         KeyguardManager keyguardManager = (KeyguardManager) mContext.getSystemService(KEYGUARD_SERVICE);
         KeyguardManager.KeyguardLock keyguardLock = keyguardManager.newKeyguardLock("unLock");
         keyguardLock.disableKeyguard();
-    }
-
-    /**
-     * 时间转时间戳
-     */
-    public static long DateToTimestamp(String date) throws ParseException {
-        return dateFormat.parse(date).getTime();
     }
 
     public static String uuid() {
@@ -213,5 +191,60 @@ public class Utils {
             }
         }
         return content.toString();
+    }
+
+    private static CompositeDisposable compositeDisposable = new CompositeDisposable();
+
+    public static void doHttpRequest(String url, HttpCallbackListener listener) {
+        Observable.create((ObservableOnSubscribe<Response>) emitter -> {
+            Call call = new OkHttpClient().newCall(new Request.Builder().url(url).get().build());
+            call.enqueue(new Callback() {
+                @Override
+                public void onFailure(Request request, IOException e) {
+                    Log.e(TAG, "onFailure: ", e);
+                }
+
+                @Override
+                public void onResponse(Response response) throws IOException {
+                    emitter.onNext(response);
+                }
+            });
+        }).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).subscribe(new Observer<Response>() {
+            Disposable mDisposable;
+
+            @Override
+            public void onSubscribe(Disposable d) {
+                Log.d(TAG, "onSubscribe: 添加订阅" + d);
+                //订阅
+                mDisposable = d;
+                //添加到容器中
+                compositeDisposable.add(d);
+            }
+
+            @Override
+            public void onNext(Response response) {
+                if (mDisposable.isDisposed()) {
+                    return;
+                }
+                try {
+                    listener.onSuccess(response.body().string());
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+
+            @Override
+            public void onError(Throwable e) {
+                listener.onError(new Exception(e));
+            }
+
+            @Override
+            public void onComplete() {
+                //取消订阅
+                Log.d(TAG, "onComplete: 取消订阅");
+                mDisposable.dispose();
+                compositeDisposable.clear();
+            }
+        });
     }
 }

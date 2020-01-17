@@ -14,4 +14,12 @@ public class Constant {
     public static final String DINGDING = "com.alibaba.android.rimet";
 
     public static final int[] images = {R.drawable.settings, R.drawable.about};
+
+    /**
+     * type
+     * 0-工作日
+     * 1-周末
+     * 2-节假日
+     */
+    public static final String BASE_URL = "http://timor.tech/api/holiday/info/";
 }

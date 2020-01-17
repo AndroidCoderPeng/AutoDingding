@@ -9,7 +9,6 @@ import android.support.annotation.Nullable;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
-import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
@@ -30,7 +29,9 @@ import com.pengxh.app.multilib.widget.dialog.InputDialog;
 import com.pengxh.autodingding.R;
 import com.pengxh.autodingding.service.AutoDingdingService;
 import com.pengxh.autodingding.utils.Constant;
+import com.pengxh.autodingding.utils.HttpCallbackListener;
 import com.pengxh.autodingding.utils.LiveDataBus;
+import com.pengxh.autodingding.utils.TimeOrDateUtil;
 import com.pengxh.autodingding.utils.Utils;
 import com.pengxh.autodingding.widgets.EasyPopupWindow;
 
@@ -94,6 +95,18 @@ public class MainActivity extends BaseNormalActivity implements View.OnClickList
         if (!qqEmail.equals("")) {
             textViewTitle.setText("打卡通知邮箱：" + qqEmail);
         }
+
+        Utils.doHttpRequest(Constant.BASE_URL + "2020-01-01", new HttpCallbackListener() {
+            @Override
+            public void onError(Exception e) {
+                Log.d(TAG, "onError: " + e);
+            }
+
+            @Override
+            public void onSuccess(String response) {
+                Log.d(TAG, "onSuccess: " + response);
+            }
+        });
     }
 
     @Override
@@ -164,13 +177,13 @@ public class MainActivity extends BaseNormalActivity implements View.OnClickList
                             @Override
                             public void onDateSet(TimePickerDialog timePickerView, long millSeconds) {
                                 //计算时间差
-                                long deltaTime = Utils.deltaTime(millSeconds / 1000);
+                                long deltaTime = TimeOrDateUtil.deltaTime(millSeconds / 1000);
                                 Log.d(TAG, "amKaoQin: " + deltaTime);
                                 if (deltaTime == 0) {
                                     Log.w(TAG, "", new Throwable());
                                     return;
                                 }
-                                String amKaoQin = Utils.timestampToDate(millSeconds);
+                                String amKaoQin = TimeOrDateUtil.timestampToDate(millSeconds);
                                 amTime.setText("将在" + amKaoQin + "自动打卡");
                                 SaveKeyValues.putValue("amKaoQin", amKaoQin);
                                 int currentPro = startProgressBar.getProgress();
@@ -192,13 +205,13 @@ public class MainActivity extends BaseNormalActivity implements View.OnClickList
                             @Override
                             public void onDateSet(TimePickerDialog timePickerView, long millSeconds) {
                                 //计算时间差
-                                long deltaTime = Utils.deltaTime(millSeconds / 1000);
+                                long deltaTime = TimeOrDateUtil.deltaTime(millSeconds / 1000);
                                 Log.d(TAG, "pmKaoQin: " + deltaTime);
                                 if (deltaTime == 0) {
                                     Log.w(TAG, "", new Throwable());
                                     return;
                                 }
-                                String pmKaoQin = Utils.timestampToDate(millSeconds);
+                                String pmKaoQin = TimeOrDateUtil.timestampToDate(millSeconds);
                                 pmTime.setText("将在" + pmKaoQin + "自动打卡");
                                 SaveKeyValues.putValue("pmKaoQin", pmKaoQin);
                                 int currentPro = endProgressBar.getProgress();
