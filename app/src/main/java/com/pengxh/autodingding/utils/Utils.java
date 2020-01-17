@@ -14,6 +14,14 @@ import android.util.Log;
 
 import com.pengxh.app.multilib.widget.EasyToast;
 
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -33,12 +41,22 @@ public class Utils {
     private static final String TAG = "Utils";
     @SuppressLint("SimpleDateFormat")
     private static final SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-    private static String sdCardDir = Environment.getExternalStorageDirectory() + "/DingDingLogs/";
+    private static String filePath = Environment.getExternalStorageDirectory().getAbsolutePath() + "/AutoDingding/";
+    private static String fileName = "emailAddress.txt";
     @SuppressLint("StaticFieldLeak")
     private static Context mContext;
 
     public static void init(Context context) {
         Utils.mContext = context.getApplicationContext();//获取全局上下文，最长生命周期
+        File file = new File(filePath + fileName);
+        if (!file.exists()) {
+            try {
+                file.createNewFile();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+        Log.d(TAG, "init: " + file);
     }
 
     /**
@@ -143,5 +161,57 @@ public class Utils {
             sb.append(str.charAt(number));
         }
         return sb.toString();
+    }
+
+    /**
+     * 将数据写入文件
+     */
+    public static void saveEmailAddress(String email) {
+        //准备写入
+        FileOutputStream outputStream;
+        BufferedWriter bufferedWriter = null;
+        try {
+            outputStream = mContext.openFileOutput(fileName, Context.MODE_PRIVATE);
+            bufferedWriter = new BufferedWriter(new OutputStreamWriter(outputStream));
+            bufferedWriter.write(email);
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+            if (bufferedWriter != null) {
+                try {
+                    bufferedWriter.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+    }
+
+    /**
+     * 读取文件存储内容
+     */
+    public static String readEmailAddress() {
+        FileInputStream inputStream;
+        BufferedReader bufferedReader = null;
+        StringBuilder content = new StringBuilder();
+        try {
+            inputStream = mContext.openFileInput(fileName);
+            bufferedReader = new BufferedReader(new InputStreamReader(inputStream));
+            String line;
+            while ((line = bufferedReader.readLine()) != null) {
+                content.append(line);
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+            if (bufferedReader != null) {
+                try {
+                    bufferedReader.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+        return content.toString();
     }
 }

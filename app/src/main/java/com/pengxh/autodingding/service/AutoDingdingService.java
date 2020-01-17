@@ -12,7 +12,6 @@ import android.os.Message;
 import android.support.annotation.Nullable;
 import android.util.Log;
 
-import com.pengxh.app.multilib.utils.SaveKeyValues;
 import com.pengxh.autodingding.ui.MainActivity;
 import com.pengxh.autodingding.utils.Constant;
 import com.pengxh.autodingding.utils.LiveDataBus;
@@ -111,10 +110,12 @@ public class AutoDingdingService extends Service {
         @Override
         public void handleMessage(Message msg) {
             if (msg.what == 1) {
-                startActivity(new Intent(getApplicationContext(), MainActivity.class));
+                Intent intent = new Intent(getApplicationContext(), MainActivity.class);
+                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                startActivity(intent);
 
+                String qqEmail = Utils.readEmailAddress();
                 //发送打卡成功的邮件
-                String qqEmail = (String) SaveKeyValues.getValue("email", "290677893@qq.com");
                 Log.d(TAG, "handleMessage: " + qqEmail);
                 if (qqEmail.equals("")) {
                     return;

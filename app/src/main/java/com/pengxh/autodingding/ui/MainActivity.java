@@ -82,7 +82,7 @@ public class MainActivity extends BaseNormalActivity implements View.OnClickList
     public void initData() {
         amUpdateLiveData = LiveDataBus.get().with("amUpdate", int.class);
         pmUpdateLiveData = LiveDataBus.get().with("pmUpdate", int.class);
-        String qqEmail = (String) SaveKeyValues.getValue("email", "");
+        String qqEmail = Utils.readEmailAddress();
         String amKaoQin = (String) SaveKeyValues.getValue("amKaoQin", "");
         String pmKaoQin = (String) SaveKeyValues.getValue("pmKaoQin", "");
         if (!amKaoQin.equals("")) {
@@ -253,7 +253,7 @@ public class MainActivity extends BaseNormalActivity implements View.OnClickList
                     public void onConfirmClick(Dialog dialog, String input) {
                         if (!input.isEmpty()) {
                             if (input.endsWith("@qq.com")) {
-                                SaveKeyValues.putValue("email", input);
+                                Utils.saveEmailAddress(input);
                                 textViewTitle.setText("打卡通知邮箱：" + input);
                             } else {
                                 EasyToast.showToast("邮箱设置失败，暂时只支持QQ邮箱！", EasyToast.WARING);

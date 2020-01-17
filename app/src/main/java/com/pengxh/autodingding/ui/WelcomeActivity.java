@@ -2,20 +2,23 @@ package com.pengxh.autodingding.ui;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
+import android.app.Activity;
 import android.content.Intent;
-import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 
 import com.pengxh.app.multilib.widget.EasyToast;
 
-public class WelcomeActivity extends AppCompatActivity {
+import java.util.List;
+
+import pub.devrel.easypermissions.EasyPermissions;
+
+public class WelcomeActivity extends AppCompatActivity implements EasyPermissions.PermissionCallbacks {
 
     private static final int PERMISSIONS_CODE = 999;
     private static final String[] USER_PERMISSIONS = {
@@ -28,22 +31,18 @@ public class WelcomeActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         //判断是否有权限，如果版本大于5.1才需要判断（即6.0以上），其他则不需要判断。
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            if (hasAllPermission()) {
+            if (checkPermission(this, USER_PERMISSIONS)) {
                 startMainActivity();
             } else {
-                ActivityCompat.requestPermissions(this, USER_PERMISSIONS, PERMISSIONS_CODE);
+                EasyPermissions.requestPermissions(this, "需要获取相关权限", PERMISSIONS_CODE, USER_PERMISSIONS);
             }
         } else {
             startMainActivity();
         }
     }
 
-    private boolean hasAllPermission() {
-        for (String permission : USER_PERMISSIONS) {
-            int i = ActivityCompat.checkSelfPermission(this, permission);
-            return i == PackageManager.PERMISSION_GRANTED;
-        }
-        return false;
+    private boolean checkPermission(Activity mActivity, String[] perms) {
+        return EasyPermissions.hasPermissions(mActivity, perms);
     }
 
     private void startMainActivity() {
@@ -53,27 +52,23 @@ public class WelcomeActivity extends AppCompatActivity {
     }
 
     @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        if (requestCode == PERMISSIONS_CODE) {
-            //权限全部获取,grantResults数组里面元素：[0,0.......,0]
-            //权限拒绝,grantResults数组里面元素：[-1,-1.......,-1]
-            boolean grant = true;
-            if (grantResults.length == 0) {
-                grant = false;
-            }
-            for (int result : grantResults) {
-                if (result == PackageManager.PERMISSION_DENIED) {
-                    grant = false;
-                }
-            }
-            if (grant) {
-                startMainActivity();
-            } else {
-                EasyToast.showToast("权限被拒绝", EasyToast.ERROR);
-                handler.sendEmptyMessageDelayed(1, 1500);
-            }
+    public void onPermissionsGranted(int requestCode, @NonNull List<String> perms) {
+        startMainActivity();
+    }
+
+    @Override
+    public void onPermissionsDenied(int requestCode, @NonNull List<String> perms) {
+        if (perms.size() == USER_PERMISSIONS.length) {//授权全部失败，则提示用户
+            EasyToast.showToast("授权失败", EasyToast.ERROR);
+            handler.sendEmptyMessageDelayed(1, 1500);
         }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        //将请求结果传递EasyPermission库处理
+        EasyPermissions.onRequestPermissionsResult(requestCode, permissions, grantResults, this);
     }
 
     @SuppressLint("HandlerLeak")
