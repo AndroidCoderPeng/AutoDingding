@@ -94,13 +94,13 @@ public class AutoDingdingService extends Service {
                 intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                 startActivity(intent);
 
-                String qqEmail = Utils.readEmailAddress();
+                String emailAddress = Utils.readEmailAddress();
                 //发送打卡成功的邮件
-                Log.d(TAG, "handleMessage: " + qqEmail);
-                if (qqEmail.equals("")) {
+                Log.d(TAG, "handleMessage: " + emailAddress);
+                if (emailAddress.equals("")) {
                     return;
                 }
-                SendMailUtil.send(qqEmail);
+                SendMailUtil.send(emailAddress);
             }
         }
     };

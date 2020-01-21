@@ -103,7 +103,7 @@ public class DingDingClockAdapter extends RecyclerView.Adapter {
             weekTextView.setText(date);
             //设置上班打卡时间
             startWorkTextView.setOnClickListener(view -> new TimePickerDialog.Builder()
-                    .setMinMillseconds(System.currentTimeMillis() + positionTime)
+                    .setMinMillseconds(System.currentTimeMillis())
                     .setMaxMillseconds(System.currentTimeMillis() + Constant.ONE_MONTH)
                     .setThemeColor(ColorUtil.getRandomColor())
                     .setType(Type.MONTH_DAY_HOUR_MIN)
@@ -215,13 +215,13 @@ public class DingDingClockAdapter extends RecyclerView.Adapter {
                 intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                 mContext.startActivity(intent);
 
-                String qqEmail = Utils.readEmailAddress();
+                String emailAddress = Utils.readEmailAddress();
                 //发送打卡成功的邮件
-                Log.d(TAG, "handleMessage: " + qqEmail);
-                if (qqEmail.equals("")) {
+                Log.d(TAG, "handleMessage: " + emailAddress);
+                if (emailAddress.equals("")) {
                     return;
                 }
-                SendMailUtil.send(qqEmail);
+                SendMailUtil.send(emailAddress);
             }
         }
     };

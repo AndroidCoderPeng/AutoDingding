@@ -76,9 +76,14 @@ public class MainActivity extends BaseNormalActivity implements View.OnClickList
 
     @Override
     public void initData() {
+        boolean isFirst = (boolean) SaveKeyValues.getValue("isFirst", true);
+        if (isFirst) {
+            SaveKeyValues.putValue("isFirst", false);
+            new AlertView("※温馨提醒※", "本软件仅供内部使用，严禁商用或者用作其他非法用途", null, new String[]{"确定"}, null, this, AlertView.Style.Alert, null).setCancelable(false).show();
+        }
         amUpdateLiveData = LiveDataBus.get().with("amUpdate", int.class);
         pmUpdateLiveData = LiveDataBus.get().with("pmUpdate", int.class);
-        String qqEmail = Utils.readEmailAddress();
+        String emailAddress = Utils.readEmailAddress();
         String amKaoQin = (String) SaveKeyValues.getValue("amKaoQin", "");
         String pmKaoQin = (String) SaveKeyValues.getValue("pmKaoQin", "");
         if (!amKaoQin.equals("")) {
@@ -91,8 +96,8 @@ public class MainActivity extends BaseNormalActivity implements View.OnClickList
         } else {
             pmTime.setText("下班打卡时间未设置");
         }
-        if (!qqEmail.equals("")) {
-            textViewTitle.setText("打卡通知邮箱：" + qqEmail);
+        if (!emailAddress.equals("")) {
+            textViewTitle.setText("打卡通知邮箱：" + emailAddress);
         }
     }
 

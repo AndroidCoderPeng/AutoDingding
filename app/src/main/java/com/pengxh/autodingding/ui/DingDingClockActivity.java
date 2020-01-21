@@ -14,6 +14,7 @@ import com.aihook.alertview.library.AlertView;
 import com.aihook.alertview.library.OnItemClickListener;
 import com.gyf.immersionbar.ImmersionBar;
 import com.pengxh.app.multilib.base.BaseNormalActivity;
+import com.pengxh.app.multilib.utils.SaveKeyValues;
 import com.pengxh.app.multilib.widget.EasyToast;
 import com.pengxh.app.multilib.widget.dialog.InputDialog;
 import com.pengxh.autodingding.R;
@@ -63,9 +64,14 @@ public class DingDingClockActivity extends BaseNormalActivity
 
     @Override
     public void initData() {
-        String qqEmail = Utils.readEmailAddress();
-        if (!qqEmail.equals("")) {
-            textViewTitle.setText("打卡通知邮箱：" + qqEmail);
+        boolean isFirst = (boolean) SaveKeyValues.getValue("isFirst", true);
+        if (isFirst) {
+            SaveKeyValues.putValue("isFirst", false);
+            new AlertView("※温馨提醒※", "本软件仅供内部使用，严禁商用或者用作其他非法用途", null, new String[]{"确定"}, null, this, AlertView.Style.Alert, null).setCancelable(false).show();
+        }
+        String emailAddress = Utils.readEmailAddress();
+        if (!emailAddress.equals("")) {
+            textViewTitle.setText("打卡通知邮箱：" + emailAddress);
         }
         sqLiteUtil = SQLiteUtil.getInstance();
     }
