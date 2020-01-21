@@ -4,10 +4,7 @@ import android.annotation.SuppressLint;
 import android.app.Service;
 import android.arch.lifecycle.MutableLiveData;
 import android.arch.lifecycle.Observer;
-import android.content.BroadcastReceiver;
-import android.content.Context;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.os.CountDownTimer;
 import android.os.Handler;
 import android.os.IBinder;
@@ -32,7 +29,6 @@ public class AutoDingdingService extends Service {
     private static final String TAG = "AutoDingdingService";
     private Observer<Long> amKaoQinObserver, pmKaoQinObserver;
     private MutableLiveData<Long> amKaoQinLiveData, pmKaoQinLiveData;
-    private AlarmReceiver alarmReceiver;
 
     @Override
     public void onCreate() {
@@ -40,32 +36,6 @@ public class AutoDingdingService extends Service {
         Log.d(TAG, "onCreate: 自动打卡服务已启动");
         amKaoQinLiveData = LiveDataBus.get().with("amKaoQin", Long.class);
         pmKaoQinLiveData = LiveDataBus.get().with("pmKaoQin", Long.class);
-
-        alarmReceiver = new AlarmReceiver();
-        IntentFilter filter = new IntentFilter();
-        filter.addAction("com.android.deskclock.ALARM_ALERT");//android default broadcast
-        filter.addAction("com.sonyericsson.alarm.ALARM_ALERT");//sony alarm broadcast
-        filter.addAction("com.samsung.sec.android.clockpackage.alarm.ALARM_ALERT");//samsung alarm broadcast
-        filter.addAction("com.cn.google.AlertClock.ALARM_ALERT");//vivo alarm broadcast
-        filter.addAction("com.oppo.alarmclock.alarmclock.ALARM_ALERT");//oppo alarm broadcast
-        filter.addAction("com.zdworks.android.zdclock.ACTION_ALARM_ALERT");//ZTE alarm broadcast
-        filter.setPriority(Integer.MAX_VALUE);
-        registerReceiver(alarmReceiver, filter);
-    }
-
-    class AlarmReceiver extends BroadcastReceiver {
-
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            String action = intent.getAction();
-            Log.d(TAG, "onReceive: " + action);
-            if (action != null) {
-                Log.d(TAG, "onReceive: 启动闹钟监听");
-
-//            Utils.openDingding(Constant.DINGDING);
-//            handler.sendEmptyMessageDelayed(1, 10 * 1000);
-            }
-        }
     }
 
     @Override
@@ -140,7 +110,6 @@ public class AutoDingdingService extends Service {
         super.onDestroy();
         amKaoQinLiveData.removeObserver(amKaoQinObserver);
         pmKaoQinLiveData.removeObserver(pmKaoQinObserver);
-        unregisterReceiver(alarmReceiver);
     }
 
     @Override

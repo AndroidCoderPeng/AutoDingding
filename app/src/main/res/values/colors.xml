@@ -4,9 +4,11 @@
     <color name="colorPrimaryDark">#303F9F</color>
     <color name="colorAccent">#FF4081</color>
     <color name="white">#FFFFFF</color>
+    <color name="gray">#CCCCCC</color>
     <color name="colorAppTheme">#0D0D0D</color>
     <color name="colorListItem">#171717</color>
     <color name="colorText">#FFB508</color>
     <color name="colorLine">#313131</color>
     <color name="colorAppThemeLight">#0094FF</color>
+    <color name="iOSGreen">#4DDC64</color>
 </resources>

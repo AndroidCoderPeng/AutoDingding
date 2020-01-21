@@ -27,7 +27,11 @@
         <activity
             android:name=".ui.MainActivity"
             android:launchMode="singleTask" />
+        <activity
+            android:name=".ui.DingDingClockActivity"
+            android:launchMode="singleTask" />
 
         <service android:name=".service.AutoDingdingService" />
+        <service android:name=".service.BackgroundService" />
     </application>
 </manifest>

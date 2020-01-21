@@ -22,4 +22,6 @@ public class Constant {
      * 2-节假日
      */
     public static final String BASE_URL = "http://timor.tech/api/holiday/info/";
+
+    public static final long ONE_MONTH = 31 * 24 * 60 * 60 * 1000L;
 }

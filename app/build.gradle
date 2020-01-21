@@ -4,7 +4,7 @@ android {
     compileSdkVersion 28
     defaultConfig {
         applicationId "com.pengxh.autodingding"
-        minSdkVersion 23
+        minSdkVersion 19
         targetSdkVersion 28
         versionCode 4
         versionName "1.3"

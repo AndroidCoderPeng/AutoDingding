@@ -159,6 +159,9 @@ public class MainActivity extends BaseNormalActivity implements View.OnClickList
             case R.id.startTimeBtn:
                 //设置上班时间
                 new TimePickerDialog.Builder().setThemeColor(ColorUtil.getRandomColor())
+                        .setCyclic(false)
+                        .setMinMillseconds(System.currentTimeMillis())
+                        .setMaxMillseconds(System.currentTimeMillis() + Constant.ONE_MONTH)
                         .setType(Type.ALL)
                         .setCallBack(new OnDateSetListener() {
                             @Override
@@ -187,6 +190,9 @@ public class MainActivity extends BaseNormalActivity implements View.OnClickList
             case R.id.endTimeBtn:
                 //设置下班时间
                 new TimePickerDialog.Builder().setThemeColor(ColorUtil.getRandomColor())
+                        .setCyclic(false)
+                        .setMinMillseconds(System.currentTimeMillis())
+                        .setMaxMillseconds(System.currentTimeMillis() + Constant.ONE_MONTH)
                         .setType(Type.ALL)
                         .setCallBack(new OnDateSetListener() {
                             @Override
