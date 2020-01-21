@@ -239,32 +239,23 @@ public class MainActivity extends BaseNormalActivity implements View.OnClickList
     }
 
     private void setEmailAddress() {
-        new InputDialog.Builder()
-                .setContext(this)
-                .setTitle("设置邮箱")
-                .setNegativeButton("取消")
-                .setPositiveButton("确定")
-                .setOnDialogClickListener(new InputDialog.onDialogClickListener() {
-                    @Override
-                    public void onConfirmClick(Dialog dialog, String input) {
-                        if (!input.isEmpty()) {
-                            if (input.endsWith("@qq.com")) {
-                                Utils.saveEmailAddress(input);
-                                textViewTitle.setText("打卡通知邮箱：" + input);
-                            } else {
-                                EasyToast.showToast("邮箱设置失败，暂时只支持QQ邮箱！", EasyToast.WARING);
-                            }
-                            dialog.dismiss();
-                        } else {
-                            EasyToast.showToast("什么都还没输入呢！", EasyToast.ERROR);
-                        }
-                    }
+        new InputDialog.Builder().setContext(this).setTitle("设置邮箱").setNegativeButton("取消").setPositiveButton("确定").setOnDialogClickListener(new InputDialog.onDialogClickListener() {
+            @Override
+            public void onConfirmClick(Dialog dialog, String input) {
+                if (!input.isEmpty()) {
+                    Utils.saveEmailAddress(input);
+                    textViewTitle.setText("打卡通知邮箱：" + input);
+                    dialog.dismiss();
+                } else {
+                    EasyToast.showToast("什么都还没输入呢！", EasyToast.ERROR);
+                }
+            }
 
-                    @Override
-                    public void onCancelClick(Dialog dialog) {
-                        dialog.dismiss();
-                    }
-                }).build().show();
+            @Override
+            public void onCancelClick(Dialog dialog) {
+                dialog.dismiss();
+            }
+        }).build().show();
     }
 
     //屏蔽返回键

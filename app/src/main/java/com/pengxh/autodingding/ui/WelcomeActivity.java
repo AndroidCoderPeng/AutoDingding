@@ -47,8 +47,8 @@ public class WelcomeActivity extends AppCompatActivity implements EasyPermission
 
     private void startMainActivity() {
         //一周版
-//        startActivity(new Intent(this, DingDingClockActivity.class));
-        startActivity(new Intent(this, MainActivity.class));//一天版
+        startActivity(new Intent(this, DingDingClockActivity.class));
+//        startActivity(new Intent(this, MainActivity.class));//一天版
         finish();
     }
 

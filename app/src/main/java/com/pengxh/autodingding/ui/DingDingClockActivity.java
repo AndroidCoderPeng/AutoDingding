@@ -114,12 +114,8 @@ public class DingDingClockActivity extends BaseNormalActivity
             @Override
             public void onConfirmClick(Dialog dialog, String input) {
                 if (!input.isEmpty()) {
-                    if (input.endsWith("@qq.com")) {
-                        Utils.saveEmailAddress(input);
-                        textViewTitle.setText("打卡通知邮箱：" + input);
-                    } else {
-                        EasyToast.showToast("邮箱设置失败，暂时只支持QQ邮箱！", EasyToast.WARING);
-                    }
+                    Utils.saveEmailAddress(input);
+                    textViewTitle.setText("打卡通知邮箱：" + input);
                     dialog.dismiss();
                 } else {
                     EasyToast.showToast("什么都还没输入呢！", EasyToast.ERROR);
