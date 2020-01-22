@@ -99,8 +99,8 @@ public class TimeOrDateUtil {
         return rTimestampToDate(today);
     }
 
-    public static String getRandomTime(long startTimeMillis, long endTimeMillis) {
-        long nextLong = ThreadLocalRandom.current().nextLong(startTimeMillis, endTimeMillis);
+    public static String getRandomTime(long minMillis, long maxMillis) {
+        long nextLong = ThreadLocalRandom.current().nextLong(minMillis, maxMillis);
         Log.d(TAG, "getRandomMillis: " + nextLong);
         return timestampToTime(nextLong);
     }

@@ -117,9 +117,21 @@
             android:id="@+id/introduceTxt"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_above="@id/mainOpenSettings"
+            android:layout_centerHorizontal="true"
+            android:layout_marginBottom="20dp"
+            android:text="使用说明" />
+
+        <TextView
+            android:id="@+id/mainOpenSettings"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:layout_alignParentBottom="true"
             android:layout_centerHorizontal="true"
-            android:layout_marginBottom="30dp"
-            android:text="使用说明" />
+            android:layout_marginBottom="10dp"
+            android:background="@drawable/bg_layout"
+            android:padding="5dp"
+            android:text="打开通知监听"
+            android:textColor="@color/white" />
     </RelativeLayout>
 </LinearLayout>

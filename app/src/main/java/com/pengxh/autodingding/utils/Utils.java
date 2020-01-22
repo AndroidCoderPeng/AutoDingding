@@ -8,8 +8,10 @@ import android.content.Intent;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
+import android.os.Build;
 import android.os.Environment;
 import android.os.PowerManager;
+import android.provider.Settings;
 import android.util.Log;
 
 import com.squareup.okhttp.Call;
@@ -91,7 +93,7 @@ public class Utils {
      * @param packageName 应用包名
      */
 
-    public static void openDingding(String packageName) {
+    public static void openDingDing(String packageName) {
         wakeUpAndUnlock();
         PackageManager packageManager = mContext.getPackageManager();
         Intent resolveIntent = new Intent(Intent.ACTION_MAIN, null);
@@ -107,6 +109,23 @@ public class Utils {
             ComponentName cn = new ComponentName(packageName, className);
             intent.setComponent(cn);
             mContext.startActivity(intent);
+        }
+    }
+
+    /**
+     * 打开通知设置
+     */
+    public static void openNotificationSettings() {
+        try {
+            Intent intent;
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP_MR1) {
+                intent = new Intent(Settings.ACTION_NOTIFICATION_LISTENER_SETTINGS);
+            } else {
+                intent = new Intent("android.settings.ACTION_NOTIFICATION_LISTENER_SETTINGS");
+            }
+            mContext.startActivity(intent);
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 

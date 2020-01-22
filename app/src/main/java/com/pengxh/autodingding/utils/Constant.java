@@ -12,6 +12,7 @@ public class Constant {
     //钉钉包名：com.alibaba.android.rimet
     //打卡页面类名：com.alibaba.lightapp.runtime.activity.CommonWebViewActivity
     public static final String DINGDING = "com.alibaba.android.rimet";
+    public static final String DINGDING_ACTION = "action.sendNotification";
 
     public static final int[] images = {R.drawable.settings, R.drawable.about};
 

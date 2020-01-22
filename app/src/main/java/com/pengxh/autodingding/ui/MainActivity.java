@@ -1,10 +1,13 @@
 package com.pengxh.autodingding.ui;
 
 import android.annotation.SuppressLint;
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
 import android.os.CountDownTimer;
 import android.os.Handler;
 import android.os.Message;
+import android.provider.Settings;
 import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
@@ -16,9 +19,11 @@ import com.gyf.immersionbar.ImmersionBar;
 import com.jzxiang.pickerview.TimePickerDialog;
 import com.jzxiang.pickerview.data.Type;
 import com.pengxh.app.multilib.base.BaseNormalActivity;
+import com.pengxh.app.multilib.utils.BroadcastManager;
 import com.pengxh.app.multilib.utils.ColorUtil;
 import com.pengxh.app.multilib.widget.EasyToast;
 import com.pengxh.autodingding.R;
+import com.pengxh.autodingding.service.NotificationMonitorService;
 import com.pengxh.autodingding.utils.Constant;
 import com.pengxh.autodingding.utils.SendMailUtil;
 import com.pengxh.autodingding.utils.TimeOrDateUtil;
@@ -46,6 +51,9 @@ public class MainActivity extends BaseNormalActivity implements View.OnClickList
     @BindView(R.id.pmTime)
     TextView pmTime;
 
+    private BroadcastManager broadcastManager;
+    private String emailMessage = "";
+
     @Override
     public void initView() {
         setContentView(R.layout.activity_main);
@@ -63,10 +71,26 @@ public class MainActivity extends BaseNormalActivity implements View.OnClickList
 
     @Override
     public void initEvent() {
-
+        broadcastManager = BroadcastManager.getInstance(this);
+        broadcastManager.addAction(Constant.DINGDING_ACTION, new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                String action = intent.getAction();
+                if (action == null) {
+                    return;
+                }
+                if (action.equals(Constant.DINGDING_ACTION)) {
+                    String data = intent.getStringExtra("data");
+                    //工作通知:CSS-考勤打卡:23:31 上班打卡成功,进入钉钉查看详情
+                    //工作通知:CSS-考勤打卡:23:32 下班打卡成功,进入钉钉查看详情
+                    Log.d(TAG, "onReceive: " + data);
+                    emailMessage = data;
+                }
+            }
+        });
     }
 
-    @OnClick({R.id.startLayoutView, R.id.endLayoutView, R.id.introduceTxt})
+    @OnClick({R.id.startLayoutView, R.id.endLayoutView, R.id.introduceTxt, R.id.mainOpenSettings})
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
@@ -100,7 +124,7 @@ public class MainActivity extends BaseNormalActivity implements View.OnClickList
 
                                     @Override
                                     public void onFinish() {
-                                        Utils.openDingding(Constant.DINGDING);
+                                        Utils.openDingDing(Constant.DINGDING);
                                         handler.sendEmptyMessageDelayed(1, 10 * 1000);
                                     }
                                 }.start();
@@ -139,7 +163,7 @@ public class MainActivity extends BaseNormalActivity implements View.OnClickList
 
                                     @Override
                                     public void onFinish() {
-                                        Utils.openDingding(Constant.DINGDING);
+                                        Utils.openDingDing(Constant.DINGDING);
                                         handler.sendEmptyMessageDelayed(1, 10 * 1000);
                                     }
                                 }.start();
@@ -153,6 +177,17 @@ public class MainActivity extends BaseNormalActivity implements View.OnClickList
                         null, new String[]{"确定"}, null,
                         this, AlertView.Style.Alert,
                         null).setCancelable(false).show();
+                break;
+            case R.id.mainOpenSettings:
+                String string = Settings.Secure.getString(getContentResolver(), "enabled_notification_listeners");
+                if (!string.contains(NotificationMonitorService.class.getName())) {
+                    Utils.openNotificationSettings();
+                    return;
+                }
+                startService(new Intent(this, NotificationMonitorService.class));
+                EasyToast.showToast("状态栏通知监听服务已启动", EasyToast.SUCCESS);
+                break;
+            default:
                 break;
         }
     }
@@ -172,8 +207,14 @@ public class MainActivity extends BaseNormalActivity implements View.OnClickList
                 if (emailAddress.equals("")) {
                     return;
                 }
-                SendMailUtil.send(emailAddress);
+                SendMailUtil.send(emailAddress, emailMessage);
             }
         }
     };
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        broadcastManager.destroy(Constant.DINGDING_ACTION);
+    }
 }

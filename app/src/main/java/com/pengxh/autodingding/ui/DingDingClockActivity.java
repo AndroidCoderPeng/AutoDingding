@@ -2,9 +2,12 @@ package com.pengxh.autodingding.ui;
 
 import android.annotation.SuppressLint;
 import android.app.Dialog;
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Handler;
 import android.os.Message;
+import android.provider.Settings;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
@@ -16,10 +19,12 @@ import android.widget.TextView;
 import com.aihook.alertview.library.AlertView;
 import com.gyf.immersionbar.ImmersionBar;
 import com.pengxh.app.multilib.base.BaseNormalActivity;
+import com.pengxh.app.multilib.utils.BroadcastManager;
 import com.pengxh.app.multilib.utils.SaveKeyValues;
 import com.pengxh.app.multilib.widget.EasyToast;
 import com.pengxh.app.multilib.widget.dialog.InputDialog;
 import com.pengxh.autodingding.R;
+import com.pengxh.autodingding.service.NotificationMonitorService;
 import com.pengxh.autodingding.utils.Constant;
 import com.pengxh.autodingding.utils.SendMailUtil;
 import com.pengxh.autodingding.utils.TimeOrDateUtil;
@@ -63,6 +68,9 @@ public class DingDingClockActivity extends BaseNormalActivity implements View.On
     @BindView(R.id.endWorkSwitch)
     Switch endWorkSwitch;
 
+    private BroadcastManager broadcastManager;
+    private String emailMessage = "";
+
     @Override
     public void initView() {
         setContentView(R.layout.activity_clock);
@@ -80,6 +88,23 @@ public class DingDingClockActivity extends BaseNormalActivity implements View.On
         if (!emailAddress.equals("")) {
             textViewTitle.setText("打卡通知邮箱：" + emailAddress);
         }
+        broadcastManager = BroadcastManager.getInstance(this);
+        broadcastManager.addAction(Constant.DINGDING_ACTION, new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                String action = intent.getAction();
+                if (action == null) {
+                    return;
+                }
+                if (action.equals(Constant.DINGDING_ACTION)) {
+                    String data = intent.getStringExtra("data");
+                    //工作通知:CSS-考勤打卡:23:31 上班打卡成功,进入钉钉查看详情
+                    //工作通知:CSS-考勤打卡:23:32 下班打卡成功,进入钉钉查看详情
+                    Log.d(TAG, "onReceive: " + data);
+                    emailMessage = data;
+                }
+            }
+        });
     }
 
     @Override
@@ -108,7 +133,7 @@ public class DingDingClockActivity extends BaseNormalActivity implements View.On
                                 public void run() {
                                     String systemTime = TimeOrDateUtil.timestampToTime(System.currentTimeMillis());
                                     if (startTime.equals(systemTime)) {
-                                        Utils.openDingding(Constant.DINGDING);
+                                        Utils.openDingDing(Constant.DINGDING);
                                         handler.sendEmptyMessageDelayed(10, 10 * 1000);
                                     }
                                 }
@@ -137,7 +162,7 @@ public class DingDingClockActivity extends BaseNormalActivity implements View.On
                                 public void run() {
                                     String systemTime = TimeOrDateUtil.timestampToTime(System.currentTimeMillis());
                                     if (endTime.equals(systemTime)) {
-                                        Utils.openDingding(Constant.DINGDING);
+                                        Utils.openDingDing(Constant.DINGDING);
                                         handler.sendEmptyMessageDelayed(10, 10 * 1000);
                                     }
                                 }
@@ -156,50 +181,57 @@ public class DingDingClockActivity extends BaseNormalActivity implements View.On
         }
     }
 
-    @OnClick({R.id.imageViewTitleRight, R.id.introduceText, R.id.startLayout, R.id.endLayout})
+    @OnClick({R.id.imageViewTitleRight, R.id.startLayout, R.id.endLayout, R.id.introduceText, R.id.clockOpenSettings})
     @Override
     public void onClick(View v) {
-        if (v.getId() == R.id.imageViewTitleRight) {
-            EasyPopupWindow easyPopupWindow = new EasyPopupWindow(this, items);
-            easyPopupWindow.setPopupWindowClickListener(new EasyPopupWindow.PopupWindowClickListener() {
-                @Override
-                public void popupWindowClick(int position) {
+        switch (v.getId()) {
+            case R.id.imageViewTitleRight:
+                EasyPopupWindow easyPopupWindow = new EasyPopupWindow(this, items);
+                easyPopupWindow.setPopupWindowClickListener(position -> {
                     if (position == 0) {
-                        startMainActivity();
+                        startActivity(new Intent(this, MainActivity.class));
                     } else if (position == 1) {
                         setEmailAddress();
                     }
+                });
+                easyPopupWindow.showAsDropDown(titleLayout, titleLayout.getWidth(), 0);
+                break;
+            case R.id.startLayout:
+                String startCurrentDate = TimeOrDateUtil.getCurrentDate();
+                long startMillis = TimeOrDateUtil.dateToTimestamp(startCurrentDate + " 8:00:00");//8:00:00
+                long endMillis = TimeOrDateUtil.dateToTimestamp(startCurrentDate + " 9:00:00");//9:00:00
+                //在起始时间和结束时间之间取随机数，然后转为真实时间作为随机打卡时间
+                String randomStartTime = TimeOrDateUtil.getRandomTime(startMillis, endMillis);
+
+                timeMap.put(R.id.startLayout, randomStartTime);
+                startWorkTextView.setText("打卡时间：" + randomStartTime);
+                break;
+            case R.id.endLayout:
+                String endCurrentDate = TimeOrDateUtil.getCurrentDate();
+                long startTimeMillis = TimeOrDateUtil.dateToTimestamp(endCurrentDate + " 17:30:00");//17:30:00
+                long endTimeMillis = TimeOrDateUtil.dateToTimestamp(endCurrentDate + " 18:30:00");//18:30:00
+                //在起始时间和结束时间之间取随机数，然后转为真实时间作为随机打卡时间
+                String randomEndTime = TimeOrDateUtil.getRandomTime(startTimeMillis, endTimeMillis);
+
+                timeMap.put(R.id.endLayout, randomEndTime);//以View的ID作为key
+                endWorkTextView.setText("打卡时间：" + randomEndTime);
+                break;
+            case R.id.introduceText:
+                new AlertView("功能介绍", getResources().getString(R.string.about), null, new String[]{"确定"}, null,
+                        DingDingClockActivity.this, AlertView.Style.Alert, null).setCancelable(false).show();
+                break;
+            case R.id.clockOpenSettings:
+                String string = Settings.Secure.getString(getContentResolver(), "enabled_notification_listeners");
+                if (!string.contains(NotificationMonitorService.class.getName())) {
+                    Utils.openNotificationSettings();
+                    return;
                 }
-            });
-            easyPopupWindow.showAsDropDown(titleLayout, titleLayout.getWidth(), 0);
-        } else if (v.getId() == R.id.introduceText) {
-            new AlertView("功能介绍", getResources().getString(R.string.about),
-                    null, new String[]{"确定"}, null,
-                    DingDingClockActivity.this, AlertView.Style.Alert,
-                    null).setCancelable(false).show();
-        } else if (v.getId() == R.id.startLayout) {
-            String currentDate = TimeOrDateUtil.getCurrentDate();
-            long startTimeMillis = TimeOrDateUtil.dateToTimestamp(currentDate + " 8:00:00");//8:00:00
-            long endTimeMillis = TimeOrDateUtil.dateToTimestamp(currentDate + " 9:00:00");//9:00:00
-            //在起始时间和结束时间之间取随机数，然后转为真实时间作为随机打卡时间
-            String randomStartTime = TimeOrDateUtil.getRandomTime(startTimeMillis, endTimeMillis);
-
-            timeMap.put(R.id.startLayout, randomStartTime);
-            startWorkTextView.setText("打卡时间：" + randomStartTime);
-        } else if (v.getId() == R.id.endLayout) {
-            String currentDate = TimeOrDateUtil.getCurrentDate();
-            long startTimeMillis = TimeOrDateUtil.dateToTimestamp(currentDate + " 17:30:00");//17:30:00
-            long endTimeMillis = TimeOrDateUtil.dateToTimestamp(currentDate + " 18:30:00");//18:30:00
-            //在起始时间和结束时间之间取随机数，然后转为真实时间作为随机打卡时间
-            String randomEndTime = TimeOrDateUtil.getRandomTime(startTimeMillis, endTimeMillis);
-
-            timeMap.put(R.id.endLayout, randomEndTime);//以View的ID作为key
-            endWorkTextView.setText("打卡时间：" + randomEndTime);
+                startService(new Intent(this, NotificationMonitorService.class));
+                EasyToast.showToast("状态栏通知监听服务已启动", EasyToast.SUCCESS);
+                break;
+            default:
+                break;
         }
-    }
-
-    private void startMainActivity() {
-        startActivity(new Intent(this, MainActivity.class));//一天版
     }
 
     private void setEmailAddress() {
@@ -257,8 +289,14 @@ public class DingDingClockActivity extends BaseNormalActivity implements View.On
                 if (emailAddress.equals("")) {
                     return;
                 }
-                SendMailUtil.send(emailAddress);
+                SendMailUtil.send(emailAddress, emailMessage);
             }
         }
     };
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        broadcastManager.destroy(Constant.DINGDING_ACTION);
+    }
 }
