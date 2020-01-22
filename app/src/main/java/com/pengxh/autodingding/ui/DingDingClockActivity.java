@@ -84,76 +84,76 @@ public class DingDingClockActivity extends BaseNormalActivity implements View.On
 
     @Override
     public void initEvent() {
-        new Timer().schedule(new TimerTask() {
-            @Override
-            public void run() {
-                String systemTime = TimeOrDateUtil.timestampToTime(System.currentTimeMillis());
-//                currentTime.setTextColor(ColorUtil.getRandomColor());
-                currentTime.setText(systemTime);
-            }
-        }, 0, 1000);
-        if (!Utils.isAppAvailable(Constant.DINGDING)) {
+        if (Utils.isAppAvailable(Constant.DINGDING)) {
+            new Timer().schedule(new TimerTask() {
+                @Override
+                public void run() {
+                    String systemTime = TimeOrDateUtil.timestampToTime(System.currentTimeMillis());
+                    currentTime.setText(systemTime);
+                }
+            }, 0, 1000);
+
+            startWorkSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+                @Override
+                public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                    if (timeMap.get(R.id.startLayout) == null) {
+                        buttonView.setChecked(false);
+                        EasyToast.showToast("还未设置时间", EasyToast.WARING);
+                    } else {
+                        Timer startTimer = new Timer();
+                        if (isChecked) {
+                            final String startTime = timeMap.get(R.id.startLayout);
+                            startTimer.schedule(new TimerTask() {
+                                @Override
+                                public void run() {
+                                    String systemTime = TimeOrDateUtil.timestampToTime(System.currentTimeMillis());
+                                    if (startTime.equals(systemTime)) {
+                                        Utils.openDingding(Constant.DINGDING);
+                                        handler.sendEmptyMessageDelayed(10, 10 * 1000);
+                                    }
+                                }
+                            }, 0, 1000);//1s检查一次
+                        } else {
+                            startTimer.cancel();
+                            startWorkTextView.setText("打卡时间：--:--:--");
+                            timeMap.remove(R.id.startLayout);
+                        }
+                    }
+                }
+            });
+
+            endWorkSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+                @Override
+                public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                    if (timeMap.get(R.id.endLayout) == null) {
+                        buttonView.setChecked(false);
+                        EasyToast.showToast("还未设置时间", EasyToast.WARING);
+                    } else {
+                        Timer endTimer = new Timer();
+                        if (isChecked) {
+                            final String endTime = timeMap.get(R.id.endLayout);
+                            endTimer.schedule(new TimerTask() {
+                                @Override
+                                public void run() {
+                                    String systemTime = TimeOrDateUtil.timestampToTime(System.currentTimeMillis());
+                                    if (endTime.equals(systemTime)) {
+                                        Utils.openDingding(Constant.DINGDING);
+                                        handler.sendEmptyMessageDelayed(10, 10 * 1000);
+                                    }
+                                }
+                            }, 0, 1000);
+                        } else {
+                            endTimer.cancel();
+                            endWorkTextView.setText("打卡时间：--:--:--");
+                            timeMap.remove(R.id.endLayout);
+                        }
+                    }
+                }
+            });
+        } else {
             new AlertView("温馨提示", "手机没有安装钉钉软件，无法自动打卡", null, new String[]{"确定"}, null, this, AlertView.Style.Alert,
                     (o, position) -> DingDingClockActivity.this.finish()).setCancelable(false).show();
         }
-
-        startWorkSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                if (timeMap.get(R.id.startLayout) == null) {
-                    buttonView.setChecked(false);
-                    EasyToast.showToast("还未设置时间", EasyToast.WARING);
-                } else {
-                    Timer startTimer = new Timer();
-                    if (isChecked) {
-                        final String startTime = timeMap.get(R.id.startLayout);
-                        startTimer.schedule(new TimerTask() {
-                            @Override
-                            public void run() {
-                                String systemTime = TimeOrDateUtil.timestampToTime(System.currentTimeMillis());
-                                if (startTime.equals(systemTime)) {
-                                    Utils.openDingding(Constant.DINGDING);
-                                    handler.sendEmptyMessageDelayed(10, 10 * 1000);
-                                }
-                            }
-                        }, 0, 1000);//1s检查一次
-                    } else {
-                        startTimer.cancel();
-                        startWorkTextView.setText("打卡时间：--:--:--");
-                        timeMap.remove(R.id.startLayout);
-                    }
-                }
-            }
-        });
-
-        endWorkSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                if (timeMap.get(R.id.endLayout) == null) {
-                    buttonView.setChecked(false);
-                    EasyToast.showToast("还未设置时间", EasyToast.WARING);
-                } else {
-                    Timer endTimer = new Timer();
-                    if (isChecked) {
-                        final String endTime = timeMap.get(R.id.endLayout);
-                        endTimer.schedule(new TimerTask() {
-                            @Override
-                            public void run() {
-                                String systemTime = TimeOrDateUtil.timestampToTime(System.currentTimeMillis());
-                                if (endTime.equals(systemTime)) {
-                                    Utils.openDingding(Constant.DINGDING);
-                                    handler.sendEmptyMessageDelayed(10, 10 * 1000);
-                                }
-                            }
-                        }, 0, 1000);
-                    } else {
-                        endTimer.cancel();
-                        endWorkTextView.setText("打卡时间：--:--:--");
-                        timeMap.remove(R.id.endLayout);
-                    }
-                }
-            }
-        });
     }
 
     @OnClick({R.id.imageViewTitleRight, R.id.introduceText, R.id.startLayout, R.id.endLayout})
