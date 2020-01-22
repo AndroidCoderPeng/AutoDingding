@@ -9,7 +9,6 @@ import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.widget.CompoundButton;
-import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.Switch;
 import android.widget.TextView;
@@ -53,8 +52,6 @@ public class DingDingClockActivity extends BaseNormalActivity implements View.On
     RelativeLayout titleLayout;
     @BindView(R.id.textViewTitle)
     TextView textViewTitle;
-    @BindView(R.id.imageViewTitleRight)
-    ImageView imageViewTitleRight;
     @BindView(R.id.currentTime)
     TextView currentTime;
     @BindView(R.id.startWorkTextView)

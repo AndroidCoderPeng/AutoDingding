@@ -1,30 +1,26 @@
 package com.pengxh.autodingding.ui;
 
 import android.annotation.SuppressLint;
-import android.arch.lifecycle.MutableLiveData;
-import android.arch.lifecycle.Observer;
 import android.content.Intent;
-import android.support.annotation.Nullable;
+import android.os.CountDownTimer;
+import android.os.Handler;
+import android.os.Message;
 import android.util.Log;
 import android.view.View;
-import android.widget.Button;
 import android.widget.ImageView;
-import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.aihook.alertview.library.AlertView;
 import com.gyf.immersionbar.ImmersionBar;
 import com.jzxiang.pickerview.TimePickerDialog;
 import com.jzxiang.pickerview.data.Type;
-import com.jzxiang.pickerview.listener.OnDateSetListener;
 import com.pengxh.app.multilib.base.BaseNormalActivity;
 import com.pengxh.app.multilib.utils.ColorUtil;
-import com.pengxh.app.multilib.utils.SaveKeyValues;
 import com.pengxh.app.multilib.widget.EasyToast;
 import com.pengxh.autodingding.R;
-import com.pengxh.autodingding.service.AutoDingdingService;
 import com.pengxh.autodingding.utils.Constant;
-import com.pengxh.autodingding.utils.LiveDataBus;
+import com.pengxh.autodingding.utils.SendMailUtil;
 import com.pengxh.autodingding.utils.TimeOrDateUtil;
 import com.pengxh.autodingding.utils.Utils;
 
@@ -41,21 +37,14 @@ public class MainActivity extends BaseNormalActivity implements View.OnClickList
     TextView textViewTitle;
     @BindView(R.id.imageViewTitleRight)
     ImageView imageViewTitleRight;
-    @BindView(R.id.startTimeBtn)
-    Button startTimeBtn;
-    @BindView(R.id.endTimeBtn)
-    Button endTimeBtn;
+    @BindView(R.id.startTimeView)
+    TextView startTimeView;
+    @BindView(R.id.endTimeView)
+    TextView endTimeView;
     @BindView(R.id.amTime)
     TextView amTime;
     @BindView(R.id.pmTime)
     TextView pmTime;
-    @BindView(R.id.startProgressBar)
-    ProgressBar startProgressBar;
-    @BindView(R.id.endProgressBar)
-    ProgressBar endProgressBar;
-
-    private Observer<Integer> amUpdateObserver, pmUpdateObserver;
-    private MutableLiveData<Integer> amUpdateLiveData, pmUpdateLiveData;
 
     @Override
     public void initView() {
@@ -66,21 +55,7 @@ public class MainActivity extends BaseNormalActivity implements View.OnClickList
 
     @Override
     public void initData() {
-        amUpdateLiveData = LiveDataBus.get().with("amUpdate", int.class);
-        pmUpdateLiveData = LiveDataBus.get().with("pmUpdate", int.class);
         String emailAddress = Utils.readEmailAddress();
-        String amKaoQin = (String) SaveKeyValues.getValue("amKaoQin", "");
-        String pmKaoQin = (String) SaveKeyValues.getValue("pmKaoQin", "");
-        if (!amKaoQin.equals("")) {
-            amTime.setText("将在" + amKaoQin + "自动打卡");
-        } else {
-            amTime.setText("上班打卡时间未设置");
-        }
-        if (!pmKaoQin.equals("")) {
-            pmTime.setText("将在" + pmKaoQin + "自动打卡");
-        } else {
-            pmTime.setText("下班打卡时间未设置");
-        }
         if (!emailAddress.equals("")) {
             textViewTitle.setText("打卡通知邮箱：" + emailAddress);
         }
@@ -88,119 +63,117 @@ public class MainActivity extends BaseNormalActivity implements View.OnClickList
 
     @Override
     public void initEvent() {
-        startService(new Intent(this, AutoDingdingService.class));
 
-        //监听AutoDingdingService返回来的消息，更新UI
-        amUpdateObserver = new Observer<Integer>() {
-            @SuppressLint("SetTextI18n")
-            @Override
-            public void onChanged(@Nullable Integer integer) {
-                startTimeBtn.setText(integer + "s");
-                startProgressBar.setProgress(integer);
-                SaveKeyValues.putValue("progress", integer);
-                if (startProgressBar.getProgress() == 0) {
-                    //重置所有状态
-                    amTime.setText("上班打卡时间未设置");
-                    startTimeBtn.setText("上班设置");
-                    startProgressBar.setVisibility(View.GONE);
-                    SaveKeyValues.clearAll();
-                }
-            }
-        };
-        amUpdateLiveData.observeForever(amUpdateObserver);
-
-        pmUpdateObserver = new Observer<Integer>() {
-            @SuppressLint("SetTextI18n")
-            @Override
-            public void onChanged(@Nullable Integer integer) {
-                endTimeBtn.setText(integer + "s");
-                endProgressBar.setProgress(integer);
-                SaveKeyValues.putValue("progress", integer);
-                if (endProgressBar.getProgress() == 0) {
-                    //重置所有状态
-                    pmTime.setText("下班打卡时间未设置");
-                    endTimeBtn.setText("下班设置");
-                    endProgressBar.setVisibility(View.GONE);
-                    SaveKeyValues.clearAll();
-                }
-            }
-        };
-        pmUpdateLiveData.observeForever(pmUpdateObserver);
     }
 
-    @OnClick({R.id.startTimeBtn, R.id.endTimeBtn})
+    @OnClick({R.id.startLayoutView, R.id.endLayoutView, R.id.introduceTxt})
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
-            case R.id.startTimeBtn:
+            case R.id.startLayoutView:
                 //设置上班时间
                 new TimePickerDialog.Builder().setThemeColor(ColorUtil.getRandomColor())
+                        .setWheelItemTextSize(15)
                         .setCyclic(false)
                         .setMinMillseconds(System.currentTimeMillis())
                         .setMaxMillseconds(System.currentTimeMillis() + Constant.ONE_MONTH)
                         .setType(Type.ALL)
-                        .setCallBack(new OnDateSetListener() {
-                            @Override
-                            public void onDateSet(TimePickerDialog timePickerView, long millSeconds) {
-                                //计算时间差
-                                long deltaTime = TimeOrDateUtil.deltaTime(millSeconds / 1000);
-                                Log.d(TAG, "amKaoQin: " + deltaTime);
-                                if (deltaTime == 0) {
-                                    Log.w(TAG, "", new Throwable());
-                                    return;
-                                }
-                                String amKaoQin = TimeOrDateUtil.timestampToDate(millSeconds);
-                                amTime.setText("将在" + amKaoQin + "自动打卡");
-                                SaveKeyValues.putValue("amKaoQin", amKaoQin);
-                                int currentPro = startProgressBar.getProgress();
-                                if (currentPro != 0) {
-                                    EasyToast.showToast("当前已有定时任务，无法重复设置", EasyToast.ERROR);
-                                } else {
-                                    startProgressBar.setMax((int) deltaTime);
-                                    startProgressBar.setVisibility(View.VISIBLE);
-                                    LiveDataBus.get().with("amKaoQin").setValue(deltaTime);
-                                }
+                        .setCallBack((timePickerView, millSeconds) -> {
+                            //计算时间差
+                            long deltaTime = TimeOrDateUtil.deltaTime(millSeconds / 1000);
+                            Log.d(TAG, "amKaoQin: " + deltaTime);
+                            if (deltaTime == 0) {
+                                Log.w(TAG, "", new Throwable());
+                                return;
+                            }
+                            amTime.setText("打卡时间：" + TimeOrDateUtil.timestampToDate(millSeconds));
+                            //显示倒计时
+                            String text = startTimeView.getText().toString();
+                            if (text.equals("--")) {
+                                new CountDownTimer(deltaTime * 1000, 1000) {
+                                    @Override
+                                    public void onTick(long l) {
+                                        int tickTime = (int) (l / 1000);
+                                        //更新UI
+                                        startTimeView.setText(tickTime + "s");
+                                    }
+
+                                    @Override
+                                    public void onFinish() {
+                                        Utils.openDingding(Constant.DINGDING);
+                                        handler.sendEmptyMessageDelayed(1, 10 * 1000);
+                                    }
+                                }.start();
+                            } else {
+                                EasyToast.showToast("已有任务在进行中", EasyToast.WARING);
                             }
                         }).build().show(getSupportFragmentManager(), "year_month_day_hour_minute");
                 break;
-            case R.id.endTimeBtn:
+            case R.id.endLayoutView:
                 //设置下班时间
                 new TimePickerDialog.Builder().setThemeColor(ColorUtil.getRandomColor())
+                        .setWheelItemTextSize(15)
                         .setCyclic(false)
                         .setMinMillseconds(System.currentTimeMillis())
                         .setMaxMillseconds(System.currentTimeMillis() + Constant.ONE_MONTH)
                         .setType(Type.ALL)
-                        .setCallBack(new OnDateSetListener() {
-                            @Override
-                            public void onDateSet(TimePickerDialog timePickerView, long millSeconds) {
-                                //计算时间差
-                                long deltaTime = TimeOrDateUtil.deltaTime(millSeconds / 1000);
-                                Log.d(TAG, "pmKaoQin: " + deltaTime);
-                                if (deltaTime == 0) {
-                                    Log.w(TAG, "", new Throwable());
-                                    return;
-                                }
-                                String pmKaoQin = TimeOrDateUtil.timestampToDate(millSeconds);
-                                pmTime.setText("将在" + pmKaoQin + "自动打卡");
-                                SaveKeyValues.putValue("pmKaoQin", pmKaoQin);
-                                int currentPro = endProgressBar.getProgress();
-                                if (currentPro != 0) {
-                                    EasyToast.showToast("当前已有定时任务，无法重复设置", EasyToast.ERROR);
-                                } else {
-                                    endProgressBar.setMax((int) deltaTime);
-                                    endProgressBar.setVisibility(View.VISIBLE);
-                                    LiveDataBus.get().with("pmKaoQin").setValue(deltaTime);
-                                }
+                        .setCallBack((timePickerView, millSeconds) -> {
+                            //计算时间差
+                            long deltaTime = TimeOrDateUtil.deltaTime(millSeconds / 1000);
+                            Log.d(TAG, "pmKaoQin: " + deltaTime);
+                            if (deltaTime == 0) {
+                                Log.w(TAG, "", new Throwable());
+                                return;
+                            }
+                            pmTime.setText("打卡时间：" + TimeOrDateUtil.timestampToDate(millSeconds));
+                            //显示倒计时
+                            String text = startTimeView.getText().toString();
+                            if (text.equals("--")) {
+                                new CountDownTimer(deltaTime * 1000, 1000) {
+                                    @Override
+                                    public void onTick(long l) {
+                                        int tickTime = (int) (l / 1000);
+                                        //更新UI
+                                        endTimeView.setText(tickTime + "s");
+                                    }
+
+                                    @Override
+                                    public void onFinish() {
+                                        Utils.openDingding(Constant.DINGDING);
+                                        handler.sendEmptyMessageDelayed(1, 10 * 1000);
+                                    }
+                                }.start();
+                            } else {
+                                EasyToast.showToast("已有任务在进行中", EasyToast.WARING);
                             }
                         }).build().show(getSupportFragmentManager(), "year_month_day_hour_minute");
+                break;
+            case R.id.introduceTxt:
+                new AlertView("功能介绍", getResources().getString(R.string.about),
+                        null, new String[]{"确定"}, null,
+                        this, AlertView.Style.Alert,
+                        null).setCancelable(false).show();
                 break;
         }
     }
 
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        amUpdateLiveData.removeObserver(amUpdateObserver);
-        pmUpdateLiveData.removeObserver(pmUpdateObserver);
-    }
+    @SuppressLint("HandlerLeak")
+    private Handler handler = new Handler() {
+        @Override
+        public void handleMessage(Message msg) {
+            if (msg.what == 1) {
+                Intent intent = new Intent(getApplicationContext(), MainActivity.class);
+                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                startActivity(intent);
+
+                String emailAddress = Utils.readEmailAddress();
+                //发送打卡成功的邮件
+                Log.d(TAG, "发送打卡成功的邮件: " + emailAddress);
+                if (emailAddress.equals("")) {
+                    return;
+                }
+                SendMailUtil.send(emailAddress);
+            }
+        }
+    };
 }

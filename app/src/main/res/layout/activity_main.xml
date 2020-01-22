@@ -4,99 +4,122 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="#F3F7FF"
-    android:gravity="center"
     android:keepScreenOn="true"
     android:orientation="vertical"
     tools:context=".ui.MainActivity">
 
     <include layout="@layout/include_title" />
 
-    <View
-        android:layout_width="match_parent"
-        android:layout_height="1dp"
-        android:background="#FFF" />
-
     <TextView
-        android:id="@+id/v"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="#0094FF"
         android:gravity="center"
-        android:padding="5dp"
-        android:text="上班时间9:00，下班时间17:30"
-        android:textColor="#FFF" />
+        android:padding="30dp"
+        android:textSize="45sp" />
 
     <RelativeLayout
+        android:id="@+id/startLayoutView"
         android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1">
+        android:layout_height="150dp"
+        android:layout_marginStart="20dp"
+        android:layout_marginEnd="20dp"
+        android:background="@drawable/bg_layout"
+        android:elevation="5dp"
+        android:padding="10dp">
 
         <TextView
             android:id="@+id/amTime"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_above="@id/startTimeBtn"
             android:layout_centerHorizontal="true"
-            android:layout_marginBottom="10dp" />
+            android:text="打卡时间：--:--:--"
+            android:textColor="@color/white"
+            android:textSize="20sp" />
 
-        <Button
-            android:id="@+id/startTimeBtn"
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_below="@id/amTime"
+            android:layout_marginTop="5dp"
+            android:background="@color/white" />
+
+        <TextView
+            android:id="@+id/startTimeView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_centerInParent="true"
-            android:background="@drawable/bg_button_blue"
-            android:text="上班设置"
-            android:textColor="@color/white" />
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="55dp"
+            android:text="--"
+            android:textColor="@color/white"
+            android:textSize="50sp" />
 
-        <ProgressBar
-            android:id="@+id/startProgressBar"
-            style="@android:style/Widget.ProgressBar.Horizontal"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_below="@id/startTimeBtn"
-            android:layout_gravity="center_horizontal"
-            android:layout_margin="30dp"
-            android:visibility="gone" />
+        <ImageView
+            android:layout_width="80px"
+            android:layout_height="80px"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentBottom="true"
+            android:background="@drawable/ding" />
     </RelativeLayout>
 
-    <TextView
+    <View
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="#0094FF"
-        android:padding="5dp"
-        android:text="提醒：\n跳转到“钉钉”之后无需手动回到本辅助软件，10s后会自动跳回到倒计时界面"
-        android:textColor="#FFF" />
+        android:layout_height="40dp" />
 
     <RelativeLayout
+        android:id="@+id/endLayoutView"
         android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1">
+        android:layout_height="150dp"
+        android:layout_marginStart="20dp"
+        android:layout_marginEnd="20dp"
+        android:background="@drawable/bg_layout"
+        android:elevation="5dp"
+        android:padding="10dp">
 
         <TextView
             android:id="@+id/pmTime"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_above="@id/endTimeBtn"
             android:layout_centerHorizontal="true"
-            android:layout_marginBottom="10dp" />
+            android:text="打卡时间：--:--:--"
+            android:textColor="@color/white"
+            android:textSize="20sp" />
 
-        <Button
-            android:id="@+id/endTimeBtn"
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_below="@id/pmTime"
+            android:layout_marginTop="5dp"
+            android:background="@color/white" />
+
+        <TextView
+            android:id="@+id/endTimeView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_centerInParent="true"
-            android:background="@drawable/bg_button_blue"
-            android:text="下班设置"
-            android:textColor="@color/white" />
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="55dp"
+            android:text="--"
+            android:textColor="@color/white"
+            android:textSize="50sp" />
 
-        <ProgressBar
-            android:id="@+id/endProgressBar"
-            style="@android:style/Widget.ProgressBar.Horizontal"
-            android:layout_width="match_parent"
+        <ImageView
+            android:layout_width="80px"
+            android:layout_height="80px"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentBottom="true"
+            android:background="@drawable/ding" />
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <TextView
+            android:id="@+id/introduceTxt"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_below="@id/endTimeBtn"
-            android:layout_gravity="center_horizontal"
-            android:layout_margin="30dp"
-            android:visibility="gone" />
+            android:layout_alignParentBottom="true"
+            android:layout_centerHorizontal="true"
+            android:layout_marginBottom="30dp"
+            android:text="使用说明" />
     </RelativeLayout>
 </LinearLayout>

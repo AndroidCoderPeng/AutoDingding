@@ -24,13 +24,9 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity
-            android:name=".ui.MainActivity"
-            android:launchMode="singleTask" />
-        <activity
-            android:name=".ui.DingDingClockActivity"
-            android:launchMode="singleTask" />
+        <activity android:name=".ui.MainActivity" />
+        <activity android:name=".ui.DingDingClockActivity" />
 
-        <service android:name=".service.AutoDingdingService" />
+        <service android:name=".service.AutoDingDingService" />
     </application>
 </manifest>
