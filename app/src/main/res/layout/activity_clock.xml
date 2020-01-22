@@ -7,10 +7,194 @@
 
     <include layout="@layout/include_title" />
 
-    <android.support.v7.widget.RecyclerView
-        android:id="@+id/clockRecyclerView"
+    <TextView
+        android:id="@+id/currentTime"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:scrollbars="none" />
+        android:fontFamily="monospace"
+        android:gravity="center"
+        android:padding="30dp"
+        android:text="--:--:--"
+        android:textSize="45sp"
+        android:textStyle="bold" />
 
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="150dp"
+        android:layout_marginStart="20dp"
+        android:layout_marginEnd="20dp"
+        android:background="@drawable/bg_layout"
+        android:elevation="5dp"
+        android:padding="10dp">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_above="@id/view"
+            android:layout_marginStart="25dp"
+            android:text="上班"
+            android:textColor="@color/white"
+            android:textSize="22sp" />
+
+        <View
+            android:id="@+id/view"
+            android:layout_width="match_parent"
+            android:layout_height="1px"
+            android:layout_centerVertical="true" />
+
+        <RelativeLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/view">
+
+            <ImageView
+                android:layout_width="64px"
+                android:layout_height="64px"
+                android:layout_centerVertical="true"
+                android:background="@drawable/clock" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_marginStart="25dp"
+                android:text="8:00-9:05"
+                android:textColor="@color/white"
+                android:textSize="18sp" />
+        </RelativeLayout>
+
+        <Switch
+            android:id="@+id/startWorkSwitch"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:layout_centerVertical="true"
+            android:thumb="@drawable/select_switch_circle"
+            android:track="@drawable/select_switch_background" />
+
+        <ImageView
+            android:id="@+id/startLayout"
+            android:layout_width="64px"
+            android:layout_height="64px"
+            android:layout_alignParentBottom="true"
+            android:layout_marginEnd="5dp"
+            android:layout_toStartOf="@id/startWorkTextView"
+            android:background="@drawable/shaizi" />
+
+        <TextView
+            android:id="@+id/startWorkTextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentBottom="true"
+            android:text="打卡时间：--:--:--"
+            android:textColor="@color/white"
+            android:textSize="17sp" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:text="每个工作日"
+            android:textColor="@color/white" />
+    </RelativeLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="40dp" />
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="150dp"
+        android:layout_marginStart="20dp"
+        android:layout_marginEnd="20dp"
+        android:background="@drawable/bg_layout"
+        android:elevation="5dp"
+        android:padding="10dp">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_above="@id/vview"
+            android:layout_marginStart="25dp"
+            android:text="下班"
+            android:textColor="@color/white"
+            android:textSize="22sp" />
+
+        <View
+            android:id="@+id/vview"
+            android:layout_width="match_parent"
+            android:layout_height="1px"
+            android:layout_centerVertical="true" />
+
+        <RelativeLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/vview">
+
+            <ImageView
+                android:layout_width="64px"
+                android:layout_height="64px"
+                android:layout_centerVertical="true"
+                android:background="@drawable/clock" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_marginStart="25dp"
+                android:text="17:30-18:30"
+                android:textColor="@color/white"
+                android:textSize="18sp" />
+        </RelativeLayout>
+
+        <Switch
+            android:id="@+id/endWorkSwitch"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:layout_centerVertical="true"
+            android:thumb="@drawable/select_switch_circle"
+            android:track="@drawable/select_switch_background" />
+
+        <ImageView
+            android:id="@+id/endLayout"
+            android:layout_width="64px"
+            android:layout_height="64px"
+            android:layout_alignParentBottom="true"
+            android:layout_marginEnd="5dp"
+            android:layout_toStartOf="@id/endWorkTextView"
+            android:background="@drawable/shaizi" />
+
+        <TextView
+            android:id="@+id/endWorkTextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentBottom="true"
+            android:text="打卡时间：--:--:--"
+            android:textColor="@color/white"
+            android:textSize="17sp" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:text="每个工作日"
+            android:textColor="@color/white" />
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <TextView
+            android:id="@+id/introduceText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_centerHorizontal="true"
+            android:layout_marginBottom="30dp"
+            android:text="使用说明" />
+    </RelativeLayout>
 </LinearLayout>

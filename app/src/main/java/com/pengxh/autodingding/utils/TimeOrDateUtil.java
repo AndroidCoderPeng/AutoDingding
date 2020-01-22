@@ -1,6 +1,7 @@
 package com.pengxh.autodingding.utils;
 
 import android.annotation.SuppressLint;
+import android.util.Log;
 
 import com.pengxh.app.multilib.widget.EasyToast;
 
@@ -10,6 +11,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
+import java.util.concurrent.ThreadLocalRandom;
 
 /**
  * @author: Pengxh
@@ -22,7 +24,7 @@ public class TimeOrDateUtil {
     private static final String TAG = "TimeOrDateUtil";
     private static final SimpleDateFormat allDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
     private static final SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
-    private static final SimpleDateFormat timeFormat = new SimpleDateFormat("HH:mm");
+    private static final SimpleDateFormat timeFormat = new SimpleDateFormat("HH:mm:ss");
 
     /**
      * 时间戳转日期
@@ -79,7 +81,27 @@ public class TimeOrDateUtil {
     /**
      * 时间转时间戳
      */
-    public static long DateToTimestamp(String date) throws ParseException {
-        return allDateFormat.parse(date).getTime();
+    public static long dateToTimestamp(String time) {
+        try {
+            return allDateFormat.parse(time).getTime();
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        return 0L;
+    }
+
+    /**
+     * 获取当前日期
+     */
+    public static String getCurrentDate() {
+        Calendar calendar = Calendar.getInstance();
+        long today = calendar.getTimeInMillis();
+        return rTimestampToDate(today);
+    }
+
+    public static String getRandomTime(long startTimeMillis, long endTimeMillis) {
+        long nextLong = ThreadLocalRandom.current().nextLong(startTimeMillis, endTimeMillis);
+        Log.d(TAG, "getRandomMillis: " + nextLong);
+        return timestampToTime(nextLong);
     }
 }
