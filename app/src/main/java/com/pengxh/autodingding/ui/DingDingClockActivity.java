@@ -122,6 +122,7 @@ public class DingDingClockActivity extends BaseNormalActivity implements View.On
                         }, 0, 1000);//1s检查一次
                     } else {
                         startTimer.cancel();
+                        startWorkTextView.setText("打卡时间：--:--:--");
                         timeMap.remove(R.id.startLayout);
                     }
                 }
@@ -149,6 +150,8 @@ public class DingDingClockActivity extends BaseNormalActivity implements View.On
                             }
                         }, 0, 1000);
                     } else {
+                        endTimer.cancel();
+                        endWorkTextView.setText("打卡时间：--:--:--");
                         timeMap.remove(R.id.endLayout);
                     }
                 }
