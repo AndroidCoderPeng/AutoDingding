@@ -5,9 +5,6 @@ import android.util.Log;
 
 import com.pengxh.autodingding.bean.MailInfo;
 
-import java.text.SimpleDateFormat;
-import java.util.Date;
-
 /**
  * @author: Pengxh
  * @email: 290677893@qq.com
@@ -38,8 +35,7 @@ public class SendMailUtil {
         mailInfo.setFromAddress("290677893@qq.com"); // 发送者邮箱
         if (emailMessage.equals("")) {
             mailInfo.setSubject("自动打卡通知"); // 邮件主题
-            String date = rTimeMillisToDate(System.currentTimeMillis());
-            mailInfo.setContent(date + "打卡成功"); // 邮件文本
+            mailInfo.setContent("未监听到打卡成功的通知，请手动登录检查" + TimeOrDateUtil.timestampToDate(System.currentTimeMillis())); // 邮件文本
         } else {
             //工作通知:CSS-考勤打卡:23:31 上班打卡成功,进入钉钉查看详情
             String[] split = emailMessage.split("-");
@@ -48,11 +44,5 @@ public class SendMailUtil {
             mailInfo.setContent(split[1]); // 邮件文本
         }
         return mailInfo;
-    }
-
-    private static String rTimeMillisToDate(long millis) {
-        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-        Date date = new Date(millis);
-        return simpleDateFormat.format(date);
     }
 }
