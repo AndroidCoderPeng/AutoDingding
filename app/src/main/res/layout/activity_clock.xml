@@ -195,7 +195,7 @@
             android:layout_above="@id/clockOpenSettings"
             android:layout_centerHorizontal="true"
             android:layout_marginBottom="20dp"
-            android:text="使用说明" />
+            android:text="@string/introduce" />
 
         <TextView
             android:id="@+id/clockOpenSettings"

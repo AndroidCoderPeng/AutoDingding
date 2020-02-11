@@ -20,6 +20,7 @@ import com.aihook.alertview.library.AlertView;
 import com.gyf.immersionbar.ImmersionBar;
 import com.pengxh.app.multilib.base.BaseNormalActivity;
 import com.pengxh.app.multilib.utils.BroadcastManager;
+import com.pengxh.app.multilib.utils.DensityUtil;
 import com.pengxh.app.multilib.utils.SaveKeyValues;
 import com.pengxh.app.multilib.widget.EasyToast;
 import com.pengxh.app.multilib.widget.dialog.InputDialog;
@@ -50,7 +51,7 @@ import butterknife.OnClick;
 public class DingDingClockActivity extends BaseNormalActivity implements View.OnClickListener {
 
     private static final String TAG = "DingDingClockActivity";
-    private static final List<String> items = Arrays.asList("打卡一天", "邮箱设置");
+    private static final List<String> items = Arrays.asList("打卡一天", "邮箱设置", "打卡记录");
     private Map<Integer, String> timeMap = new HashMap<>();
 
     @BindView(R.id.titleLayout)
@@ -133,8 +134,9 @@ public class DingDingClockActivity extends BaseNormalActivity implements View.On
                                 public void run() {
                                     String systemTime = TimeOrDateUtil.timestampToTime(System.currentTimeMillis());
                                     if (startTime.equals(systemTime)) {
-                                        Utils.openDingDing(Constant.DINGDING);
-                                        handler.sendEmptyMessageDelayed(10, 10 * 1000);
+
+//                                        Utils.openDingDing(Constant.DINGDING);
+//                                        handler.sendEmptyMessageDelayed(10, 10 * 1000);
                                     }
                                 }
                             }, 0, 1000);//1s检查一次
@@ -162,8 +164,8 @@ public class DingDingClockActivity extends BaseNormalActivity implements View.On
                                 public void run() {
                                     String systemTime = TimeOrDateUtil.timestampToTime(System.currentTimeMillis());
                                     if (endTime.equals(systemTime)) {
-                                        Utils.openDingDing(Constant.DINGDING);
-                                        handler.sendEmptyMessageDelayed(10, 10 * 1000);
+//                                        Utils.openDingDing(Constant.DINGDING);
+//                                        handler.sendEmptyMessageDelayed(10, 10 * 1000);
                                     }
                                 }
                             }, 0, 1000);
@@ -179,6 +181,8 @@ public class DingDingClockActivity extends BaseNormalActivity implements View.On
             new AlertView("温馨提示", "手机没有安装钉钉软件，无法自动打卡", null, new String[]{"确定"}, null, this, AlertView.Style.Alert,
                     (o, position) -> DingDingClockActivity.this.finish()).setCancelable(false).show();
         }
+
+
     }
 
     @OnClick({R.id.imageViewTitleRight, R.id.startLayout, R.id.endLayout, R.id.introduceText, R.id.clockOpenSettings})
@@ -192,14 +196,17 @@ public class DingDingClockActivity extends BaseNormalActivity implements View.On
                         startActivity(new Intent(this, MainActivity.class));
                     } else if (position == 1) {
                         setEmailAddress();
+                    } else if (position == 2) {
+                        //打开侧滑页面
+
                     }
                 });
-                easyPopupWindow.showAsDropDown(titleLayout, titleLayout.getWidth(), 0);
+                easyPopupWindow.showAsDropDown(titleLayout, titleLayout.getWidth(), DensityUtil.dp2px(this, 1));
                 break;
             case R.id.startLayout:
                 String startCurrentDate = TimeOrDateUtil.getCurrentDate();
                 long startMillis = TimeOrDateUtil.dateToTimestamp(startCurrentDate + " 8:00:00");//8:00:00
-                long endMillis = TimeOrDateUtil.dateToTimestamp(startCurrentDate + " 9:00:00");//9:00:00
+                long endMillis = TimeOrDateUtil.dateToTimestamp(startCurrentDate + " 9:05:00");//9:00:00
                 //在起始时间和结束时间之间取随机数，然后转为真实时间作为随机打卡时间
                 String randomStartTime = TimeOrDateUtil.getRandomTime(startMillis, endMillis);
 

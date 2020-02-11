@@ -14,7 +14,7 @@ public class Constant {
     public static final String DINGDING = "com.alibaba.android.rimet";
     public static final String DINGDING_ACTION = "action.sendNotification";
 
-    public static final int[] images = {R.drawable.settings, R.drawable.about};
+    public static final int[] images = {R.drawable.settings, R.drawable.about, R.drawable.history};
 
     /**
      * type
