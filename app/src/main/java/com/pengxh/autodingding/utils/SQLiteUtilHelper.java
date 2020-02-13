@@ -14,7 +14,7 @@ public class SQLiteUtilHelper extends SQLiteOpenHelper {
 
     @Override
     public void onCreate(SQLiteDatabase db) {
-        db.execSQL("create table TimeTable(id integer primary key autoincrement,uuid text, startTime text, endTime text,isStart text)");
+        db.execSQL("create table HistoryTable(id integer primary key autoincrement,uuid text, title text, date text,time text,message text)");
         Log.d(TAG, "数据库创建成功");
     }
 

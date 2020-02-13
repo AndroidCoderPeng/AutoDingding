@@ -1,137 +1,36 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#F3F7FF"
-    android:keepScreenOn="true"
-    android:orientation="vertical"
-    tools:context=".ui.MainActivity">
-
-    <include layout="@layout/include_title" />
+    android:orientation="vertical">
 
     <TextView
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="50dp"
+        android:background="#0094FF"
         android:gravity="center"
-        android:padding="30dp"
-        android:textSize="45sp" />
+        android:text="@string/app_name"
+        android:textColor="#FFF"
+        android:textSize="18sp" />
 
-    <RelativeLayout
-        android:id="@+id/startLayoutView"
+    <com.pengxh.app.multilib.widget.NoScrollViewPager
+        android:id="@+id/mViewPager"
         android:layout_width="match_parent"
-        android:layout_height="150dp"
-        android:layout_marginStart="20dp"
-        android:layout_marginEnd="20dp"
-        android:background="@drawable/bg_layout"
-        android:elevation="5dp"
-        android:padding="10dp">
-
-        <TextView
-            android:id="@+id/amTime"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerHorizontal="true"
-            android:text="打卡时间：--:--:--"
-            android:textColor="@color/white"
-            android:textSize="20sp" />
-
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="1dp"
-            android:layout_below="@id/amTime"
-            android:layout_marginTop="5dp"
-            android:background="@color/white" />
-
-        <TextView
-            android:id="@+id/startTimeView"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerHorizontal="true"
-            android:layout_marginTop="55dp"
-            android:text="--"
-            android:textColor="@color/white"
-            android:textSize="50sp" />
-
-        <ImageView
-            android:layout_width="80px"
-            android:layout_height="80px"
-            android:layout_alignParentEnd="true"
-            android:layout_alignParentBottom="true"
-            android:background="@drawable/ding" />
-    </RelativeLayout>
+        android:layout_height="0dp"
+        android:layout_weight="12" />
 
     <View
         android:layout_width="match_parent"
-        android:layout_height="40dp" />
+        android:layout_height="1px"
+        android:background="#e8e8e8" />
 
-    <RelativeLayout
-        android:id="@+id/endLayoutView"
+    <android.support.design.widget.TabLayout
+        android:id="@+id/mTabLayout"
         android:layout_width="match_parent"
-        android:layout_height="150dp"
-        android:layout_marginStart="20dp"
-        android:layout_marginEnd="20dp"
-        android:background="@drawable/bg_layout"
-        android:elevation="5dp"
-        android:padding="10dp">
+        android:layout_height="0dp"
+        android:layout_alignParentBottom="true"
+        android:layout_weight="1"
+        app:tabIndicatorHeight="0dp" />
 
-        <TextView
-            android:id="@+id/pmTime"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerHorizontal="true"
-            android:text="打卡时间：--:--:--"
-            android:textColor="@color/white"
-            android:textSize="20sp" />
-
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="1dp"
-            android:layout_below="@id/pmTime"
-            android:layout_marginTop="5dp"
-            android:background="@color/white" />
-
-        <TextView
-            android:id="@+id/endTimeView"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerHorizontal="true"
-            android:layout_marginTop="55dp"
-            android:text="--"
-            android:textColor="@color/white"
-            android:textSize="50sp" />
-
-        <ImageView
-            android:layout_width="80px"
-            android:layout_height="80px"
-            android:layout_alignParentEnd="true"
-            android:layout_alignParentBottom="true"
-            android:background="@drawable/ding" />
-    </RelativeLayout>
-
-    <RelativeLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent">
-
-        <TextView
-            android:id="@+id/introduceTxt"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_above="@id/mainOpenSettings"
-            android:layout_centerHorizontal="true"
-            android:layout_marginBottom="20dp"
-            android:text="@string/introduce" />
-
-        <TextView
-            android:id="@+id/mainOpenSettings"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentBottom="true"
-            android:layout_centerHorizontal="true"
-            android:layout_marginBottom="10dp"
-            android:background="@drawable/bg_layout"
-            android:padding="5dp"
-            android:text="打开通知监听"
-            android:textColor="@color/white" />
-    </RelativeLayout>
 </LinearLayout>

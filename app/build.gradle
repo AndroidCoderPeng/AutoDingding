@@ -6,8 +6,8 @@ android {
         applicationId "com.pengxh.autodingding"
         minSdkVersion 21
         targetSdkVersion 28
-        versionCode 6
-        versionName "1.5"
+        versionCode 1
+        versionName "1.0"
     }
     buildTypes {
         release {

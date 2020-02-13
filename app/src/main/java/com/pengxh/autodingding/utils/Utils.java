@@ -1,7 +1,10 @@
 package com.pengxh.autodingding.utils;
 
 import android.annotation.SuppressLint;
+import android.app.Activity;
+import android.app.ActivityManager;
 import android.app.KeyguardManager;
+import android.app.ProgressDialog;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
@@ -88,6 +91,22 @@ public class Utils {
     }
 
     /**
+     * 查询某个服务是否在运行中
+     */
+    public static boolean isServiceAlive(String serviceName) {
+        ActivityManager manager = (ActivityManager) mContext.getSystemService(mContext.ACTIVITY_SERVICE);
+        List<ActivityManager.RunningServiceInfo> services = manager.getRunningServices(Integer.MAX_VALUE);
+        for (ActivityManager.RunningServiceInfo service : services) {
+            String className = service.service.getClassName();
+            Log.d(TAG, "isServiceAlive: " + className);
+            if (serviceName.equals(className)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
      * 打开指定包名的apk
      *
      * @param packageName 应用包名
@@ -123,6 +142,7 @@ public class Utils {
             } else {
                 intent = new Intent("android.settings.ACTION_NOTIFICATION_LISTENER_SETTINGS");
             }
+            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             mContext.startActivity(intent);
         } catch (Exception e) {
             e.printStackTrace();
@@ -265,5 +285,22 @@ public class Utils {
                 compositeDisposable.clear();
             }
         });
+    }
+
+    private static ProgressDialog progressDialog;
+
+    public static void showProgress(Activity activity, String msg) {
+        if (progressDialog == null) {
+            progressDialog = new ProgressDialog(activity);
+        }
+        progressDialog.setMessage(msg);
+        progressDialog.setCanceledOnTouchOutside(false);
+        progressDialog.show();
+    }
+
+    public static void hideProgress() {
+        if (progressDialog != null && progressDialog.isShowing()) {
+            progressDialog.dismiss();
+        }
     }
 }

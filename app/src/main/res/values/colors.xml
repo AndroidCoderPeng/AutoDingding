@@ -11,4 +11,6 @@
     <color name="colorLine">#313131</color>
     <color name="colorAppThemeLight">#0094FF</color>
     <color name="iOSGreen">#4DDC64</color>
+    <color name="tab_selected_txtcolor">#0094ff</color>
+    <color name="tab_txtcolor">#666666</color>
 </resources>

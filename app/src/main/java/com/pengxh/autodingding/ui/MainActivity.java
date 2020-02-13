@@ -1,220 +1,172 @@
 package com.pengxh.autodingding.ui;
 
-import android.annotation.SuppressLint;
-import android.content.BroadcastReceiver;
-import android.content.Context;
-import android.content.Intent;
-import android.os.CountDownTimer;
-import android.os.Handler;
-import android.os.Message;
-import android.provider.Settings;
-import android.util.Log;
+import android.support.design.widget.TabLayout;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentPagerAdapter;
+import android.support.v4.view.ViewPager;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ImageView;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.aihook.alertview.library.AlertView;
 import com.gyf.immersionbar.ImmersionBar;
-import com.jzxiang.pickerview.TimePickerDialog;
-import com.jzxiang.pickerview.data.Type;
-import com.pengxh.app.multilib.base.BaseNormalActivity;
-import com.pengxh.app.multilib.utils.BroadcastManager;
-import com.pengxh.app.multilib.utils.ColorUtil;
-import com.pengxh.app.multilib.widget.EasyToast;
+import com.pengxh.app.multilib.base.DoubleClickExitActivity;
+import com.pengxh.app.multilib.utils.SaveKeyValues;
+import com.pengxh.app.multilib.widget.NoScrollViewPager;
 import com.pengxh.autodingding.R;
-import com.pengxh.autodingding.service.NotificationMonitorService;
+import com.pengxh.autodingding.adapter.BaseFragmentAdapter;
+import com.pengxh.autodingding.ui.fragment.OneDayFragment;
+import com.pengxh.autodingding.ui.fragment.SettingsFragment;
 import com.pengxh.autodingding.utils.Constant;
-import com.pengxh.autodingding.utils.SendMailUtil;
-import com.pengxh.autodingding.utils.TimeOrDateUtil;
 import com.pengxh.autodingding.utils.Utils;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
 import butterknife.BindView;
-import butterknife.OnClick;
 
-public class MainActivity extends BaseNormalActivity implements View.OnClickListener {
+public class MainActivity extends DoubleClickExitActivity {
 
-    private static final String TAG = "MainActivity";
+    @BindView(R.id.mViewPager)
+    NoScrollViewPager mViewPager;
+    @BindView(R.id.mTabLayout)
+    TabLayout mTableLayout;
 
-    @BindView(R.id.titleLayout)
-    RelativeLayout titleLayout;
-    @BindView(R.id.textViewTitle)
-    TextView textViewTitle;
-    @BindView(R.id.imageViewTitleRight)
-    ImageView imageViewTitleRight;
-    @BindView(R.id.startTimeView)
-    TextView startTimeView;
-    @BindView(R.id.endTimeView)
-    TextView endTimeView;
-    @BindView(R.id.amTime)
-    TextView amTime;
-    @BindView(R.id.pmTime)
-    TextView pmTime;
-
-    private BroadcastManager broadcastManager;
-    private String emailMessage = "";
+    private List<String> mTabName = Arrays.asList("一天", "设置");
+    private List<Fragment> fragmentList = new ArrayList<>();
 
     @Override
     public void initView() {
         setContentView(R.layout.activity_main);
         ImmersionBar.with(this).fitsSystemWindows(true).statusBarColor(R.color.colorAppThemeLight).init();
-        imageViewTitleRight.setVisibility(View.GONE);
     }
 
     @Override
     public void initData() {
-        String emailAddress = Utils.readEmailAddress();
-        if (!emailAddress.equals("")) {
-            textViewTitle.setText("打卡通知邮箱：" + emailAddress);
-        }
+        fragmentList.add(new OneDayFragment());
+        fragmentList.add(new SettingsFragment());
     }
 
     @Override
     public void initEvent() {
-        broadcastManager = BroadcastManager.getInstance(this);
-        broadcastManager.addAction(Constant.DINGDING_ACTION, new BroadcastReceiver() {
+        FragmentPagerAdapter fragmentAdapter = new BaseFragmentAdapter(getSupportFragmentManager(), fragmentList);
+        mViewPager.setAdapter(fragmentAdapter);
+        mViewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+
             @Override
-            public void onReceive(Context context, Intent intent) {
-                String action = intent.getAction();
-                if (action == null) {
-                    return;
-                }
-                if (action.equals(Constant.DINGDING_ACTION)) {
-                    String data = intent.getStringExtra("data");
-                    //工作通知:CSS-考勤打卡:23:31 上班打卡成功,进入钉钉查看详情
-                    //工作通知:CSS-考勤打卡:23:32 下班打卡成功,进入钉钉查看详情
-                    Log.d(TAG, "onReceive: " + data);
-                    emailMessage = data;
-                }
+            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+
+            }
+
+            @Override
+            public void onPageSelected(int position) {
+                resetBtnState();
+                selectBtnState(position);
+            }
+
+            @Override
+            public void onPageScrollStateChanged(int state) {
+
             }
         });
-    }
+        mTableLayout.setupWithViewPager(mViewPager);
+        mTableLayout.setOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
+            @Override
+            public void onTabSelected(TabLayout.Tab tab) {
+                mViewPager.setCurrentItem(tab.getPosition(), false);
+            }
 
-    @OnClick({R.id.startLayoutView, R.id.endLayoutView, R.id.introduceTxt, R.id.mainOpenSettings})
-    @Override
-    public void onClick(View v) {
-        switch (v.getId()) {
-            case R.id.startLayoutView:
-                //设置上班时间
-                new TimePickerDialog.Builder().setThemeColor(ColorUtil.getRandomColor())
-                        .setWheelItemTextSize(15)
-                        .setCyclic(false)
-                        .setMinMillseconds(System.currentTimeMillis())
-                        .setMaxMillseconds(System.currentTimeMillis() + Constant.ONE_MONTH)
-                        .setType(Type.ALL)
-                        .setCallBack((timePickerView, millSeconds) -> {
-                            //计算时间差
-                            long deltaTime = TimeOrDateUtil.deltaTime(millSeconds / 1000);
-                            Log.d(TAG, "amKaoQin: " + deltaTime);
-                            if (deltaTime == 0) {
-                                Log.w(TAG, "", new Throwable());
-                                return;
-                            }
-                            amTime.setText("打卡时间：" + TimeOrDateUtil.timestampToDate(millSeconds));
-                            //显示倒计时
-                            String text = startTimeView.getText().toString();
-                            if (text.equals("--")) {
-                                new CountDownTimer(deltaTime * 1000, 1000) {
-                                    @Override
-                                    public void onTick(long l) {
-                                        int tickTime = (int) (l / 1000);
-                                        //更新UI
-                                        startTimeView.setText(tickTime + "s");
-                                    }
+            @Override
+            public void onTabUnselected(TabLayout.Tab tab) {
 
-                                    @Override
-                                    public void onFinish() {
-                                        Utils.openDingDing(Constant.DINGDING);
-                                        handler.sendEmptyMessageDelayed(1, 10 * 1000);
-                                    }
-                                }.start();
-                            } else {
-                                EasyToast.showToast("已有任务在进行中", EasyToast.WARING);
-                            }
-                        }).build().show(getSupportFragmentManager(), "year_month_day_hour_minute");
-                break;
-            case R.id.endLayoutView:
-                //设置下班时间
-                new TimePickerDialog.Builder().setThemeColor(ColorUtil.getRandomColor())
-                        .setWheelItemTextSize(15)
-                        .setCyclic(false)
-                        .setMinMillseconds(System.currentTimeMillis())
-                        .setMaxMillseconds(System.currentTimeMillis() + Constant.ONE_MONTH)
-                        .setType(Type.ALL)
-                        .setCallBack((timePickerView, millSeconds) -> {
-                            //计算时间差
-                            long deltaTime = TimeOrDateUtil.deltaTime(millSeconds / 1000);
-                            Log.d(TAG, "pmKaoQin: " + deltaTime);
-                            if (deltaTime == 0) {
-                                Log.w(TAG, "", new Throwable());
-                                return;
-                            }
-                            pmTime.setText("打卡时间：" + TimeOrDateUtil.timestampToDate(millSeconds));
-                            //显示倒计时
-                            String text = startTimeView.getText().toString();
-                            if (text.equals("--")) {
-                                new CountDownTimer(deltaTime * 1000, 1000) {
-                                    @Override
-                                    public void onTick(long l) {
-                                        int tickTime = (int) (l / 1000);
-                                        //更新UI
-                                        endTimeView.setText(tickTime + "s");
-                                    }
+            }
 
-                                    @Override
-                                    public void onFinish() {
-                                        Utils.openDingDing(Constant.DINGDING);
-                                        handler.sendEmptyMessageDelayed(1, 10 * 1000);
-                                    }
-                                }.start();
-                            } else {
-                                EasyToast.showToast("已有任务在进行中", EasyToast.WARING);
-                            }
-                        }).build().show(getSupportFragmentManager(), "year_month_day_hour_minute");
-                break;
-            case R.id.introduceTxt:
-                new AlertView("功能介绍", getResources().getString(R.string.about),
-                        null, new String[]{"确定"}, null,
-                        this, AlertView.Style.Alert,
-                        null).setCancelable(false).show();
-                break;
-            case R.id.mainOpenSettings:
-                String string = Settings.Secure.getString(getContentResolver(), "enabled_notification_listeners");
-                if (!string.contains(NotificationMonitorService.class.getName())) {
-                    Utils.openNotificationSettings();
-                    return;
-                }
-                startService(new Intent(this, NotificationMonitorService.class));
-                EasyToast.showToast("状态栏通知监听服务已启动", EasyToast.SUCCESS);
-                break;
-            default:
-                break;
-        }
-    }
+            @Override
+            public void onTabReselected(TabLayout.Tab tab) {
 
-    @SuppressLint("HandlerLeak")
-    private Handler handler = new Handler() {
-        @Override
-        public void handleMessage(Message msg) {
-            if (msg.what == 1) {
-                Intent intent = new Intent(getApplicationContext(), MainActivity.class);
-                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                startActivity(intent);
+            }
+        });
+        resetBtnState();
+        selectBtnState(0);
 
-                String emailAddress = Utils.readEmailAddress();
-                //发送打卡成功的邮件
-                Log.d(TAG, "发送打卡成功的邮件: " + emailAddress);
-                if (emailAddress.equals("")) {
-                    return;
-                }
-                SendMailUtil.send(emailAddress, emailMessage);
+        if (!Utils.isAppAvailable(Constant.DINGDING)) {
+            new AlertView("温馨提示", "手机没有安装钉钉软件，无法自动打卡", null, new String[]{"确定"}, null, this, AlertView.Style.Alert,
+                    (o, position) -> this.finish()).setCancelable(false).show();
+        } else {
+            boolean isFirst = (boolean) SaveKeyValues.getValue("isFirst", true);
+            if (isFirst) {
+                SaveKeyValues.putValue("isFirst", false);
+                new AlertView("※温馨提醒※", "本软件仅供内部使用，严禁商用或者用作其他非法用途", null, new String[]{"确定"}, null, this, AlertView.Style.Alert, null).setCancelable(false).show();
             }
         }
-    };
+    }
+
+    private void selectBtnState(int index) {
+        if (index < 0 || index >= 2) {
+            return;
+        }
+        TabLayout.Tab tabAt = mTableLayout.getTabAt(index);
+        if (tabAt != null) {
+            switch (index) {
+                case 0:
+                    View v = tabAt.getCustomView();
+                    if (v != null) {
+                        ImageView imv_icon = v.findViewById(R.id.tab_icon);
+                        imv_icon.setImageResource(R.mipmap.day_blue);
+                        TextView tv_name = v.findViewById(R.id.tab_title);
+                        tv_name.setTextColor(getResources().getColor(R.color.tab_selected_txtcolor));
+                    }
+                    break;
+                case 1:
+                    View v2 = tabAt.getCustomView();
+                    if (v2 != null) {
+                        ImageView imv_icon = v2.findViewById(R.id.tab_icon);
+                        imv_icon.setImageResource(R.mipmap.settings_blue);
+                        TextView tv_name = v2.findViewById(R.id.tab_title);
+                        tv_name.setTextColor(getResources().getColor(R.color.tab_selected_txtcolor));
+                    }
+                    break;
+                default:
+                    break;
+            }
+        }
+    }
+
+    private void resetBtnState() {
+        TabLayout.Tab tabAt1 = mTableLayout.getTabAt(0);
+        TabLayout.Tab tabAt2 = mTableLayout.getTabAt(1);
+
+        if (tabAt1 != null) {
+            if (tabAt1.getCustomView() == null) {
+                View v = LayoutInflater.from(this).inflate(R.layout.item_tab, null);
+                tabAt1.setCustomView(v);
+            }
+            ImageView imv_icon = tabAt1.getCustomView().findViewById(R.id.tab_icon);
+            TextView tv_name = tabAt1.getCustomView().findViewById(R.id.tab_title);
+            imv_icon.setImageResource(R.mipmap.day_gray);
+            tv_name.setText(mTabName.get(0));
+            tv_name.setTextColor(getResources().getColor(R.color.tab_txtcolor));
+        }
+        if (tabAt2 != null) {
+            if (tabAt2.getCustomView() == null) {
+                View v = LayoutInflater.from(this).inflate(R.layout.item_tab, null);
+                tabAt2.setCustomView(v);
+            }
+            ImageView imv_icon = tabAt2.getCustomView().findViewById(R.id.tab_icon);
+            TextView tv_name = tabAt2.getCustomView().findViewById(R.id.tab_title);
+            imv_icon.setImageResource(R.mipmap.settings_gray);
+            tv_name.setText(mTabName.get(1));
+            tv_name.setTextColor(getResources().getColor(R.color.tab_txtcolor));
+        }
+    }
 
     @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        broadcastManager.destroy(Constant.DINGDING_ACTION);
+    protected void onResume() {
+        //跳转制定fragment
+        int position = getIntent().getIntExtra("position", 0);
+        mViewPager.setCurrentItem(position);
+        super.onResume();
     }
 }

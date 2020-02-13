@@ -14,15 +14,7 @@ public class Constant {
     public static final String DINGDING = "com.alibaba.android.rimet";
     public static final String DINGDING_ACTION = "action.sendNotification";
 
-    public static final int[] images = {R.drawable.settings, R.drawable.about, R.drawable.history};
-
-    /**
-     * type
-     * 0-工作日
-     * 1-周末
-     * 2-节假日
-     */
-    public static final String BASE_URL = "http://timor.tech/api/holiday/info/";
+    public static final int[] images = {R.drawable.delete, R.drawable.output};
 
     public static final long ONE_MONTH = 31 * 24 * 60 * 60 * 1000L;
 }

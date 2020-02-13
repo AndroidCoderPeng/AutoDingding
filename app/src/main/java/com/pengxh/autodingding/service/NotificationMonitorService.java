@@ -1,6 +1,7 @@
 package com.pengxh.autodingding.service;
 
 import android.app.Notification;
+import android.content.Intent;
 import android.os.Bundle;
 import android.service.notification.NotificationListenerService;
 import android.service.notification.StatusBarNotification;
@@ -20,9 +21,9 @@ public class NotificationMonitorService extends NotificationListenerService {
     private static final String TAG = "NotificationService";
 
     @Override
-    public void onCreate() {
-        super.onCreate();
-        Log.d(TAG, "onCreate: 状态栏监听服务已启动");
+    public int onStartCommand(Intent intent, int flags, int startId) {
+        Log.d(TAG, "onStartCommand: 状态栏监听服务已启动");
+        return super.onStartCommand(intent, flags, startId);
     }
 
     /**
@@ -30,7 +31,7 @@ public class NotificationMonitorService extends NotificationListenerService {
      */
     @Override
     public void onListenerConnected() {
-        Log.d(TAG, "onListenerConnected: ");
+
     }
 
     /**
@@ -59,6 +60,6 @@ public class NotificationMonitorService extends NotificationListenerService {
      */
     @Override
     public void onNotificationRemoved(StatusBarNotification sbn) {
-        Log.d(TAG, "onNotificationRemoved: " + sbn.getPackageName());
+
     }
 }
