@@ -31,6 +31,7 @@
 
         <activity android:name=".ui.HistoryActivity" />
 
+        <service android:name=".service.NotificationCollectorService" />
         <service
             android:name=".service.NotificationMonitorService"
             android:permission="android.permission.BIND_NOTIFICATION_LISTENER_SERVICE">

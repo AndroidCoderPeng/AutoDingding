@@ -9,6 +9,7 @@ import com.aihook.alertview.library.OnItemClickListener;
 import com.gyf.immersionbar.ImmersionBar;
 import com.pengxh.app.multilib.base.BaseNormalActivity;
 import com.pengxh.app.multilib.utils.DensityUtil;
+import com.pengxh.app.multilib.widget.EasyToast;
 import com.pengxh.autodingding.R;
 import com.pengxh.autodingding.adapter.HistoryAdapter;
 import com.pengxh.autodingding.bean.HistoryBean;
@@ -79,7 +80,12 @@ public class HistoryActivity extends BaseNormalActivity
                     emptyLayout.setVisibility(View.VISIBLE);
                 }
             } else if (position == 1) {
-                alertView = new AlertView("温馨提示", "导出到" + Utils.readEmailAddress(), "取消", new String[]{"确定"}, null, this, AlertView.Style.Alert,
+                String emailAddress = Utils.readEmailAddress();
+                if (emailAddress.equals("")) {
+                    EasyToast.showToast("未设置邮箱，无法导出", EasyToast.WARING);
+                    return;
+                }
+                alertView = new AlertView("温馨提示", "导出到" + emailAddress, "取消", new String[]{"确定"}, null, this, AlertView.Style.Alert,
                         this).setCancelable(false);
                 alertView.show();
             }

@@ -1,9 +1,11 @@
 package com.pengxh.autodingding;
 
 import android.app.Application;
+import android.content.Intent;
 
 import com.pengxh.app.multilib.utils.SaveKeyValues;
 import com.pengxh.app.multilib.widget.EasyToast;
+import com.pengxh.autodingding.service.NotificationCollectorService;
 import com.pengxh.autodingding.utils.SQLiteUtil;
 import com.pengxh.autodingding.utils.Utils;
 
@@ -21,5 +23,6 @@ public class BaseApplication extends Application {
         EasyToast.init(this);
         SQLiteUtil.initDataBase(this);
         SaveKeyValues.initSharedPreferences(this);
+        startService(new Intent(this, NotificationCollectorService.class));
     }
 }

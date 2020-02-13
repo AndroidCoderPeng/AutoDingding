@@ -4,6 +4,9 @@ import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.ActivityManager;
 import android.app.KeyguardManager;
+import android.app.Notification;
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
 import android.app.ProgressDialog;
 import android.content.ComponentName;
 import android.content.Context;
@@ -17,6 +20,7 @@ import android.os.PowerManager;
 import android.provider.Settings;
 import android.util.Log;
 
+import com.pengxh.autodingding.R;
 import com.squareup.okhttp.Call;
 import com.squareup.okhttp.Callback;
 import com.squareup.okhttp.OkHttpClient;
@@ -57,6 +61,7 @@ public class Utils {
     private static String fileName = "emailAddress.txt";
     @SuppressLint("StaticFieldLeak")
     private static Context mContext;
+    private static NotificationManager notificationManager;
 
     public static void init(Context context) {
         Utils.mContext = context.getApplicationContext();//获取全局上下文，最长生命周期
@@ -68,6 +73,7 @@ public class Utils {
                 e.printStackTrace();
             }
         }
+        notificationManager = (NotificationManager) mContext.getSystemService(Context.NOTIFICATION_SERVICE);
         Log.d(TAG, "init: " + file);
     }
 
@@ -100,10 +106,43 @@ public class Utils {
             String className = service.service.getClassName();
             Log.d(TAG, "isServiceAlive: " + className);
             if (serviceName.equals(className)) {
+                //打开常住通知栏
+                createNotification();
                 return true;
             }
         }
         return false;
+    }
+
+    private static void createNotification() {
+        Log.d(TAG, "createNotification");
+        //Android8.0以上必须添加 渠道 才能显示通知栏
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            //创建渠道
+            String id = "notification_999";
+            String name = "钉钉打卡通知专用监听";
+            NotificationChannel mChannel = new NotificationChannel(id, name, NotificationManager.IMPORTANCE_LOW);
+            notificationManager.createNotificationChannel(mChannel);
+
+            Notification.Builder builder = new Notification.Builder(mContext, id);
+            builder.setContentTitle("通知栏监听")
+                    .setContentText("钉钉打卡通知专用监听已打开")
+                    .setSmallIcon(R.mipmap.logo)
+                    .setAutoCancel(false);
+            Notification notification = builder.build();
+            notification.flags = Notification.FLAG_ONGOING_EVENT;
+            notificationManager.notify(1, notification);
+        } else {
+            //设置图片,通知标题,发送时间,提示方式等属性
+            Notification.Builder builder = new Notification.Builder(mContext);
+            builder.setContentTitle("通知栏监听")
+                    .setContentText("钉钉打卡通知专用监听已打开")
+                    .setSmallIcon(R.mipmap.logo)
+                    .setAutoCancel(false);
+            Notification notification = builder.build();
+            notification.flags = Notification.FLAG_ONGOING_EVENT;
+            notificationManager.notify(1, notification);
+        }
     }
 
     /**

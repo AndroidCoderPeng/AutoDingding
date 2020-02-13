@@ -25,6 +25,7 @@ import com.pengxh.app.multilib.widget.dialog.InputDialog;
 import com.pengxh.autodingding.R;
 import com.pengxh.autodingding.service.NotificationMonitorService;
 import com.pengxh.autodingding.ui.HistoryActivity;
+import com.pengxh.autodingding.utils.Constant;
 import com.pengxh.autodingding.utils.Utils;
 
 import butterknife.BindView;
@@ -35,7 +36,6 @@ import butterknife.Unbinder;
 public class SettingsFragment extends Fragment implements View.OnClickListener {
 
     private static final String TAG = "SettingsFragment";
-    private static final String SERVICE_NAME = "com.pengxh.autodingding.service.NotificationMonitorService";
 
     @BindView(R.id.emailTextView)
     TextView emailTextView;
@@ -68,7 +68,7 @@ public class SettingsFragment extends Fragment implements View.OnClickListener {
             e.printStackTrace();
         }
 
-        noticeSwitch.setChecked(Utils.isServiceAlive(SERVICE_NAME));
+        noticeSwitch.setChecked(Utils.isServiceAlive(Constant.SERVICE_NAME));
         noticeSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton compoundButton, boolean isChecked) {
