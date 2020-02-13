@@ -85,6 +85,10 @@ public class HistoryActivity extends BaseNormalActivity
                     EasyToast.showToast("未设置邮箱，无法导出", EasyToast.WARING);
                     return;
                 }
+                if (historyBeans.size() == 0) {
+                    EasyToast.showToast("无打卡记录，无法导出", EasyToast.WARING);
+                    return;
+                }
                 alertView = new AlertView("温馨提示", "导出到" + emailAddress, "取消", new String[]{"确定"}, null, this, AlertView.Style.Alert,
                         this).setCancelable(false);
                 alertView.show();
@@ -101,7 +105,9 @@ public class HistoryActivity extends BaseNormalActivity
                 break;
             case 0:
                 //导出Excel
-
+                EasyToast.showToast("预留功能，目前暂无", EasyToast.WARING);
+                break;
+            default:
                 break;
         }
     }
