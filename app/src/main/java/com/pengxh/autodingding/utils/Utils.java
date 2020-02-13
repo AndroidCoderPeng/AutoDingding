@@ -127,7 +127,7 @@ public class Utils {
             Notification.Builder builder = new Notification.Builder(mContext, id);
             builder.setContentTitle("通知栏监听")
                     .setContentText("钉钉打卡通知专用监听已打开")
-                    .setSmallIcon(R.mipmap.logo)
+                    .setSmallIcon(R.mipmap.logo_round)
                     .setAutoCancel(false);
             Notification notification = builder.build();
             notification.flags = Notification.FLAG_ONGOING_EVENT;
@@ -137,7 +137,7 @@ public class Utils {
             Notification.Builder builder = new Notification.Builder(mContext);
             builder.setContentTitle("通知栏监听")
                     .setContentText("钉钉打卡通知专用监听已打开")
-                    .setSmallIcon(R.mipmap.logo)
+                    .setSmallIcon(R.mipmap.logo_round)
                     .setAutoCancel(false);
             Notification notification = builder.build();
             notification.flags = Notification.FLAG_ONGOING_EVENT;
