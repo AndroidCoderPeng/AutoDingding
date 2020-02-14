@@ -11,6 +11,7 @@ import android.os.Message;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -54,6 +55,7 @@ public class OneDayFragment extends Fragment implements View.OnClickListener {
     TextView pmTime;
 
     Unbinder unbinder;
+    private FragmentManager fragmentManager;
     private BroadcastManager broadcastManager;
     private String emailMessage = "";
 
@@ -67,6 +69,7 @@ public class OneDayFragment extends Fragment implements View.OnClickListener {
     }
 
     private void initEvent() {
+        fragmentManager = getActivity().getSupportFragmentManager();
         new Timer().schedule(new TimerTask() {
             @Override
             public void run() {
@@ -122,38 +125,10 @@ public class OneDayFragment extends Fragment implements View.OnClickListener {
                         .setMaxMillseconds(System.currentTimeMillis() + Constant.ONE_MONTH)
                         .setType(Type.ALL)
                         .setCallBack((timePickerView, millSeconds) -> {
+                            amTime.setText(TimeOrDateUtil.timestampToDate(millSeconds));
                             //计算时间差
-                            long deltaTime = TimeOrDateUtil.deltaTime(millSeconds / 1000);
-                            Log.d(TAG, "amKaoQin: " + deltaTime);
-                            if (deltaTime == 0) {
-                                Log.w(TAG, "", new Throwable());
-                                return;
-                            }
-                            amTime.setText("上班打卡：" + TimeOrDateUtil.timestampToDate(millSeconds));
-                            //显示倒计时
-                            String text = startTimeView.getText().toString();
-                            if (text.equals("--")) {
-                                new CountDownTimer(deltaTime * 1000, 1000) {
-                                    @Override
-                                    public void onTick(long l) {
-                                        int tickTime = (int) (l / 1000);
-                                        //更新UI
-                                        startTimeView.setText(tickTime + "s");
-                                        if (tickTime == 0) {
-                                            startTimeView.setText("--");
-                                        }
-                                    }
-
-                                    @Override
-                                    public void onFinish() {
-                                        Utils.openDingDing(Constant.DINGDING);
-                                        handler.sendEmptyMessageDelayed(1, 10 * 1000);
-                                    }
-                                }.start();
-                            } else {
-                                EasyToast.showToast("已有任务在进行中", EasyToast.WARING);
-                            }
-                        }).build().show(getActivity().getSupportFragmentManager(), "year_month_day_hour_minute");
+                            onDuty(millSeconds);
+                        }).build().show(fragmentManager, "year_month_day_hour_minute");
                 break;
             case R.id.endLayoutView:
                 //设置下班时间
@@ -164,41 +139,76 @@ public class OneDayFragment extends Fragment implements View.OnClickListener {
                         .setMaxMillseconds(System.currentTimeMillis() + Constant.ONE_MONTH)
                         .setType(Type.ALL)
                         .setCallBack((timePickerView, millSeconds) -> {
+                            pmTime.setText(TimeOrDateUtil.timestampToDate(millSeconds));
                             //计算时间差
-                            long deltaTime = TimeOrDateUtil.deltaTime(millSeconds / 1000);
-                            Log.d(TAG, "pmKaoQin: " + deltaTime);
-                            if (deltaTime == 0) {
-                                Log.w(TAG, "", new Throwable());
-                                return;
-                            }
-                            pmTime.setText("下班打卡：" + TimeOrDateUtil.timestampToDate(millSeconds));
-                            //显示倒计时
-                            String text = endTimeView.getText().toString();
-                            if (text.equals("--")) {
-                                new CountDownTimer(deltaTime * 1000, 1000) {
-                                    @Override
-                                    public void onTick(long l) {
-                                        int tickTime = (int) (l / 1000);
-                                        //更新UI
-                                        endTimeView.setText(tickTime + "s");
-                                        if (tickTime == 0) {
-                                            endTimeView.setText("--");
-                                        }
-                                    }
-
-                                    @Override
-                                    public void onFinish() {
-                                        Utils.openDingDing(Constant.DINGDING);
-                                        handler.sendEmptyMessageDelayed(1, 10 * 1000);
-                                    }
-                                }.start();
-                            } else {
-                                EasyToast.showToast("已有任务在进行中", EasyToast.WARING);
-                            }
-                        }).build().show(getActivity().getSupportFragmentManager(), "year_month_day_hour_minute");
+                            offDuty(millSeconds);
+                        }).build().show(fragmentManager, "year_month_day_hour_minute");
                 break;
             default:
                 break;
+        }
+    }
+
+    private void onDuty(long millSeconds) {
+        long deltaTime = TimeOrDateUtil.deltaTime(millSeconds / 1000);
+        if (deltaTime == 0) {
+            Log.w(TAG, "", new Throwable());
+            return;
+        }
+        //显示倒计时
+        String text = startTimeView.getText().toString();
+
+        if (text.equals("--")) {
+            new CountDownTimer(deltaTime * 1000, 1000) {
+                @Override
+                public void onTick(long l) {
+                    int tickTime = (int) (l / 1000);
+                    //更新UI
+                    startTimeView.setText(tickTime + "s");
+                    if (tickTime == 0) {
+                        startTimeView.setText("--");
+                    }
+                }
+
+                @Override
+                public void onFinish() {
+                    Utils.openDingDing(Constant.DINGDING);
+                    handler.sendEmptyMessageDelayed(1, 10 * 1000);
+                }
+            }.start();
+        } else {
+            EasyToast.showToast("已有任务在进行中", EasyToast.WARING);
+        }
+    }
+
+    private void offDuty(long millSeconds) {
+        long deltaTime = TimeOrDateUtil.deltaTime(millSeconds / 1000);
+        if (deltaTime == 0) {
+            Log.w(TAG, "", new Throwable());
+            return;
+        }
+        //显示倒计时
+        String text = endTimeView.getText().toString();
+        if (text.equals("--")) {
+            new CountDownTimer(deltaTime * 1000, 1000) {
+                @Override
+                public void onTick(long l) {
+                    int tickTime = (int) (l / 1000);
+                    //更新UI
+                    endTimeView.setText(tickTime + "s");
+                    if (tickTime == 0) {
+                        endTimeView.setText("--");
+                    }
+                }
+
+                @Override
+                public void onFinish() {
+                    Utils.openDingDing(Constant.DINGDING);
+                    handler.sendEmptyMessageDelayed(1, 10 * 1000);
+                }
+            }.start();
+        } else {
+            EasyToast.showToast("已有任务在进行中", EasyToast.WARING);
         }
     }
 

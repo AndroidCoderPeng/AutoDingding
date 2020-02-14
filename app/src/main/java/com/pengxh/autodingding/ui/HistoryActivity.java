@@ -1,6 +1,7 @@
 package com.pengxh.autodingding.ui;
 
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
 
@@ -16,6 +17,7 @@ import com.pengxh.autodingding.bean.HistoryBean;
 import com.pengxh.autodingding.utils.SQLiteUtil;
 import com.pengxh.autodingding.utils.Utils;
 import com.pengxh.autodingding.widgets.EasyPopupWindow;
+import com.scwang.smartrefresh.layout.SmartRefreshLayout;
 
 import java.util.Arrays;
 import java.util.List;
@@ -28,16 +30,18 @@ public class HistoryActivity extends BaseNormalActivity
 
     @BindView(R.id.titleLayout)
     RelativeLayout titleLayout;
-    @BindView(R.id.emptyLayout)
-    RelativeLayout emptyLayout;
+    @BindView(R.id.refreshLayout)
+    SmartRefreshLayout refreshLayout;
+    @BindView(R.id.emptyView)
+    ImageView emptyView;
     @BindView(R.id.historyList)
     ListView historyList;
-    private SQLiteUtil sqLiteUtil;
-    private List<HistoryBean> historyBeans;
-    private HistoryAdapter historyAdapter;
 
     private static final List<String> items = Arrays.asList("删除记录", "导出记录");
     private AlertView alertView;
+    private List<HistoryBean> historyBeans;
+    private HistoryAdapter historyAdapter;
+    private SQLiteUtil sqLiteUtil;
 
     @Override
     public void initView() {
@@ -49,18 +53,19 @@ public class HistoryActivity extends BaseNormalActivity
     public void initData() {
         sqLiteUtil = SQLiteUtil.getInstance();
         historyBeans = sqLiteUtil.loadHistory();
+        if (historyBeans.size() == 0) {
+            emptyView.setVisibility(View.VISIBLE);
+        } else {
+            emptyView.setVisibility(View.GONE);
+            historyAdapter = new HistoryAdapter(this, historyBeans);
+            historyList.setAdapter(historyAdapter);
+        }
     }
 
     @Override
     public void initEvent() {
-        if (historyBeans.size() == 0) {
-            emptyLayout.setVisibility(View.VISIBLE);
-        } else {
-            emptyLayout.setVisibility(View.GONE);
-
-            historyAdapter = new HistoryAdapter(this, historyBeans);
-            historyList.setAdapter(historyAdapter);
-        }
+        refreshLayout.setEnableRefresh(false);
+        refreshLayout.setEnableLoadMore(false);
     }
 
     @OnClick({R.id.settingsView})
@@ -77,7 +82,7 @@ public class HistoryActivity extends BaseNormalActivity
                     sqLiteUtil.deleteAll();
                     historyBeans.clear();
                     historyAdapter.notifyDataSetChanged();
-                    emptyLayout.setVisibility(View.VISIBLE);
+                    emptyView.setVisibility(View.VISIBLE);
                 }
             } else if (position == 1) {
                 String emailAddress = Utils.readEmailAddress();

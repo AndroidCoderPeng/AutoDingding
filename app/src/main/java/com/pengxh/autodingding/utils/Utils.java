@@ -15,6 +15,7 @@ import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
 import android.os.Build;
+import android.os.CountDownTimer;
 import android.os.Environment;
 import android.os.PowerManager;
 import android.provider.Settings;
@@ -153,21 +154,32 @@ public class Utils {
 
     public static void openDingDing(String packageName) {
         wakeUpAndUnlock();
-        PackageManager packageManager = mContext.getPackageManager();
-        Intent resolveIntent = new Intent(Intent.ACTION_MAIN, null);
-        resolveIntent.addCategory(Intent.CATEGORY_LAUNCHER);
-        resolveIntent.setPackage(packageName);
-        List<ResolveInfo> apps = packageManager.queryIntentActivities(resolveIntent, 0);
-        ResolveInfo resolveInfo = apps.iterator().next();
-        if (resolveInfo != null) {
-            String className = resolveInfo.activityInfo.name;
-            Intent intent = new Intent(Intent.ACTION_MAIN);
-            intent.addCategory(Intent.CATEGORY_LAUNCHER);
-            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-            ComponentName cn = new ComponentName(packageName, className);
-            intent.setComponent(cn);
-            mContext.startActivity(intent);
-        }
+        Log.d(TAG, "openDingDing: 已亮屏，1s后启动钉钉");
+        new CountDownTimer(1000, 1000) {
+            @Override
+            public void onTick(long millisUntilFinished) {
+
+            }
+
+            @Override
+            public void onFinish() {
+                PackageManager packageManager = mContext.getPackageManager();
+                Intent resolveIntent = new Intent(Intent.ACTION_MAIN, null);
+                resolveIntent.addCategory(Intent.CATEGORY_LAUNCHER);
+                resolveIntent.setPackage(packageName);
+                List<ResolveInfo> apps = packageManager.queryIntentActivities(resolveIntent, 0);
+                ResolveInfo resolveInfo = apps.iterator().next();
+                if (resolveInfo != null) {
+                    String className = resolveInfo.activityInfo.name;
+                    Intent intent = new Intent(Intent.ACTION_MAIN);
+                    intent.addCategory(Intent.CATEGORY_LAUNCHER);
+                    intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                    ComponentName cn = new ComponentName(packageName, className);
+                    intent.setComponent(cn);
+                    mContext.startActivity(intent);
+                }
+            }
+        }.start();
     }
 
     /**

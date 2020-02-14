@@ -162,11 +162,11 @@ public class MainActivity extends DoubleClickExitActivity {
         }
     }
 
-    @Override
-    protected void onResume() {
-        //跳转制定fragment
-        int position = getIntent().getIntExtra("position", 0);
-        mViewPager.setCurrentItem(position);
-        super.onResume();
-    }
+//    @Override
+//    protected void onResume() {
+//        //跳转制定fragment
+//        int position = getIntent().getIntExtra("position", 0);
+//        mViewPager.setCurrentItem(position);
+//        super.onResume();
+//    }
 }

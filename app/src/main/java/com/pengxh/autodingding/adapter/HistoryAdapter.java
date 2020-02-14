@@ -16,12 +16,10 @@ import java.util.List;
 public class HistoryAdapter extends BaseAdapter {
 
     private List<HistoryBean> beanList;
-    private Context mContext;
     private LayoutInflater mInflater;
 
     public HistoryAdapter(Context mContext, List<HistoryBean> list) {
         this.beanList = list;
-        this.mContext = mContext;
         mInflater = LayoutInflater.from(mContext);
     }
 
@@ -66,7 +64,7 @@ public class HistoryAdapter extends BaseAdapter {
 
         void bindData(HistoryBean historyBean) {
             String message = historyBean.getMessage();
-            if (message.contains("成功")) {
+            if (message.contains("成功") || message.contains("极速打卡")) {
                 noticeMsg.setTextColor(Color.WHITE);
                 noticeMsg.setBackgroundResource(R.drawable.bg_textview);
             } else {
