@@ -31,6 +31,7 @@ import com.pengxh.autodingding.utils.SendMailUtil;
 import com.pengxh.autodingding.utils.TimeOrDateUtil;
 import com.pengxh.autodingding.utils.Utils;
 
+import java.util.Objects;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -39,6 +40,7 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 import butterknife.Unbinder;
 
+@SuppressLint("SetTextI18n")
 public class OneDayFragment extends Fragment implements View.OnClickListener {
 
     private static final String TAG = "OneDayFragment";
@@ -69,12 +71,12 @@ public class OneDayFragment extends Fragment implements View.OnClickListener {
     }
 
     private void initEvent() {
-        fragmentManager = getActivity().getSupportFragmentManager();
+        fragmentManager = Objects.requireNonNull(getActivity()).getSupportFragmentManager();
         new Timer().schedule(new TimerTask() {
             @Override
             public void run() {
                 String systemTime = TimeOrDateUtil.timestampToTime(System.currentTimeMillis());
-                currentTime.setText(systemTime);
+                currentTime.post(() -> currentTime.setText(systemTime));
             }
         }, 0, 1000);
 
@@ -89,24 +91,18 @@ public class OneDayFragment extends Fragment implements View.OnClickListener {
                 if (action.equals(Constant.DINGDING_ACTION)) {
                     emailMessage = intent.getStringExtra("data");
                     Log.d(TAG, "onReceive: " + emailMessage);
-                    //保存打卡记录
-                    //工作通知:CSS-考勤打卡:23:31 上班打卡成功,进入钉钉查看详情
-                    //工作通知:CSS-考勤打卡:23:32 下班打卡成功,进入钉钉查看详情
-                    String[] split = emailMessage.split("-");
-                    String title = split[0].replace("工作通知", "打卡部门");//工作通知:政府事业本部2
-                    //[1条]考勤打卡:19:49 下班打卡成功
-                    String[] strings = split[1].split(",")[0].split(" ");
-                    //[3条]考勤打卡:20:06
-                    String s = strings[0];
-                    int off = s.indexOf("]");
-                    String time = s.substring(off + 1);
-                    String message = strings[1];
-
+                    //TODO 保存打卡记录
+                    //考勤打卡:11:14 下班打卡成功,进入钉钉查看详情
+                    //[4条]考勤打卡:11:11 下班打卡成功,进入钉钉查看详情
+                    String result;
+                    if (emailMessage.startsWith("[")) {
+                        result = emailMessage.substring(emailMessage.indexOf("]") + 1, emailMessage.indexOf(","));
+                    } else {
+                        result = emailMessage.substring(0, emailMessage.indexOf(","));
+                    }
                     SQLiteUtil.getInstance().saveHistory(Utils.uuid(),
-                            title,
                             TimeOrDateUtil.rTimestampToDate(System.currentTimeMillis()),
-                            time,
-                            message);
+                            result);
                 }
             }
         });

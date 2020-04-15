@@ -48,7 +48,7 @@ public class SQLiteUtil {
     }
 
     //存记录
-    public void saveHistory(String uuid, String title, String date, String time, String message) {
+    public void saveHistory(String uuid, String date, String message) {
         Log.d(TAG, "saveHistory: 开始保存数据");
         if (!TextUtils.isEmpty(uuid)) {
             ContentValues values = new ContentValues();
@@ -56,9 +56,7 @@ public class SQLiteUtil {
                 Log.d(TAG, uuid + "已经存在了");
             } else {
                 values.put("uuid", uuid);
-                values.put("title", title);
                 values.put("date", date);
-                values.put("time", time);
                 values.put("message", message);
                 db.insert("HistoryTable", null, values);
                 Log.d(TAG, "saveHistory: 保存成功");
@@ -75,9 +73,7 @@ public class SQLiteUtil {
             do {
                 HistoryBean resultBean = new HistoryBean();
                 resultBean.setUuid(cursor.getString(cursor.getColumnIndex("uuid")));
-                resultBean.setTitle(cursor.getString(cursor.getColumnIndex("title")));
                 resultBean.setDate(cursor.getString(cursor.getColumnIndex("date")));
-                resultBean.setTime(cursor.getString(cursor.getColumnIndex("time")));
                 resultBean.setMessage(cursor.getString(cursor.getColumnIndex("message")));
                 list.add(resultBean);
             } while (cursor.moveToNext());

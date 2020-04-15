@@ -1,11 +1,11 @@
 package com.pengxh.autodingding.adapter;
 
 import android.content.Context;
-import android.graphics.Color;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.pengxh.autodingding.R;
@@ -44,10 +44,9 @@ public class HistoryAdapter extends BaseAdapter {
         if (convertView == null) {
             convertView = mInflater.inflate(R.layout.item_list, null);
             holder = new HistoryViewHolder();
-            holder.noticeTitle = convertView.findViewById(R.id.noticeTitle);
             holder.noticeDate = convertView.findViewById(R.id.noticeDate);
-            holder.noticeTime = convertView.findViewById(R.id.noticeTime);
-            holder.noticeMsg = convertView.findViewById(R.id.noticeMsg);
+            holder.noticeMessage = convertView.findViewById(R.id.noticeMessage);
+            holder.tagView = convertView.findViewById(R.id.tagView);
             convertView.setTag(holder);
         } else {
             holder = (HistoryViewHolder) convertView.getTag();
@@ -56,25 +55,18 @@ public class HistoryAdapter extends BaseAdapter {
         return convertView;
     }
 
-    private class HistoryViewHolder {
-        private TextView noticeMsg;
-        private TextView noticeTitle;
+    private static class HistoryViewHolder {
         private TextView noticeDate;
-        private TextView noticeTime;
+        private TextView noticeMessage;
+        private ImageView tagView;
 
         void bindData(HistoryBean historyBean) {
             String message = historyBean.getMessage();
-            if (message.contains("成功") || message.contains("极速打卡")) {
-                noticeMsg.setTextColor(Color.WHITE);
-                noticeMsg.setBackgroundResource(R.drawable.bg_textview);
-            } else {
-                noticeMsg.setTextColor(Color.parseColor("#0094FF"));
-                noticeMsg.setBackgroundResource(R.drawable.bg_textview_error);
+            if (!message.contains("成功")) {
+                tagView.setBackgroundResource(R.drawable.bg_textview_error);
             }
-            noticeMsg.setText(message);
-            noticeTitle.setText(historyBean.getTitle());
+            noticeMessage.setText(message);
             noticeDate.setText(historyBean.getDate());
-            noticeTime.setText(historyBean.getTime());
         }
     }
 }

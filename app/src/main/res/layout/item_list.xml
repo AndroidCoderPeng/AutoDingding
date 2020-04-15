@@ -2,43 +2,30 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:paddingStart="10dp"
-    android:paddingTop="5dp"
-    android:paddingEnd="10dp"
-    android:paddingBottom="5dp">
-
-    <TextView
-        android:id="@+id/noticeMsg"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentEnd="true"
-        android:layout_centerVertical="true"
-        android:background="@drawable/bg_textview"
-        android:paddingStart="10dp"
-        android:paddingTop="5dp"
-        android:paddingEnd="10dp"
-        android:paddingBottom="5dp"
-        android:text="下班打卡成功"
-        android:textColor="#FFFFFF"
-        android:textSize="20sp" />
+    android:padding="10dp">
 
     <TextView
         android:id="@+id/noticeDate"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="2020年2月12日" />
+        android:layout_centerVertical="true"
+        android:text="2020年2月12日"
+        android:textSize="16sp" />
 
     <TextView
-        android:id="@+id/noticeTime"
+        android:id="@+id/noticeMessage"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@id/noticeDate"
-        android:text="考勤打卡:20:11" />
+        android:layout_centerVertical="true"
+        android:layout_toEndOf="@id/noticeDate"
+        android:text="下班打卡成功"
+        android:textSize="16sp" />
 
-    <TextView
-        android:id="@+id/noticeTitle"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/noticeTime"
-        android:text="打卡部门:政府事业本部2" />
+    <ImageView
+        android:id="@+id/tagView"
+        android:layout_width="20dp"
+        android:layout_height="20dp"
+        android:layout_alignParentEnd="true"
+        android:layout_centerVertical="true"
+        android:background="@drawable/bg_textview" />
 </RelativeLayout>

@@ -13,6 +13,7 @@ import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 
 import com.pengxh.app.multilib.widget.EasyToast;
+import com.pengxh.app.multilib.widget.dialog.PermissionDialog;
 
 import java.util.List;
 
@@ -34,7 +35,20 @@ public class WelcomeActivity extends AppCompatActivity implements EasyPermission
             if (checkPermission(this, USER_PERMISSIONS)) {
                 startMainActivity();
             } else {
-                EasyPermissions.requestPermissions(this, "需要获取相关权限", PERMISSIONS_CODE, USER_PERMISSIONS);
+                new PermissionDialog.Builder()
+                        .setContext(this)
+                        .setPermission(USER_PERMISSIONS)
+                        .setOnDialogClickListener(new PermissionDialog.onDialogClickListener() {
+                            @Override
+                            public void onButtonClick() {
+                                EasyPermissions.requestPermissions(WelcomeActivity.this, "需要获取相关权限", PERMISSIONS_CODE, USER_PERMISSIONS);
+                            }
+
+                            @Override
+                            public void onCancelClick() {
+                                EasyToast.showToast("用户取消授权", EasyToast.WARING);
+                            }
+                        }).build().show();
             }
         } else {
             startMainActivity();
