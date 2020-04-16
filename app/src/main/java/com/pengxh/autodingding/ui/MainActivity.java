@@ -1,5 +1,6 @@
 package com.pengxh.autodingding.ui;
 
+import android.content.Intent;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentPagerAdapter;
@@ -16,6 +17,7 @@ import com.pengxh.app.multilib.utils.SaveKeyValues;
 import com.pengxh.app.multilib.widget.NoScrollViewPager;
 import com.pengxh.autodingding.R;
 import com.pengxh.autodingding.adapter.BaseFragmentAdapter;
+import com.pengxh.autodingding.service.TimeService;
 import com.pengxh.autodingding.ui.fragment.OneDayFragment;
 import com.pengxh.autodingding.ui.fragment.SettingsFragment;
 import com.pengxh.autodingding.utils.Constant;
@@ -45,6 +47,7 @@ public class MainActivity extends DoubleClickExitActivity {
 
     @Override
     public void initData() {
+        startService(new Intent(this, TimeService.class));
         fragmentList.add(new OneDayFragment());
         fragmentList.add(new SettingsFragment());
     }

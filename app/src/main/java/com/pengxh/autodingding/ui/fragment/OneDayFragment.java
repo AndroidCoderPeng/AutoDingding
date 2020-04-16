@@ -103,6 +103,7 @@ public class OneDayFragment extends Fragment implements View.OnClickListener {
                     SQLiteUtil.getInstance().saveHistory(Utils.uuid(),
                             TimeOrDateUtil.rTimestampToDate(System.currentTimeMillis()),
                             result);
+                    BroadcastManager.getInstance(context).sendBroadcast(Constant.ACTION_UPDATE, "update");
                 }
             }
         });

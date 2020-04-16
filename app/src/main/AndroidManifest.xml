@@ -27,7 +27,7 @@
         <activity
             android:name=".ui.MainActivity"
             android:launchMode="singleTask"
-            android:screenOrientation="fullSensor" />
+            android:screenOrientation="unspecified" />
 
         <activity android:name=".ui.HistoryActivity" />
 
@@ -38,5 +38,6 @@
                 <action android:name="android.service.notification.NotificationListenerService" />
             </intent-filter>
         </service>
+        <service android:name=".service.TimeService" />
     </application>
 </manifest>
