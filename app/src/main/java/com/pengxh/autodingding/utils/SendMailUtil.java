@@ -1,9 +1,15 @@
 package com.pengxh.autodingding.utils;
 
+import android.annotation.SuppressLint;
+import android.os.Handler;
+import android.os.Message;
 import android.support.annotation.NonNull;
 import android.util.Log;
 
+import com.pengxh.app.multilib.widget.EasyToast;
 import com.pengxh.autodingding.bean.MailInfo;
+
+import java.io.File;
 
 /**
  * @author: Pengxh
@@ -16,12 +22,44 @@ public class SendMailUtil {
     private static final String TAG = "SendMailUtil";
 
     public static void send(String toAddress, String emailMessage) {
-        final MailInfo mailInfo = createMail(toAddress, emailMessage);
         new Thread(() -> {
-            boolean isSendSuccess = new MailSender().sendTextMail(mailInfo);
+            boolean isSendSuccess = new MailSender().sendTextMail(createMail(toAddress, emailMessage));
             Log.d(TAG, "run: 邮件发送成功？--->" + isSendSuccess);
         }).start();
     }
+
+    static void sendAttachFileEmail(String toAddress, String filePath) {
+        Log.d(TAG, "sendAttachFileEmail: 添加附件");
+        File file = new File(filePath);
+        if (!file.exists()) {
+            EasyToast.showToast("打卡记录不存在，请检查", EasyToast.ERROR);
+            return;
+        }
+        new Thread(() -> {
+            boolean isSendSuccess = new MailSender().sendAccessoryMail(createAttachMail(toAddress, file));
+            Log.d(TAG, "sendAttachFileEmail: " + isSendSuccess);
+            if (isSendSuccess) {
+                handler.sendEmptyMessage(0);
+            } else {
+                handler.sendEmptyMessage(1);
+            }
+        }).start();
+    }
+
+    @SuppressLint("HandlerLeak")
+    private static Handler handler = new Handler() {
+        @Override
+        public void handleMessage(Message msg) {
+            switch (msg.what) {
+                case 0:
+                    EasyToast.showToast("导出到邮箱成功", EasyToast.SUCCESS);
+                    break;
+                case 1:
+                    EasyToast.showToast("导出到邮箱失败", EasyToast.ERROR);
+                    break;
+            }
+        }
+    };
 
     @NonNull
     private static MailInfo createMail(String toAddress, String emailMessage) {
@@ -43,6 +81,23 @@ public class SendMailUtil {
             mailInfo.setSubject(split[0]); // 邮件主题
             mailInfo.setContent(split[1]); // 邮件文本
         }
+        return mailInfo;
+    }
+
+    @NonNull
+    private static MailInfo createAttachMail(String toAddress, File file) {
+        Log.d(TAG, "createAttachMail: 创建邮件实体开始");
+        MailInfo mailInfo = new MailInfo();
+        mailInfo.setMailServerHost("smtp.qq.com");//发送方邮箱服务器
+        mailInfo.setMailServerPort("587");//发送方邮箱端口号
+        mailInfo.setValidate(true);
+        mailInfo.setUserName("290677893@qq.com"); // 发送者邮箱地址
+        mailInfo.setPassword("gqvwykjvpnvfbjid");//邮箱授权码，不是密码
+        mailInfo.setToAddress(toAddress); // 接收者邮箱
+        mailInfo.setFromAddress("290677893@qq.com"); // 发送者邮箱
+        mailInfo.setSubject("打卡记录"); // 邮件主题
+        mailInfo.setAttachFile(file);
+        Log.d(TAG, "createAttachMail: 创建邮件实体结束");
         return mailInfo;
     }
 }

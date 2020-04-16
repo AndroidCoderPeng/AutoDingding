@@ -1,10 +1,11 @@
 package com.pengxh.autodingding.ui.fragment;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.Dialog;
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
-import android.content.pm.PackageInfo;
-import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.provider.Settings;
@@ -15,17 +16,19 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.CompoundButton;
 import android.widget.Switch;
 import android.widget.TextView;
 
 import com.aihook.alertview.library.AlertView;
+import com.pengxh.app.multilib.utils.BroadcastManager;
 import com.pengxh.app.multilib.widget.EasyToast;
 import com.pengxh.app.multilib.widget.dialog.InputDialog;
+import com.pengxh.autodingding.BuildConfig;
 import com.pengxh.autodingding.R;
 import com.pengxh.autodingding.service.NotificationMonitorService;
 import com.pengxh.autodingding.ui.HistoryActivity;
 import com.pengxh.autodingding.utils.Constant;
+import com.pengxh.autodingding.utils.SQLiteUtil;
 import com.pengxh.autodingding.utils.Utils;
 
 import butterknife.BindView;
@@ -41,46 +44,51 @@ public class SettingsFragment extends Fragment implements View.OnClickListener {
     TextView emailTextView;
     @BindView(R.id.noticeSwitch)
     Switch noticeSwitch;
+    @BindView(R.id.recordSize)
+    TextView recordSize;
     @BindView(R.id.appVersion)
     TextView appVersion;
     Unbinder unbinder;
+    private BroadcastManager broadcastManager;
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = LayoutInflater.from(this.getContext()).inflate(R.layout.fragment_settings, null);
         unbinder = ButterKnife.bind(this, view);
+        broadcastManager = BroadcastManager.getInstance(getContext());
         initEvent(getActivity());
         return view;
     }
 
+    @SuppressLint("SetTextI18n")
     private void initEvent(Activity mActivity) {
         String emailAddress = Utils.readEmailAddress();
         if (!emailAddress.equals("")) {
             emailTextView.setText(emailAddress);
         }
-
-        PackageManager manager = mActivity.getPackageManager();
-        try {
-            PackageInfo packageInfo = manager.getPackageInfo(mActivity.getPackageName(), 0);
-            appVersion.setText(packageInfo.versionName);
-        } catch (PackageManager.NameNotFoundException e) {
-            e.printStackTrace();
-        }
+        recordSize.setText(SQLiteUtil.getInstance().loadHistory().size() + "");
+        broadcastManager.addAction(Constant.ACTION_UPDATE, new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                String action = intent.getAction();
+                if (action != null && action.equals(Constant.ACTION_UPDATE)) {
+                    recordSize.setText(SQLiteUtil.getInstance().loadHistory().size() + "");
+                }
+            }
+        });
+        appVersion.setText(BuildConfig.VERSION_NAME);
 
         noticeSwitch.setChecked(Utils.isServiceAlive(Constant.SERVICE_NAME));
-        noticeSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton compoundButton, boolean isChecked) {
-                if (isChecked) {
-                    Log.d(TAG, "onCheckedChanged: 打开通知监听");
-                    String string = Settings.Secure.getString(mActivity.getContentResolver(), "enabled_notification_listeners");
-                    if (!string.contains(NotificationMonitorService.class.getName())) {
-                        Utils.openNotificationSettings();
-                        return;
-                    }
-                    mActivity.startService(new Intent(mActivity, NotificationMonitorService.class));
+        noticeSwitch.setOnCheckedChangeListener((compoundButton, isChecked) -> {
+            if (isChecked) {
+                Log.d(TAG, "onCheckedChanged: 打开通知监听");
+                String string = Settings.Secure.getString(mActivity.getContentResolver(), "enabled_notification_listeners");
+                if (!string.contains(NotificationMonitorService.class.getName())) {
+                    Utils.openNotificationSettings();
+                    return;
                 }
+                mActivity.startService(new Intent(mActivity, NotificationMonitorService.class));
             }
         });
     }
@@ -141,5 +149,6 @@ public class SettingsFragment extends Fragment implements View.OnClickListener {
     public void onDestroyView() {
         super.onDestroyView();
         unbinder.unbind();
+        broadcastManager.destroy(Constant.ACTION_UPDATE);
     }
 }

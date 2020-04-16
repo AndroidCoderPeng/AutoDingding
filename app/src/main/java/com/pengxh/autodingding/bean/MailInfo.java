@@ -1,5 +1,6 @@
 package com.pengxh.autodingding.bean;
 
+import java.io.File;
 import java.util.Properties;
 
 /**
@@ -25,8 +26,10 @@ public class MailInfo {
     private String subject;
     // 邮件的文本内容
     private String content;
+    // 邮件的附件
+    private File attachFile;
     // 邮件附件的文件名
-    private String[] attachFileNames;
+    private String attachFileName;
 
     /**
      * 获得邮件会话属性
@@ -111,11 +114,19 @@ public class MailInfo {
         this.content = content;
     }
 
-    public String[] getAttachFileNames() {
-        return attachFileNames;
+    public File getAttachFile() {
+        return attachFile;
     }
 
-    public void setAttachFileNames(String[] attachFileNames) {
-        this.attachFileNames = attachFileNames;
+    public void setAttachFile(File attachFile) {
+        this.attachFile = attachFile;
+    }
+
+    public String getAttachFileName() {
+        return attachFileName;
+    }
+
+    public void setAttachFileName(String attachFileName) {
+        this.attachFileName = attachFileName;
     }
 }

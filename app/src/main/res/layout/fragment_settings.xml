@@ -30,7 +30,7 @@
             android:textSize="18sp" />
     </RelativeLayout>
 
-    <LinearLayout
+    <RelativeLayout
         android:id="@+id/historyLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -40,9 +40,19 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
             android:text="打卡记录"
             android:textSize="18sp" />
-    </LinearLayout>
+
+        <TextView
+            android:id="@+id/recordSize"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:layout_centerVertical="true"
+            android:textColor="#333333"
+            android:textSize="18sp" />
+    </RelativeLayout>
 
     <View
         android:layout_width="match_parent"
@@ -77,7 +87,7 @@
         android:layout_height="1px"
         android:background="#CCC" />
 
-    <LinearLayout
+    <RelativeLayout
         android:id="@+id/introduceLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -87,9 +97,17 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
             android:text="使用说明"
             android:textSize="18sp" />
-    </LinearLayout>
+
+        <ImageView
+            android:layout_width="72px"
+            android:layout_height="72px"
+            android:layout_alignParentEnd="true"
+            android:layout_centerVertical="true"
+            android:background="@mipmap/right" />
+    </RelativeLayout>
 
     <View
         android:layout_width="match_parent"
@@ -116,6 +134,7 @@
             android:layout_height="wrap_content"
             android:layout_alignParentEnd="true"
             android:gravity="center_vertical"
+            android:textColor="#333333"
             android:textSize="18sp" />
     </RelativeLayout>
 </LinearLayout>
