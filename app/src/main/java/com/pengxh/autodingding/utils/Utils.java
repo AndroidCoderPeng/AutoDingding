@@ -2,7 +2,6 @@ package com.pengxh.autodingding.utils;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
-import android.app.ActivityManager;
 import android.app.KeyguardManager;
 import android.app.Notification;
 import android.app.NotificationChannel;
@@ -18,15 +17,9 @@ import android.os.Build;
 import android.os.CountDownTimer;
 import android.os.Environment;
 import android.os.PowerManager;
-import android.provider.Settings;
 import android.util.Log;
 
 import com.pengxh.autodingding.R;
-import com.squareup.okhttp.Call;
-import com.squareup.okhttp.Callback;
-import com.squareup.okhttp.OkHttpClient;
-import com.squareup.okhttp.Request;
-import com.squareup.okhttp.Response;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -39,14 +32,6 @@ import java.io.OutputStreamWriter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
-
-import io.reactivex.Observable;
-import io.reactivex.ObservableOnSubscribe;
-import io.reactivex.Observer;
-import io.reactivex.android.schedulers.AndroidSchedulers;
-import io.reactivex.disposables.CompositeDisposable;
-import io.reactivex.disposables.Disposable;
-import io.reactivex.schedulers.Schedulers;
 
 import static android.content.Context.KEYGUARD_SERVICE;
 
@@ -97,25 +82,7 @@ public class Utils {
         return packageNames.contains(packageName);
     }
 
-    /**
-     * 查询某个服务是否在运行中
-     */
-    public static boolean isServiceAlive(String serviceName) {
-        ActivityManager manager = (ActivityManager) mContext.getSystemService(mContext.ACTIVITY_SERVICE);
-        List<ActivityManager.RunningServiceInfo> services = manager.getRunningServices(Integer.MAX_VALUE);
-        for (ActivityManager.RunningServiceInfo service : services) {
-            String className = service.service.getClassName();
-            Log.d(TAG, "isServiceAlive: " + className);
-            if (serviceName.equals(className)) {
-                //打开常住通知栏
-                createNotification();
-                return true;
-            }
-        }
-        return false;
-    }
-
-    private static void createNotification() {
+    public static void createNotification() {
         Log.d(TAG, "createNotification");
         //Android8.0以上必须添加 渠道 才能显示通知栏
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
@@ -180,24 +147,6 @@ public class Utils {
                 }
             }
         }.start();
-    }
-
-    /**
-     * 打开通知设置
-     */
-    public static void openNotificationSettings() {
-        try {
-            Intent intent;
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP_MR1) {
-                intent = new Intent(Settings.ACTION_NOTIFICATION_LISTENER_SETTINGS);
-            } else {
-                intent = new Intent("android.settings.ACTION_NOTIFICATION_LISTENER_SETTINGS");
-            }
-            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-            mContext.startActivity(intent);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
     }
 
     /**
@@ -281,61 +230,6 @@ public class Utils {
             }
         }
         return content.toString();
-    }
-
-    private static CompositeDisposable compositeDisposable = new CompositeDisposable();
-
-    public static void doHttpRequest(String url, HttpCallbackListener listener) {
-        Observable.create((ObservableOnSubscribe<Response>) emitter -> {
-            Call call = new OkHttpClient().newCall(new Request.Builder().url(url).get().build());
-            call.enqueue(new Callback() {
-                @Override
-                public void onFailure(Request request, IOException e) {
-                    Log.e(TAG, "onFailure: ", e);
-                }
-
-                @Override
-                public void onResponse(Response response) throws IOException {
-                    emitter.onNext(response);
-                }
-            });
-        }).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).subscribe(new Observer<Response>() {
-            Disposable mDisposable;
-
-            @Override
-            public void onSubscribe(Disposable d) {
-                Log.d(TAG, "onSubscribe: 添加订阅" + d);
-                //订阅
-                mDisposable = d;
-                //添加到容器中
-                compositeDisposable.add(d);
-            }
-
-            @Override
-            public void onNext(Response response) {
-                if (mDisposable.isDisposed()) {
-                    return;
-                }
-                try {
-                    listener.onSuccess(response.body().string());
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }
-
-            @Override
-            public void onError(Throwable e) {
-                listener.onError(new Exception(e));
-            }
-
-            @Override
-            public void onComplete() {
-                //取消订阅
-                Log.d(TAG, "onComplete: 取消订阅");
-                mDisposable.dispose();
-                compositeDisposable.clear();
-            }
-        });
     }
 
     private static ProgressDialog progressDialog;

@@ -4,15 +4,17 @@ import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.Dialog;
 import android.content.BroadcastReceiver;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.provider.Settings;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.util.Log;
+import android.support.v4.app.NotificationManagerCompat;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -30,6 +32,9 @@ import com.pengxh.autodingding.ui.HistoryActivity;
 import com.pengxh.autodingding.utils.Constant;
 import com.pengxh.autodingding.utils.SQLiteUtil;
 import com.pengxh.autodingding.utils.Utils;
+
+import java.util.Objects;
+import java.util.Set;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -62,7 +67,7 @@ public class SettingsFragment extends Fragment implements View.OnClickListener {
     }
 
     @SuppressLint("SetTextI18n")
-    private void initEvent(Activity mActivity) {
+    private void initEvent(Activity activity) {
         String emailAddress = Utils.readEmailAddress();
         if (!emailAddress.equals("")) {
             emailTextView.setText(emailAddress);
@@ -79,18 +84,44 @@ public class SettingsFragment extends Fragment implements View.OnClickListener {
         });
         appVersion.setText(BuildConfig.VERSION_NAME);
 
-        noticeSwitch.setChecked(Utils.isServiceAlive(Constant.SERVICE_NAME));
-        noticeSwitch.setOnCheckedChangeListener((compoundButton, isChecked) -> {
-            if (isChecked) {
-                Log.d(TAG, "onCheckedChanged: 打开通知监听");
-                String string = Settings.Secure.getString(mActivity.getContentResolver(), "enabled_notification_listeners");
-                if (!string.contains(NotificationMonitorService.class.getName())) {
-                    Utils.openNotificationSettings();
-                    return;
-                }
-                mActivity.startService(new Intent(mActivity, NotificationMonitorService.class));
+        boolean enabled = isNotificationListenerEnabled(activity.getApplicationContext());
+        noticeSwitch.setChecked(enabled);
+        if (!enabled) {
+            openNotificationListenSettings();
+        }
+        toggleNotificationListenerService();
+        Utils.createNotification();
+    }
+
+    //检测通知监听服务是否被授权
+    public boolean isNotificationListenerEnabled(Context context) {
+        Set<String> packageNames = NotificationManagerCompat.getEnabledListenerPackages(context);
+        return packageNames.contains(context.getPackageName());
+    }
+
+    //打开通知监听设置页面
+    public void openNotificationListenSettings() {
+        try {
+            Intent intent;
+            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP_MR1) {
+                intent = new Intent(Settings.ACTION_NOTIFICATION_LISTENER_SETTINGS);
+            } else {
+                intent = new Intent("android.settings.ACTION_NOTIFICATION_LISTENER_SETTINGS");
             }
-        });
+            startActivity(intent);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    //把应用的NotificationListenerService实现类disable再enable，即可触发系统rebind操作
+    private void toggleNotificationListenerService() {
+        Context context = Objects.requireNonNull(getContext());
+        ComponentName componentName = new ComponentName(context, NotificationMonitorService.class);
+        PackageManager pm = context.getPackageManager();
+        pm.setComponentEnabledSetting(componentName, PackageManager.COMPONENT_ENABLED_STATE_DISABLED, PackageManager.DONT_KILL_APP);
+
+        pm.setComponentEnabledSetting(componentName, PackageManager.COMPONENT_ENABLED_STATE_ENABLED, PackageManager.DONT_KILL_APP);
     }
 
     @OnClick({R.id.emailLayout, R.id.historyLayout, R.id.introduceLayout, R.id.updateLayout})

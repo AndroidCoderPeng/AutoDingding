@@ -27,6 +27,7 @@
             android:layout_height="wrap_content"
             android:layout_alignParentEnd="true"
             android:gravity="center_vertical"
+            android:textColor="#333333"
             android:textSize="18sp" />
     </RelativeLayout>
 
