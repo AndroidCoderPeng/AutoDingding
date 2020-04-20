@@ -4,6 +4,7 @@ import android.annotation.SuppressLint;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.os.Handler;
@@ -60,12 +61,14 @@ public class OneDayFragment extends Fragment implements View.OnClickListener {
     private FragmentManager fragmentManager;
     private BroadcastManager broadcastManager;
     private String emailMessage = "";
+    private Context context;
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View mView = LayoutInflater.from(this.getContext()).inflate(R.layout.fragment_day, null);
         unbinder = ButterKnife.bind(this, mView);
+        context = getContext();
         initEvent();
         return mView;
     }
@@ -80,15 +83,12 @@ public class OneDayFragment extends Fragment implements View.OnClickListener {
             }
         }, 0, 1000);
 
-        broadcastManager = BroadcastManager.getInstance(getContext());
+        broadcastManager = BroadcastManager.getInstance(context);
         broadcastManager.addAction(Constant.DINGDING_ACTION, new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {
                 String action = intent.getAction();
-                if (action == null) {
-                    return;
-                }
-                if (action.equals(Constant.DINGDING_ACTION)) {
+                if (action != null && action.equals(Constant.DINGDING_ACTION)) {
                     emailMessage = intent.getStringExtra("data");
                     Log.d(TAG, "onReceive: " + emailMessage);
                     //TODO 保存打卡记录
@@ -162,8 +162,19 @@ public class OneDayFragment extends Fragment implements View.OnClickListener {
                     int tickTime = (int) (l / 1000);
                     //更新UI
                     startTimeView.setText(tickTime + "s");
-                    if (tickTime < 1) {
-                        startTimeView.setText("--");
+                    /**
+                     * 7.0系统只能倒计时到1
+                     *
+                     * 9.1系统可以倒计时到0
+                     * */
+                    if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.N) {
+                        if (tickTime == 1) {
+                            startTimeView.setText("--");
+                        }
+                    } else {
+                        if (tickTime == 0) {
+                            startTimeView.setText("--");
+                        }
                     }
                 }
 
@@ -193,8 +204,14 @@ public class OneDayFragment extends Fragment implements View.OnClickListener {
                     int tickTime = (int) (l / 1000);
                     //更新UI
                     endTimeView.setText(tickTime + "s");
-                    if (tickTime < 1) {
-                        endTimeView.setText("--");
+                    if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.N) {
+                        if (tickTime == 1) {
+                            endTimeView.setText("--");
+                        }
+                    } else {
+                        if (tickTime == 0) {
+                            endTimeView.setText("--");
+                        }
                     }
                 }
 
@@ -214,9 +231,9 @@ public class OneDayFragment extends Fragment implements View.OnClickListener {
         @Override
         public void handleMessage(Message msg) {
             if (msg.what == 1) {
-                Intent intent = new Intent(getActivity(), MainActivity.class);
+                Intent intent = new Intent(context, MainActivity.class);
                 intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                startActivity(intent);
+                context.startActivity(intent);
 
                 String emailAddress = Utils.readEmailAddress();
                 //发送打卡成功的邮件
