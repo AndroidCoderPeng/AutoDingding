@@ -1,6 +1,5 @@
 package com.pengxh.autodingding.ui;
 
-import android.content.Intent;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentPagerAdapter;
@@ -17,7 +16,6 @@ import com.pengxh.app.multilib.utils.SaveKeyValues;
 import com.pengxh.app.multilib.widget.NoScrollViewPager;
 import com.pengxh.autodingding.R;
 import com.pengxh.autodingding.adapter.BaseFragmentAdapter;
-import com.pengxh.autodingding.service.TimeService;
 import com.pengxh.autodingding.ui.fragment.OneDayFragment;
 import com.pengxh.autodingding.ui.fragment.SettingsFragment;
 import com.pengxh.autodingding.utils.Constant;
@@ -47,7 +45,6 @@ public class MainActivity extends DoubleClickExitActivity {
 
     @Override
     public void initData() {
-        startService(new Intent(this, TimeService.class));
         fragmentList.add(new OneDayFragment());
         fragmentList.add(new SettingsFragment());
     }
@@ -164,12 +161,4 @@ public class MainActivity extends DoubleClickExitActivity {
             tv_name.setTextColor(getResources().getColor(R.color.tab_txtcolor));
         }
     }
-
-//    @Override
-//    protected void onResume() {
-//        //跳转制定fragment
-//        int position = getIntent().getIntExtra("position", 0);
-//        mViewPager.setCurrentItem(position);
-//        super.onResume();
-//    }
 }

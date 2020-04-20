@@ -71,15 +71,13 @@ public class SendMailUtil {
         mailInfo.setPassword("gqvwykjvpnvfbjid");//邮箱授权码，不是密码
         mailInfo.setToAddress(toAddress); // 接收者邮箱
         mailInfo.setFromAddress("290677893@qq.com"); // 发送者邮箱
+        mailInfo.setSubject("自动打卡通知"); // 邮件主题
         if (emailMessage.equals("")) {
-            mailInfo.setSubject("自动打卡通知"); // 邮件主题
             mailInfo.setContent("未监听到打卡成功的通知，请手动登录检查" + TimeOrDateUtil.timestampToDate(System.currentTimeMillis())); // 邮件文本
         } else {
-            //工作通知:CSS-考勤打卡:23:31 上班打卡成功,进入钉钉查看详情
-            String[] split = emailMessage.split("-");
-
-            mailInfo.setSubject(split[0]); // 邮件主题
-            mailInfo.setContent(split[1]); // 邮件文本
+            //考勤打卡:09:13 极速打卡成功,进入钉钉查看详情
+            //考勤打卡:09:17 下班打卡 早退
+            mailInfo.setContent(emailMessage); // 邮件文本
         }
         return mailInfo;
     }

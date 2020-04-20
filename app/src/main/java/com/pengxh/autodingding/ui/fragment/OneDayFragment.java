@@ -162,7 +162,7 @@ public class OneDayFragment extends Fragment implements View.OnClickListener {
                     int tickTime = (int) (l / 1000);
                     //更新UI
                     startTimeView.setText(tickTime + "s");
-                    if (tickTime == 0) {
+                    if (tickTime < 1) {
                         startTimeView.setText("--");
                     }
                 }
@@ -170,7 +170,7 @@ public class OneDayFragment extends Fragment implements View.OnClickListener {
                 @Override
                 public void onFinish() {
                     Utils.openDingDing(Constant.DINGDING);
-                    handler.sendEmptyMessageDelayed(1, 10 * 1000);
+                    handler.sendEmptyMessageDelayed(1, 15 * 1000);
                 }
             }.start();
         } else {
@@ -193,7 +193,7 @@ public class OneDayFragment extends Fragment implements View.OnClickListener {
                     int tickTime = (int) (l / 1000);
                     //更新UI
                     endTimeView.setText(tickTime + "s");
-                    if (tickTime == 0) {
+                    if (tickTime < 1) {
                         endTimeView.setText("--");
                     }
                 }
@@ -201,7 +201,7 @@ public class OneDayFragment extends Fragment implements View.OnClickListener {
                 @Override
                 public void onFinish() {
                     Utils.openDingDing(Constant.DINGDING);
-                    handler.sendEmptyMessageDelayed(1, 10 * 1000);
+                    handler.sendEmptyMessageDelayed(1, 15 * 1000);
                 }
             }.start();
         } else {
@@ -215,7 +215,6 @@ public class OneDayFragment extends Fragment implements View.OnClickListener {
         public void handleMessage(Message msg) {
             if (msg.what == 1) {
                 Intent intent = new Intent(getActivity(), MainActivity.class);
-                intent.putExtra("position", 0);
                 intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                 startActivity(intent);
 
