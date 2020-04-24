@@ -28,6 +28,7 @@ import com.pengxh.app.multilib.widget.EasyToast;
 import com.pengxh.autodingding.R;
 import com.pengxh.autodingding.ui.MainActivity;
 import com.pengxh.autodingding.utils.Constant;
+import com.pengxh.autodingding.utils.LogToFile;
 import com.pengxh.autodingding.utils.SQLiteUtil;
 import com.pengxh.autodingding.utils.SendMailUtil;
 import com.pengxh.autodingding.utils.TimeOrDateUtil;
@@ -90,7 +91,8 @@ public class OneDayFragment extends Fragment implements View.OnClickListener {
                 String action = intent.getAction();
                 if (action != null && action.equals(Constant.DINGDING_ACTION)) {
                     String message = intent.getStringExtra("data");
-                    Log.d(TAG, "onReceive: " + message);
+                    Log.d(TAG, "接收到广播, 通知内容: " + message);
+                    LogToFile.d(TAG, "接收到广播, 通知内容: " + message);
                     //TODO 保存打卡记录
                     //考勤打卡:11:14 下班打卡成功,进入钉钉查看详情
                     //[4条]考勤打卡:11:11 下班打卡成功,进入钉钉查看详情

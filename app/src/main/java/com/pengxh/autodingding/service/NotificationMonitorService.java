@@ -9,6 +9,7 @@ import android.util.Log;
 
 import com.pengxh.app.multilib.utils.BroadcastManager;
 import com.pengxh.autodingding.utils.Constant;
+import com.pengxh.autodingding.utils.LogToFile;
 
 /**
  * @description: TODO 状态栏监听服务
@@ -31,7 +32,7 @@ public class NotificationMonitorService extends NotificationListenerService {
      */
     @Override
     public void onListenerConnected() {
-
+        Log.d(TAG, "onListenerConnected: 通知管理器连接成功");
     }
 
     /**
@@ -44,7 +45,9 @@ public class NotificationMonitorService extends NotificationListenerService {
         String packageName = sbn.getPackageName();
         // 获取接收消息的内容
         String notificationText = extras.getString(Notification.EXTRA_TEXT);
-        if (packageName.equals("com.alibaba.android.rimet")) {
+        Log.d(TAG, "推送通知包名: [" + packageName + "], 通知内容: " + notificationText);
+        LogToFile.d(TAG, "推送通知包名: [" + packageName + "], 通知内容: " + notificationText);
+        if (packageName.contains("rimet")) {
             BroadcastManager.getInstance(this).sendBroadcast(Constant.DINGDING_ACTION, notificationText);
         } else {
             Log.d(TAG, "onNotificationPosted: 不是打卡通知，不处理");
