@@ -23,7 +23,6 @@ import com.jzxiang.pickerview.TimePickerDialog;
 import com.jzxiang.pickerview.data.Type;
 import com.pengxh.app.multilib.utils.BroadcastManager;
 import com.pengxh.app.multilib.utils.ColorUtil;
-import com.pengxh.app.multilib.utils.SaveKeyValues;
 import com.pengxh.app.multilib.widget.EasyToast;
 import com.pengxh.autodingding.R;
 import com.pengxh.autodingding.ui.MainActivity;
@@ -63,6 +62,7 @@ public class OneDayFragment extends Fragment implements View.OnClickListener {
     private FragmentManager fragmentManager;
     private BroadcastManager broadcastManager;
     private Context context;
+    private String result = "";
 
     @Nullable
     @Override
@@ -96,16 +96,12 @@ public class OneDayFragment extends Fragment implements View.OnClickListener {
                     //TODO 保存打卡记录
                     //考勤打卡:11:14 下班打卡成功,进入钉钉查看详情
                     //[4条]考勤打卡:11:11 下班打卡成功,进入钉钉查看详情
-                    String result;
                     if (message.startsWith("[")) {
                         result = message.substring(message.indexOf("]") + 1, message.indexOf(","));
                     } else {
                         result = message.substring(0, message.indexOf(","));
                     }
-                    SQLiteUtil.getInstance().saveHistory(Utils.uuid(),
-                            TimeOrDateUtil.rTimestampToDate(System.currentTimeMillis()),
-                            result);
-                    SaveKeyValues.putValue("emailMessage", message);
+                    SQLiteUtil.getInstance().saveHistory(Utils.uuid(), TimeOrDateUtil.rTimestampToDate(System.currentTimeMillis()), result);
                     BroadcastManager.getInstance(context).sendBroadcast(Constant.ACTION_UPDATE, "update");
                 }
             }
@@ -244,7 +240,7 @@ public class OneDayFragment extends Fragment implements View.OnClickListener {
                 if (emailAddress.equals("")) {
                     return;
                 }
-                SendMailUtil.send(emailAddress, (String) SaveKeyValues.getValue("emailMessage", ""));
+                SendMailUtil.send(emailAddress, result);
             }
         }
     };
