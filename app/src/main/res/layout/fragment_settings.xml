@@ -5,11 +5,13 @@
     android:background="#F3F7FF"
     android:orientation="vertical">
 
+    <include layout="@layout/include_title" />
+
     <RelativeLayout
+        android:layout_marginTop="10dp"
         android:id="@+id/emailLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="20dp"
         android:layout_marginBottom="20dp"
         android:background="#FFFFFF"
         android:padding="10dp">

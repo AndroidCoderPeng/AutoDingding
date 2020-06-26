@@ -4,12 +4,12 @@ import android.os.Environment;
 import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ListView;
-import android.widget.RelativeLayout;
+import android.widget.TextView;
 
 import com.aihook.alertview.library.AlertView;
 import com.google.gson.Gson;
-import com.gyf.immersionbar.ImmersionBar;
 import com.pengxh.app.multilib.base.BaseNormalActivity;
 import com.pengxh.app.multilib.utils.BroadcastManager;
 import com.pengxh.app.multilib.utils.DensityUtil;
@@ -34,8 +34,14 @@ import butterknife.OnClick;
 
 public class HistoryActivity extends BaseNormalActivity implements View.OnClickListener {
 
-    @BindView(R.id.titleLayout)
-    RelativeLayout titleLayout;
+    @BindView(R.id.parentLayout)
+    LinearLayout parentLayout;
+    @BindView(R.id.mTitleLeftView)
+    ImageView mTitleLeftView;
+    @BindView(R.id.mTitleView)
+    TextView mTitleView;
+    @BindView(R.id.mTitleRightView)
+    ImageView mTitleRightView;
     @BindView(R.id.refreshLayout)
     SmartRefreshLayout refreshLayout;
     @BindView(R.id.emptyView)
@@ -51,13 +57,16 @@ public class HistoryActivity extends BaseNormalActivity implements View.OnClickL
     private SQLiteUtil sqLiteUtil;
 
     @Override
-    public void initView() {
-        setContentView(R.layout.activity_history);
-        ImmersionBar.with(this).fitsSystemWindows(true).statusBarColor(R.color.colorAppThemeLight).init();
+    public int initLayoutView() {
+        return R.layout.activity_history;
     }
 
     @Override
     public void initData() {
+        mTitleLeftView.setVisibility(View.GONE);
+        mTitleView.setText("自动打卡");
+        mTitleRightView.setBackgroundResource(R.drawable.settings);
+
         loadRecord();
     }
 
@@ -83,7 +92,7 @@ public class HistoryActivity extends BaseNormalActivity implements View.OnClickL
         }
     }
 
-    @OnClick({R.id.settingsView})
+    @OnClick({R.id.mTitleRightView})
     @Override
     public void onClick(View view) {
         EasyPopupWindow easyPopupWindow = new EasyPopupWindow(this, items);
@@ -114,15 +123,17 @@ public class HistoryActivity extends BaseNormalActivity implements View.OnClickL
                     EasyToast.showToast("无打卡记录，无法导出", EasyToast.WARING);
                     return;
                 }
-                new AlertView("温馨提示", "导出到" + emailAddress, "取消", new String[]{"确定"}, null, this, AlertView.Style.Alert, (o, position1) -> {
-                    if (position1 == 0) {
+                new AlertView("温馨提示", "导出到" + emailAddress, "取消", new String[]{"确定"}, null, this, AlertView.Style.Alert, (o, pos) -> {
+                    if (pos == 0) {
                         //导出Excel
                         pullToEmail(recordData);
                     }
                 }).setCancelable(false).show();
             }
         });
-        easyPopupWindow.showAsDropDown(titleLayout, titleLayout.getWidth(), DensityUtil.dp2px(this, 1));
+        easyPopupWindow.showAsDropDown(mTitleRightView
+                , mTitleRightView.getWidth()
+                , DensityUtil.dp2px(this, 10));
     }
 
     private void pullToEmail(List<HistoryBean> historyBeans) {

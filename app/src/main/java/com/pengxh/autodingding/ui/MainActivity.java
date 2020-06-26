@@ -1,16 +1,13 @@
 package com.pengxh.autodingding.ui;
 
-import android.support.design.widget.TabLayout;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentPagerAdapter;
-import android.support.v4.view.ViewPager;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.widget.ImageView;
-import android.widget.TextView;
+import android.view.MenuItem;
+
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentPagerAdapter;
+import androidx.viewpager.widget.ViewPager;
 
 import com.aihook.alertview.library.AlertView;
-import com.gyf.immersionbar.ImmersionBar;
+import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.pengxh.app.multilib.base.DoubleClickExitActivity;
 import com.pengxh.app.multilib.utils.SaveKeyValues;
 import com.pengxh.app.multilib.widget.NoScrollViewPager;
@@ -22,7 +19,6 @@ import com.pengxh.autodingding.utils.Constant;
 import com.pengxh.autodingding.utils.Utils;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 import butterknife.BindView;
@@ -31,16 +27,15 @@ public class MainActivity extends DoubleClickExitActivity {
 
     @BindView(R.id.mViewPager)
     NoScrollViewPager mViewPager;
-    @BindView(R.id.mTabLayout)
-    TabLayout mTableLayout;
+    @BindView(R.id.bottomNavigation)
+    BottomNavigationView bottomNavigation;
 
-    private List<String> mTabName = Arrays.asList("一天", "设置");
+    private MenuItem menuItem = null;
     private List<Fragment> fragmentList = new ArrayList<>();
 
     @Override
-    public void initView() {
-        setContentView(R.layout.activity_main);
-        ImmersionBar.with(this).fitsSystemWindows(true).statusBarColor(R.color.colorAppThemeLight).init();
+    public int initLayoutView() {
+        return R.layout.activity_main;
     }
 
     @Override
@@ -51,10 +46,21 @@ public class MainActivity extends DoubleClickExitActivity {
 
     @Override
     public void initEvent() {
+        bottomNavigation.setOnNavigationItemSelectedListener(item -> {
+            switch (item.getItemId()) {
+                case R.id.nav_clock:
+                    mViewPager.setCurrentItem(0);
+                    break;
+                case R.id.nav_settings:
+                    mViewPager.setCurrentItem(1);
+                    break;
+            }
+            return false;
+        });
         FragmentPagerAdapter fragmentAdapter = new BaseFragmentAdapter(getSupportFragmentManager(), fragmentList);
         mViewPager.setAdapter(fragmentAdapter);
+        mViewPager.setOffscreenPageLimit(fragmentList.size());
         mViewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
-
             @Override
             public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
 
@@ -62,8 +68,13 @@ public class MainActivity extends DoubleClickExitActivity {
 
             @Override
             public void onPageSelected(int position) {
-                resetBtnState();
-                selectBtnState(position);
+                if (menuItem != null) {
+                    menuItem.setChecked(false);
+                } else {
+                    bottomNavigation.getMenu().getItem(0).setChecked(false);
+                }
+                menuItem = bottomNavigation.getMenu().getItem(position);
+                menuItem.setChecked(true);
             }
 
             @Override
@@ -71,94 +82,16 @@ public class MainActivity extends DoubleClickExitActivity {
 
             }
         });
-        mTableLayout.setupWithViewPager(mViewPager);
-        mTableLayout.setOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
-            @Override
-            public void onTabSelected(TabLayout.Tab tab) {
-                mViewPager.setCurrentItem(tab.getPosition(), false);
-            }
-
-            @Override
-            public void onTabUnselected(TabLayout.Tab tab) {
-
-            }
-
-            @Override
-            public void onTabReselected(TabLayout.Tab tab) {
-
-            }
-        });
-        resetBtnState();
-        selectBtnState(0);
-
-        if (!Utils.isAppAvailable(Constant.DINGDING)) {
-            new AlertView("温馨提示", "手机没有安装钉钉软件，无法自动打卡", null, new String[]{"确定"}, null, this, AlertView.Style.Alert,
-                    (o, position) -> this.finish()).setCancelable(false).show();
-        } else {
-            boolean isFirst = (boolean) SaveKeyValues.getValue("isFirst", true);
-            if (isFirst) {
-                SaveKeyValues.putValue("isFirst", false);
-                new AlertView("※温馨提醒※", "本软件仅供内部使用，严禁商用或者用作其他非法用途", null, new String[]{"确定"}, null, this, AlertView.Style.Alert, null).setCancelable(false).show();
-            }
-        }
-    }
-
-    private void selectBtnState(int index) {
-        if (index < 0 || index >= 2) {
-            return;
-        }
-        TabLayout.Tab tabAt = mTableLayout.getTabAt(index);
-        if (tabAt != null) {
-            switch (index) {
-                case 0:
-                    View v = tabAt.getCustomView();
-                    if (v != null) {
-                        ImageView imv_icon = v.findViewById(R.id.tab_icon);
-                        imv_icon.setImageResource(R.mipmap.day_blue);
-                        TextView tv_name = v.findViewById(R.id.tab_title);
-                        tv_name.setTextColor(getResources().getColor(R.color.tab_selected_txtcolor));
-                    }
-                    break;
-                case 1:
-                    View v2 = tabAt.getCustomView();
-                    if (v2 != null) {
-                        ImageView imv_icon = v2.findViewById(R.id.tab_icon);
-                        imv_icon.setImageResource(R.mipmap.settings_blue);
-                        TextView tv_name = v2.findViewById(R.id.tab_title);
-                        tv_name.setTextColor(getResources().getColor(R.color.tab_selected_txtcolor));
-                    }
-                    break;
-                default:
-                    break;
-            }
-        }
-    }
-
-    private void resetBtnState() {
-        TabLayout.Tab tabAt1 = mTableLayout.getTabAt(0);
-        TabLayout.Tab tabAt2 = mTableLayout.getTabAt(1);
-
-        if (tabAt1 != null) {
-            if (tabAt1.getCustomView() == null) {
-                View v = LayoutInflater.from(this).inflate(R.layout.item_tab, null);
-                tabAt1.setCustomView(v);
-            }
-            ImageView imv_icon = tabAt1.getCustomView().findViewById(R.id.tab_icon);
-            TextView tv_name = tabAt1.getCustomView().findViewById(R.id.tab_title);
-            imv_icon.setImageResource(R.mipmap.day_gray);
-            tv_name.setText(mTabName.get(0));
-            tv_name.setTextColor(getResources().getColor(R.color.tab_txtcolor));
-        }
-        if (tabAt2 != null) {
-            if (tabAt2.getCustomView() == null) {
-                View v = LayoutInflater.from(this).inflate(R.layout.item_tab, null);
-                tabAt2.setCustomView(v);
-            }
-            ImageView imv_icon = tabAt2.getCustomView().findViewById(R.id.tab_icon);
-            TextView tv_name = tabAt2.getCustomView().findViewById(R.id.tab_title);
-            imv_icon.setImageResource(R.mipmap.settings_gray);
-            tv_name.setText(mTabName.get(1));
-            tv_name.setTextColor(getResources().getColor(R.color.tab_txtcolor));
-        }
+//        if (!Utils.isAppAvailable(Constant.DINGDING)) {
+//            new AlertView("温馨提示", "手机没有安装钉钉软件，无法自动打卡", null, new String[]{"确定"}, null, this, AlertView.Style.Alert,
+//                    (o, position) -> this.finish()).setCancelable(false).show();
+//        } else {
+//            boolean isFirst = (boolean) SaveKeyValues.getValue("isFirst", true);
+//            if (isFirst) {
+//                SaveKeyValues.putValue("isFirst", false);
+//                new AlertView("※温馨提醒※", "本软件仅供内部使用，严禁商用或者用作其他非法用途", null, new String[]{"确定"}, null, this, AlertView.Style.Alert, null).setCancelable(false).show();
+//            }
+//        }
+//        startService(new Intent(this, AlarmTaskService.class));
     }
 }

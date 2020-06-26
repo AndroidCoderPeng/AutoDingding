@@ -1,30 +1,27 @@
 package com.pengxh.autodingding.ui.fragment;
 
 import android.annotation.SuppressLint;
-import android.app.Activity;
 import android.app.Dialog;
 import android.content.BroadcastReceiver;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.provider.Settings;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.NotificationManagerCompat;
-import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.Switch;
 import android.widget.TextView;
+
+import androidx.core.app.NotificationManagerCompat;
+import androidx.fragment.app.FragmentActivity;
 
 import com.aihook.alertview.library.AlertView;
 import com.pengxh.app.multilib.utils.BroadcastManager;
 import com.pengxh.app.multilib.widget.EasyToast;
 import com.pengxh.app.multilib.widget.dialog.InputDialog;
+import com.pengxh.autodingding.BaseFragment;
 import com.pengxh.autodingding.BuildConfig;
 import com.pengxh.autodingding.R;
 import com.pengxh.autodingding.service.NotificationMonitorService;
@@ -33,18 +30,21 @@ import com.pengxh.autodingding.utils.Constant;
 import com.pengxh.autodingding.utils.SQLiteUtil;
 import com.pengxh.autodingding.utils.Utils;
 
-import java.util.Objects;
 import java.util.Set;
 
 import butterknife.BindView;
-import butterknife.ButterKnife;
 import butterknife.OnClick;
-import butterknife.Unbinder;
 
-public class SettingsFragment extends Fragment implements View.OnClickListener {
+public class SettingsFragment extends BaseFragment implements View.OnClickListener {
 
     private static final String TAG = "SettingsFragment";
 
+    @BindView(R.id.mTitleLeftView)
+    ImageView mTitleLeftView;
+    @BindView(R.id.mTitleView)
+    TextView mTitleView;
+    @BindView(R.id.mTitleRightView)
+    ImageView mTitleRightView;
     @BindView(R.id.emailTextView)
     TextView emailTextView;
     @BindView(R.id.noticeSwitch)
@@ -53,38 +53,50 @@ public class SettingsFragment extends Fragment implements View.OnClickListener {
     TextView recordSize;
     @BindView(R.id.appVersion)
     TextView appVersion;
-    Unbinder unbinder;
-    private BroadcastManager broadcastManager;
 
-    @Nullable
+    private BroadcastManager broadcastManager;
+    private SQLiteUtil sqLiteUtil;
+    private Context context;
+    private FragmentActivity activity;
+
     @Override
-    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View view = LayoutInflater.from(this.getContext()).inflate(R.layout.fragment_settings, null);
-        unbinder = ButterKnife.bind(this, view);
-        broadcastManager = BroadcastManager.getInstance(getContext());
-        initEvent(getActivity());
-        return view;
+    protected int initLayoutView() {
+        return R.layout.fragment_settings;
+    }
+
+    @Override
+    protected void initData() {
+        context = getContext();
+        activity = getActivity();
+
+        mTitleLeftView.setVisibility(View.GONE);
+        mTitleView.setText("其他设置");
+        mTitleRightView.setVisibility(View.GONE);
+
+        broadcastManager = BroadcastManager.getInstance(context);
+        sqLiteUtil = SQLiteUtil.getInstance();
     }
 
     @SuppressLint("SetTextI18n")
-    private void initEvent(Activity activity) {
+    @Override
+    protected void initEvent() {
         String emailAddress = Utils.readEmailAddress();
         if (!emailAddress.equals("")) {
             emailTextView.setText(emailAddress);
         }
-        recordSize.setText(SQLiteUtil.getInstance().loadHistory().size() + "");
+        recordSize.setText(sqLiteUtil.loadHistory().size() + "");
         broadcastManager.addAction(Constant.ACTION_UPDATE, new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {
                 String action = intent.getAction();
                 if (action != null && action.equals(Constant.ACTION_UPDATE)) {
-                    recordSize.setText(SQLiteUtil.getInstance().loadHistory().size() + "");
+                    recordSize.setText(sqLiteUtil.loadHistory().size() + "");
                 }
             }
         });
         appVersion.setText(BuildConfig.VERSION_NAME);
 
-        boolean enabled = isNotificationListenerEnabled(activity.getApplicationContext());
+        boolean enabled = isNotificationListenerEnabled();
         noticeSwitch.setChecked(enabled);
         if (!enabled) {
             openNotificationListenSettings();
@@ -94,13 +106,13 @@ public class SettingsFragment extends Fragment implements View.OnClickListener {
     }
 
     //检测通知监听服务是否被授权
-    public boolean isNotificationListenerEnabled(Context context) {
+    private boolean isNotificationListenerEnabled() {
         Set<String> packageNames = NotificationManagerCompat.getEnabledListenerPackages(context);
         return packageNames.contains(context.getPackageName());
     }
 
     //打开通知监听设置页面
-    public void openNotificationListenSettings() {
+    private void openNotificationListenSettings() {
         try {
             Intent intent;
             if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP_MR1) {
@@ -116,7 +128,6 @@ public class SettingsFragment extends Fragment implements View.OnClickListener {
 
     //把应用的NotificationListenerService实现类disable再enable，即可触发系统rebind操作
     private void toggleNotificationListenerService() {
-        Context context = Objects.requireNonNull(getContext());
         ComponentName componentName = new ComponentName(context, NotificationMonitorService.class);
         PackageManager pm = context.getPackageManager();
         pm.setComponentEnabledSetting(componentName, PackageManager.COMPONENT_ENABLED_STATE_DISABLED, PackageManager.DONT_KILL_APP);
@@ -129,7 +140,7 @@ public class SettingsFragment extends Fragment implements View.OnClickListener {
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.emailLayout:
-                new InputDialog.Builder().setContext(getContext()).setTitle("设置邮箱").setNegativeButton("取消").setPositiveButton("确定").setOnDialogClickListener(new InputDialog.onDialogClickListener() {
+                new InputDialog.Builder().setContext(context).setTitle("设置邮箱").setNegativeButton("取消").setPositiveButton("确定").setOnDialogClickListener(new InputDialog.onDialogClickListener() {
                     @Override
                     public void onConfirmClick(Dialog dialog, String input) {
                         if (!input.isEmpty()) {
@@ -148,16 +159,16 @@ public class SettingsFragment extends Fragment implements View.OnClickListener {
                 }).build().show();
                 break;
             case R.id.historyLayout:
-                startActivity(new Intent(getActivity(), HistoryActivity.class));
+                startActivity(new Intent(context, HistoryActivity.class));
                 break;
             case R.id.introduceLayout:
                 new AlertView("功能介绍", getResources().getString(R.string.about),
                         null, new String[]{"确定"}, null,
-                        getContext(), AlertView.Style.Alert,
+                        context, AlertView.Style.Alert,
                         null).setCancelable(false).show();
                 break;
             case R.id.updateLayout:
-                Utils.showProgress(getActivity(), "正在检查更新......");
+                Utils.showProgress(activity, "正在检查更新......");
                 new CountDownTimer(5000, 1000) {
                     @Override
                     public void onTick(long l) {
@@ -179,7 +190,6 @@ public class SettingsFragment extends Fragment implements View.OnClickListener {
     @Override
     public void onDestroyView() {
         super.onDestroyView();
-        unbinder.unbind();
         broadcastManager.destroy(Constant.ACTION_UPDATE);
     }
 }

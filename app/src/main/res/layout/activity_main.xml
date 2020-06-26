@@ -5,32 +5,19 @@
     android:layout_height="match_parent"
     android:orientation="vertical">
 
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="50dp"
-        android:background="#0094FF"
-        android:gravity="center"
-        android:text="@string/app_name"
-        android:textColor="#FFF"
-        android:textSize="18sp" />
-
     <com.pengxh.app.multilib.widget.NoScrollViewPager
         android:id="@+id/mViewPager"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="12" />
+        android:layout_weight="1" />
 
-    <View
+    <com.google.android.material.bottomnavigation.BottomNavigationView
+        android:id="@+id/bottomNavigation"
         android:layout_width="match_parent"
-        android:layout_height="1px"
-        android:background="#e8e8e8" />
-
-    <android.support.design.widget.TabLayout
-        android:id="@+id/mTabLayout"
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_alignParentBottom="true"
-        android:layout_weight="1"
-        app:tabIndicatorHeight="0dp" />
+        android:layout_height="wrap_content"
+        android:background="#FFFFFF"
+        app:itemIconTint="@drawable/bottom_text_color"
+        app:itemTextColor="@drawable/bottom_text_color"
+        app:menu="@menu/bottom_nav_menu" />
 
 </LinearLayout>

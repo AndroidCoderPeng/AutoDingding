@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <item
+        android:id="@+id/nav_clock"
+        android:enabled="true"
+        android:icon="@mipmap/day_gray"
+        android:title="自动打卡"
+        app:showAsAction="ifRoom" />
+
+    <item
+        android:id="@+id/nav_settings"
+        android:enabled="true"
+        android:icon="@mipmap/settings_gray"
+        android:title="其他设置"
+        app:showAsAction="ifRoom" />
+</menu>

@@ -1,33 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
+    android:id="@+id/parentLayout"
     android:layout_height="match_parent"
     android:background="#FFFFFF"
     android:orientation="vertical">
 
-    <RelativeLayout
-        android:id="@+id/titleLayout"
-        android:layout_width="match_parent"
-        android:layout_height="50dp"
-        android:background="#0094FF"
-        android:padding="10dp">
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerInParent="true"
-            android:text="打卡记录"
-            android:textColor="#FFF"
-            android:textSize="18sp" />
-
-        <ImageView
-            android:id="@+id/settingsView"
-            android:layout_width="80px"
-            android:layout_height="80px"
-            android:layout_alignParentEnd="true"
-            android:layout_centerVertical="true"
-            android:background="@drawable/settings" />
-    </RelativeLayout>
+    <include layout="@layout/include_title" />
 
     <com.scwang.smartrefresh.layout.SmartRefreshLayout
         android:id="@+id/refreshLayout"

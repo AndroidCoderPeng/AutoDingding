@@ -3,7 +3,7 @@ package com.pengxh.autodingding.utils;
 import android.annotation.SuppressLint;
 import android.os.Handler;
 import android.os.Message;
-import android.support.annotation.NonNull;
+import androidx.annotation.NonNull;
 import android.util.Log;
 
 import com.pengxh.app.multilib.widget.EasyToast;

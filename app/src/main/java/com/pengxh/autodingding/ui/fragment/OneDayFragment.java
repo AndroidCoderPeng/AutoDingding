@@ -5,25 +5,23 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
-import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.os.Handler;
 import android.os.Message;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
 import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
+
+import androidx.fragment.app.FragmentActivity;
+import androidx.fragment.app.FragmentManager;
 
 import com.jzxiang.pickerview.TimePickerDialog;
 import com.jzxiang.pickerview.data.Type;
 import com.pengxh.app.multilib.utils.BroadcastManager;
 import com.pengxh.app.multilib.utils.ColorUtil;
 import com.pengxh.app.multilib.widget.EasyToast;
+import com.pengxh.autodingding.BaseFragment;
 import com.pengxh.autodingding.R;
 import com.pengxh.autodingding.ui.MainActivity;
 import com.pengxh.autodingding.utils.Constant;
@@ -33,20 +31,23 @@ import com.pengxh.autodingding.utils.SendMailUtil;
 import com.pengxh.autodingding.utils.TimeOrDateUtil;
 import com.pengxh.autodingding.utils.Utils;
 
-import java.util.Objects;
 import java.util.Timer;
 import java.util.TimerTask;
 
 import butterknife.BindView;
-import butterknife.ButterKnife;
 import butterknife.OnClick;
-import butterknife.Unbinder;
 
 @SuppressLint("SetTextI18n")
-public class OneDayFragment extends Fragment implements View.OnClickListener {
+public class OneDayFragment extends BaseFragment implements View.OnClickListener {
 
     private static final String TAG = "OneDayFragment";
 
+    @BindView(R.id.mTitleLeftView)
+    ImageView mTitleLeftView;
+    @BindView(R.id.mTitleView)
+    TextView mTitleView;
+    @BindView(R.id.mTitleRightView)
+    ImageView mTitleRightView;
     @BindView(R.id.currentTime)
     TextView currentTime;
     @BindView(R.id.startTimeView)
@@ -58,24 +59,30 @@ public class OneDayFragment extends Fragment implements View.OnClickListener {
     @BindView(R.id.pmTime)
     TextView pmTime;
 
-    Unbinder unbinder;
+    private Context context;
+    private FragmentActivity activity;
     private FragmentManager fragmentManager;
     private BroadcastManager broadcastManager;
-    private Context context;
     private String result = "";
 
-    @Nullable
     @Override
-    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View mView = LayoutInflater.from(this.getContext()).inflate(R.layout.fragment_day, null);
-        unbinder = ButterKnife.bind(this, mView);
-        context = getContext();
-        initEvent();
-        return mView;
+    protected int initLayoutView() {
+        return R.layout.fragment_day;
     }
 
-    private void initEvent() {
-        fragmentManager = Objects.requireNonNull(getActivity()).getSupportFragmentManager();
+    @Override
+    protected void initData() {
+        context = getContext();
+        activity = getActivity();
+
+        mTitleLeftView.setVisibility(View.GONE);
+        mTitleView.setText("自动打卡");
+        mTitleRightView.setVisibility(View.GONE);
+    }
+
+    @Override
+    protected void initEvent() {
+        fragmentManager = activity.getSupportFragmentManager();
         new Timer().schedule(new TimerTask() {
             @Override
             public void run() {
