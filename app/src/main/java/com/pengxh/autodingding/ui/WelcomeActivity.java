@@ -8,6 +8,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
@@ -22,10 +23,8 @@ import pub.devrel.easypermissions.EasyPermissions;
 public class WelcomeActivity extends AppCompatActivity implements EasyPermissions.PermissionCallbacks {
 
     private static final int PERMISSIONS_CODE = 999;
-    private static final String[] USER_PERMISSIONS = {
-            Manifest.permission.WAKE_LOCK,
-            Manifest.permission.DISABLE_KEYGUARD,
-            Manifest.permission.WRITE_EXTERNAL_STORAGE};
+    private static final String[] USER_PERMISSIONS = {Manifest.permission.WRITE_EXTERNAL_STORAGE,
+            Manifest.permission.READ_EXTERNAL_STORAGE};
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {

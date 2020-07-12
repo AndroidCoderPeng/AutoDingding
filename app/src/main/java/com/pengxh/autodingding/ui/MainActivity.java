@@ -13,7 +13,7 @@ import com.pengxh.app.multilib.utils.SaveKeyValues;
 import com.pengxh.app.multilib.widget.NoScrollViewPager;
 import com.pengxh.autodingding.R;
 import com.pengxh.autodingding.adapter.BaseFragmentAdapter;
-import com.pengxh.autodingding.ui.fragment.OneDayFragment;
+import com.pengxh.autodingding.ui.fragment.AutoDingDingFragment;
 import com.pengxh.autodingding.ui.fragment.SettingsFragment;
 import com.pengxh.autodingding.utils.Constant;
 import com.pengxh.autodingding.utils.Utils;
@@ -40,7 +40,7 @@ public class MainActivity extends DoubleClickExitActivity {
 
     @Override
     public void initData() {
-        fragmentList.add(new OneDayFragment());
+        fragmentList.add(new AutoDingDingFragment());
         fragmentList.add(new SettingsFragment());
     }
 
@@ -82,16 +82,15 @@ public class MainActivity extends DoubleClickExitActivity {
 
             }
         });
-//        if (!Utils.isAppAvailable(Constant.DINGDING)) {
-//            new AlertView("温馨提示", "手机没有安装钉钉软件，无法自动打卡", null, new String[]{"确定"}, null, this, AlertView.Style.Alert,
-//                    (o, position) -> this.finish()).setCancelable(false).show();
-//        } else {
-//            boolean isFirst = (boolean) SaveKeyValues.getValue("isFirst", true);
-//            if (isFirst) {
-//                SaveKeyValues.putValue("isFirst", false);
-//                new AlertView("※温馨提醒※", "本软件仅供内部使用，严禁商用或者用作其他非法用途", null, new String[]{"确定"}, null, this, AlertView.Style.Alert, null).setCancelable(false).show();
-//            }
-//        }
-//        startService(new Intent(this, AlarmTaskService.class));
+        if (!Utils.isAppAvailable(Constant.DINGDING)) {
+            new AlertView("温馨提示", "手机没有安装钉钉软件，无法自动打卡", null, new String[]{"确定"}, null, this, AlertView.Style.Alert,
+                    (o, position) -> this.finish()).setCancelable(false).show();
+        } else {
+            boolean isFirst = (boolean) SaveKeyValues.getValue("isFirst", true);
+            if (isFirst) {
+                SaveKeyValues.putValue("isFirst", false);
+                new AlertView("※温馨提醒※", "本软件仅供内部使用，严禁商用或者用作其他非法用途", null, new String[]{"确定"}, null, this, AlertView.Style.Alert, null).setCancelable(false).show();
+            }
+        }
     }
 }

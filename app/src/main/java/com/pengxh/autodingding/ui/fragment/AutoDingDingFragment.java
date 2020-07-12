@@ -4,7 +4,6 @@ import android.annotation.SuppressLint;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
-import android.os.Build;
 import android.os.CountDownTimer;
 import android.os.Handler;
 import android.os.Message;
@@ -13,7 +12,6 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import androidx.fragment.app.FragmentActivity;
 import androidx.fragment.app.FragmentManager;
 
 import com.jzxiang.pickerview.TimePickerDialog;
@@ -38,7 +36,7 @@ import butterknife.BindView;
 import butterknife.OnClick;
 
 @SuppressLint("SetTextI18n")
-public class OneDayFragment extends BaseFragment implements View.OnClickListener {
+public class AutoDingDingFragment extends BaseFragment implements View.OnClickListener {
 
     private static final String TAG = "OneDayFragment";
 
@@ -60,7 +58,6 @@ public class OneDayFragment extends BaseFragment implements View.OnClickListener
     TextView pmTime;
 
     private Context context;
-    private FragmentActivity activity;
     private FragmentManager fragmentManager;
     private BroadcastManager broadcastManager;
     private String result = "";
@@ -73,16 +70,11 @@ public class OneDayFragment extends BaseFragment implements View.OnClickListener
     @Override
     protected void initData() {
         context = getContext();
-        activity = getActivity();
 
         mTitleLeftView.setVisibility(View.GONE);
         mTitleView.setText("自动打卡");
         mTitleRightView.setVisibility(View.GONE);
-    }
 
-    @Override
-    protected void initEvent() {
-        fragmentManager = activity.getSupportFragmentManager();
         new Timer().schedule(new TimerTask() {
             @Override
             public void run() {
@@ -91,7 +83,12 @@ public class OneDayFragment extends BaseFragment implements View.OnClickListener
             }
         }, 0, 1000);
 
+        fragmentManager = getActivity().getSupportFragmentManager();
         broadcastManager = BroadcastManager.getInstance(context);
+    }
+
+    @Override
+    protected void initEvent() {
         broadcastManager.addAction(Constant.DINGDING_ACTION, new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {
@@ -168,19 +165,8 @@ public class OneDayFragment extends BaseFragment implements View.OnClickListener
                     int tickTime = (int) (l / 1000);
                     //更新UI
                     startTimeView.setText(tickTime + "s");
-                    /**
-                     * 7.0系统只能倒计时到1
-                     *
-                     * 9.1系统可以倒计时到0
-                     * */
-                    if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.N) {
-                        if (tickTime == 1) {
-                            startTimeView.setText("--");
-                        }
-                    } else {
-                        if (tickTime == 0) {
-                            startTimeView.setText("--");
-                        }
+                    if (tickTime == 0) {
+                        startTimeView.setText("--");
                     }
                 }
 
@@ -210,14 +196,8 @@ public class OneDayFragment extends BaseFragment implements View.OnClickListener
                     int tickTime = (int) (l / 1000);
                     //更新UI
                     endTimeView.setText(tickTime + "s");
-                    if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.N) {
-                        if (tickTime == 1) {
-                            endTimeView.setText("--");
-                        }
-                    } else {
-                        if (tickTime == 0) {
-                            endTimeView.setText("--");
-                        }
+                    if (tickTime == 0) {
+                        endTimeView.setText("--");
                     }
                 }
 
