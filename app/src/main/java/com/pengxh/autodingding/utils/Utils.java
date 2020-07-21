@@ -9,6 +9,7 @@ import android.app.NotificationManager;
 import android.app.ProgressDialog;
 import android.content.ComponentName;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
@@ -32,6 +33,8 @@ import java.io.OutputStreamWriter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
+
+import androidx.appcompat.app.AlertDialog;
 
 import static android.content.Context.KEYGUARD_SERVICE;
 
@@ -247,5 +250,28 @@ public class Utils {
         if (progressDialog != null && progressDialog.isShowing()) {
             progressDialog.dismiss();
         }
+    }
+
+    public static void showAlertDialog(Activity activity, String title, String message, String positiveButton) {
+        createBuilder(activity, title, message)
+                .setCancelable(false)
+                .setPositiveButton(positiveButton, null)
+                .create()
+                .show();
+    }
+
+    public static void showAlertDialog(Activity activity, String title, String message, String positiveButton, DialogInterface.OnClickListener listener) {
+        createBuilder(activity, title, message)
+                .setPositiveButton(positiveButton, listener)
+                .create()
+                .show();
+    }
+
+    private static AlertDialog.Builder createBuilder(Activity activity, String title, String message) {
+        return new AlertDialog.Builder(activity)
+                .setIcon(R.mipmap.logo)
+                .setTitle(title)
+                .setMessage(message)
+                .setCancelable(false);
     }
 }

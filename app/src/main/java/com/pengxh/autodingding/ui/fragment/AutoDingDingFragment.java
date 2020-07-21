@@ -4,41 +4,43 @@ import android.annotation.SuppressLint;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.CountDownTimer;
 import android.os.Handler;
 import android.os.Message;
-import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import androidx.fragment.app.FragmentManager;
-
+import com.gyf.immersionbar.ImmersionBar;
 import com.jzxiang.pickerview.TimePickerDialog;
 import com.jzxiang.pickerview.data.Type;
 import com.pengxh.app.multilib.utils.BroadcastManager;
 import com.pengxh.app.multilib.utils.ColorUtil;
+import com.pengxh.app.multilib.utils.LogToFile;
 import com.pengxh.app.multilib.widget.EasyToast;
 import com.pengxh.autodingding.BaseFragment;
 import com.pengxh.autodingding.R;
 import com.pengxh.autodingding.ui.MainActivity;
 import com.pengxh.autodingding.utils.Constant;
-import com.pengxh.autodingding.utils.LogToFile;
 import com.pengxh.autodingding.utils.SQLiteUtil;
 import com.pengxh.autodingding.utils.SendMailUtil;
+import com.pengxh.autodingding.utils.StatusBarColorUtil;
 import com.pengxh.autodingding.utils.TimeOrDateUtil;
 import com.pengxh.autodingding.utils.Utils;
 
 import java.util.Timer;
 import java.util.TimerTask;
 
+import androidx.fragment.app.FragmentActivity;
+import androidx.fragment.app.FragmentManager;
 import butterknife.BindView;
 import butterknife.OnClick;
 
 @SuppressLint("SetTextI18n")
 public class AutoDingDingFragment extends BaseFragment implements View.OnClickListener {
 
-    private static final String TAG = "OneDayFragment";
+    private static final String TAG = "AutoDingDingFragment";
 
     @BindView(R.id.mTitleLeftView)
     ImageView mTitleLeftView;
@@ -60,7 +62,8 @@ public class AutoDingDingFragment extends BaseFragment implements View.OnClickLi
     private Context context;
     private FragmentManager fragmentManager;
     private BroadcastManager broadcastManager;
-    private String result = "";
+    private String message;
+    private FragmentActivity activity;
 
     @Override
     protected int initLayoutView() {
@@ -70,6 +73,7 @@ public class AutoDingDingFragment extends BaseFragment implements View.OnClickLi
     @Override
     protected void initData() {
         context = getContext();
+        activity = getActivity();
 
         mTitleLeftView.setVisibility(View.GONE);
         mTitleView.setText("自动打卡");
@@ -83,7 +87,7 @@ public class AutoDingDingFragment extends BaseFragment implements View.OnClickLi
             }
         }, 0, 1000);
 
-        fragmentManager = getActivity().getSupportFragmentManager();
+        fragmentManager = activity.getSupportFragmentManager();
         broadcastManager = BroadcastManager.getInstance(context);
     }
 
@@ -94,22 +98,22 @@ public class AutoDingDingFragment extends BaseFragment implements View.OnClickLi
             public void onReceive(Context context, Intent intent) {
                 String action = intent.getAction();
                 if (action != null && action.equals(Constant.DINGDING_ACTION)) {
-                    String message = intent.getStringExtra("data");
-                    Log.d(TAG, "接收到广播, 通知内容: " + message);
+                    message = intent.getStringExtra("data");
                     LogToFile.d(TAG, "接收到广播, 通知内容: " + message);
                     //TODO 保存打卡记录
                     //考勤打卡:11:14 下班打卡成功,进入钉钉查看详情
                     //[4条]考勤打卡:11:11 下班打卡成功,进入钉钉查看详情
-                    if (message.startsWith("[")) {
-                        result = message.substring(message.indexOf("]") + 1, message.indexOf(","));
-                    } else {
-                        result = message.substring(0, message.indexOf(","));
-                    }
-                    SQLiteUtil.getInstance().saveHistory(Utils.uuid(), TimeOrDateUtil.rTimestampToDate(System.currentTimeMillis()), result);
+                    SQLiteUtil.getInstance().saveHistory(Utils.uuid(), TimeOrDateUtil.rTimestampToDate(System.currentTimeMillis()), message);
                     BroadcastManager.getInstance(context).sendBroadcast(Constant.ACTION_UPDATE, "update");
                 }
             }
         });
+    }
+
+    @Override
+    public void initImmersionBar() {
+        StatusBarColorUtil.setColor(activity, Color.parseColor("#0094FF"));
+        ImmersionBar.with(this).init();
     }
 
     @OnClick({R.id.startLayoutView, R.id.endLayoutView})
@@ -152,7 +156,7 @@ public class AutoDingDingFragment extends BaseFragment implements View.OnClickLi
     private void onDuty(long millSeconds) {
         long deltaTime = TimeOrDateUtil.deltaTime(millSeconds / 1000);
         if (deltaTime == 0) {
-            Log.w(TAG, "", new Throwable());
+            LogToFile.w(TAG, String.valueOf(new Throwable()));
             return;
         }
         //显示倒计时
@@ -184,7 +188,6 @@ public class AutoDingDingFragment extends BaseFragment implements View.OnClickLi
     private void offDuty(long millSeconds) {
         long deltaTime = TimeOrDateUtil.deltaTime(millSeconds / 1000);
         if (deltaTime == 0) {
-            Log.w(TAG, "", new Throwable());
             return;
         }
         //显示倒计时
@@ -223,11 +226,11 @@ public class AutoDingDingFragment extends BaseFragment implements View.OnClickLi
 
                 String emailAddress = Utils.readEmailAddress();
                 //发送打卡成功的邮件
-                Log.d(TAG, "发送打卡成功的邮件: " + emailAddress);
+                LogToFile.d(TAG, "发送打卡成功的邮件: " + emailAddress);
                 if (emailAddress.equals("")) {
                     return;
                 }
-                SendMailUtil.send(emailAddress, result);
+                SendMailUtil.send(emailAddress, message);
             }
         }
     };

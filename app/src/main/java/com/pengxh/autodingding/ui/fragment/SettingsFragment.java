@@ -7,6 +7,7 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.Color;
 import android.os.CountDownTimer;
 import android.provider.Settings;
 import android.view.View;
@@ -14,10 +15,7 @@ import android.widget.ImageView;
 import android.widget.Switch;
 import android.widget.TextView;
 
-import androidx.core.app.NotificationManagerCompat;
-import androidx.fragment.app.FragmentActivity;
-
-import com.aihook.alertview.library.AlertView;
+import com.gyf.immersionbar.ImmersionBar;
 import com.pengxh.app.multilib.utils.BroadcastManager;
 import com.pengxh.app.multilib.widget.EasyToast;
 import com.pengxh.app.multilib.widget.dialog.InputDialog;
@@ -28,10 +26,13 @@ import com.pengxh.autodingding.service.NotificationMonitorService;
 import com.pengxh.autodingding.ui.HistoryActivity;
 import com.pengxh.autodingding.utils.Constant;
 import com.pengxh.autodingding.utils.SQLiteUtil;
+import com.pengxh.autodingding.utils.StatusBarColorUtil;
 import com.pengxh.autodingding.utils.Utils;
 
 import java.util.Set;
 
+import androidx.core.app.NotificationManagerCompat;
+import androidx.fragment.app.FragmentActivity;
 import butterknife.BindView;
 import butterknife.OnClick;
 
@@ -105,6 +106,12 @@ public class SettingsFragment extends BaseFragment implements View.OnClickListen
         Utils.createNotification();
     }
 
+    @Override
+    public void initImmersionBar() {
+        StatusBarColorUtil.setColor(activity, Color.parseColor("#0094FF"));
+        ImmersionBar.with(this).init();
+    }
+
     //检测通知监听服务是否被授权
     private boolean isNotificationListenerEnabled() {
         Set<String> packageNames = NotificationManagerCompat.getEnabledListenerPackages(context);
@@ -162,10 +169,7 @@ public class SettingsFragment extends BaseFragment implements View.OnClickListen
                 startActivity(new Intent(context, HistoryActivity.class));
                 break;
             case R.id.introduceLayout:
-                new AlertView("功能介绍", getResources().getString(R.string.about),
-                        null, new String[]{"确定"}, null,
-                        context, AlertView.Style.Alert,
-                        null).setCancelable(false).show();
+                Utils.showAlertDialog(activity, "功能介绍", context.getString(R.string.about), "看完了");
                 break;
             case R.id.updateLayout:
                 Utils.showProgress(activity, "正在检查更新......");
@@ -181,6 +185,7 @@ public class SettingsFragment extends BaseFragment implements View.OnClickListen
                         EasyToast.showToast("已是最新版本", EasyToast.SUCCESS);
                     }
                 }.start();
+//                startActivity(new Intent(context, WebViewActivity.class));
                 break;
             default:
                 break;

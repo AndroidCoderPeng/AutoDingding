@@ -16,7 +16,6 @@ public class Constant {
 
     public static final int[] images = {R.drawable.delete, R.drawable.output};
 
-    public static final long ONE_DAY = 24 * 60 * 60 * 1000L;
     public static final long ONE_MONTH = 31 * 24 * 60 * 60 * 1000L;
 
     public static final String ACTION_UPDATE = "action_updateRecord";

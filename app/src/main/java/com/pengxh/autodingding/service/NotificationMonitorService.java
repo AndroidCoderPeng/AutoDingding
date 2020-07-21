@@ -1,15 +1,13 @@
 package com.pengxh.autodingding.service;
 
 import android.app.Notification;
-import android.content.Intent;
 import android.os.Bundle;
 import android.service.notification.NotificationListenerService;
 import android.service.notification.StatusBarNotification;
-import android.util.Log;
 
 import com.pengxh.app.multilib.utils.BroadcastManager;
+import com.pengxh.app.multilib.utils.LogToFile;
 import com.pengxh.autodingding.utils.Constant;
-import com.pengxh.autodingding.utils.LogToFile;
 
 /**
  * @description: TODO 状态栏监听服务
@@ -21,18 +19,12 @@ public class NotificationMonitorService extends NotificationListenerService {
 
     private static final String TAG = "NotificationService";
 
-    @Override
-    public int onStartCommand(Intent intent, int flags, int startId) {
-        Log.d(TAG, "onStartCommand: 状态栏监听服务已启动");
-        return super.onStartCommand(intent, flags, startId);
-    }
-
     /**
      * 有可用的并且和通知管理器连接成功时回调
      */
     @Override
     public void onListenerConnected() {
-        Log.d(TAG, "onListenerConnected: 通知管理器连接成功");
+
     }
 
     /**
@@ -44,13 +36,21 @@ public class NotificationMonitorService extends NotificationListenerService {
         // 获取接收消息APP的包名
         String packageName = sbn.getPackageName();
         // 获取接收消息的内容
-        String notificationText = extras.getString(Notification.EXTRA_TEXT);
-        Log.d(TAG, "推送通知包名: [" + packageName + "], 通知内容: " + notificationText);
+        //TODO Key android.text expected String but value was a android.text.SpannableString.  The default value <null> was returned.
+        String notificationText = extras.getString(Notification.EXTRA_TEXT.toString());
         LogToFile.d(TAG, "推送通知包名: [" + packageName + "], 通知内容: " + notificationText);
-        if (packageName.contains("rimet")) {
-            BroadcastManager.getInstance(this).sendBroadcast(Constant.DINGDING_ACTION, notificationText);
+        if (packageName.equals("com.alibaba.android.rimet")) {
+            if (notificationText == null || notificationText.equals("")) {
+                LogToFile.d(TAG, "通知内容为null");
+                return;
+            }
+            if (notificationText.contains("考勤打卡")) {
+                BroadcastManager.getInstance(this).sendBroadcast(Constant.DINGDING_ACTION, notificationText);
+            } else {
+                LogToFile.d(TAG, "onNotificationPosted: 不是打卡通知，不处理");
+            }
         } else {
-            Log.d(TAG, "onNotificationPosted: 不是打卡通知，不处理");
+            LogToFile.d(TAG, "onNotificationPosted: 不是打卡通知，不处理");
         }
     }
 

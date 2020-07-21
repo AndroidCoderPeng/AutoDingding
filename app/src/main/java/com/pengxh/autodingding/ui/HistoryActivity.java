@@ -1,5 +1,6 @@
 package com.pengxh.autodingding.ui;
 
+import android.graphics.Color;
 import android.os.Environment;
 import android.util.Log;
 import android.view.View;
@@ -10,6 +11,7 @@ import android.widget.TextView;
 
 import com.aihook.alertview.library.AlertView;
 import com.google.gson.Gson;
+import com.gyf.immersionbar.ImmersionBar;
 import com.pengxh.app.multilib.base.BaseNormalActivity;
 import com.pengxh.app.multilib.utils.BroadcastManager;
 import com.pengxh.app.multilib.utils.DensityUtil;
@@ -20,6 +22,7 @@ import com.pengxh.autodingding.bean.HistoryBean;
 import com.pengxh.autodingding.utils.Constant;
 import com.pengxh.autodingding.utils.ExcelUtils;
 import com.pengxh.autodingding.utils.SQLiteUtil;
+import com.pengxh.autodingding.utils.StatusBarColorUtil;
 import com.pengxh.autodingding.utils.Utils;
 import com.pengxh.autodingding.widgets.EasyPopupWindow;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
@@ -63,6 +66,9 @@ public class HistoryActivity extends BaseNormalActivity implements View.OnClickL
 
     @Override
     public void initData() {
+        StatusBarColorUtil.setColor(this, Color.parseColor("#0094FF"));
+        ImmersionBar.with(this).init();
+
         mTitleLeftView.setVisibility(View.GONE);
         mTitleView.setText("自动打卡");
         mTitleRightView.setBackgroundResource(R.drawable.settings);

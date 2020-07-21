@@ -6,6 +6,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.gyf.immersionbar.components.ImmersionFragment;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
@@ -19,7 +21,7 @@ import butterknife.ButterKnife;
  * @email: 290677893@qq.com
  * @date: 2020/6/26 21:22
  */
-public abstract class BaseFragment extends Fragment {
+public abstract class BaseFragment extends ImmersionFragment {
 
     private View view;
 

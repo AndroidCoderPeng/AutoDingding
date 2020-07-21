@@ -2,11 +2,12 @@ package com.pengxh.autodingding;
 
 import android.app.Application;
 
+import com.pengxh.app.multilib.utils.LogToFile;
 import com.pengxh.app.multilib.utils.SaveKeyValues;
 import com.pengxh.app.multilib.widget.EasyToast;
-import com.pengxh.autodingding.utils.LogToFile;
 import com.pengxh.autodingding.utils.SQLiteUtil;
 import com.pengxh.autodingding.utils.Utils;
+import com.tencent.bugly.crashreport.CrashReport;
 
 /**
  * @author: Pengxh
@@ -23,5 +24,6 @@ public class BaseApplication extends Application {
         LogToFile.initLog(this);
         SQLiteUtil.initDataBase(this);
         SaveKeyValues.initSharedPreferences(this);
+        CrashReport.initCrashReport(this, "ce38195468", false);
     }
 }
