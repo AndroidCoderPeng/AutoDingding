@@ -67,6 +67,10 @@ dependencies {
     implementation 'com.just.agentweb:agentweb:4.1.3'
     // https://mvnrepository.com/artifact/com.tencent.bugly/crashreport
     implementation group: 'com.tencent.bugly', name: 'crashreport', version: '2.6.6.1'
+    //ZBar扫一扫(综合Java和C++扫码)
+    implementation 'cn.bertsir.zbarLibary:zbarlibary:1.4.2'
+
+    //以下开源库暂时没用
     //解析Html
     implementation 'org.jsoup:jsoup:1.12.2'
 }

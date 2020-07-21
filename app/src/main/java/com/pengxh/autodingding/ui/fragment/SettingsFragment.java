@@ -8,14 +8,19 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
+import android.net.Uri;
 import android.provider.Settings;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.Switch;
 import android.widget.TextView;
 
+import androidx.core.app.NotificationManagerCompat;
+import androidx.fragment.app.FragmentActivity;
+
 import com.gyf.immersionbar.ImmersionBar;
 import com.pengxh.app.multilib.utils.BroadcastManager;
+import com.pengxh.app.multilib.utils.SaveKeyValues;
 import com.pengxh.app.multilib.widget.EasyToast;
 import com.pengxh.app.multilib.widget.dialog.InputDialog;
 import com.pengxh.autodingding.BaseFragment;
@@ -30,10 +35,9 @@ import com.pengxh.autodingding.utils.Utils;
 
 import java.util.Set;
 
-import androidx.core.app.NotificationManagerCompat;
-import androidx.fragment.app.FragmentActivity;
 import butterknife.BindView;
 import butterknife.OnClick;
+import cn.bertsir.zbar.utils.QRUtils;
 
 public class SettingsFragment extends BaseFragment implements View.OnClickListener {
 
@@ -106,12 +110,24 @@ public class SettingsFragment extends BaseFragment implements View.OnClickListen
         toggleNotificationListenerService();
         Utils.createNotification();
 
-        updateCodeView.setOnLongClickListener(new View.OnLongClickListener() {
-            @Override
-            public boolean onLongClick(View v) {
-                EasyToast.showToast("开发中...", EasyToast.DEFAULT);
-                return false;
-            }
+        //先识别出来备用
+        try {
+            String codeValue = QRUtils.getInstance().decodeQRcode(updateCodeView);
+            SaveKeyValues.putValue("updateLink", codeValue);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        updateCodeView.setOnLongClickListener(v -> {
+            String updateLink = (String) SaveKeyValues.getValue("updateLink", "https://www.pgyer.com/MBGt");
+            Utils.showAlertDialog(activity, "识别结果", updateLink, "前往更新页面(密码：123)",
+                    (dialog, which) -> {
+                        Intent intent = new Intent();
+                        intent.setAction("android.intent.action.VIEW");
+                        Uri content_url = Uri.parse(updateLink);
+                        intent.setData(content_url);
+                        startActivity(intent);
+                    });
+            return true;
         });
     }
 
