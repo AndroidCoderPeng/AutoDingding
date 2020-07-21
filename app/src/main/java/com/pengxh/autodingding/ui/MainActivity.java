@@ -2,6 +2,10 @@ package com.pengxh.autodingding.ui;
 
 import android.view.MenuItem;
 
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentPagerAdapter;
+import androidx.viewpager.widget.ViewPager;
+
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.pengxh.app.multilib.base.DoubleClickExitActivity;
 import com.pengxh.app.multilib.utils.SaveKeyValues;
@@ -16,9 +20,6 @@ import com.pengxh.autodingding.utils.Utils;
 import java.util.ArrayList;
 import java.util.List;
 
-import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentPagerAdapter;
-import androidx.viewpager.widget.ViewPager;
 import butterknife.BindView;
 
 public class MainActivity extends DoubleClickExitActivity {
@@ -81,12 +82,12 @@ public class MainActivity extends DoubleClickExitActivity {
             }
         });
         if (!Utils.isAppAvailable(Constant.DINGDING)) {
-            Utils.showAlertDialog(this, "温馨提示", "手机没有安装钉钉软件，无法自动打卡", "退出", (dialog, which) -> finish());
+            Utils.showAlertDialog(this, "温馨提示", "手机没有安装钉钉软件，无法自动打卡", "退出", false, (dialog, which) -> finish());
         } else {
             boolean isFirst = (boolean) SaveKeyValues.getValue("isFirst", true);
             if (isFirst) {
                 SaveKeyValues.putValue("isFirst", false);
-                Utils.showAlertDialog(this, "温馨提醒", "本软件仅供内部使用，严禁商用或者用作其他非法用途", "知道了");
+                Utils.showAlertDialog(this, "温馨提醒", "本软件仅供内部使用，严禁商用或者用作其他非法用途", "知道了", true);
             }
         }
     }

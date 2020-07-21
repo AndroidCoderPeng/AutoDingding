@@ -6,7 +6,6 @@ import android.app.KeyguardManager;
 import android.app.Notification;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
-import android.app.ProgressDialog;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -19,6 +18,8 @@ import android.os.CountDownTimer;
 import android.os.Environment;
 import android.os.PowerManager;
 import android.util.Log;
+
+import androidx.appcompat.app.AlertDialog;
 
 import com.pengxh.autodingding.R;
 
@@ -33,8 +34,6 @@ import java.io.OutputStreamWriter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
-
-import androidx.appcompat.app.AlertDialog;
 
 import static android.content.Context.KEYGUARD_SERVICE;
 
@@ -175,7 +174,7 @@ public class Utils {
     public static String uuid() {
         String str = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
         Random random = new Random();
-        StringBuffer sb = new StringBuffer();
+        StringBuilder sb = new StringBuilder();
         for (int i = 0; i < 11; i++) {
             int number = random.nextInt(62);
             sb.append(str.charAt(number));
@@ -235,33 +234,17 @@ public class Utils {
         return content.toString();
     }
 
-    private static ProgressDialog progressDialog;
-
-    public static void showProgress(Activity activity, String msg) {
-        if (progressDialog == null) {
-            progressDialog = new ProgressDialog(activity);
-        }
-        progressDialog.setMessage(msg);
-        progressDialog.setCanceledOnTouchOutside(false);
-        progressDialog.show();
-    }
-
-    public static void hideProgress() {
-        if (progressDialog != null && progressDialog.isShowing()) {
-            progressDialog.dismiss();
-        }
-    }
-
-    public static void showAlertDialog(Activity activity, String title, String message, String positiveButton) {
+    public static void showAlertDialog(Activity activity, String title, String message, String positiveButton, boolean cancelable) {
         createBuilder(activity, title, message)
-                .setCancelable(false)
+                .setCancelable(cancelable)
                 .setPositiveButton(positiveButton, null)
                 .create()
                 .show();
     }
 
-    public static void showAlertDialog(Activity activity, String title, String message, String positiveButton, DialogInterface.OnClickListener listener) {
+    public static void showAlertDialog(Activity activity, String title, String message, String positiveButton, boolean cancelable, DialogInterface.OnClickListener listener) {
         createBuilder(activity, title, message)
+                .setCancelable(cancelable)
                 .setPositiveButton(positiveButton, listener)
                 .create()
                 .show();
@@ -271,7 +254,6 @@ public class Utils {
         return new AlertDialog.Builder(activity)
                 .setIcon(R.mipmap.logo)
                 .setTitle(title)
-                .setMessage(message)
-                .setCancelable(false);
+                .setMessage(message);
     }
 }

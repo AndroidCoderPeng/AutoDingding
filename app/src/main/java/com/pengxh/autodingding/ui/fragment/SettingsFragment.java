@@ -119,7 +119,7 @@ public class SettingsFragment extends BaseFragment implements View.OnClickListen
         }
         updateCodeView.setOnLongClickListener(v -> {
             String updateLink = (String) SaveKeyValues.getValue("updateLink", "https://www.pgyer.com/MBGt");
-            Utils.showAlertDialog(activity, "识别结果", updateLink, "前往更新页面(密码：123)",
+            Utils.showAlertDialog(activity, "识别结果", updateLink, "前往更新页面(密码：123)", true,
                     (dialog, which) -> {
                         Intent intent = new Intent();
                         intent.setAction("android.intent.action.VIEW");
@@ -194,7 +194,7 @@ public class SettingsFragment extends BaseFragment implements View.OnClickListen
                 startActivity(new Intent(context, HistoryActivity.class));
                 break;
             case R.id.introduceLayout:
-                Utils.showAlertDialog(activity, "功能介绍", context.getString(R.string.about), "看完了");
+                Utils.showAlertDialog(activity, "功能介绍", context.getString(R.string.about), "看完了", true);
                 break;
             default:
                 break;
