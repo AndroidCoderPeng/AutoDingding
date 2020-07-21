@@ -8,10 +8,10 @@
     <include layout="@layout/include_title" />
 
     <RelativeLayout
-        android:layout_marginTop="10dp"
         android:id="@+id/emailLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
         android:layout_marginBottom="20dp"
         android:background="#FFFFFF"
         android:padding="10dp">
@@ -118,7 +118,6 @@
         android:background="#CCC" />
 
     <RelativeLayout
-        android:id="@+id/updateLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="#FFFFFF"
@@ -128,7 +127,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:gravity="center_vertical"
-            android:text="检查更新"
+            android:text="当前版本"
             android:textSize="18sp" />
 
         <TextView
@@ -139,5 +138,26 @@
             android:gravity="center_vertical"
             android:textColor="#333333"
             android:textSize="18sp" />
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <ImageView
+            android:id="@+id/updateCodeView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:src="@mipmap/update_code" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/updateCodeView"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="10dp"
+            android:text="长按识别二维码，获取最新应用下载地址"
+            android:textColor="@color/colorText" />
     </RelativeLayout>
 </LinearLayout>

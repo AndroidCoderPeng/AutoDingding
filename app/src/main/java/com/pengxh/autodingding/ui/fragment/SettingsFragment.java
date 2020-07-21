@@ -8,7 +8,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
-import android.os.CountDownTimer;
 import android.provider.Settings;
 import android.view.View;
 import android.widget.ImageView;
@@ -54,6 +53,8 @@ public class SettingsFragment extends BaseFragment implements View.OnClickListen
     TextView recordSize;
     @BindView(R.id.appVersion)
     TextView appVersion;
+    @BindView(R.id.updateCodeView)
+    ImageView updateCodeView;
 
     private BroadcastManager broadcastManager;
     private SQLiteUtil sqLiteUtil;
@@ -104,6 +105,14 @@ public class SettingsFragment extends BaseFragment implements View.OnClickListen
         }
         toggleNotificationListenerService();
         Utils.createNotification();
+
+        updateCodeView.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View v) {
+                EasyToast.showToast("开发中...", EasyToast.DEFAULT);
+                return false;
+            }
+        });
     }
 
     @Override
@@ -142,7 +151,7 @@ public class SettingsFragment extends BaseFragment implements View.OnClickListen
         pm.setComponentEnabledSetting(componentName, PackageManager.COMPONENT_ENABLED_STATE_ENABLED, PackageManager.DONT_KILL_APP);
     }
 
-    @OnClick({R.id.emailLayout, R.id.historyLayout, R.id.introduceLayout, R.id.updateLayout})
+    @OnClick({R.id.emailLayout, R.id.historyLayout, R.id.introduceLayout})
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
@@ -170,22 +179,6 @@ public class SettingsFragment extends BaseFragment implements View.OnClickListen
                 break;
             case R.id.introduceLayout:
                 Utils.showAlertDialog(activity, "功能介绍", context.getString(R.string.about), "看完了");
-                break;
-            case R.id.updateLayout:
-                Utils.showProgress(activity, "正在检查更新......");
-                new CountDownTimer(5000, 1000) {
-                    @Override
-                    public void onTick(long l) {
-
-                    }
-
-                    @Override
-                    public void onFinish() {
-                        Utils.hideProgress();
-                        EasyToast.showToast("已是最新版本", EasyToast.SUCCESS);
-                    }
-                }.start();
-//                startActivity(new Intent(context, WebViewActivity.class));
                 break;
             default:
                 break;
