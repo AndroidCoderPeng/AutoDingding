@@ -33,7 +33,6 @@
             android:screenOrientation="unspecified" />
 
         <activity android:name=".ui.HistoryActivity" />
-        <activity android:name=".ui.WebViewActivity" />
 
         <service
             android:name=".service.NotificationMonitorService"
