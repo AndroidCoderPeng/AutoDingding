@@ -36,8 +36,7 @@ public class NotificationMonitorService extends NotificationListenerService {
         // 获取接收消息APP的包名
         String packageName = sbn.getPackageName();
         // 获取接收消息的内容
-        //TODO Key android.text expected String but value was a android.text.SpannableString.  The default value <null> was returned.
-        String notificationText = extras.getString(Notification.EXTRA_TEXT.toString());
+        String notificationText = extras.getString(Notification.EXTRA_TEXT);
         LogToFile.d(TAG, "推送通知包名: [" + packageName + "], 通知内容: " + notificationText);
         if (packageName.equals("com.alibaba.android.rimet")) {
             if (notificationText == null || notificationText.equals("")) {
@@ -50,7 +49,7 @@ public class NotificationMonitorService extends NotificationListenerService {
                 LogToFile.d(TAG, "onNotificationPosted: 不是打卡通知，不处理");
             }
         } else {
-            LogToFile.d(TAG, "onNotificationPosted: 不是打卡通知，不处理");
+            LogToFile.d(TAG, "onNotificationPosted: 不是钉钉通知，不处理");
         }
     }
 

@@ -2,13 +2,12 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:padding="10dp">
+    android:padding="5dp">
 
     <TextView
         android:id="@+id/noticeDate"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_centerVertical="true"
         android:text="2020年2月12日"
         android:textSize="16sp" />
 
@@ -16,8 +15,8 @@
         android:id="@+id/noticeMessage"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_centerVertical="true"
-        android:layout_toEndOf="@id/noticeDate"
+        android:layout_below="@id/noticeDate"
+        android:layout_marginTop="3dp"
         android:text="下班打卡成功"
         android:textSize="16sp" />
 
@@ -26,6 +25,5 @@
         android:layout_width="20dp"
         android:layout_height="20dp"
         android:layout_alignParentEnd="true"
-        android:layout_centerVertical="true"
         android:background="@drawable/bg_textview" />
 </RelativeLayout>

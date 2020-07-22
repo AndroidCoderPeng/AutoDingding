@@ -68,7 +68,7 @@ public class SQLiteUtil {
     public List<HistoryBean> loadHistory() {
         List<HistoryBean> list = new ArrayList<>();
         Cursor cursor = db
-                .query("HistoryTable", null, null, null, null, null, null);
+                .query("HistoryTable", null, null, null, null, null, "id DESC");//id倒序
         if (cursor.moveToFirst()) {
             do {
                 HistoryBean resultBean = new HistoryBean();
