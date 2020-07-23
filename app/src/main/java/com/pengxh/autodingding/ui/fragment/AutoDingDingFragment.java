@@ -1,13 +1,16 @@
 package com.pengxh.autodingding.ui.fragment;
 
 import android.annotation.SuppressLint;
+import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.CountDownTimer;
 import android.os.Handler;
 import android.os.Message;
+import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -101,8 +104,6 @@ public class AutoDingDingFragment extends BaseFragment implements View.OnClickLi
                     message = intent.getStringExtra("data");
                     LogToFile.d(TAG, "接收到广播, 通知内容: " + message);
                     //TODO 保存打卡记录
-                    //考勤打卡:11:14 下班打卡成功,进入钉钉查看详情
-                    //[4条]考勤打卡:11:11 下班打卡成功,进入钉钉查看详情
                     SQLiteUtil.getInstance().saveHistory(Utils.uuid(), TimeOrDateUtil.rTimestampToDate(System.currentTimeMillis()), message);
                     BroadcastManager.getInstance(context).sendBroadcast(Constant.ACTION_UPDATE, "update");
                 }
@@ -220,16 +221,21 @@ public class AutoDingDingFragment extends BaseFragment implements View.OnClickLi
         @Override
         public void handleMessage(Message msg) {
             if (msg.what == 1) {
+                Log.d(TAG, "handleMessage: 回主页");
                 Intent intent = new Intent(context, MainActivity.class);
                 intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                 context.startActivity(intent);
 
                 String emailAddress = Utils.readEmailAddress();
-                //发送打卡成功的邮件
-                LogToFile.d(TAG, "发送打卡成功的邮件: " + emailAddress);
                 if (emailAddress.equals("")) {
                     return;
                 }
+                Log.d(TAG, "邮箱地址: " + emailAddress + ", 邮件内容： " + message);
+                if (message == null) {
+                    return;
+                }
+                //发送打卡成功的邮件
+                LogToFile.d(TAG, "邮箱地址: " + emailAddress + ", 邮件内容： " + message);
                 SendMailUtil.send(emailAddress, message);
             }
         }

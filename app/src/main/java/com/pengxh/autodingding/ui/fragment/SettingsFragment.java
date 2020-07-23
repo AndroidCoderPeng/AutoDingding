@@ -15,9 +15,6 @@ import android.widget.ImageView;
 import android.widget.Switch;
 import android.widget.TextView;
 
-import androidx.core.app.NotificationManagerCompat;
-import androidx.fragment.app.FragmentActivity;
-
 import com.gyf.immersionbar.ImmersionBar;
 import com.pengxh.app.multilib.utils.BroadcastManager;
 import com.pengxh.app.multilib.utils.SaveKeyValues;
@@ -35,6 +32,8 @@ import com.pengxh.autodingding.utils.Utils;
 
 import java.util.Set;
 
+import androidx.core.app.NotificationManagerCompat;
+import androidx.fragment.app.FragmentActivity;
 import butterknife.BindView;
 import butterknife.OnClick;
 import cn.bertsir.zbar.utils.QRUtils;
@@ -108,6 +107,7 @@ public class SettingsFragment extends BaseFragment implements View.OnClickListen
             openNotificationListenSettings();
         }
         toggleNotificationListenerService();
+        //创建常住通知栏
         Utils.createNotification();
 
         //先识别出来备用

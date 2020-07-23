@@ -1,10 +1,10 @@
 package com.pengxh.autodingding.ui;
 
+import android.content.Intent;
+import android.net.Uri;
+import android.os.Build;
+import android.provider.Settings;
 import android.view.MenuItem;
-
-import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentPagerAdapter;
-import androidx.viewpager.widget.ViewPager;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.pengxh.app.multilib.base.DoubleClickExitActivity;
@@ -20,6 +20,9 @@ import com.pengxh.autodingding.utils.Utils;
 import java.util.ArrayList;
 import java.util.List;
 
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentPagerAdapter;
+import androidx.viewpager.widget.ViewPager;
 import butterknife.BindView;
 
 public class MainActivity extends DoubleClickExitActivity {
@@ -39,6 +42,13 @@ public class MainActivity extends DoubleClickExitActivity {
 
     @Override
     public void initData() {
+        //检查是否已经授予权限
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && !Settings.canDrawOverlays(this)) {
+            //若未授权则请求权限
+            Intent intent = new Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION);
+            intent.setData(Uri.parse("package:" + getPackageName()));
+            startActivity(intent);
+        }
         fragmentList.add(new AutoDingDingFragment());
         fragmentList.add(new SettingsFragment());
     }

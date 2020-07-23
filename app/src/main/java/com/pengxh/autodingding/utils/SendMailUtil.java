@@ -3,13 +3,13 @@ package com.pengxh.autodingding.utils;
 import android.annotation.SuppressLint;
 import android.os.Handler;
 import android.os.Message;
-import androidx.annotation.NonNull;
-import android.util.Log;
 
 import com.pengxh.app.multilib.widget.EasyToast;
 import com.pengxh.autodingding.bean.MailInfo;
 
 import java.io.File;
+
+import androidx.annotation.NonNull;
 
 /**
  * @author: Pengxh
@@ -19,17 +19,13 @@ import java.io.File;
  */
 public class SendMailUtil {
 
-    private static final String TAG = "SendMailUtil";
-
     public static void send(String toAddress, String emailMessage) {
         new Thread(() -> {
-            boolean isSendSuccess = new MailSender().sendTextMail(createMail(toAddress, emailMessage));
-            Log.d(TAG, "run: 邮件发送成功？--->" + isSendSuccess);
+            new MailSender().sendTextMail(createMail(toAddress, emailMessage));
         }).start();
     }
 
     static void sendAttachFileEmail(String toAddress, String filePath) {
-        Log.d(TAG, "sendAttachFileEmail: 添加附件");
         File file = new File(filePath);
         if (!file.exists()) {
             EasyToast.showToast("打卡记录不存在，请检查", EasyToast.ERROR);
@@ -37,7 +33,6 @@ public class SendMailUtil {
         }
         new Thread(() -> {
             boolean isSendSuccess = new MailSender().sendAccessoryMail(createAttachMail(toAddress, file));
-            Log.d(TAG, "sendAttachFileEmail: " + isSendSuccess);
             if (isSendSuccess) {
                 handler.sendEmptyMessage(0);
             } else {
@@ -75,8 +70,6 @@ public class SendMailUtil {
         if (emailMessage.equals("")) {
             mailInfo.setContent("未监听到打卡成功的通知，请手动登录检查" + TimeOrDateUtil.timestampToDate(System.currentTimeMillis())); // 邮件文本
         } else {
-            //考勤打卡:09:13 极速打卡成功,进入钉钉查看详情
-            //考勤打卡:09:17 下班打卡 早退
             mailInfo.setContent(emailMessage); // 邮件文本
         }
         return mailInfo;
@@ -84,7 +77,6 @@ public class SendMailUtil {
 
     @NonNull
     private static MailInfo createAttachMail(String toAddress, File file) {
-        Log.d(TAG, "createAttachMail: 创建邮件实体开始");
         MailInfo mailInfo = new MailInfo();
         mailInfo.setMailServerHost("smtp.qq.com");//发送方邮箱服务器
         mailInfo.setMailServerPort("587");//发送方邮箱端口号
@@ -95,7 +87,6 @@ public class SendMailUtil {
         mailInfo.setFromAddress("290677893@qq.com"); // 发送者邮箱
         mailInfo.setSubject("打卡记录"); // 邮件主题
         mailInfo.setAttachFile(file);
-        Log.d(TAG, "createAttachMail: 创建邮件实体结束");
         return mailInfo;
     }
 }

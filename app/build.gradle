@@ -4,7 +4,7 @@ android {
     compileSdkVersion 29
     defaultConfig {
         applicationId "com.pengxh.autodingding"
-        minSdkVersion 21
+        minSdkVersion 23
         targetSdkVersion 29
         versionCode 2
         versionName "1.1"
@@ -42,7 +42,7 @@ dependencies {
     //对话框
     implementation 'com.aihook:alertview:1.0.0'
     //基础依赖库
-    implementation 'com.github.pengxianhong:Android-library:1.5'
+    implementation 'com.github.pengxianhong:Android-library:1.5.1'
     //Google官方授权库
     implementation 'pub.devrel:easypermissions:1.3.0'
     implementation 'androidx.recyclerview:recyclerview:1.1.0'
