@@ -6,6 +6,10 @@ import android.os.Build;
 import android.provider.Settings;
 import android.view.MenuItem;
 
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentPagerAdapter;
+import androidx.viewpager.widget.ViewPager;
+
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.pengxh.app.multilib.base.DoubleClickExitActivity;
 import com.pengxh.app.multilib.utils.SaveKeyValues;
@@ -20,9 +24,6 @@ import com.pengxh.autodingding.utils.Utils;
 import java.util.ArrayList;
 import java.util.List;
 
-import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentPagerAdapter;
-import androidx.viewpager.widget.ViewPager;
 import butterknife.BindView;
 
 public class MainActivity extends DoubleClickExitActivity {

@@ -1,9 +1,7 @@
 package com.pengxh.autodingding.ui.fragment;
 
 import android.annotation.SuppressLint;
-import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
-import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
@@ -15,6 +13,9 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import androidx.fragment.app.FragmentActivity;
+import androidx.fragment.app.FragmentManager;
+
 import com.gyf.immersionbar.ImmersionBar;
 import com.jzxiang.pickerview.TimePickerDialog;
 import com.jzxiang.pickerview.data.Type;
@@ -24,7 +25,7 @@ import com.pengxh.app.multilib.utils.LogToFile;
 import com.pengxh.app.multilib.widget.EasyToast;
 import com.pengxh.autodingding.BaseFragment;
 import com.pengxh.autodingding.R;
-import com.pengxh.autodingding.ui.MainActivity;
+import com.pengxh.autodingding.ui.WelcomeActivity;
 import com.pengxh.autodingding.utils.Constant;
 import com.pengxh.autodingding.utils.SQLiteUtil;
 import com.pengxh.autodingding.utils.SendMailUtil;
@@ -35,8 +36,6 @@ import com.pengxh.autodingding.utils.Utils;
 import java.util.Timer;
 import java.util.TimerTask;
 
-import androidx.fragment.app.FragmentActivity;
-import androidx.fragment.app.FragmentManager;
 import butterknife.BindView;
 import butterknife.OnClick;
 
@@ -62,7 +61,6 @@ public class AutoDingDingFragment extends BaseFragment implements View.OnClickLi
     @BindView(R.id.pmTime)
     TextView pmTime;
 
-    private Context context;
     private FragmentManager fragmentManager;
     private BroadcastManager broadcastManager;
     private String message;
@@ -75,7 +73,6 @@ public class AutoDingDingFragment extends BaseFragment implements View.OnClickLi
 
     @Override
     protected void initData() {
-        context = getContext();
         activity = getActivity();
 
         mTitleLeftView.setVisibility(View.GONE);
@@ -91,7 +88,7 @@ public class AutoDingDingFragment extends BaseFragment implements View.OnClickLi
         }, 0, 1000);
 
         fragmentManager = activity.getSupportFragmentManager();
-        broadcastManager = BroadcastManager.getInstance(context);
+        broadcastManager = BroadcastManager.getInstance(activity);
     }
 
     @Override
@@ -174,6 +171,8 @@ public class AutoDingDingFragment extends BaseFragment implements View.OnClickLi
                 public void onFinish() {
                     startTimeView.setText("--");
                     Utils.openDingDing(Constant.DINGDING);
+
+//                    new ReturnActivityService().returnActivity();
                     handler.sendEmptyMessageDelayed(1, 15 * 1000);
                 }
             }.start();
@@ -200,6 +199,8 @@ public class AutoDingDingFragment extends BaseFragment implements View.OnClickLi
                 public void onFinish() {
                     endTimeView.setText("--");
                     Utils.openDingDing(Constant.DINGDING);
+
+//                    new ReturnActivityService().returnActivity();
                     handler.sendEmptyMessageDelayed(1, 15 * 1000);
                 }
             }.start();
@@ -214,10 +215,9 @@ public class AutoDingDingFragment extends BaseFragment implements View.OnClickLi
         public void handleMessage(Message msg) {
             if (msg.what == 1) {
                 Log.d(TAG, "handleMessage: 回主页");
-                Intent intent = new Intent(context, MainActivity.class);
+                Intent intent = new Intent(activity, WelcomeActivity.class);
                 intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                context.startActivity(intent);
-
+                activity.startActivity(intent);
                 String emailAddress = Utils.readEmailAddress();
                 if (emailAddress.equals("")) {
                     return;
