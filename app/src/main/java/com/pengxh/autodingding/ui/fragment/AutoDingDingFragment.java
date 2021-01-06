@@ -172,7 +172,6 @@ public class AutoDingDingFragment extends BaseFragment implements View.OnClickLi
                     startTimeView.setText("--");
                     Utils.openDingDing(Constant.DINGDING);
 
-//                    new ReturnActivityService().returnActivity();
                     handler.sendEmptyMessageDelayed(1, 15 * 1000);
                 }
             }.start();
@@ -200,7 +199,6 @@ public class AutoDingDingFragment extends BaseFragment implements View.OnClickLi
                     endTimeView.setText("--");
                     Utils.openDingDing(Constant.DINGDING);
 
-//                    new ReturnActivityService().returnActivity();
                     handler.sendEmptyMessageDelayed(1, 15 * 1000);
                 }
             }.start();
