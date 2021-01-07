@@ -39,7 +39,6 @@ import java.util.TimerTask;
 import butterknife.BindView;
 import butterknife.OnClick;
 
-@SuppressLint("SetTextI18n")
 public class AutoDingDingFragment extends BaseFragment implements View.OnClickListener {
 
     private static final String TAG = "AutoDingDingFragment";
@@ -151,6 +150,7 @@ public class AutoDingDingFragment extends BaseFragment implements View.OnClickLi
         }
     }
 
+    @SuppressLint("SetTextI18n")
     private void onDuty(long millSeconds) {
         long deltaTime = TimeOrDateUtil.deltaTime(millSeconds / 1000);
         if (deltaTime == 0) {
@@ -180,6 +180,7 @@ public class AutoDingDingFragment extends BaseFragment implements View.OnClickLi
         }
     }
 
+    @SuppressLint("SetTextI18n")
     private void offDuty(long millSeconds) {
         long deltaTime = TimeOrDateUtil.deltaTime(millSeconds / 1000);
         if (deltaTime == 0) {
@@ -218,10 +219,11 @@ public class AutoDingDingFragment extends BaseFragment implements View.OnClickLi
                 activity.startActivity(intent);
                 String emailAddress = Utils.readEmailAddress();
                 if (emailAddress.equals("")) {
+                    LogToFile.d(TAG, "邮箱地址为空");
                     return;
                 }
-                Log.d(TAG, "邮箱地址: " + emailAddress + ", 邮件内容： " + message);
-                if (message == null) {
+                if (message == null || message.equals("")) {
+                    LogToFile.d(TAG, "邮件内容为空");
                     return;
                 }
                 //发送打卡成功的邮件
