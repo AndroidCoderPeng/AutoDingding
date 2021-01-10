@@ -11,9 +11,12 @@ import android.graphics.Color;
 import android.net.Uri;
 import android.provider.Settings;
 import android.view.View;
+import android.widget.CheckBox;
 import android.widget.ImageView;
-import android.widget.Switch;
 import android.widget.TextView;
+
+import androidx.core.app.NotificationManagerCompat;
+import androidx.fragment.app.FragmentActivity;
 
 import com.gyf.immersionbar.ImmersionBar;
 import com.pengxh.app.multilib.utils.BroadcastManager;
@@ -32,8 +35,6 @@ import com.pengxh.autodingding.utils.Utils;
 
 import java.util.Set;
 
-import androidx.core.app.NotificationManagerCompat;
-import androidx.fragment.app.FragmentActivity;
 import butterknife.BindView;
 import butterknife.OnClick;
 import cn.bertsir.zbar.utils.QRUtils;
@@ -50,8 +51,8 @@ public class SettingsFragment extends BaseFragment implements View.OnClickListen
     ImageView mTitleRightView;
     @BindView(R.id.emailTextView)
     TextView emailTextView;
-    @BindView(R.id.noticeSwitch)
-    Switch noticeSwitch;
+    @BindView(R.id.noticeCheckBox)
+    CheckBox noticeCheckBox;
     @BindView(R.id.recordSize)
     TextView recordSize;
     @BindView(R.id.appVersion)
@@ -102,7 +103,7 @@ public class SettingsFragment extends BaseFragment implements View.OnClickListen
         appVersion.setText(BuildConfig.VERSION_NAME);
 
         boolean enabled = isNotificationListenerEnabled();
-        noticeSwitch.setChecked(enabled);
+        noticeCheckBox.setChecked(enabled);
         if (!enabled) {
             openNotificationListenSettings();
         }

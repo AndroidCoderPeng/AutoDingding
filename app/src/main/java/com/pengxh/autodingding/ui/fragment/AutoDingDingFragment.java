@@ -99,14 +99,46 @@ public class AutoDingDingFragment extends BaseFragment implements View.OnClickLi
                 String action = intent.getAction();
                 if (action != null && action.equals(Constant.DINGDING_ACTION)) {
                     message = intent.getStringExtra("data");
+                    Log.d(TAG, "接收到广播, 通知内容: " + message);
                     LogToFile.d(TAG, "接收到广播, 通知内容: " + message);
-                    //TODO 保存打卡记录
+                    //保存打卡记录
                     SQLiteUtil.getInstance().saveHistory(Utils.uuid(), TimeOrDateUtil.rTimestampToDate(System.currentTimeMillis()), message);
                     broadcastManager.sendBroadcast(Constant.ACTION_UPDATE, "update");
+                    //回到主页
+                    handler.sendEmptyMessage(110);
                 }
             }
         });
     }
+
+    @SuppressLint("HandlerLeak")
+    private Handler handler = new Handler() {
+        @Override
+        public void handleMessage(Message msg) {
+            if (msg.what == 110) {
+                Log.d(TAG, "回主页");
+                LogToFile.d(TAG, "回主页");
+                Intent intent = new Intent(activity, WelcomeActivity.class);
+                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                activity.startActivity(intent);
+                String emailAddress = Utils.readEmailAddress();
+                if (emailAddress.equals("")) {
+                    Log.d(TAG, "邮箱地址为空");
+                    LogToFile.d(TAG, "邮箱地址为空");
+                    return;
+                }
+                if (message == null || message.equals("")) {
+                    Log.d(TAG, "邮件内容为空");
+                    LogToFile.d(TAG, "邮件内容为空");
+                    return;
+                }
+                //发送打卡成功的邮件
+                Log.d(TAG, "邮箱地址: " + emailAddress + ", 邮件内容： " + message);
+                LogToFile.d(TAG, "邮箱地址: " + emailAddress + ", 邮件内容： " + message);
+                SendMailUtil.send(emailAddress, message);
+            }
+        }
+    };
 
     @Override
     public void initImmersionBar() {
@@ -180,8 +212,6 @@ public class AutoDingDingFragment extends BaseFragment implements View.OnClickLi
                 public void onFinish() {
                     startTimeView.setText("--");
                     Utils.openDingDing(Constant.DINGDING);
-
-                    handler.sendEmptyMessageDelayed(1, 15 * 1000);
                 }
             };
             amCountDownTimer.start();
@@ -209,8 +239,6 @@ public class AutoDingDingFragment extends BaseFragment implements View.OnClickLi
                 public void onFinish() {
                     endTimeView.setText("--");
                     Utils.openDingDing(Constant.DINGDING);
-
-                    handler.sendEmptyMessageDelayed(1, 15 * 1000);
                 }
             };
             pmCountDownTimer.start();
@@ -218,35 +246,6 @@ public class AutoDingDingFragment extends BaseFragment implements View.OnClickLi
             EasyToast.showToast("已有任务在进行中", EasyToast.WARING);
         }
     }
-
-    @SuppressLint("HandlerLeak")
-    private Handler handler = new Handler() {
-        @Override
-        public void handleMessage(Message msg) {
-            if (msg.what == 1) {
-                Log.d(TAG, "回主页");
-                LogToFile.d(TAG, "回主页");
-                Intent intent = new Intent(activity, WelcomeActivity.class);
-                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                activity.startActivity(intent);
-                String emailAddress = Utils.readEmailAddress();
-                if (emailAddress.equals("")) {
-                    Log.d(TAG, "邮箱地址为空");
-                    LogToFile.d(TAG, "邮箱地址为空");
-                    return;
-                }
-                if (message == null || message.equals("")) {
-                    Log.d(TAG, "邮件内容为空");
-                    LogToFile.d(TAG, "邮件内容为空");
-                    return;
-                }
-                //发送打卡成功的邮件
-                Log.d(TAG, "邮箱地址: " + emailAddress + ", 邮件内容： " + message);
-                LogToFile.d(TAG, "邮箱地址: " + emailAddress + ", 邮件内容： " + message);
-                SendMailUtil.send(emailAddress, message);
-            }
-        }
-    };
 
     @Override
     public void onDestroyView() {

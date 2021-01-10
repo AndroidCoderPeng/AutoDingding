@@ -75,14 +75,12 @@
             android:text="通知监听"
             android:textSize="18sp" />
 
-        <Switch
-            android:id="@+id/noticeSwitch"
+        <CheckBox
+            android:id="@+id/noticeCheckBox"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentEnd="true"
-            android:layout_centerVertical="true"
-            android:thumb="@drawable/select_switch_circle"
-            android:track="@drawable/select_switch_background" />
+            android:layout_centerVertical="true" />
     </RelativeLayout>
 
     <View
