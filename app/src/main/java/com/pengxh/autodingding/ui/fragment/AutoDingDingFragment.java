@@ -62,7 +62,6 @@ public class AutoDingDingFragment extends BaseFragment implements View.OnClickLi
 
     private FragmentManager fragmentManager;
     private BroadcastManager broadcastManager;
-    private String message;
     private FragmentActivity activity;
     private CountDownTimer amCountDownTimer, pmCountDownTimer;
 
@@ -98,14 +97,17 @@ public class AutoDingDingFragment extends BaseFragment implements View.OnClickLi
             public void onReceive(Context context, Intent intent) {
                 String action = intent.getAction();
                 if (action != null && action.equals(Constant.DINGDING_ACTION)) {
-                    message = intent.getStringExtra("data");
+                    String message = intent.getStringExtra("data");
                     Log.d(TAG, "接收到广播, 通知内容: " + message);
                     LogToFile.d(TAG, "接收到广播, 通知内容: " + message);
                     //保存打卡记录
                     SQLiteUtil.getInstance().saveHistory(Utils.uuid(), TimeOrDateUtil.rTimestampToDate(System.currentTimeMillis()), message);
                     broadcastManager.sendBroadcast(Constant.ACTION_UPDATE, "update");
                     //回到主页
-                    handler.sendEmptyMessage(110);
+                    Message msg = handler.obtainMessage();
+                    msg.what = 110;
+                    msg.obj = message;
+                    handler.sendMessage(msg);
                 }
             }
         });
@@ -125,17 +127,18 @@ public class AutoDingDingFragment extends BaseFragment implements View.OnClickLi
                 if (emailAddress.equals("")) {
                     Log.d(TAG, "邮箱地址为空");
                     LogToFile.d(TAG, "邮箱地址为空");
-                    return;
+                } else {
+                    String message = (String) msg.obj;
+                    if (message == null || message.equals("")) {
+                        Log.d(TAG, "邮件内容为空");
+                        LogToFile.d(TAG, "邮件内容为空");
+                    } else {
+                        //发送打卡成功的邮件
+                        Log.d(TAG, "邮箱地址: " + emailAddress + ", 邮件内容： " + message);
+                        LogToFile.d(TAG, "邮箱地址: " + emailAddress + ", 邮件内容： " + message);
+                        SendMailUtil.send(emailAddress, message);
+                    }
                 }
-                if (message == null || message.equals("")) {
-                    Log.d(TAG, "邮件内容为空");
-                    LogToFile.d(TAG, "邮件内容为空");
-                    return;
-                }
-                //发送打卡成功的邮件
-                Log.d(TAG, "邮箱地址: " + emailAddress + ", 邮件内容： " + message);
-                LogToFile.d(TAG, "邮箱地址: " + emailAddress + ", 邮件内容： " + message);
-                SendMailUtil.send(emailAddress, message);
             }
         }
     };
@@ -179,12 +182,16 @@ public class AutoDingDingFragment extends BaseFragment implements View.OnClickLi
                         }).build().show(fragmentManager, "year_month_day_hour_minute");
                 break;
             case R.id.endAmDuty:
-                amCountDownTimer.cancel();
-                startTimeView.setText("--");
+                if (amCountDownTimer != null) {
+                    amCountDownTimer.cancel();
+                    startTimeView.setText("--");
+                }
                 break;
             case R.id.endPmDuty:
-                pmCountDownTimer.cancel();
-                endTimeView.setText("--");
+                if (pmCountDownTimer != null) {
+                    pmCountDownTimer.cancel();
+                    endTimeView.setText("--");
+                }
                 break;
             default:
                 break;
