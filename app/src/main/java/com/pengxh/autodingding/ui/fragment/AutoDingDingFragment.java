@@ -64,6 +64,7 @@ public class AutoDingDingFragment extends BaseFragment implements View.OnClickLi
     private BroadcastManager broadcastManager;
     private String message;
     private FragmentActivity activity;
+    private CountDownTimer amCountDownTimer, pmCountDownTimer;
 
     @Override
     protected int initLayoutView() {
@@ -101,7 +102,7 @@ public class AutoDingDingFragment extends BaseFragment implements View.OnClickLi
                     LogToFile.d(TAG, "接收到广播, 通知内容: " + message);
                     //TODO 保存打卡记录
                     SQLiteUtil.getInstance().saveHistory(Utils.uuid(), TimeOrDateUtil.rTimestampToDate(System.currentTimeMillis()), message);
-                    BroadcastManager.getInstance(context).sendBroadcast(Constant.ACTION_UPDATE, "update");
+                    broadcastManager.sendBroadcast(Constant.ACTION_UPDATE, "update");
                 }
             }
         });
@@ -113,7 +114,7 @@ public class AutoDingDingFragment extends BaseFragment implements View.OnClickLi
         ImmersionBar.with(this).init();
     }
 
-    @OnClick({R.id.startLayoutView, R.id.endLayoutView})
+    @OnClick({R.id.startLayoutView, R.id.endLayoutView, R.id.endAmDuty, R.id.endPmDuty})
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
@@ -145,6 +146,14 @@ public class AutoDingDingFragment extends BaseFragment implements View.OnClickLi
                             offDuty(millSeconds);
                         }).build().show(fragmentManager, "year_month_day_hour_minute");
                 break;
+            case R.id.endAmDuty:
+                amCountDownTimer.cancel();
+                startTimeView.setText("--");
+                break;
+            case R.id.endPmDuty:
+                pmCountDownTimer.cancel();
+                endTimeView.setText("--");
+                break;
             default:
                 break;
         }
@@ -161,7 +170,7 @@ public class AutoDingDingFragment extends BaseFragment implements View.OnClickLi
         String text = startTimeView.getText().toString();
 
         if (text.equals("--")) {
-            new CountDownTimer(deltaTime * 1000, 1000) {
+            amCountDownTimer = new CountDownTimer(deltaTime * 1000, 1000) {
                 @Override
                 public void onTick(long l) {
                     startTimeView.setText((int) (l / 1000) + "s");
@@ -174,7 +183,8 @@ public class AutoDingDingFragment extends BaseFragment implements View.OnClickLi
 
                     handler.sendEmptyMessageDelayed(1, 15 * 1000);
                 }
-            }.start();
+            };
+            amCountDownTimer.start();
         } else {
             EasyToast.showToast("已有任务在进行中", EasyToast.WARING);
         }
@@ -189,7 +199,7 @@ public class AutoDingDingFragment extends BaseFragment implements View.OnClickLi
         //显示倒计时
         String text = endTimeView.getText().toString();
         if (text.equals("--")) {
-            new CountDownTimer(deltaTime * 1000, 1000) {
+            pmCountDownTimer = new CountDownTimer(deltaTime * 1000, 1000) {
                 @Override
                 public void onTick(long l) {
                     endTimeView.setText((int) (l / 1000) + "s");
@@ -202,7 +212,8 @@ public class AutoDingDingFragment extends BaseFragment implements View.OnClickLi
 
                     handler.sendEmptyMessageDelayed(1, 15 * 1000);
                 }
-            }.start();
+            };
+            pmCountDownTimer.start();
         } else {
             EasyToast.showToast("已有任务在进行中", EasyToast.WARING);
         }
@@ -213,20 +224,24 @@ public class AutoDingDingFragment extends BaseFragment implements View.OnClickLi
         @Override
         public void handleMessage(Message msg) {
             if (msg.what == 1) {
-                Log.d(TAG, "handleMessage: 回主页");
+                Log.d(TAG, "回主页");
+                LogToFile.d(TAG, "回主页");
                 Intent intent = new Intent(activity, WelcomeActivity.class);
                 intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                 activity.startActivity(intent);
                 String emailAddress = Utils.readEmailAddress();
                 if (emailAddress.equals("")) {
+                    Log.d(TAG, "邮箱地址为空");
                     LogToFile.d(TAG, "邮箱地址为空");
                     return;
                 }
                 if (message == null || message.equals("")) {
+                    Log.d(TAG, "邮件内容为空");
                     LogToFile.d(TAG, "邮件内容为空");
                     return;
                 }
                 //发送打卡成功的邮件
+                Log.d(TAG, "邮箱地址: " + emailAddress + ", 邮件内容： " + message);
                 LogToFile.d(TAG, "邮箱地址: " + emailAddress + ", 邮件内容： " + message);
                 SendMailUtil.send(emailAddress, message);
             }

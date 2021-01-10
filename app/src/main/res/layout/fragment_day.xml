@@ -52,6 +52,13 @@
                     android:layout_toEndOf="@id/v"
                     android:text="上班打卡"
                     android:textColor="@color/white" />
+
+                <ImageView
+                    android:id="@+id/endAmDuty"
+                    android:layout_width="80px"
+                    android:layout_height="80px"
+                    android:layout_alignParentEnd="true"
+                    android:background="@drawable/ic_stop" />
             </RelativeLayout>
 
             <TextView
@@ -116,6 +123,13 @@
                     android:layout_toEndOf="@id/vv"
                     android:text="下班打卡"
                     android:textColor="@color/white" />
+
+                <ImageView
+                    android:id="@+id/endPmDuty"
+                    android:layout_width="80px"
+                    android:layout_height="80px"
+                    android:layout_alignParentEnd="true"
+                    android:background="@drawable/ic_stop" />
             </RelativeLayout>
 
             <TextView
