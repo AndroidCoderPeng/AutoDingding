@@ -25,6 +25,6 @@
 
 a、打卡成功
 
-![打卡成功](https://github.com/AndroidCoderPeng/AutoDingding/blob/master/demoImage/6.jpg)
+![打卡成功](https://github.com/AndroidCoderPeng/AutoDingding/blob/master/demoImage/6.png)
 
 b、打卡失败（失败原因有很多，比如，钉钉账号被自己另一个手机挤下去，再比如，钉钉未设置极速打卡，或者钉钉应用内部打卡通知或者手机通知被关闭，或者钉钉打卡手机又2个以上，因为钉钉最多只能有两个常用打卡手机等等情况都会导致打卡失败，所以，在使用本软件之前，最好先自行测试一两天没确认没问题之后再使用，谢谢理解！）
