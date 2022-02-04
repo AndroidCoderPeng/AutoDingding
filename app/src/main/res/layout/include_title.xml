@@ -5,12 +5,12 @@
     android:background="@color/colorAppThemeLight">
 
     <ImageView
-        android:id="@+id/mTitleLeftView"
+        android:id="@+id/titleLeftView"
         style="@style/leftImageStyle"
         android:background="@mipmap/right" />
 
     <TextView
-        android:id="@+id/mTitleView"
+        android:id="@+id/titleView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerInParent="true"
@@ -21,7 +21,7 @@
         android:textSize="18sp" />
 
     <ImageView
-        android:id="@+id/mTitleRightView"
+        android:id="@+id/titleRightView"
         style="@style/rightImageStyle"
         android:background="@mipmap/right"
         android:visibility="visible" />

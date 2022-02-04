@@ -3,7 +3,7 @@ package com.pengxh.autodingding.utils;
 import android.util.Log;
 
 import com.pengxh.app.multilib.widget.EasyToast;
-import com.pengxh.autodingding.bean.HistoryBean;
+import com.pengxh.autodingding.bean.HistoryRecordBean;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -29,14 +29,10 @@ import jxl.write.WriteException;
  */
 public class ExcelUtils {
     private static final String TAG = "ExcelUtils";
-    private static WritableFont arial14font = null;
     private static WritableCellFormat arial14format = null;
-    private static WritableFont arial10font = null;
     private static WritableCellFormat arial10format = null;
-    private static WritableFont arial12font = null;
     private static WritableCellFormat arial12format = null;
     private final static String UTF8_ENCODING = "UTF-8";
-    public final static String GBK_ENCODING = "GBK";
 
     /**
      * 初始化Excel
@@ -79,21 +75,19 @@ public class ExcelUtils {
      */
     private static void format() {
         try {
-            arial14font = new WritableFont(WritableFont.ARIAL, 14, WritableFont.BOLD);
+            WritableFont arial14font = new WritableFont(WritableFont.ARIAL, 14, WritableFont.BOLD);
             arial14font.setColour(jxl.format.Colour.LIGHT_BLUE);
             arial14format = new WritableCellFormat(arial14font);
             arial14format.setAlignment(jxl.format.Alignment.CENTRE);
             arial14format.setBorder(jxl.format.Border.ALL, jxl.format.BorderLineStyle.THIN);
             arial14format.setBackground(jxl.format.Colour.VERY_LIGHT_YELLOW);
 
-            arial10font = new WritableFont(WritableFont.ARIAL, 10, WritableFont.BOLD);
-            arial10format = new WritableCellFormat(arial10font);
+            arial10format = new WritableCellFormat(new WritableFont(WritableFont.ARIAL, 10, WritableFont.BOLD));
             arial10format.setAlignment(jxl.format.Alignment.CENTRE);
             arial10format.setBorder(jxl.format.Border.ALL, jxl.format.BorderLineStyle.THIN);
             arial10format.setBackground(Colour.GRAY_25);
 
-            arial12font = new WritableFont(WritableFont.ARIAL, 10);
-            arial12format = new WritableCellFormat(arial12font);
+            arial12format = new WritableCellFormat(new WritableFont(WritableFont.ARIAL, 10));
             arial10format.setAlignment(jxl.format.Alignment.CENTRE);//对齐格式
             arial12format.setBorder(jxl.format.Border.ALL, jxl.format.BorderLineStyle.THIN); //设置边框
         } catch (WriteException e) {
@@ -101,7 +95,7 @@ public class ExcelUtils {
         }
     }
 
-    public static void writeObjListToExcel(List<HistoryBean> objList, String fileName) {
+    public static void writeObjListToExcel(List<HistoryRecordBean> objList, String fileName) {
         if (objList != null && objList.size() > 0) {
             WritableWorkbook writebook = null;
             InputStream in = null;
@@ -113,7 +107,7 @@ public class ExcelUtils {
                 writebook = Workbook.createWorkbook(new File(fileName), workbook);
                 WritableSheet sheet = writebook.getSheet(0);
                 for (int j = 0; j < objList.size(); j++) {
-                    HistoryBean historyBean = objList.get(j);
+                    HistoryRecordBean historyBean = objList.get(j);
                     String uuid = historyBean.getUuid();
                     String date = historyBean.getDate();
                     String message = historyBean.getMessage();

@@ -34,7 +34,7 @@
             android:name=".ui.MainActivity"
             android:launchMode="singleTask"
             android:screenOrientation="unspecified" />
-        <activity android:name=".ui.HistoryActivity" />
+        <activity android:name=".ui.HistoryRecordActivity" />
 
         <service
             android:name=".service.NotificationMonitorService"

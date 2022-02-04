@@ -9,16 +9,16 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.pengxh.autodingding.R;
-import com.pengxh.autodingding.bean.HistoryBean;
+import com.pengxh.autodingding.bean.HistoryRecordBean;
 
 import java.util.List;
 
-public class HistoryAdapter extends BaseAdapter {
+public class HistoryRecordAdapter extends BaseAdapter {
 
-    private List<HistoryBean> beanList;
-    private LayoutInflater mInflater;
+    private final List<HistoryRecordBean> beanList;
+    private final LayoutInflater mInflater;
 
-    public HistoryAdapter(Context mContext, List<HistoryBean> list) {
+    public HistoryRecordAdapter(Context mContext, List<HistoryRecordBean> list) {
         this.beanList = list;
         mInflater = LayoutInflater.from(mContext);
     }
@@ -60,7 +60,7 @@ public class HistoryAdapter extends BaseAdapter {
         private TextView noticeMessage;
         private ImageView tagView;
 
-        void bindData(HistoryBean historyBean) {
+        void bindData(HistoryRecordBean historyBean) {
             String message = historyBean.getMessage();
             if (!message.contains("成功")) {
                 tagView.setBackgroundResource(R.drawable.bg_textview_error);

@@ -1,5 +1,20 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
+  <component name="DesignSurface">
+    <option name="filePathToZoomLevelMap">
+      <map>
+        <entry key="..\:/Code/AutoDingding/app/src/main/res/drawable/bottom_text_color.xml" value="0.1855" />
+        <entry key="..\:/Code/AutoDingding/app/src/main/res/layout/activity_history.xml" value="0.15208333333333332" />
+        <entry key="..\:/Code/AutoDingding/app/src/main/res/layout/activity_main.xml" value="0.2916666666666667" />
+        <entry key="..\:/Code/AutoDingding/app/src/main/res/layout/easy_popup.xml" value="0.2916666666666667" />
+        <entry key="..\:/Code/AutoDingding/app/src/main/res/layout/fragment_day.xml" value="0.32916666666666666" />
+        <entry key="..\:/Code/AutoDingding/app/src/main/res/layout/fragment_settings.xml" value="0.32916666666666666" />
+        <entry key="..\:/Code/AutoDingding/app/src/main/res/layout/include_title.xml" value="0.32916666666666666" />
+        <entry key="..\:/Code/AutoDingding/app/src/main/res/layout/item_easy_popup.xml" value="0.32916666666666666" />
+        <entry key="..\:/Code/AutoDingding/app/src/main/res/menu/bottom_nav_menu.xml" value="0.32916666666666666" />
+      </map>
+    </option>
+  </component>
   <component name="NullableNotNullManager">
     <option name="myDefaultNullable" value="android.support.annotation.Nullable" />
     <option name="myDefaultNotNull" value="androidx.annotation.RecentlyNonNull" />

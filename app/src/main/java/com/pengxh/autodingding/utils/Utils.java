@@ -8,7 +8,6 @@ import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.content.ComponentName;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
@@ -18,6 +17,8 @@ import android.os.CountDownTimer;
 import android.os.Environment;
 import android.os.PowerManager;
 import android.util.Log;
+
+import androidx.appcompat.app.AlertDialog;
 
 import com.pengxh.autodingding.R;
 
@@ -31,11 +32,6 @@ import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Random;
-
-import androidx.appcompat.app.AlertDialog;
-
-import static android.content.Context.KEYGUARD_SERVICE;
 
 /**
  * @author: Pengxh
@@ -45,8 +41,8 @@ import static android.content.Context.KEYGUARD_SERVICE;
  */
 public class Utils {
     private static final String TAG = "Utils";
-    private static String filePath = Environment.getExternalStorageDirectory().getAbsolutePath() + "/AutoDingding/";
-    private static String fileName = "emailAddress.txt";
+    private static final String filePath = Environment.getExternalStorageDirectory().getAbsolutePath() + "/AutoDingding/";
+    private static final String fileName = "emailAddress.txt";
     @SuppressLint("StaticFieldLeak")
     private static Context mContext;
     private static NotificationManager notificationManager;
@@ -155,20 +151,9 @@ public class Utils {
             wakeLock.release();
         }
         //解锁屏幕
-        KeyguardManager keyguardManager = (KeyguardManager) mContext.getSystemService(KEYGUARD_SERVICE);
+        KeyguardManager keyguardManager = (KeyguardManager) mContext.getSystemService(Context.KEYGUARD_SERVICE);
         KeyguardManager.KeyguardLock keyguardLock = keyguardManager.newKeyguardLock("unLock");
         keyguardLock.disableKeyguard();
-    }
-
-    public static String uuid() {
-        String str = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
-        Random random = new Random();
-        StringBuilder sb = new StringBuilder();
-        for (int i = 0; i < 11; i++) {
-            int number = random.nextInt(62);
-            sb.append(str.charAt(number));
-        }
-        return sb.toString();
     }
 
     /**
@@ -227,14 +212,6 @@ public class Utils {
         createBuilder(activity, title, message)
                 .setCancelable(cancelable)
                 .setPositiveButton(positiveButton, null)
-                .create()
-                .show();
-    }
-
-    public static void showAlertDialog(Activity activity, String title, String message, String positiveButton, boolean cancelable, DialogInterface.OnClickListener listener) {
-        createBuilder(activity, title, message)
-                .setCancelable(cancelable)
-                .setPositiveButton(positiveButton, listener)
                 .create()
                 .show();
     }

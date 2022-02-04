@@ -1,109 +1,57 @@
 package com.pengxh.autodingding.ui.fragment;
 
-import android.annotation.SuppressLint;
-import android.app.Dialog;
-import android.content.BroadcastReceiver;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.graphics.Color;
 import android.net.Uri;
 import android.provider.Settings;
 import android.view.View;
-import android.widget.CheckBox;
-import android.widget.ImageView;
-import android.widget.TextView;
 
 import androidx.core.app.NotificationManagerCompat;
-import androidx.fragment.app.FragmentActivity;
 
-import com.gyf.immersionbar.ImmersionBar;
-import com.pengxh.app.multilib.utils.BroadcastManager;
 import com.pengxh.app.multilib.utils.SaveKeyValues;
 import com.pengxh.app.multilib.widget.EasyToast;
+import com.pengxh.app.multilib.widget.dialog.AlertMessageDialog;
 import com.pengxh.app.multilib.widget.dialog.InputDialog;
-import com.pengxh.autodingding.BaseFragment;
+import com.pengxh.autodingding.AndroidxBaseFragment;
+import com.pengxh.autodingding.BaseApplication;
 import com.pengxh.autodingding.BuildConfig;
 import com.pengxh.autodingding.R;
+import com.pengxh.autodingding.databinding.FragmentSettingsBinding;
+import com.pengxh.autodingding.greendao.HistoryRecordBeanDao;
 import com.pengxh.autodingding.service.NotificationMonitorService;
-import com.pengxh.autodingding.ui.HistoryActivity;
-import com.pengxh.autodingding.utils.Constant;
-import com.pengxh.autodingding.utils.SQLiteUtil;
-import com.pengxh.autodingding.utils.StatusBarColorUtil;
+import com.pengxh.autodingding.ui.HistoryRecordActivity;
 import com.pengxh.autodingding.utils.Utils;
 
 import java.util.Set;
 
-import butterknife.BindView;
-import butterknife.OnClick;
 import cn.bertsir.zbar.utils.QRUtils;
 
-public class SettingsFragment extends BaseFragment implements View.OnClickListener {
+public class SettingsFragment extends AndroidxBaseFragment<FragmentSettingsBinding> implements View.OnClickListener {
 
-    private static final String TAG = "SettingsFragment";
-
-    @BindView(R.id.mTitleLeftView)
-    ImageView mTitleLeftView;
-    @BindView(R.id.mTitleView)
-    TextView mTitleView;
-    @BindView(R.id.mTitleRightView)
-    ImageView mTitleRightView;
-    @BindView(R.id.emailTextView)
-    TextView emailTextView;
-    @BindView(R.id.noticeCheckBox)
-    CheckBox noticeCheckBox;
-    @BindView(R.id.recordSize)
-    TextView recordSize;
-    @BindView(R.id.appVersion)
-    TextView appVersion;
-    @BindView(R.id.updateCodeView)
-    ImageView updateCodeView;
-
-    private BroadcastManager broadcastManager;
-    private SQLiteUtil sqLiteUtil;
     private Context context;
-    private FragmentActivity activity;
 
     @Override
-    protected int initLayoutView() {
-        return R.layout.fragment_settings;
+    protected void setupTopBarLayout() {
+        context = getContext();
     }
 
     @Override
     protected void initData() {
-        context = getContext();
-        activity = getActivity();
-
-        mTitleLeftView.setVisibility(View.GONE);
-        mTitleView.setText("其他设置");
-        mTitleRightView.setVisibility(View.GONE);
-
-        broadcastManager = BroadcastManager.getInstance(context);
-        sqLiteUtil = SQLiteUtil.getInstance();
-    }
-
-    @SuppressLint("SetTextI18n")
-    @Override
-    protected void initEvent() {
+        HistoryRecordBeanDao historyBeanDao = BaseApplication.getDaoSession().getHistoryRecordBeanDao();
         String emailAddress = Utils.readEmailAddress();
         if (!emailAddress.equals("")) {
-            emailTextView.setText(emailAddress);
+            viewBinding.emailTextView.setText(emailAddress);
         }
-        recordSize.setText(sqLiteUtil.loadHistory().size() + "");
-        broadcastManager.addAction(Constant.ACTION_UPDATE, new BroadcastReceiver() {
-            @Override
-            public void onReceive(Context context, Intent intent) {
-                String action = intent.getAction();
-                if (action != null && action.equals(Constant.ACTION_UPDATE)) {
-                    recordSize.setText(sqLiteUtil.loadHistory().size() + "");
-                }
-            }
-        });
-        appVersion.setText(BuildConfig.VERSION_NAME);
+        viewBinding.recordSize.setText(String.valueOf(historyBeanDao.loadAll().size()));
+        viewBinding.appVersion.setText(BuildConfig.VERSION_NAME);
+    }
 
+    @Override
+    protected void initEvent() {
         boolean enabled = isNotificationListenerEnabled();
-        noticeCheckBox.setChecked(enabled);
+        viewBinding.noticeCheckBox.setChecked(enabled);
         if (!enabled) {
             openNotificationListenSettings();
         }
@@ -113,29 +61,33 @@ public class SettingsFragment extends BaseFragment implements View.OnClickListen
 
         //先识别出来备用
         try {
-            String codeValue = QRUtils.getInstance().decodeQRcode(updateCodeView);
+            String codeValue = QRUtils.getInstance().decodeQRcode(viewBinding.updateCodeView);
             SaveKeyValues.putValue("updateLink", codeValue);
         } catch (Exception e) {
             e.printStackTrace();
         }
-        updateCodeView.setOnLongClickListener(v -> {
+        viewBinding.updateCodeView.setOnLongClickListener(v -> {
             String updateLink = (String) SaveKeyValues.getValue("updateLink", "https://www.pgyer.com/MBGt");
-            Utils.showAlertDialog(activity, "识别结果", updateLink, "前往更新页面(密码：123)", true,
-                    (dialog, which) -> {
-                        Intent intent = new Intent();
-                        intent.setAction("android.intent.action.VIEW");
-                        Uri content_url = Uri.parse(updateLink);
-                        intent.setData(content_url);
-                        startActivity(intent);
-                    });
+            new AlertMessageDialog.Builder()
+                    .setContext(context)
+                    .setTitle("识别结果")
+                    .setMessage(updateLink)
+                    .setPositiveButton("前往更新页面(密码：123)")
+                    .setOnDialogButtonClickListener(new AlertMessageDialog.OnDialogButtonClickListener() {
+                        @Override
+                        public void onConfirmClick() {
+                            Intent intent = new Intent();
+                            intent.setAction("android.intent.action.VIEW");
+                            Uri content_url = Uri.parse(updateLink);
+                            intent.setData(content_url);
+                            startActivity(intent);
+                        }
+                    }).build().show();
             return true;
         });
-    }
-
-    @Override
-    public void initImmersionBar() {
-        StatusBarColorUtil.setColor(activity, Color.parseColor("#0094FF"));
-        ImmersionBar.with(this).init();
+        viewBinding.emailLayout.setOnClickListener(this);
+        viewBinding.historyLayout.setOnClickListener(this);
+        viewBinding.introduceLayout.setOnClickListener(this);
     }
 
     //检测通知监听服务是否被授权
@@ -147,12 +99,7 @@ public class SettingsFragment extends BaseFragment implements View.OnClickListen
     //打开通知监听设置页面
     private void openNotificationListenSettings() {
         try {
-            Intent intent;
-            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP_MR1) {
-                intent = new Intent(Settings.ACTION_NOTIFICATION_LISTENER_SETTINGS);
-            } else {
-                intent = new Intent("android.settings.ACTION_NOTIFICATION_LISTENER_SETTINGS");
-            }
+            Intent intent = new Intent(Settings.ACTION_NOTIFICATION_LISTENER_SETTINGS);
             startActivity(intent);
         } catch (Exception e) {
             e.printStackTrace();
@@ -168,43 +115,36 @@ public class SettingsFragment extends BaseFragment implements View.OnClickListen
         pm.setComponentEnabledSetting(componentName, PackageManager.COMPONENT_ENABLED_STATE_ENABLED, PackageManager.DONT_KILL_APP);
     }
 
-    @OnClick({R.id.emailLayout, R.id.historyLayout, R.id.introduceLayout})
     @Override
     public void onClick(View v) {
-        switch (v.getId()) {
-            case R.id.emailLayout:
-                new InputDialog.Builder().setContext(context).setTitle("设置邮箱").setNegativeButton("取消").setPositiveButton("确定").setOnDialogClickListener(new InputDialog.onDialogClickListener() {
-                    @Override
-                    public void onConfirmClick(Dialog dialog, String input) {
-                        if (!input.isEmpty()) {
-                            Utils.saveEmailAddress(input);
-                            emailTextView.setText(input);
-                            dialog.dismiss();
-                        } else {
-                            EasyToast.showToast("什么都还没输入呢！", EasyToast.ERROR);
+        int id = v.getId();
+        if (id == R.id.emailLayout) {
+            new InputDialog.Builder()
+                    .setContext(context)
+                    .setTitle("设置邮箱")
+                    .setHintMessage("请输入邮箱")
+                    .setNegativeButton("取消")
+                    .setPositiveButton("确定")
+                    .setOnDialogButtonClickListener(new InputDialog.OnDialogButtonClickListener() {
+                        @Override
+                        public void onConfirmClick(String value) {
+                            if (!value.isEmpty()) {
+                                Utils.saveEmailAddress(value);
+                                viewBinding.emailTextView.setText(value);
+                            } else {
+                                EasyToast.showToast("什么都还没输入呢！", EasyToast.ERROR);
+                            }
                         }
-                    }
 
-                    @Override
-                    public void onCancelClick(Dialog dialog) {
-                        dialog.dismiss();
-                    }
-                }).build().show();
-                break;
-            case R.id.historyLayout:
-                startActivity(new Intent(context, HistoryActivity.class));
-                break;
-            case R.id.introduceLayout:
-                Utils.showAlertDialog(activity, "功能介绍", context.getString(R.string.about), "看完了", true);
-                break;
-            default:
-                break;
+                        @Override
+                        public void onCancelClick() {
+
+                        }
+                    }).build().show();
+        } else if (id == R.id.historyLayout) {
+            startActivity(new Intent(context, HistoryRecordActivity.class));
+        } else if (id == R.id.introduceLayout) {
+            Utils.showAlertDialog(getActivity(), "功能介绍", context.getString(R.string.about), "看完了", true);
         }
-    }
-
-    @Override
-    public void onDestroyView() {
-        super.onDestroyView();
-        broadcastManager.destroy(Constant.ACTION_UPDATE);
     }
 }

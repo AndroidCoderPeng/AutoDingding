@@ -21,8 +21,8 @@ import java.util.List;
  */
 public class PopupAdapter extends BaseAdapter {
 
-    private List<String> itemList;
-    private LayoutInflater inflater;
+    private final List<String> itemList;
+    private final LayoutInflater inflater;
 
     public PopupAdapter(Context mContext, List<String> stringList) {
         this.itemList = stringList;
@@ -60,7 +60,7 @@ public class PopupAdapter extends BaseAdapter {
         return convertView;
     }
 
-    private class PopupWindowHolder {
+    private static class PopupWindowHolder {
         private ImageView itemIcon;
         private TextView itemName;
 

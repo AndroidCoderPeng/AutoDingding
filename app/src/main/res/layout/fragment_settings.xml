@@ -5,8 +5,6 @@
     android:background="#F3F7FF"
     android:orientation="vertical">
 
-    <include layout="@layout/include_title" />
-
     <RelativeLayout
         android:id="@+id/emailLayout"
         android:layout_width="match_parent"
@@ -21,6 +19,7 @@
             android:layout_height="wrap_content"
             android:gravity="center_vertical"
             android:text="邮箱设置"
+            android:textColor="@color/colorText"
             android:textSize="18sp" />
 
         <TextView
@@ -29,7 +28,7 @@
             android:layout_height="wrap_content"
             android:layout_alignParentEnd="true"
             android:gravity="center_vertical"
-            android:textColor="#333333"
+            android:textColor="@color/colorText"
             android:textSize="18sp" />
     </RelativeLayout>
 
@@ -45,6 +44,7 @@
             android:layout_height="wrap_content"
             android:layout_centerVertical="true"
             android:text="打卡记录"
+            android:textColor="@color/colorText"
             android:textSize="18sp" />
 
         <TextView
@@ -53,7 +53,7 @@
             android:layout_height="wrap_content"
             android:layout_alignParentEnd="true"
             android:layout_centerVertical="true"
-            android:textColor="#333333"
+            android:textColor="@color/colorText"
             android:textSize="18sp" />
     </RelativeLayout>
 
@@ -73,6 +73,7 @@
             android:layout_height="wrap_content"
             android:layout_centerVertical="true"
             android:text="通知监听"
+            android:textColor="@color/colorText"
             android:textSize="18sp" />
 
         <CheckBox
@@ -100,6 +101,7 @@
             android:layout_height="wrap_content"
             android:layout_centerVertical="true"
             android:text="使用说明"
+            android:textColor="@color/colorText"
             android:textSize="18sp" />
 
         <ImageView
@@ -126,6 +128,7 @@
             android:layout_height="wrap_content"
             android:gravity="center_vertical"
             android:text="当前版本"
+            android:textColor="@color/colorText"
             android:textSize="18sp" />
 
         <TextView
@@ -134,7 +137,7 @@
             android:layout_height="wrap_content"
             android:layout_alignParentEnd="true"
             android:gravity="center_vertical"
-            android:textColor="#333333"
+            android:textColor="@color/colorText"
             android:textSize="18sp" />
     </RelativeLayout>
 

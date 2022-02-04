@@ -37,7 +37,7 @@ class MailSender {
      *
      * @param mailInfo 待发送的邮件的信息
      */
-    boolean sendTextMail(MailInfo mailInfo) {
+    void sendTextMail(MailInfo mailInfo) {
         // 判断是否需要身份认证
         EmailAuthenticator authenticator = null;
         Properties pro = mailInfo.getProperties();
@@ -67,11 +67,9 @@ class MailSender {
             mailMessage.setText(mailContent);
             // 发送邮件
             Transport.send(mailMessage);
-            return true;
         } catch (MessagingException ex) {
             ex.printStackTrace();
         }
-        return false;
     }
 
     // 发送带附件的邮件

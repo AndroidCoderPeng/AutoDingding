@@ -20,10 +20,9 @@ import java.util.List;
  */
 public class EasyPopupWindow extends PopupWindow {
 
-    private static final String TAG = "EasyPopupWindow";
     private PopupWindowClickListener mClickListener;
-    private Context mContext;
-    private List<String> itemList;
+    private final Context mContext;
+    private final List<String> itemList;
 
     public EasyPopupWindow(Context context, List<String> stringList) {
         super(context);

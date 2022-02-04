@@ -20,9 +20,7 @@ import androidx.annotation.NonNull;
 public class SendMailUtil {
 
     public static void send(String toAddress, String emailMessage) {
-        new Thread(() -> {
-            new MailSender().sendTextMail(createMail(toAddress, emailMessage));
-        }).start();
+        new Thread(() -> new MailSender().sendTextMail(createMail(toAddress, emailMessage))).start();
     }
 
     static void sendAttachFileEmail(String toAddress, String filePath) {

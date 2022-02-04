@@ -6,7 +6,7 @@ import android.service.notification.NotificationListenerService;
 import android.service.notification.StatusBarNotification;
 
 import com.pengxh.app.multilib.utils.BroadcastManager;
-import com.pengxh.app.multilib.utils.LogToFile;
+import com.pengxh.autodingding.ui.fragment.AutoDingDingFragment;
 import com.pengxh.autodingding.utils.Constant;
 
 /**
@@ -16,8 +16,6 @@ import com.pengxh.autodingding.utils.Constant;
  * @date: 2019/12/25 23:17
  */
 public class NotificationMonitorService extends NotificationListenerService {
-
-    private static final String TAG = "NotificationService";
 
     /**
      * 有可用的并且和通知管理器连接成功时回调
@@ -37,19 +35,15 @@ public class NotificationMonitorService extends NotificationListenerService {
         String packageName = sbn.getPackageName();
         // 获取接收消息的内容
         String notificationText = extras.getString(Notification.EXTRA_TEXT);
-        LogToFile.d(TAG, "推送通知包名: [" + packageName + "], 通知内容: " + notificationText);
         if (packageName.equals("com.alibaba.android.rimet")) {
             if (notificationText == null || notificationText.equals("")) {
-                LogToFile.d(TAG, "通知内容为null");
                 return;
             }
             if (notificationText.contains("考勤打卡")) {
+
+                AutoDingDingFragment.sendMessage();
                 BroadcastManager.getInstance(this).sendBroadcast(Constant.DINGDING_ACTION, notificationText);
-            } else {
-                LogToFile.d(TAG, "onNotificationPosted: 不是打卡通知，不处理");
             }
-        } else {
-            LogToFile.d(TAG, "onNotificationPosted: 不是钉钉通知，不处理");
         }
     }
 
