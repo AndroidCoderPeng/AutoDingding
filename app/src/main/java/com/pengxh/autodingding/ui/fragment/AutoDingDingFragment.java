@@ -1,6 +1,5 @@
 package com.pengxh.autodingding.ui.fragment;
 
-import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.os.CountDownTimer;
@@ -13,15 +12,11 @@ import androidx.annotation.NonNull;
 
 import com.jzxiang.pickerview.TimePickerDialog;
 import com.jzxiang.pickerview.data.Type;
-import com.pengxh.app.multilib.utils.BroadcastManager;
 import com.pengxh.app.multilib.utils.ColorUtil;
 import com.pengxh.app.multilib.widget.EasyToast;
 import com.pengxh.autodingding.AndroidxBaseFragment;
-import com.pengxh.autodingding.BaseApplication;
 import com.pengxh.autodingding.R;
-import com.pengxh.autodingding.bean.HistoryRecordBean;
 import com.pengxh.autodingding.databinding.FragmentDayBinding;
-import com.pengxh.autodingding.greendao.HistoryRecordBeanDao;
 import com.pengxh.autodingding.ui.WelcomeActivity;
 import com.pengxh.autodingding.utils.Constant;
 import com.pengxh.autodingding.utils.SendMailUtil;
@@ -31,27 +26,23 @@ import com.pengxh.autodingding.utils.Utils;
 import java.lang.ref.WeakReference;
 import java.util.Timer;
 import java.util.TimerTask;
-import java.util.UUID;
 
 public class AutoDingDingFragment extends AndroidxBaseFragment<FragmentDayBinding> implements View.OnClickListener {
 
     private static final String TAG = "AutoDingDingFragment";
     private static WeakReferenceHandler weakReferenceHandler;
-    private Context context;
-    private BroadcastManager broadcastManager;
     private CountDownTimer amCountDownTimer, pmCountDownTimer;
-    private HistoryRecordBeanDao recordBeanDao;
     private Timer timer;
 
     @Override
     protected void setupTopBarLayout() {
-        context = getContext();
+
     }
 
     @Override
     protected void initData() {
         weakReferenceHandler = new WeakReferenceHandler(this);
-        recordBeanDao = BaseApplication.getDaoSession().getHistoryRecordBeanDao();
+
         timer = new Timer();
         timer.schedule(new TimerTask() {
             @Override
@@ -60,7 +51,6 @@ public class AutoDingDingFragment extends AndroidxBaseFragment<FragmentDayBindin
                 viewBinding.currentTime.post(() -> viewBinding.currentTime.setText(systemTime));
             }
         }, 0, 1000);
-        broadcastManager = BroadcastManager.getInstance(context);
         viewBinding.startLayoutView.setOnClickListener(this);
         viewBinding.endLayoutView.setOnClickListener(this);
         viewBinding.endAmDuty.setOnClickListener(this);
@@ -69,30 +59,14 @@ public class AutoDingDingFragment extends AndroidxBaseFragment<FragmentDayBindin
 
     @Override
     protected void initEvent() {
-        broadcastManager.addAction(Constant.DINGDING_ACTION, new BroadcastReceiver() {
-            @Override
-            public void onReceive(Context context, Intent intent) {
-                String action = intent.getAction();
-                if (action != null && action.equals(Constant.DINGDING_ACTION)) {
-                    String message = intent.getStringExtra("data");
-                    Log.d(TAG, "接收到广播, 通知内容: " + message);
-                    //保存打卡记录
-                    HistoryRecordBean bean = new HistoryRecordBean();
-                    bean.setUuid(UUID.randomUUID().toString());
-                    bean.setDate(TimeOrDateUtil.rTimestampToDate(System.currentTimeMillis()));
-                    bean.setMessage(message);
-                    recordBeanDao.save(bean);
-                    //回到主页
-                    Message msg = weakReferenceHandler.obtainMessage();
-                    msg.what = 2022010401;
-                    msg.obj = message;
-                    weakReferenceHandler.sendMessage(msg);
-                }
-            }
-        });
+
     }
 
-    public static void sendMessage(Message message) {
+    public static void sendMessage(String value) {
+        Message message = weakReferenceHandler.obtainMessage();
+        //回到主页
+        message.obj = value;
+        message.what = 2022021401;
         weakReferenceHandler.sendMessage(message);
     }
 
@@ -110,8 +84,7 @@ public class AutoDingDingFragment extends AndroidxBaseFragment<FragmentDayBindin
             AutoDingDingFragment fragment = reference.get();
             Context context = fragment.getContext();
             assert context != null;
-            if (msg.what == 2022010401) {
-                Log.d(TAG, "回主页");
+            if (msg.what == 2022021401) {
                 Intent intent = new Intent(context, WelcomeActivity.class);
                 intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                 context.startActivity(intent);
@@ -124,7 +97,6 @@ public class AutoDingDingFragment extends AndroidxBaseFragment<FragmentDayBindin
                         Log.d(TAG, "邮件内容为空");
                     } else {
                         //发送打卡成功的邮件
-                        Log.d(TAG, "邮箱地址: " + emailAddress + ", 邮件内容： " + message);
                         SendMailUtil.send(emailAddress, message);
                     }
                 }
@@ -232,7 +204,6 @@ public class AutoDingDingFragment extends AndroidxBaseFragment<FragmentDayBindin
         if (timer != null) {
             timer.cancel();
         }
-        broadcastManager.destroy(Constant.DINGDING_ACTION);
         super.onDestroyView();
     }
 }

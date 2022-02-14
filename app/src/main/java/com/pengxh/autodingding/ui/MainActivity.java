@@ -1,8 +1,5 @@
 package com.pengxh.autodingding.ui;
 
-import android.content.Intent;
-import android.net.Uri;
-import android.provider.Settings;
 import android.view.MenuItem;
 
 import androidx.core.content.ContextCompat;
@@ -39,13 +36,6 @@ public class MainActivity extends AndroidxBaseActivity<ActivityMainBinding> {
 
     @Override
     protected void initData() {
-        //检查是否已经授予权限
-        if (!Settings.canDrawOverlays(this)) {
-            //若未授权则请求权限
-            Intent intent = new Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION);
-            intent.setData(Uri.parse("package:" + getPackageName()));
-            startActivity(intent);
-        }
         fragmentList.add(new AutoDingDingFragment());
         fragmentList.add(new SettingsFragment());
     }

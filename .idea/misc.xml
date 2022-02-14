@@ -12,9 +12,15 @@
         <entry key="..\:/Code/AutoDingding/app/src/main/res/layout/include_title.xml" value="0.32916666666666666" />
         <entry key="..\:/Code/AutoDingding/app/src/main/res/layout/item_easy_popup.xml" value="0.32916666666666666" />
         <entry key="..\:/Code/AutoDingding/app/src/main/res/menu/bottom_nav_menu.xml" value="0.32916666666666666" />
+        <entry key="app/src/main/res/drawable/bg_textview.xml" value="0.2005" />
+        <entry key="app/src/main/res/drawable/bg_textview_error.xml" value="0.2005" />
+        <entry key="app/src/main/res/layout/activity_history.xml" value="0.2203125" />
+        <entry key="app/src/main/res/layout/fragment_settings.xml" value="0.2203125" />
+        <entry key="app/src/main/res/layout/item_list.xml" value="0.2203125" />
       </map>
     </option>
   </component>
+  <component name="ExternalStorageConfigurationManager" enabled="true" />
   <component name="NullableNotNullManager">
     <option name="myDefaultNullable" value="android.support.annotation.Nullable" />
     <option name="myDefaultNotNull" value="androidx.annotation.RecentlyNonNull" />

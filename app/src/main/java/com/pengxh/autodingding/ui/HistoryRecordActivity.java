@@ -4,13 +4,11 @@ import android.os.CountDownTimer;
 import android.os.Environment;
 import android.os.Handler;
 import android.os.Message;
-import android.util.Log;
 import android.view.View;
 
 import androidx.annotation.NonNull;
 import androidx.core.content.ContextCompat;
 
-import com.google.gson.Gson;
 import com.gyf.immersionbar.ImmersionBar;
 import com.pengxh.app.multilib.utils.SizeUtil;
 import com.pengxh.app.multilib.widget.EasyToast;
@@ -36,7 +34,6 @@ import java.util.List;
 
 public class HistoryRecordActivity extends AndroidxBaseActivity<ActivityHistoryBinding> implements View.OnClickListener {
 
-    private static final String TAG = "HistoryActivity";
     private static final List<String> items = Arrays.asList("删除记录", "导出记录");
     private static final String[] excelTitle = {"uuid", "日期", "打卡信息"};
     private WeakReferenceHandler weakReferenceHandler;
@@ -49,7 +46,7 @@ public class HistoryRecordActivity extends AndroidxBaseActivity<ActivityHistoryB
     protected void setupTopBarLayout() {
         StatusBarColorUtil.setColor(this, ContextCompat.getColor(this, R.color.colorAppThemeLight));
         ImmersionBar.with(this).statusBarDarkFont(false).init();
-        viewBinding.titleView.setText("自动打卡");
+        viewBinding.titleView.setText("打卡记录");
         viewBinding.titleRightView.setOnClickListener(this);
     }
 
@@ -58,7 +55,7 @@ public class HistoryRecordActivity extends AndroidxBaseActivity<ActivityHistoryB
         weakReferenceHandler = new WeakReferenceHandler(this);
         recordBeanDao = BaseApplication.getDaoSession().getHistoryRecordBeanDao();
         dataBeans = recordBeanDao.loadAll();
-        weakReferenceHandler.sendEmptyMessage(20220103);
+        weakReferenceHandler.sendEmptyMessage(2022021403);
     }
 
     @Override
@@ -78,10 +75,9 @@ public class HistoryRecordActivity extends AndroidxBaseActivity<ActivityHistoryB
                     dataBeans = recordBeanDao.loadAll();
                     layout.finishRefresh();
                     isRefresh = false;
-                    weakReferenceHandler.sendEmptyMessage(20220103);
+                    weakReferenceHandler.sendEmptyMessage(2022021403);
                 }
             }.start();
-//            BroadcastManager.getInstance(this).sendBroadcast(Constant.ACTION_UPDATE, "update");
         });
         viewBinding.refreshLayout.setEnableLoadMore(false);
     }
@@ -98,7 +94,7 @@ public class HistoryRecordActivity extends AndroidxBaseActivity<ActivityHistoryB
         public void handleMessage(@NonNull Message msg) {
             super.handleMessage(msg);
             HistoryRecordActivity activity = reference.get();
-            if (msg.what == 20220103) {
+            if (msg.what == 2022021403) {
                 if (activity.isRefresh) {
                     activity.historyAdapter.notifyDataSetChanged();
                 } else { //首次加载数据
@@ -145,8 +141,6 @@ public class HistoryRecordActivity extends AndroidxBaseActivity<ActivityHistoryB
                                     recordBeanDao.deleteAll();
                                     dataBeans.clear();
                                     historyAdapter.notifyDataSetChanged();
-//                            emptyView.setVisibility(View.VISIBLE);
-//                            BroadcastManager.getInstance(this).sendBroadcast(Constant.ACTION_UPDATE, "update");
                                 }
 
                                 @Override
@@ -192,7 +186,6 @@ public class HistoryRecordActivity extends AndroidxBaseActivity<ActivityHistoryB
 
     private void pullToEmail(List<HistoryRecordBean> historyBeans) {
         //{"date":"2020-04-15","message":"考勤打卡:11:42 下班打卡 早退","uuid":"26btND0uLqU"},{"date":"2020-04-15","message":"考勤打卡:16:32 下班打卡 早退","uuid":"UTWQJzCfTl9"}
-        Log.d(TAG, "pullToEmail: " + new Gson().toJson(historyBeans));
         File dir = new File(this.getExternalFilesDir(Environment.DIRECTORY_DOCUMENTS), "DingRecord");
         if (!dir.exists()) {
             dir.mkdir();

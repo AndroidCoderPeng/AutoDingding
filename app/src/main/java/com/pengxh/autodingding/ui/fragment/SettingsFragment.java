@@ -5,9 +5,16 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.net.Uri;
+import android.os.Handler;
+import android.os.Message;
 import android.provider.Settings;
 import android.view.View;
 
+import androidx.activity.result.ActivityResult;
+import androidx.activity.result.ActivityResultCallback;
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
+import androidx.annotation.NonNull;
 import androidx.core.app.NotificationManagerCompat;
 
 import com.pengxh.app.multilib.utils.SaveKeyValues;
@@ -24,6 +31,7 @@ import com.pengxh.autodingding.service.NotificationMonitorService;
 import com.pengxh.autodingding.ui.HistoryRecordActivity;
 import com.pengxh.autodingding.utils.Utils;
 
+import java.lang.ref.WeakReference;
 import java.util.Set;
 
 import cn.bertsir.zbar.utils.QRUtils;
@@ -31,6 +39,8 @@ import cn.bertsir.zbar.utils.QRUtils;
 public class SettingsFragment extends AndroidxBaseFragment<FragmentSettingsBinding> implements View.OnClickListener {
 
     private Context context;
+    private static WeakReferenceHandler weakReferenceHandler;
+    private HistoryRecordBeanDao historyBeanDao;
 
     @Override
     protected void setupTopBarLayout() {
@@ -39,7 +49,8 @@ public class SettingsFragment extends AndroidxBaseFragment<FragmentSettingsBindi
 
     @Override
     protected void initData() {
-        HistoryRecordBeanDao historyBeanDao = BaseApplication.getDaoSession().getHistoryRecordBeanDao();
+        weakReferenceHandler = new WeakReferenceHandler(this);
+        historyBeanDao = BaseApplication.getDaoSession().getHistoryRecordBeanDao();
         String emailAddress = Utils.readEmailAddress();
         if (!emailAddress.equals("")) {
             viewBinding.emailTextView.setText(emailAddress);
@@ -48,17 +59,58 @@ public class SettingsFragment extends AndroidxBaseFragment<FragmentSettingsBindi
         viewBinding.appVersion.setText(BuildConfig.VERSION_NAME);
     }
 
+    public static void sendEmptyMessage() {
+        weakReferenceHandler.sendEmptyMessage(2022021402);
+    }
+
+    private static class WeakReferenceHandler extends Handler {
+
+        private final WeakReference<SettingsFragment> reference;
+
+        private WeakReferenceHandler(SettingsFragment fragment) {
+            reference = new WeakReference<>(fragment);
+        }
+
+        @Override
+        public void handleMessage(@NonNull Message msg) {
+            super.handleMessage(msg);
+            SettingsFragment fragment = reference.get();
+            Context context = fragment.getContext();
+            assert context != null;
+            if (msg.what == 2022021402) {
+                fragment.viewBinding.recordSize.setText(String.valueOf(fragment.historyBeanDao.loadAll().size()));
+            }
+        }
+    }
+
+    private final ActivityResultLauncher<Intent> settingsLauncher = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), new ActivityResultCallback<ActivityResult>() {
+        @Override
+        public void onActivityResult(ActivityResult result) {
+            if (isNotificationEnable()) {
+                startNotificationMonitorService();
+            }
+        }
+    });
+
+    //检测通知监听服务是否被授权
+    private boolean isNotificationEnable() {
+        Set<String> packageNames = NotificationManagerCompat.getEnabledListenerPackages(context);
+        return packageNames.contains(context.getPackageName());
+    }
+
     @Override
     protected void initEvent() {
-        boolean enabled = isNotificationListenerEnabled();
-        viewBinding.noticeCheckBox.setChecked(enabled);
-        if (!enabled) {
-            openNotificationListenSettings();
+        if (!isNotificationEnable()) {
+            try {
+                //打开通知监听设置页面
+                Intent intent = new Intent(Settings.ACTION_NOTIFICATION_LISTENER_SETTINGS);
+                settingsLauncher.launch(intent);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        } else {
+            startNotificationMonitorService();
         }
-        toggleNotificationListenerService();
-        //创建常住通知栏
-        Utils.createNotification();
-
         //先识别出来备用
         try {
             String codeValue = QRUtils.getInstance().decodeQRcode(viewBinding.updateCodeView);
@@ -90,29 +142,20 @@ public class SettingsFragment extends AndroidxBaseFragment<FragmentSettingsBindi
         viewBinding.introduceLayout.setOnClickListener(this);
     }
 
-    //检测通知监听服务是否被授权
-    private boolean isNotificationListenerEnabled() {
-        Set<String> packageNames = NotificationManagerCompat.getEnabledListenerPackages(context);
-        return packageNames.contains(context.getPackageName());
-    }
+    //切换通知监听器服务
+    private void startNotificationMonitorService() {
+        //创建常住通知栏
+        Utils.createNotification();
 
-    //打开通知监听设置页面
-    private void openNotificationListenSettings() {
-        try {
-            Intent intent = new Intent(Settings.ACTION_NOTIFICATION_LISTENER_SETTINGS);
-            startActivity(intent);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-
-    //把应用的NotificationListenerService实现类disable再enable，即可触发系统rebind操作
-    private void toggleNotificationListenerService() {
-        ComponentName componentName = new ComponentName(context, NotificationMonitorService.class);
         PackageManager pm = context.getPackageManager();
-        pm.setComponentEnabledSetting(componentName, PackageManager.COMPONENT_ENABLED_STATE_DISABLED, PackageManager.DONT_KILL_APP);
 
-        pm.setComponentEnabledSetting(componentName, PackageManager.COMPONENT_ENABLED_STATE_ENABLED, PackageManager.DONT_KILL_APP);
+        pm.setComponentEnabledSetting(new ComponentName(context, NotificationMonitorService.class),
+                PackageManager.COMPONENT_ENABLED_STATE_DISABLED, PackageManager.DONT_KILL_APP);
+
+        pm.setComponentEnabledSetting(new ComponentName(context, NotificationMonitorService.class),
+                PackageManager.COMPONENT_ENABLED_STATE_ENABLED, PackageManager.DONT_KILL_APP);
+
+        viewBinding.noticeCheckBox.setChecked(isNotificationEnable());
     }
 
     @Override
