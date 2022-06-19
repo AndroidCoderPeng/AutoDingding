@@ -11,7 +11,7 @@
         android:layout_height="wrap_content"
         android:text="下班打卡成功"
         android:textColor="@color/colorText"
-        android:textSize="18sp"
+        android:textSize="16sp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 

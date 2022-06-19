@@ -11,8 +11,9 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="10dp"
         android:layout_marginBottom="20dp"
-        android:background="#FFFFFF"
-        android:padding="10dp">
+        android:background="@color/white"
+        android:paddingHorizontal="10dp"
+        android:paddingVertical="15dp">
 
         <TextView
             android:layout_width="wrap_content"
@@ -36,8 +37,9 @@
         android:id="@+id/historyLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="#FFFFFF"
-        android:padding="10dp">
+        android:background="@color/white"
+        android:paddingHorizontal="10dp"
+        android:paddingVertical="15dp">
 
         <TextView
             android:layout_width="wrap_content"
@@ -65,8 +67,9 @@
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="#FFFFFF"
-        android:padding="10dp">
+        android:background="@color/white"
+        android:paddingHorizontal="10dp"
+        android:paddingVertical="15dp">
 
         <TextView
             android:layout_width="wrap_content"
@@ -93,8 +96,9 @@
         android:id="@+id/introduceLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="#FFFFFF"
-        android:padding="10dp">
+        android:background="@color/white"
+        android:paddingHorizontal="10dp"
+        android:paddingVertical="15dp">
 
         <TextView
             android:layout_width="wrap_content"
@@ -120,8 +124,9 @@
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="#FFFFFF"
-        android:padding="10dp">
+        android:background="@color/white"
+        android:paddingHorizontal="10dp"
+        android:paddingVertical="15dp">
 
         <TextView
             android:layout_width="wrap_content"
@@ -158,6 +163,7 @@
             android:layout_below="@id/updateCodeView"
             android:layout_centerHorizontal="true"
             android:layout_marginTop="10dp"
+            android:paddingVertical="5dp"
             android:text="长按识别二维码，获取最新应用下载地址"
             android:textColor="@color/colorText" />
     </RelativeLayout>

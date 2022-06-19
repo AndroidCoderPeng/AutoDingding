@@ -16,8 +16,8 @@
         android:textColor="@color/white"
         android:textSize="18sp" />
 
-    <com.pengxh.app.multilib.widget.NoScrollViewPager
-        android:id="@+id/mViewPager"
+    <androidx.viewpager.widget.ViewPager
+        android:id="@+id/viewPager"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1" />
@@ -26,7 +26,7 @@
         android:id="@+id/bottomNavigation"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="#FFFFFF"
+        android:background="@color/white"
         app:itemIconTint="@drawable/bottom_text_color"
         app:itemTextColor="@drawable/bottom_text_color"
         app:menu="@menu/bottom_nav_menu" />

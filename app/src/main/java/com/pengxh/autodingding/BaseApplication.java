@@ -3,8 +3,7 @@ package com.pengxh.autodingding;
 import android.app.Application;
 import android.database.sqlite.SQLiteDatabase;
 
-import com.pengxh.app.multilib.utils.SaveKeyValues;
-import com.pengxh.app.multilib.widget.EasyToast;
+import com.pengxh.androidx.lite.utils.SaveKeyValues;
 import com.pengxh.autodingding.greendao.DaoMaster;
 import com.pengxh.autodingding.greendao.DaoSession;
 import com.pengxh.autodingding.utils.Utils;
@@ -13,7 +12,6 @@ import com.tencent.bugly.crashreport.CrashReport;
 /**
  * @author: Pengxh
  * @email: 290677893@qq.com
- * @description: TODO
  * @date: 2019/12/25 13:19
  */
 public class BaseApplication extends Application {
@@ -26,7 +24,6 @@ public class BaseApplication extends Application {
         super.onCreate();
         application = this;
         Utils.init(this);
-        EasyToast.init(this);
         SaveKeyValues.initSharedPreferences(this);
         CrashReport.initCrashReport(this, "ce38195468", false);
         initDataBase();

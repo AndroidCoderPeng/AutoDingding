@@ -2,22 +2,29 @@ package com.pengxh.autodingding.service;
 
 import android.app.Notification;
 import android.content.ComponentName;
+import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
 import android.service.notification.NotificationListenerService;
 import android.service.notification.StatusBarNotification;
+import android.text.TextUtils;
+import android.util.Log;
 
+import com.pengxh.androidx.lite.utils.SaveKeyValues;
+import com.pengxh.androidx.lite.utils.TimeOrDateUtil;
 import com.pengxh.autodingding.BaseApplication;
 import com.pengxh.autodingding.bean.HistoryRecordBean;
+import com.pengxh.autodingding.bean.MailInfo;
 import com.pengxh.autodingding.greendao.HistoryRecordBeanDao;
-import com.pengxh.autodingding.ui.fragment.AutoDingDingFragment;
-import com.pengxh.autodingding.ui.fragment.SettingsFragment;
-import com.pengxh.autodingding.utils.TimeOrDateUtil;
+import com.pengxh.autodingding.ui.WelcomeActivity;
+import com.pengxh.autodingding.utils.Constant;
+import com.pengxh.autodingding.utils.MailInfoUtil;
+import com.pengxh.autodingding.utils.MailSender;
 
 import java.util.UUID;
 
 /**
- * @description: TODO 状态栏监听服务
+ * @description: 状态栏监听服务
  * @author: Pengxh
  * @email: 290677893@qq.com
  * @date: 2019/12/25 23:17
@@ -32,6 +39,7 @@ public class NotificationMonitorService extends NotificationListenerService {
      */
     @Override
     public void onListenerConnected() {
+        Log.d(TAG, "onListenerConnected");
         recordBeanDao = BaseApplication.getDaoSession().getHistoryRecordBeanDao();
     }
 
@@ -43,22 +51,37 @@ public class NotificationMonitorService extends NotificationListenerService {
         Bundle extras = sbn.getNotification().extras;
         // 获取接收消息APP的包名
         String packageName = sbn.getPackageName();
+        Log.d(TAG, "onNotificationPosted ===> " + packageName);
         // 获取接收消息的内容
         String notificationText = extras.getString(Notification.EXTRA_TEXT);
+//        if (packageName.equals("com.tencent.mobileqq")) {
         if (packageName.equals("com.alibaba.android.rimet")) {
             if (notificationText == null || notificationText.equals("")) {
                 return;
             }
+            Log.d(TAG, "onNotificationPosted ===> " + notificationText);
             if (notificationText.contains("考勤打卡")) {
                 //保存打卡记录
                 HistoryRecordBean bean = new HistoryRecordBean();
                 bean.setUuid(UUID.randomUUID().toString());
-                bean.setDate(TimeOrDateUtil.timestampToDate(System.currentTimeMillis()));
+                bean.setDate(TimeOrDateUtil.timestampToCompleteDate(System.currentTimeMillis()));
                 bean.setMessage(notificationText);
                 recordBeanDao.save(bean);
-                //通知发送邮件和更新界面
-                AutoDingDingFragment.sendMessage(notificationText);
-                SettingsFragment.sendEmptyMessage();
+
+                String emailAddress = (String) SaveKeyValues.getValue(Constant.EMAIL_ADDRESS, "");
+                if (TextUtils.isEmpty(emailAddress)) {
+                    Log.d(TAG, "邮箱地址为空");
+                } else {
+                    //发送打卡成功的邮件
+                    new Thread(() -> {
+                        MailInfo mailInfo = MailInfoUtil.createMail(emailAddress, notificationText);
+                        MailSender.getSender().sendTextMail(mailInfo);
+                    }).start();
+
+                    Intent intent = new Intent(this, WelcomeActivity.class);
+                    intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                    startActivity(intent);
+                }
             }
         }
     }
@@ -73,6 +96,7 @@ public class NotificationMonitorService extends NotificationListenerService {
 
     @Override
     public void onListenerDisconnected() {
+        Log.d(TAG, "onListenerDisconnected");
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
             // 通知侦听器断开连接 - 请求重新绑定
             requestRebind(new ComponentName(this, NotificationListenerService.class));

@@ -3,117 +3,78 @@ package com.pengxh.autodingding.ui;
 import android.os.CountDownTimer;
 import android.os.Environment;
 import android.os.Handler;
-import android.os.Message;
+import android.text.TextUtils;
+import android.util.Log;
 import android.view.View;
 
-import androidx.annotation.NonNull;
-import androidx.core.content.ContextCompat;
-
+import com.google.gson.Gson;
 import com.gyf.immersionbar.ImmersionBar;
-import com.pengxh.app.multilib.utils.SizeUtil;
-import com.pengxh.app.multilib.widget.EasyToast;
-import com.pengxh.app.multilib.widget.dialog.AlertControlDialog;
-import com.pengxh.app.multilib.widget.dialog.AlertMessageDialog;
-import com.pengxh.autodingding.AndroidxBaseActivity;
+import com.pengxh.androidx.lite.base.AndroidxBaseActivity;
+import com.pengxh.androidx.lite.utils.ColorUtil;
+import com.pengxh.androidx.lite.utils.DeviceSizeUtil;
+import com.pengxh.androidx.lite.utils.ImmerseStatusBarUtil;
+import com.pengxh.androidx.lite.utils.SaveKeyValues;
+import com.pengxh.androidx.lite.utils.WeakReferenceHandler;
+import com.pengxh.androidx.lite.widget.EasyPopupWindow;
+import com.pengxh.androidx.lite.widget.EasyToast;
+import com.pengxh.androidx.lite.widget.dialog.AlertControlDialog;
+import com.pengxh.androidx.lite.widget.dialog.AlertMessageDialog;
 import com.pengxh.autodingding.BaseApplication;
 import com.pengxh.autodingding.R;
 import com.pengxh.autodingding.adapter.HistoryRecordAdapter;
 import com.pengxh.autodingding.bean.HistoryRecordBean;
 import com.pengxh.autodingding.databinding.ActivityHistoryBinding;
-import com.pengxh.autodingding.greendao.HistoryRecordBeanDao;
+import com.pengxh.autodingding.greendao.DaoSession;
+import com.pengxh.autodingding.utils.Constant;
 import com.pengxh.autodingding.utils.ExcelUtils;
-import com.pengxh.autodingding.utils.StatusBarColorUtil;
-import com.pengxh.autodingding.utils.Utils;
-import com.pengxh.autodingding.widgets.EasyPopupWindow;
 
 import java.io.File;
-import java.lang.ref.WeakReference;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
-public class HistoryRecordActivity extends AndroidxBaseActivity<ActivityHistoryBinding> implements View.OnClickListener {
+public class HistoryRecordActivity extends AndroidxBaseActivity<ActivityHistoryBinding> {
 
-    private static final List<String> items = Arrays.asList("删除记录", "导出记录");
+    private static final String TAG = "HistoryRecordActivity";
+    private static final int[] images = new int[]{R.drawable.ic_delete, R.drawable.ic_export};
+    private static final String[] titles = new String[]{"删除记录", "导出记录"};
     private static final String[] excelTitle = {"uuid", "日期", "打卡信息"};
+    private EasyPopupWindow easyPopupWindow;
     private WeakReferenceHandler weakReferenceHandler;
-    private HistoryRecordBeanDao recordBeanDao;
+    private DaoSession daoSession;
     private List<HistoryRecordBean> dataBeans = new ArrayList<>();
     private boolean isRefresh = false;
+    private boolean isLoadMore = false;
+    private int offset = 0;// 本地数据库分页从0开始
     private HistoryRecordAdapter historyAdapter;
+
 
     @Override
     protected void setupTopBarLayout() {
-        StatusBarColorUtil.setColor(this, ContextCompat.getColor(this, R.color.colorAppThemeLight));
+        ImmerseStatusBarUtil.setColor(this, ColorUtil.convertColor(this, R.color.colorAppThemeLight));
         ImmersionBar.with(this).statusBarDarkFont(false).init();
         viewBinding.titleView.setText("打卡记录");
-        viewBinding.titleRightView.setOnClickListener(this);
+        viewBinding.titleRightView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                easyPopupWindow.showAsDropDown(viewBinding.titleRightView
+                        , 0
+                        , DeviceSizeUtil.dp2px(HistoryRecordActivity.this, 10));
+            }
+        });
     }
 
     @Override
     public void initData() {
-        weakReferenceHandler = new WeakReferenceHandler(this);
-        recordBeanDao = BaseApplication.getDaoSession().getHistoryRecordBeanDao();
-        dataBeans = recordBeanDao.loadAll();
+        weakReferenceHandler = new WeakReferenceHandler(callback);
+        daoSession = BaseApplication.getDaoSession();
+
+        dataBeans = queryHistoryRecord();
+        Log.d(TAG, new Gson().toJson(dataBeans));
         weakReferenceHandler.sendEmptyMessage(2022021403);
-    }
 
-    @Override
-    public void initEvent() {
-        viewBinding.refreshLayout.setOnRefreshListener(layout -> {
-            isRefresh = true;
-            new CountDownTimer(1500, 500) {
-
-                @Override
-                public void onTick(long millisUntilFinished) {
-
-                }
-
-                @Override
-                public void onFinish() {
-                    dataBeans.clear();
-                    dataBeans = recordBeanDao.loadAll();
-                    layout.finishRefresh();
-                    isRefresh = false;
-                    weakReferenceHandler.sendEmptyMessage(2022021403);
-                }
-            }.start();
-        });
-        viewBinding.refreshLayout.setEnableLoadMore(false);
-    }
-
-    private static class WeakReferenceHandler extends Handler {
-
-        private final WeakReference<HistoryRecordActivity> reference;
-
-        private WeakReferenceHandler(HistoryRecordActivity activity) {
-            reference = new WeakReference<>(activity);
-        }
-
-        @Override
-        public void handleMessage(@NonNull Message msg) {
-            super.handleMessage(msg);
-            HistoryRecordActivity activity = reference.get();
-            if (msg.what == 2022021403) {
-                if (activity.isRefresh) {
-                    activity.historyAdapter.notifyDataSetChanged();
-                } else { //首次加载数据
-                    if (activity.dataBeans.size() == 0) {
-                        activity.viewBinding.emptyView.setVisibility(View.VISIBLE);
-                    } else {
-                        activity.viewBinding.emptyView.setVisibility(View.GONE);
-                        activity.historyAdapter = new HistoryRecordAdapter(activity, activity.dataBeans);
-                        activity.viewBinding.historyListView.setAdapter(activity.historyAdapter);
-                    }
-                }
-            }
-        }
-    }
-
-    @Override
-    public void onClick(View view) {
-        EasyPopupWindow easyPopupWindow = new EasyPopupWindow(this, items);
-        easyPopupWindow.setPopupWindowClickListener(position -> {
+        easyPopupWindow = new EasyPopupWindow(this);
+        easyPopupWindow.setPopupMenuItem(images, titles);
+        easyPopupWindow.setOnPopupWindowClickListener(position -> {
             if (position == 0) {
                 //添加导出功能
                 if (dataBeans.size() == 0) {
@@ -122,11 +83,8 @@ public class HistoryRecordActivity extends AndroidxBaseActivity<ActivityHistoryB
                             .setTitle("温馨提示")
                             .setMessage("空空如也，无法删除")
                             .setPositiveButton("确定")
-                            .setOnDialogButtonClickListener(new AlertMessageDialog.OnDialogButtonClickListener() {
-                                @Override
-                                public void onConfirmClick() {
+                            .setOnDialogButtonClickListener(() -> {
 
-                                }
                             }).build().show();
                 } else {
                     new AlertControlDialog.Builder()
@@ -138,9 +96,10 @@ public class HistoryRecordActivity extends AndroidxBaseActivity<ActivityHistoryB
                             .setOnDialogButtonClickListener(new AlertControlDialog.OnDialogButtonClickListener() {
                                 @Override
                                 public void onConfirmClick() {
-                                    recordBeanDao.deleteAll();
+                                    daoSession.getHistoryRecordBeanDao().deleteAll();
                                     dataBeans.clear();
                                     historyAdapter.notifyDataSetChanged();
+                                    viewBinding.emptyView.setVisibility(View.VISIBLE);
                                 }
 
                                 @Override
@@ -150,13 +109,13 @@ public class HistoryRecordActivity extends AndroidxBaseActivity<ActivityHistoryB
                             }).build().show();
                 }
             } else if (position == 1) {
-                String emailAddress = Utils.readEmailAddress();
-                if (emailAddress.equals("")) {
-                    EasyToast.showToast("未设置邮箱，无法导出", EasyToast.WARING);
+                String emailAddress = (String) SaveKeyValues.getValue(Constant.EMAIL_ADDRESS, "");
+                if (TextUtils.isEmpty(emailAddress)) {
+                    EasyToast.show(this, "未设置邮箱，无法导出");
                     return;
                 }
                 if (dataBeans.size() == 0) {
-                    EasyToast.showToast("无打卡记录，无法导出", EasyToast.WARING);
+                    EasyToast.show(this, "无打卡记录，无法导出");
                     return;
                 }
                 new AlertControlDialog.Builder()
@@ -169,7 +128,7 @@ public class HistoryRecordActivity extends AndroidxBaseActivity<ActivityHistoryB
                             @Override
                             public void onConfirmClick() {
                                 //导出Excel
-                                pullToEmail(dataBeans);
+                                exportToEmail(dataBeans);
                             }
 
                             @Override
@@ -179,12 +138,76 @@ public class HistoryRecordActivity extends AndroidxBaseActivity<ActivityHistoryB
                         }).build().show();
             }
         });
-        easyPopupWindow.showAsDropDown(viewBinding.titleRightView
-                , viewBinding.titleRightView.getWidth()
-                , SizeUtil.dp2px(this, 10));
     }
 
-    private void pullToEmail(List<HistoryRecordBean> historyBeans) {
+    @Override
+    public void initEvent() {
+        viewBinding.refreshLayout.setOnRefreshListener(refreshLayout -> {
+            isRefresh = true;
+            new CountDownTimer(1000, 500) {
+
+                @Override
+                public void onTick(long millisUntilFinished) {
+
+                }
+
+                @Override
+                public void onFinish() {
+                    isRefresh = false;
+                    dataBeans.clear();
+                    offset = 0;
+                    dataBeans = queryHistoryRecord();
+
+                    refreshLayout.finishRefresh();
+                    weakReferenceHandler.sendEmptyMessage(2022021403);
+                }
+            }.start();
+        });
+
+        viewBinding.refreshLayout.setOnLoadMoreListener(refreshLayout -> {
+            isLoadMore = true;
+            new CountDownTimer(1000, 500) {
+
+                @Override
+                public void onTick(long millisUntilFinished) {
+
+                }
+
+                @Override
+                public void onFinish() {
+                    isLoadMore = false;
+                    offset++;
+                    dataBeans.addAll(queryHistoryRecord());
+
+                    refreshLayout.finishLoadMore();
+                    weakReferenceHandler.sendEmptyMessage(2022021403);
+                }
+            }.start();
+        });
+    }
+
+    private final Handler.Callback callback = msg -> {
+        if (msg.what == 2022021403) {
+            if (isRefresh || isLoadMore) {
+                historyAdapter.notifyDataSetChanged();
+            } else { //首次加载数据
+                if (dataBeans.size() == 0) {
+                    viewBinding.emptyView.setVisibility(View.VISIBLE);
+                } else {
+                    viewBinding.emptyView.setVisibility(View.GONE);
+                    historyAdapter = new HistoryRecordAdapter(this, dataBeans);
+                    viewBinding.historyListView.setAdapter(historyAdapter);
+                }
+            }
+        }
+        return true;
+    };
+
+    private List<HistoryRecordBean> queryHistoryRecord() {
+        return daoSession.queryBuilder(HistoryRecordBean.class).offset(offset * 15).limit(15).list();
+    }
+
+    private void exportToEmail(List<HistoryRecordBean> historyBeans) {
         //{"date":"2020-04-15","message":"考勤打卡:11:42 下班打卡 早退","uuid":"26btND0uLqU"},{"date":"2020-04-15","message":"考勤打卡:16:32 下班打卡 早退","uuid":"UTWQJzCfTl9"}
         File dir = new File(this.getExternalFilesDir(Environment.DIRECTORY_DOCUMENTS), "DingRecord");
         if (!dir.exists()) {
@@ -192,6 +215,6 @@ public class HistoryRecordActivity extends AndroidxBaseActivity<ActivityHistoryB
         }
         ExcelUtils.initExcel(dir + "/打卡记录表.xls", excelTitle);
         String fileName = dir + "/打卡记录表.xls";
-        ExcelUtils.writeObjListToExcel(historyBeans, fileName);
+        ExcelUtils.writeObjListToExcel(this, historyBeans, fileName);
     }
 }

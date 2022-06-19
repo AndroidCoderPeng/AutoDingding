@@ -1,9 +1,13 @@
 package com.pengxh.autodingding.utils;
 
+import android.content.Context;
+import android.text.TextUtils;
 import android.util.Log;
 
-import com.pengxh.app.multilib.widget.EasyToast;
+import com.pengxh.androidx.lite.utils.SaveKeyValues;
+import com.pengxh.androidx.lite.widget.EasyToast;
 import com.pengxh.autodingding.bean.HistoryRecordBean;
+import com.pengxh.autodingding.bean.MailInfo;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -24,7 +28,6 @@ import jxl.write.WriteException;
 /**
  * @author: Pengxh
  * @email: 290677893@qq.com
- * @description: TODO
  * @date: 2020/4/15 17:14
  */
 public class ExcelUtils {
@@ -42,27 +45,27 @@ public class ExcelUtils {
      */
     public static void initExcel(String fileName, String[] colName) {
         format();
-        WritableWorkbook workbook = null;
+        WritableWorkbook writeBook = null;
         try {
             File file = new File(fileName);
             if (!file.exists()) {
                 file.createNewFile();
             }
-            workbook = Workbook.createWorkbook(file);
-            WritableSheet sheet = workbook.createSheet("打卡记录表", 0);
+            writeBook = Workbook.createWorkbook(file);
+            WritableSheet sheet = writeBook.createSheet("打卡记录表", 0);
             //创建标题栏
             sheet.addCell(new Label(0, 0, fileName, arial14format));
             for (int col = 0; col < colName.length; col++) {
                 sheet.addCell(new Label(col, 0, colName[col], arial10format));
             }
             sheet.setRowView(0, 340); //设置行高
-            workbook.write();
+            writeBook.write();
         } catch (Exception e) {
             e.printStackTrace();
         } finally {
-            if (workbook != null) {
+            if (writeBook != null) {
                 try {
-                    workbook.close();
+                    writeBook.close();
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
@@ -95,17 +98,18 @@ public class ExcelUtils {
         }
     }
 
-    public static void writeObjListToExcel(List<HistoryRecordBean> objList, String fileName) {
+    public static void writeObjListToExcel(Context context, List<HistoryRecordBean> objList, String fileName) {
         if (objList != null && objList.size() > 0) {
-            WritableWorkbook writebook = null;
+            WritableWorkbook writeBook = null;
             InputStream in = null;
             try {
                 WorkbookSettings setEncode = new WorkbookSettings();
                 setEncode.setEncoding(UTF8_ENCODING);
-                in = new FileInputStream(new File(fileName));
+                in = new FileInputStream(fileName);
                 Workbook workbook = Workbook.getWorkbook(in);
-                writebook = Workbook.createWorkbook(new File(fileName), workbook);
-                WritableSheet sheet = writebook.getSheet(0);
+                File file = new File(fileName);
+                writeBook = Workbook.createWorkbook(file, workbook);
+                WritableSheet sheet = writeBook.getSheet(0);
                 for (int j = 0; j < objList.size(); j++) {
                     HistoryRecordBean historyBean = objList.get(j);
                     String uuid = historyBean.getUuid();
@@ -117,21 +121,24 @@ public class ExcelUtils {
                     sheet.addCell(new Label(2, j + 1, message, arial12format));
                     sheet.setRowView(j + 1, 350); //设置行高
                 }
-                writebook.write();
+                writeBook.write();
                 Log.d(TAG, "writeObjListToExcel: 导出表格到本地成功");
                 //然后发送邮件到指定邮箱
-                String emailAddress = Utils.readEmailAddress();
-                if (emailAddress.equals("")) {
-                    EasyToast.showToast("邮箱未填写，无法导出", EasyToast.WARING);
+                String emailAddress = (String) SaveKeyValues.getValue(Constant.EMAIL_ADDRESS, "");
+                if (TextUtils.isEmpty(emailAddress)) {
+                    EasyToast.show(context, "邮箱未填写，无法导出");
                     return;
                 }
-                SendMailUtil.sendAttachFileEmail(emailAddress, fileName);
+                new Thread(() -> {
+                    MailInfo mailInfo = MailInfoUtil.createAttachMail(emailAddress, file);
+                    MailSender.getSender().sendAccessoryMail(mailInfo);
+                }).start();
             } catch (Exception e) {
                 e.printStackTrace();
             } finally {
-                if (writebook != null) {
+                if (writeBook != null) {
                     try {
-                        writebook.close();
+                        writeBook.close();
                     } catch (Exception e) {
                         e.printStackTrace();
                     }

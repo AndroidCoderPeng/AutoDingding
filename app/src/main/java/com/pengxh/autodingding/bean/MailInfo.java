@@ -6,7 +6,6 @@ import java.util.Properties;
 /**
  * @author: Pengxh
  * @email: 290677893@qq.com
- * @description: TODO
  * @date: 2020/1/16 15:40
  */
 public class MailInfo {
