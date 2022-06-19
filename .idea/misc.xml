@@ -8,12 +8,14 @@
         <entry key="..\:/Code/AutoDingding/app/src/main/res/drawable/ic_export.xml" value="0.35572916666666665" />
         <entry key="..\:/Code/AutoDingding/app/src/main/res/layout/activity_history.xml" value="0.15208333333333332" />
         <entry key="..\:/Code/AutoDingding/app/src/main/res/layout/activity_main.xml" value="0.2916666666666667" />
+        <entry key="..\:/Code/AutoDingding/app/src/main/res/layout/activity_notification.xml" value="0.33541666666666664" />
         <entry key="..\:/Code/AutoDingding/app/src/main/res/layout/easy_popup.xml" value="0.2916666666666667" />
         <entry key="..\:/Code/AutoDingding/app/src/main/res/layout/fragment_day.xml" value="0.32916666666666666" />
         <entry key="..\:/Code/AutoDingding/app/src/main/res/layout/fragment_settings.xml" value="0.32916666666666666" />
         <entry key="..\:/Code/AutoDingding/app/src/main/res/layout/include_title.xml" value="0.32916666666666666" />
         <entry key="..\:/Code/AutoDingding/app/src/main/res/layout/item_easy_popup.xml" value="0.32916666666666666" />
         <entry key="..\:/Code/AutoDingding/app/src/main/res/layout/item_list.xml" value="0.33" />
+        <entry key="..\:/Code/AutoDingding/app/src/main/res/layout/item_list_notification.xml" value="0.33541666666666664" />
         <entry key="..\:/Code/AutoDingding/app/src/main/res/menu/bottom_nav_menu.xml" value="0.32916666666666666" />
         <entry key="app/src/main/res/drawable/bg_textview.xml" value="0.2005" />
         <entry key="app/src/main/res/drawable/bg_textview_error.xml" value="0.2005" />

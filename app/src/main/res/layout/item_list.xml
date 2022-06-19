@@ -3,7 +3,8 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:padding="8dp">
+    android:background="@color/white"
+    android:padding="10dp">
 
     <TextView
         android:id="@+id/noticeMessage"
@@ -11,7 +12,6 @@
         android:layout_height="wrap_content"
         android:text="下班打卡成功"
         android:textColor="@color/colorText"
-        android:textSize="16sp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
@@ -20,8 +20,9 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@id/noticeMessage"
-        android:layout_marginTop="4dp"
+        android:layout_marginTop="5dp"
         android:text="2020年2月12日"
+        android:textColorHint="#C0C0C0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/noticeMessage" />
 
@@ -30,6 +31,6 @@
         android:layout_width="20dp"
         android:layout_height="20dp"
         android:background="@drawable/bg_textview"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent" />
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
 </androidx.constraintlayout.widget.ConstraintLayout>

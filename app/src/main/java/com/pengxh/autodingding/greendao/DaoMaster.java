@@ -22,11 +22,13 @@ public class DaoMaster extends AbstractDaoMaster {
     /** Creates underlying database table using DAOs. */
     public static void createAllTables(Database db, boolean ifNotExists) {
         HistoryRecordBeanDao.createTable(db, ifNotExists);
+        NotificationBeanDao.createTable(db, ifNotExists);
     }
 
     /** Drops underlying database table using DAOs. */
     public static void dropAllTables(Database db, boolean ifExists) {
         HistoryRecordBeanDao.dropTable(db, ifExists);
+        NotificationBeanDao.dropTable(db, ifExists);
     }
 
     /**
@@ -46,6 +48,7 @@ public class DaoMaster extends AbstractDaoMaster {
     public DaoMaster(Database db) {
         super(db, SCHEMA_VERSION);
         registerDaoClass(HistoryRecordBeanDao.class);
+        registerDaoClass(NotificationBeanDao.class);
     }
 
     public DaoSession newSession() {

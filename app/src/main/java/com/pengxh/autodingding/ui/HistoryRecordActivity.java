@@ -69,7 +69,6 @@ public class HistoryRecordActivity extends AndroidxBaseActivity<ActivityHistoryB
         daoSession = BaseApplication.getDaoSession();
 
         dataBeans = queryHistoryRecord();
-        Log.d(TAG, new Gson().toJson(dataBeans));
         weakReferenceHandler.sendEmptyMessage(2022021403);
 
         easyPopupWindow = new EasyPopupWindow(this);

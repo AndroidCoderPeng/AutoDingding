@@ -28,6 +28,7 @@ import com.pengxh.autodingding.R;
 import com.pengxh.autodingding.databinding.FragmentSettingsBinding;
 import com.pengxh.autodingding.greendao.HistoryRecordBeanDao;
 import com.pengxh.autodingding.ui.HistoryRecordActivity;
+import com.pengxh.autodingding.ui.NotificationRecordActivity;
 import com.pengxh.autodingding.utils.Constant;
 
 import java.util.Set;
@@ -84,6 +85,12 @@ public class SettingsFragment extends AndroidxBaseFragment<FragmentSettingsBindi
             @Override
             public void onClick(View v) {
                 ContextUtil.navigatePageTo(requireContext(), HistoryRecordActivity.class);
+            }
+        });
+        viewBinding.notificationLayout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                ContextUtil.navigatePageTo(requireContext(), NotificationRecordActivity.class);
             }
         });
         viewBinding.introduceLayout.setOnClickListener(v -> new AlertMessageDialog.Builder()

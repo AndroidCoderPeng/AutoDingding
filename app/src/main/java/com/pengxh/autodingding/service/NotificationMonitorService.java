@@ -15,7 +15,9 @@ import com.pengxh.androidx.lite.utils.TimeOrDateUtil;
 import com.pengxh.autodingding.BaseApplication;
 import com.pengxh.autodingding.bean.HistoryRecordBean;
 import com.pengxh.autodingding.bean.MailInfo;
+import com.pengxh.autodingding.bean.NotificationBean;
 import com.pengxh.autodingding.greendao.HistoryRecordBeanDao;
+import com.pengxh.autodingding.greendao.NotificationBeanDao;
 import com.pengxh.autodingding.ui.WelcomeActivity;
 import com.pengxh.autodingding.utils.Constant;
 import com.pengxh.autodingding.utils.MailInfoUtil;
@@ -33,6 +35,7 @@ public class NotificationMonitorService extends NotificationListenerService {
 
     private static final String TAG = "MonitorService";
     private HistoryRecordBeanDao recordBeanDao;
+    private NotificationBeanDao notificationBeanDao;
 
     /**
      * 有可用的并且和通知管理器连接成功时回调
@@ -41,6 +44,7 @@ public class NotificationMonitorService extends NotificationListenerService {
     public void onListenerConnected() {
         Log.d(TAG, "onListenerConnected");
         recordBeanDao = BaseApplication.getDaoSession().getHistoryRecordBeanDao();
+        notificationBeanDao = BaseApplication.getDaoSession().getNotificationBeanDao();
     }
 
     /**
@@ -51,9 +55,18 @@ public class NotificationMonitorService extends NotificationListenerService {
         Bundle extras = sbn.getNotification().extras;
         // 获取接收消息APP的包名
         String packageName = sbn.getPackageName();
-        Log.d(TAG, "onNotificationPosted ===> " + packageName);
         // 获取接收消息的内容
         String notificationText = extras.getString(Notification.EXTRA_TEXT);
+
+        //保存所有通知信息
+        NotificationBean notificationBean = new NotificationBean();
+        notificationBean.setUuid(UUID.randomUUID().toString());
+        notificationBean.setPackageName(packageName);
+        notificationBean.setNotificationTitle(extras.getString(Notification.EXTRA_TITLE));
+        notificationBean.setNotificationMsg(notificationText);
+        notificationBean.setPostTime(TimeOrDateUtil.timestampToCompleteDate(System.currentTimeMillis()));
+        notificationBeanDao.save(notificationBean);
+
 //        if (packageName.equals("com.tencent.mobileqq")) {
         if (packageName.equals("com.alibaba.android.rimet")) {
             if (notificationText == null || notificationText.equals("")) {

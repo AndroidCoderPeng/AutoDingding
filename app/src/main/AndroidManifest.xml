@@ -35,6 +35,7 @@
         </activity>
         <activity android:name=".ui.MainActivity" />
         <activity android:name=".ui.HistoryRecordActivity" />
+        <activity android:name=".ui.NotificationRecordActivity" />
 
         <service
             android:name=".service.NotificationMonitorService"
