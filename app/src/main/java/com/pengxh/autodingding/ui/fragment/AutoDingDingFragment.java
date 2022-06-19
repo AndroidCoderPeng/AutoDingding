@@ -1,5 +1,9 @@
 package com.pengxh.autodingding.ui.fragment;
 
+import android.app.AlarmManager;
+import android.app.PendingIntent;
+import android.content.Context;
+import android.content.Intent;
 import android.os.CountDownTimer;
 
 import com.jzxiang.pickerview.TimePickerDialog;
@@ -9,6 +13,7 @@ import com.pengxh.androidx.lite.utils.ColorUtil;
 import com.pengxh.androidx.lite.utils.TimeOrDateUtil;
 import com.pengxh.androidx.lite.widget.EasyToast;
 import com.pengxh.autodingding.databinding.FragmentDayBinding;
+import com.pengxh.autodingding.service.DingTaskService;
 import com.pengxh.autodingding.utils.Constant;
 import com.pengxh.autodingding.utils.Utils;
 
@@ -36,6 +41,12 @@ public class AutoDingDingFragment extends AndroidxBaseFragment<FragmentDayBindin
                 viewBinding.currentTime.post(() -> viewBinding.currentTime.setText(systemTime));
             }
         }, 0, 1000);
+
+        AlarmManager alarmManager = (AlarmManager) requireContext().getSystemService(Context.ALARM_SERVICE);
+        Intent intent = new Intent(requireContext(), DingTaskService.class);
+        PendingIntent pIntent = PendingIntent.getService(requireContext(), 0, intent, 0);
+        alarmManager.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP,
+                System.currentTimeMillis() + 10, pIntent);
     }
 
     @Override

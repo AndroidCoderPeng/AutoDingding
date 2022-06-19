@@ -4,10 +4,10 @@ import android.os.CountDownTimer;
 import android.os.Environment;
 import android.os.Handler;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.View;
 
-import com.google.gson.Gson;
+import androidx.recyclerview.widget.LinearLayoutManager;
+
 import com.gyf.immersionbar.ImmersionBar;
 import com.pengxh.androidx.lite.base.AndroidxBaseActivity;
 import com.pengxh.androidx.lite.utils.ColorUtil;
@@ -195,7 +195,8 @@ public class HistoryRecordActivity extends AndroidxBaseActivity<ActivityHistoryB
                 } else {
                     viewBinding.emptyView.setVisibility(View.GONE);
                     historyAdapter = new HistoryRecordAdapter(this, dataBeans);
-                    viewBinding.historyListView.setAdapter(historyAdapter);
+                    viewBinding.historyRecordView.setLayoutManager(new LinearLayoutManager(this));
+                    viewBinding.historyRecordView.setAdapter(historyAdapter);
                 }
             }
         }

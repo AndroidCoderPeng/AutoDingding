@@ -4,64 +4,59 @@ import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.BaseAdapter;
 import android.widget.TextView;
+
+import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.pengxh.autodingding.R;
 import com.pengxh.autodingding.bean.NotificationBean;
 
 import java.util.List;
 
-public class NotificationRecordAdapter extends BaseAdapter {
+public class NotificationRecordAdapter extends RecyclerView.Adapter<NotificationRecordAdapter.ItemViewHolder> {
 
-    private final List<NotificationBean> beanList;
-    private final LayoutInflater mInflater;
+    private final List<NotificationBean> dataRows;
+    private final LayoutInflater layoutInflater;
 
     public NotificationRecordAdapter(Context mContext, List<NotificationBean> list) {
-        this.beanList = list;
-        mInflater = LayoutInflater.from(mContext);
+        this.dataRows = list;
+        layoutInflater = LayoutInflater.from(mContext);
+    }
+
+    @NonNull
+    @Override
+    public ItemViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+        View view = layoutInflater.inflate(R.layout.item_list_notification, parent, false);
+        return new ItemViewHolder(view);
     }
 
     @Override
-    public int getCount() {
-        return beanList == null ? 0 : beanList.size();
+    public void onBindViewHolder(@NonNull ItemViewHolder holder, int position) {
+        holder.bindView(dataRows.get(position));
     }
 
     @Override
-    public Object getItem(int position) {
-        return beanList.get(position);
+    public int getItemCount() {
+        return dataRows.size();
     }
 
-    @Override
-    public long getItemId(int position) {
-        return position;
-    }
+    static class ItemViewHolder extends RecyclerView.ViewHolder {
 
-    @Override
-    public View getView(int position, View convertView, ViewGroup parent) {
-        NotificationViewHolder holder;
-        if (convertView == null) {
-            convertView = mInflater.inflate(R.layout.item_list_notification, null);
-            holder = new NotificationViewHolder();
-            holder.titleView = convertView.findViewById(R.id.titleView);
-            holder.packageNameView = convertView.findViewById(R.id.packageNameView);
-            holder.messageView = convertView.findViewById(R.id.messageView);
-            holder.postTimeView = convertView.findViewById(R.id.postTimeView);
-            convertView.setTag(holder);
-        } else {
-            holder = (NotificationViewHolder) convertView.getTag();
+        private final TextView titleView;
+        private final TextView packageNameView;
+        private final TextView messageView;
+        private final TextView postTimeView;
+
+        ItemViewHolder(@NonNull View itemView) {
+            super(itemView);
+            titleView = itemView.findViewById(R.id.titleView);
+            packageNameView = itemView.findViewById(R.id.packageNameView);
+            messageView = itemView.findViewById(R.id.messageView);
+            postTimeView = itemView.findViewById(R.id.postTimeView);
         }
-        holder.bindData(beanList.get(position));
-        return convertView;
-    }
 
-    private static class NotificationViewHolder {
-        private TextView titleView;
-        private TextView packageNameView;
-        private TextView messageView;
-        private TextView postTimeView;
-
-        void bindData(NotificationBean bean) {
+        void bindView(NotificationBean bean) {
             titleView.setText("标题：" + bean.getNotificationTitle());
             packageNameView.setText("包名：" + bean.getPackageName());
             messageView.setText("内容：" + bean.getNotificationMsg());

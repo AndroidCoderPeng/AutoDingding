@@ -4,69 +4,64 @@ import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
+
+import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.pengxh.autodingding.R;
 import com.pengxh.autodingding.bean.HistoryRecordBean;
 
 import java.util.List;
 
-public class HistoryRecordAdapter extends BaseAdapter {
+public class HistoryRecordAdapter extends RecyclerView.Adapter<HistoryRecordAdapter.ItemViewHolder> {
 
-    private final List<HistoryRecordBean> beanList;
-    private final LayoutInflater mInflater;
+    private final List<HistoryRecordBean> dataRows;
+    private final LayoutInflater layoutInflater;
 
     public HistoryRecordAdapter(Context mContext, List<HistoryRecordBean> list) {
-        this.beanList = list;
-        mInflater = LayoutInflater.from(mContext);
+        this.dataRows = list;
+        layoutInflater = LayoutInflater.from(mContext);
+    }
+
+    @NonNull
+    @Override
+    public ItemViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+        View view = layoutInflater.inflate(R.layout.item_list, parent, false);
+        return new ItemViewHolder(view);
     }
 
     @Override
-    public int getCount() {
-        return beanList == null ? 0 : beanList.size();
+    public void onBindViewHolder(@NonNull ItemViewHolder holder, int position) {
+        holder.bindView(dataRows.get(position));
     }
 
     @Override
-    public Object getItem(int position) {
-        return beanList.get(position);
+    public int getItemCount() {
+        return dataRows.size();
     }
 
-    @Override
-    public long getItemId(int position) {
-        return position;
-    }
+    static class ItemViewHolder extends RecyclerView.ViewHolder {
 
-    @Override
-    public View getView(int position, View convertView, ViewGroup parent) {
-        HistoryViewHolder holder;
-        if (convertView == null) {
-            convertView = mInflater.inflate(R.layout.item_list, null);
-            holder = new HistoryViewHolder();
-            holder.noticeDate = convertView.findViewById(R.id.noticeDate);
-            holder.noticeMessage = convertView.findViewById(R.id.noticeMessage);
-            holder.tagView = convertView.findViewById(R.id.tagView);
-            convertView.setTag(holder);
-        } else {
-            holder = (HistoryViewHolder) convertView.getTag();
+        private final TextView noticeDate;
+        private final TextView noticeMessage;
+        private final ImageView tagView;
+
+        ItemViewHolder(@NonNull View itemView) {
+            super(itemView);
+            noticeDate = itemView.findViewById(R.id.noticeDate);
+            noticeMessage = itemView.findViewById(R.id.noticeMessage);
+            tagView = itemView.findViewById(R.id.tagView);
         }
-        holder.bindData(beanList.get(position));
-        return convertView;
-    }
 
-    private static class HistoryViewHolder {
-        private TextView noticeDate;
-        private TextView noticeMessage;
-        private ImageView tagView;
-
-        void bindData(HistoryRecordBean historyBean) {
-            String message = historyBean.getMessage();
+        void bindView(HistoryRecordBean bean) {
+            String message = bean.getMessage();
             if (!message.contains("成功")) {
                 tagView.setBackgroundResource(R.drawable.bg_textview_error);
             }
             noticeMessage.setText(message);
-            noticeDate.setText(historyBean.getDate());
+            noticeDate.setText(bean.getDate());
         }
     }
 }

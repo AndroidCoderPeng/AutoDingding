@@ -37,26 +37,30 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />
 
-        <RelativeLayout
+        <androidx.core.widget.NestedScrollView
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            android:layout_height="match_parent"
+            android:fillViewport="true"
+            android:scrollbars="vertical">
 
-            <ImageView
-                android:id="@+id/emptyView"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_centerInParent="true"
-                android:src="@mipmap/empty"
-                android:visibility="gone" />
-
-            <ListView
-                android:id="@+id/historyListView"
+            <RelativeLayout
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_centerInParent="true"
-                android:dividerHeight="1px"
-                android:scrollbars="none" />
-        </RelativeLayout>
+                android:layout_height="match_parent">
+
+                <ImageView
+                    android:id="@+id/emptyView"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerInParent="true"
+                    android:src="@mipmap/empty"
+                    android:visibility="gone" />
+
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/historyRecordView"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content" />
+            </RelativeLayout>
+        </androidx.core.widget.NestedScrollView>
 
         <com.scwang.smartrefresh.layout.footer.ClassicsFooter
             android:layout_width="match_parent"

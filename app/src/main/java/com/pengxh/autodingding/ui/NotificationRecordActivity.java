@@ -4,6 +4,8 @@ import android.os.CountDownTimer;
 import android.os.Handler;
 import android.view.View;
 
+import androidx.recyclerview.widget.LinearLayoutManager;
+
 import com.gyf.immersionbar.ImmersionBar;
 import com.pengxh.androidx.lite.base.AndroidxBaseActivity;
 import com.pengxh.androidx.lite.utils.ColorUtil;
@@ -101,7 +103,8 @@ public class NotificationRecordActivity extends AndroidxBaseActivity<ActivityNot
                 } else {
                     viewBinding.emptyView.setVisibility(View.GONE);
                     notificationAdapter = new NotificationRecordAdapter(this, dataBeans);
-                    viewBinding.notificationListView.setAdapter(notificationAdapter);
+                    viewBinding.notificationView.setLayoutManager(new LinearLayoutManager(this));
+                    viewBinding.notificationView.setAdapter(notificationAdapter);
                 }
             }
         }
