@@ -50,9 +50,8 @@
         </service>
 
         <service
-            android:name=".service.DingTaskService"
-            android:enabled="true"
-            android:exported="false"
-            android:label="自动打卡服务" />
+            android:name=".service.JobSchedulerService"
+            android:exported="true"
+            android:permission="android.permission.BIND_JOB_SERVICE" />
     </application>
 </manifest>

@@ -1,9 +1,9 @@
 package com.pengxh.autodingding.ui.fragment;
 
-import android.app.AlarmManager;
-import android.app.PendingIntent;
+import android.app.job.JobInfo;
+import android.app.job.JobScheduler;
+import android.content.ComponentName;
 import android.content.Context;
-import android.content.Intent;
 import android.os.CountDownTimer;
 
 import com.jzxiang.pickerview.TimePickerDialog;
@@ -13,7 +13,7 @@ import com.pengxh.androidx.lite.utils.ColorUtil;
 import com.pengxh.androidx.lite.utils.TimeOrDateUtil;
 import com.pengxh.androidx.lite.widget.EasyToast;
 import com.pengxh.autodingding.databinding.FragmentDayBinding;
-import com.pengxh.autodingding.service.DingTaskService;
+import com.pengxh.autodingding.service.JobSchedulerService;
 import com.pengxh.autodingding.utils.Constant;
 import com.pengxh.autodingding.utils.Utils;
 
@@ -42,11 +42,14 @@ public class AutoDingDingFragment extends AndroidxBaseFragment<FragmentDayBindin
             }
         }, 0, 1000);
 
-        AlarmManager alarmManager = (AlarmManager) requireContext().getSystemService(Context.ALARM_SERVICE);
-        Intent intent = new Intent(requireContext(), DingTaskService.class);
-        PendingIntent pIntent = PendingIntent.getService(requireContext(), 0, intent, 0);
-        alarmManager.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP,
-                System.currentTimeMillis() + 10, pIntent);
+        JobScheduler jobScheduler = (JobScheduler) requireContext().getSystemService(Context.JOB_SCHEDULER_SERVICE);
+        ComponentName componentName = new ComponentName(requireContext(), JobSchedulerService.class);
+        JobInfo jobInfo = new JobInfo.Builder(Integer.MAX_VALUE, componentName)
+                .setMinimumLatency(2000) // 2s后执行
+                .setOverrideDeadline(10000) // 最晚10s后执行
+                .setPeriodic(10000)
+                .build();
+        jobScheduler.schedule(jobInfo);
     }
 
     @Override
