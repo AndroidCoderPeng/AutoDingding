@@ -17,7 +17,7 @@ import com.pengxh.autodingding.databinding.ActivityMainBinding;
 import com.pengxh.autodingding.ui.fragment.AutoDingDingFragment;
 import com.pengxh.autodingding.ui.fragment.SettingsFragment;
 import com.pengxh.autodingding.utils.Constant;
-import com.pengxh.autodingding.utils.Utils;
+import com.pengxh.autodingding.utils.DingDingUtil;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -78,7 +78,7 @@ public class MainActivity extends AndroidxBaseActivity<ActivityMainBinding> {
 
             }
         });
-        if (!Utils.isAppAvailable(Constant.DINGDING)) {
+        if (!DingDingUtil.isAppAvailable(Constant.DINGDING)) {
             new AlertMessageDialog.Builder()
                     .setContext(this)
                     .setTitle("温馨提醒")

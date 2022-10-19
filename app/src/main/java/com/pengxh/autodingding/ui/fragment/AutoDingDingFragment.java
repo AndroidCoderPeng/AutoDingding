@@ -1,9 +1,5 @@
 package com.pengxh.autodingding.ui.fragment;
 
-import android.app.job.JobInfo;
-import android.app.job.JobScheduler;
-import android.content.ComponentName;
-import android.content.Context;
 import android.os.CountDownTimer;
 
 import com.jzxiang.pickerview.TimePickerDialog;
@@ -13,9 +9,8 @@ import com.pengxh.androidx.lite.utils.ColorUtil;
 import com.pengxh.androidx.lite.utils.TimeOrDateUtil;
 import com.pengxh.androidx.lite.widget.EasyToast;
 import com.pengxh.autodingding.databinding.FragmentDayBinding;
-import com.pengxh.autodingding.service.JobSchedulerService;
 import com.pengxh.autodingding.utils.Constant;
-import com.pengxh.autodingding.utils.Utils;
+import com.pengxh.autodingding.utils.DingDingUtil;
 
 import java.util.Timer;
 import java.util.TimerTask;
@@ -42,14 +37,15 @@ public class AutoDingDingFragment extends AndroidxBaseFragment<FragmentDayBindin
             }
         }, 0, 1000);
 
-        JobScheduler jobScheduler = (JobScheduler) requireContext().getSystemService(Context.JOB_SCHEDULER_SERVICE);
-        ComponentName componentName = new ComponentName(requireContext(), JobSchedulerService.class);
-        JobInfo jobInfo = new JobInfo.Builder(Integer.MAX_VALUE, componentName)
-                .setMinimumLatency(2000) // 2s后执行
-                .setOverrideDeadline(10000) // 最晚10s后执行
-                .setPeriodic(10000)
-                .build();
-        jobScheduler.schedule(jobInfo);
+        //TODO 定时任务未通过测试，先注掉
+//        JobScheduler jobScheduler = (JobScheduler) requireContext().getSystemService(Context.JOB_SCHEDULER_SERVICE);
+//        ComponentName componentName = new ComponentName(requireContext(), JobSchedulerService.class);
+//        JobInfo jobInfo = new JobInfo.Builder(Integer.MAX_VALUE, componentName)
+//                .setMinimumLatency(2000) // 2s后执行
+//                .setOverrideDeadline(10000) // 最晚10s后执行
+//                .setPeriodic(10000)
+//                .build();
+//        jobScheduler.schedule(jobInfo);
     }
 
     @Override
@@ -114,7 +110,7 @@ public class AutoDingDingFragment extends AndroidxBaseFragment<FragmentDayBindin
                 @Override
                 public void onFinish() {
                     viewBinding.startTimeView.setText("--");
-                    Utils.openDingDing(Constant.DINGDING);
+                    DingDingUtil.openDingDing(Constant.DINGDING);
                 }
             };
             amCountDownTimer.start();
@@ -140,7 +136,7 @@ public class AutoDingDingFragment extends AndroidxBaseFragment<FragmentDayBindin
                 @Override
                 public void onFinish() {
                     viewBinding.endTimeView.setText("--");
-                    Utils.openDingDing(Constant.DINGDING);
+                    DingDingUtil.openDingDing(Constant.DINGDING);
                 }
             };
             pmCountDownTimer.start();

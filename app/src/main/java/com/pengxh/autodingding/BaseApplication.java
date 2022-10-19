@@ -6,7 +6,7 @@ import android.database.sqlite.SQLiteDatabase;
 import com.pengxh.androidx.lite.utils.SaveKeyValues;
 import com.pengxh.autodingding.greendao.DaoMaster;
 import com.pengxh.autodingding.greendao.DaoSession;
-import com.pengxh.autodingding.utils.Utils;
+import com.pengxh.autodingding.utils.DingDingUtil;
 import com.tencent.bugly.crashreport.CrashReport;
 
 /**
@@ -23,7 +23,7 @@ public class BaseApplication extends Application {
     public void onCreate() {
         super.onCreate();
         application = this;
-        Utils.init(this);
+        DingDingUtil.init(this);
         SaveKeyValues.initSharedPreferences(this);
         CrashReport.initCrashReport(this, "ce38195468", false);
         initDataBase();

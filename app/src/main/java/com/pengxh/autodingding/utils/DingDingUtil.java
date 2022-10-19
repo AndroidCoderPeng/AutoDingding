@@ -15,6 +15,7 @@ import android.util.Log;
 import android.view.WindowManager;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 /**
@@ -22,14 +23,14 @@ import java.util.List;
  * @email: 290677893@qq.com
  * @date: 2019/12/25 13:13
  */
-public class Utils {
+public class DingDingUtil {
     private static final String TAG = "Utils";
     @SuppressLint("StaticFieldLeak")
     private static Context mContext;
     private static NotificationManager notificationManager;
 
     public static void init(Context context) {
-        Utils.mContext = context.getApplicationContext();//获取全局上下文，最长生命周期
+        DingDingUtil.mContext = context.getApplicationContext();//获取全局上下文，最长生命周期
         notificationManager = (NotificationManager) mContext.getSystemService(Context.NOTIFICATION_SERVICE);
     }
 
@@ -72,7 +73,11 @@ public class Utils {
                 resolveIntent.addCategory(Intent.CATEGORY_LAUNCHER);
                 resolveIntent.setPackage(packageName);
                 List<ResolveInfo> apps = packageManager.queryIntentActivities(resolveIntent, 0);
-                ResolveInfo resolveInfo = apps.iterator().next();
+                Iterator<ResolveInfo> iterator = apps.iterator();
+                if (!iterator.hasNext()) {
+                    return;
+                }
+                ResolveInfo resolveInfo = iterator.next();
                 if (resolveInfo != null) {
                     String className = resolveInfo.activityInfo.name;
                     Intent intent = new Intent(Intent.ACTION_MAIN);
