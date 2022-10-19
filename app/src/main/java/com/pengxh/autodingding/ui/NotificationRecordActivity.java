@@ -41,7 +41,7 @@ public class NotificationRecordActivity extends AndroidxBaseActivity<ActivityNot
     @Override
     public void initData() {
         weakReferenceHandler = new WeakReferenceHandler(callback);
-        daoSession = BaseApplication.getDaoSession();
+        daoSession = BaseApplication.getInstance().getDaoSession();
 
         dataBeans = queryNotificationRecord();
         weakReferenceHandler.sendEmptyMessage(2022061901);

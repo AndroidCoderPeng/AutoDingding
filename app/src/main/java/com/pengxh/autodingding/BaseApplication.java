@@ -50,7 +50,7 @@ public class BaseApplication extends Application {
         daoSession = daoMaster.newSession();
     }
 
-    public static DaoSession getDaoSession() {
+    public DaoSession getDaoSession() {
         return daoSession;
     }
 }

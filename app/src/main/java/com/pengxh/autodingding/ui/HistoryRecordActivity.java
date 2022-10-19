@@ -66,7 +66,7 @@ public class HistoryRecordActivity extends AndroidxBaseActivity<ActivityHistoryB
     @Override
     public void initData() {
         weakReferenceHandler = new WeakReferenceHandler(callback);
-        daoSession = BaseApplication.getDaoSession();
+        daoSession = BaseApplication.getInstance().getDaoSession();
 
         dataBeans = queryHistoryRecord();
         weakReferenceHandler.sendEmptyMessage(2022021403);

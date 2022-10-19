@@ -43,8 +43,8 @@ public class NotificationMonitorService extends NotificationListenerService {
     @Override
     public void onListenerConnected() {
         Log.d(TAG, "onListenerConnected");
-        recordBeanDao = BaseApplication.getDaoSession().getHistoryRecordBeanDao();
-        notificationBeanDao = BaseApplication.getDaoSession().getNotificationBeanDao();
+        recordBeanDao = BaseApplication.getInstance().getDaoSession().getHistoryRecordBeanDao();
+        notificationBeanDao = BaseApplication.getInstance().getDaoSession().getNotificationBeanDao();
     }
 
     /**

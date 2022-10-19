@@ -77,4 +77,7 @@ dependencies {
     implementation 'cn.bertsir.zbarLibary:zbarlibary:1.4.2'
     //数据库框架
     implementation 'org.greenrobot:greendao:3.3.0'
+    def work_version = "2.7.1"
+    // (Java only)
+    implementation "androidx.work:work-runtime:$work_version"
 }

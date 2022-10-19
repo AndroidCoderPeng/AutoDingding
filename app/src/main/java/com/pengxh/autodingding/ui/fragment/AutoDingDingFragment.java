@@ -1,6 +1,11 @@
 package com.pengxh.autodingding.ui.fragment;
 
 import android.os.CountDownTimer;
+import android.util.Log;
+
+import androidx.work.PeriodicWorkRequest;
+import androidx.work.WorkInfo;
+import androidx.work.WorkManager;
 
 import com.jzxiang.pickerview.TimePickerDialog;
 import com.jzxiang.pickerview.data.Type;
@@ -9,11 +14,13 @@ import com.pengxh.androidx.lite.utils.ColorUtil;
 import com.pengxh.androidx.lite.utils.TimeOrDateUtil;
 import com.pengxh.androidx.lite.widget.EasyToast;
 import com.pengxh.autodingding.databinding.FragmentDayBinding;
+import com.pengxh.autodingding.service.JobSchedulerWorker;
 import com.pengxh.autodingding.utils.Constant;
 import com.pengxh.autodingding.utils.DingDingUtil;
 
 import java.util.Timer;
 import java.util.TimerTask;
+import java.util.concurrent.TimeUnit;
 
 public class AutoDingDingFragment extends AndroidxBaseFragment<FragmentDayBinding> {
 
@@ -38,14 +45,12 @@ public class AutoDingDingFragment extends AndroidxBaseFragment<FragmentDayBindin
         }, 0, 1000);
 
         //TODO 定时任务未通过测试，先注掉
-//        JobScheduler jobScheduler = (JobScheduler) requireContext().getSystemService(Context.JOB_SCHEDULER_SERVICE);
-//        ComponentName componentName = new ComponentName(requireContext(), JobSchedulerService.class);
-//        JobInfo jobInfo = new JobInfo.Builder(Integer.MAX_VALUE, componentName)
-//                .setMinimumLatency(2000) // 2s后执行
-//                .setOverrideDeadline(10000) // 最晚10s后执行
-//                .setPeriodic(10000)
-//                .build();
-//        jobScheduler.schedule(jobInfo);
+        PeriodicWorkRequest schedulerRequest = new PeriodicWorkRequest.Builder(JobSchedulerWorker.class, 12, TimeUnit.HOURS).build();
+        WorkManager.getInstance(requireContext()).enqueue(schedulerRequest);
+        WorkManager.getInstance(requireContext()).getWorkInfoByIdLiveData(schedulerRequest.getId()).observe(this, workInfo -> {
+            WorkInfo.State state = workInfo.getState();
+            Log.d(TAG, "JobSchedulerWorker state: " + state);
+        });
     }
 
     @Override

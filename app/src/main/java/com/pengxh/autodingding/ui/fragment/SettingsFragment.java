@@ -48,7 +48,7 @@ public class SettingsFragment extends AndroidxBaseFragment<FragmentSettingsBindi
 
     @Override
     protected void initData() {
-        historyBeanDao = BaseApplication.getDaoSession().getHistoryRecordBeanDao();
+        historyBeanDao = BaseApplication.getInstance().getDaoSession().getHistoryRecordBeanDao();
         notificationManager = (NotificationManager) requireContext().getSystemService(Context.NOTIFICATION_SERVICE);
         String emailAddress = (String) SaveKeyValues.getValue(Constant.EMAIL_ADDRESS, "");
         if (!TextUtils.isEmpty(emailAddress)) {
