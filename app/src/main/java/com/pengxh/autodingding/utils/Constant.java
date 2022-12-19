@@ -16,6 +16,7 @@ public class Constant {
     //钉钉包名：com.alibaba.android.rimet
     //打卡页面类名：com.alibaba.lightapp.runtime.activity.CommonWebViewActivity
     public static final String DINGDING = "com.alibaba.android.rimet";
+    public static final String WECHAT = "com.tencent.wework";
 
     public static final long ONE_WEEK = 5 * 24 * 60 * 60 * 1000L;
 }

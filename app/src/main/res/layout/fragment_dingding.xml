@@ -7,11 +7,11 @@
     android:keepScreenOn="true"
     android:orientation="vertical">
 
-    <TextView
-        android:id="@+id/currentTime"
+    <TextClock
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:fontFamily="monospace"
+        android:format24Hour="HH:mm:ss"
         android:gravity="center"
         android:padding="30dp"
         android:text="--:--:--"
@@ -40,9 +40,9 @@
 
                 <ImageView
                     android:id="@+id/v"
-                    android:layout_width="80px"
-                    android:layout_height="80px"
-                    android:background="@mipmap/clock" />
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/ic_clock" />
 
                 <TextView
                     android:layout_width="wrap_content"
@@ -54,8 +54,8 @@
 
                 <ImageView
                     android:id="@+id/endAmDuty"
-                    android:layout_width="80px"
-                    android:layout_height="80px"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
                     android:layout_alignParentEnd="true"
                     android:background="@drawable/ic_stop" />
             </RelativeLayout>
@@ -78,11 +78,11 @@
                 android:textColor="@color/white" />
 
             <ImageView
-                android:layout_width="80px"
-                android:layout_height="80px"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
                 android:layout_alignParentEnd="true"
                 android:layout_alignParentBottom="true"
-                android:background="@mipmap/ding" />
+                android:background="@drawable/ic_dingding" />
         </RelativeLayout>
     </androidx.cardview.widget.CardView>
 
@@ -111,9 +111,9 @@
 
                 <ImageView
                     android:id="@+id/vv"
-                    android:layout_width="80px"
-                    android:layout_height="80px"
-                    android:background="@mipmap/clock" />
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/ic_clock" />
 
                 <TextView
                     android:layout_width="wrap_content"
@@ -125,8 +125,8 @@
 
                 <ImageView
                     android:id="@+id/endPmDuty"
-                    android:layout_width="80px"
-                    android:layout_height="80px"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
                     android:layout_alignParentEnd="true"
                     android:background="@drawable/ic_stop" />
             </RelativeLayout>
@@ -149,11 +149,11 @@
                 android:textColor="@color/white" />
 
             <ImageView
-                android:layout_width="80px"
-                android:layout_height="80px"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
                 android:layout_alignParentEnd="true"
                 android:layout_alignParentBottom="true"
-                android:background="@mipmap/ding" />
+                android:background="@drawable/ic_dingding" />
         </RelativeLayout>
     </androidx.cardview.widget.CardView>
 </LinearLayout>

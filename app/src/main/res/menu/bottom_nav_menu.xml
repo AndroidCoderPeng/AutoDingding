@@ -3,16 +3,23 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <item
-        android:id="@+id/nav_clock"
+        android:id="@+id/nav_dingding"
         android:enabled="true"
-        android:icon="@mipmap/day_gray"
-        android:title="自动打卡"
-        app:showAsAction="ifRoom" />
+        android:icon="@drawable/ic_tab_dingding"
+        android:title="钉钉打卡"
+        app:showAsAction="always" />
+
+    <item
+        android:id="@+id/nav_wechat"
+        android:enabled="true"
+        android:icon="@drawable/ic_tab_wechat"
+        android:title="企业微信设置"
+        app:showAsAction="always" />
 
     <item
         android:id="@+id/nav_settings"
         android:enabled="true"
-        android:icon="@mipmap/settings_gray"
+        android:icon="@drawable/ic_tab_settings"
         android:title="其他设置"
-        app:showAsAction="ifRoom" />
+        app:showAsAction="always" />
 </menu>

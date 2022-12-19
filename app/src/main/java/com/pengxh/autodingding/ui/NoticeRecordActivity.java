@@ -15,13 +15,13 @@ import com.pengxh.autodingding.BaseApplication;
 import com.pengxh.autodingding.R;
 import com.pengxh.autodingding.adapter.NotificationRecordAdapter;
 import com.pengxh.autodingding.bean.NotificationBean;
-import com.pengxh.autodingding.databinding.ActivityNotificationBinding;
+import com.pengxh.autodingding.databinding.ActivityNoticeBinding;
 import com.pengxh.autodingding.greendao.DaoSession;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class NotificationRecordActivity extends AndroidxBaseActivity<ActivityNotificationBinding> {
+public class NoticeRecordActivity extends AndroidxBaseActivity<ActivityNoticeBinding> {
 
     private WeakReferenceHandler weakReferenceHandler;
     private DaoSession daoSession;
