@@ -4,29 +4,25 @@
     <option name="filePathToZoomLevelMap">
       <map>
         <entry key="..\:/Code/AutoDingding/app/src/main/res/drawable/bottom_text_color.xml" value="0.1855" />
-        <entry key="..\:/Code/AutoDingding/app/src/main/res/drawable/ic_clock.xml" value="0.34629629629629627" />
-        <entry key="..\:/Code/AutoDingding/app/src/main/res/drawable/ic_dingding.xml" value="0.34629629629629627" />
-        <entry key="..\:/Code/AutoDingding/app/src/main/res/drawable/ic_launcher_background.xml" value="0.34629629629629627" />
-        <entry key="..\:/Code/AutoDingding/app/src/main/res/drawable/ic_settings.xml" value="0.34629629629629627" />
-        <entry key="..\:/Code/AutoDingding/app/src/main/res/drawable/ic_stop.xml" value="0.34629629629629627" />
-        <entry key="..\:/Code/AutoDingding/app/src/main/res/drawable/ic_tab_dingding.xml" value="0.34629629629629627" />
-        <entry key="..\:/Code/AutoDingding/app/src/main/res/drawable/ic_tab_settings.xml" value="0.34629629629629627" />
-        <entry key="..\:/Code/AutoDingding/app/src/main/res/drawable/ic_tab_wechat.xml" value="0.34629629629629627" />
         <entry key="..\:/Code/AutoDingding/app/src/main/res/layout/activity_history.xml" value="0.15208333333333332" />
         <entry key="..\:/Code/AutoDingding/app/src/main/res/layout/activity_main.xml" value="0.2916666666666667" />
-        <entry key="..\:/Code/AutoDingding/app/src/main/res/layout/activity_notification.xml" value="0.2962962962962963" />
         <entry key="..\:/Code/AutoDingding/app/src/main/res/layout/easy_popup.xml" value="0.2916666666666667" />
         <entry key="..\:/Code/AutoDingding/app/src/main/res/layout/fragment_day.xml" value="0.32916666666666666" />
-        <entry key="..\:/Code/AutoDingding/app/src/main/res/layout/fragment_dingding.xml" value="0.33541666666666664" />
         <entry key="..\:/Code/AutoDingding/app/src/main/res/layout/fragment_settings.xml" value="0.32916666666666666" />
         <entry key="..\:/Code/AutoDingding/app/src/main/res/layout/include_title.xml" value="0.32916666666666666" />
         <entry key="..\:/Code/AutoDingding/app/src/main/res/layout/item_easy_popup.xml" value="0.32916666666666666" />
         <entry key="..\:/Code/AutoDingding/app/src/main/res/menu/bottom_nav_menu.xml" value="0.32916666666666666" />
         <entry key="app/src/main/res/drawable/bg_textview.xml" value="0.2005" />
         <entry key="app/src/main/res/drawable/bg_textview_error.xml" value="0.2005" />
-        <entry key="app/src/main/res/layout/activity_history.xml" value="0.2203125" />
+        <entry key="app/src/main/res/drawable/ic_arrow_right.xml" value="0.18802083333333333" />
+        <entry key="app/src/main/res/drawable/ic_outline_settings_24.xml" value="0.18802083333333333" />
+        <entry key="app/src/main/res/drawable/ic_settings.xml" value="0.18802083333333333" />
+        <entry key="app/src/main/res/layout/activity_history.xml" value="0.3581757508342603" />
         <entry key="app/src/main/res/layout/activity_main.xml" value="0.21979166666666666" />
-        <entry key="app/src/main/res/layout/fragment_settings.xml" value="0.2203125" />
+        <entry key="app/src/main/res/layout/activity_test.xml" value="0.21979166666666666" />
+        <entry key="app/src/main/res/layout/fragment_settings.xml" value="0.16770833333333332" />
+        <entry key="app/src/main/res/layout/fragment_wechat.xml" value="0.16770833333333332" />
+        <entry key="app/src/main/res/layout/include_title.xml" value="0.16770833333333332" />
         <entry key="app/src/main/res/layout/item_list.xml" value="0.2203125" />
       </map>
     </option>

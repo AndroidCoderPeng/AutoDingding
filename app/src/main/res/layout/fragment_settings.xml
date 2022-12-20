@@ -81,11 +81,11 @@
             android:textSize="18sp" />
 
         <ImageView
-            android:layout_width="72px"
-            android:layout_height="72px"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:layout_alignParentEnd="true"
             android:layout_centerVertical="true"
-            android:background="@mipmap/right" />
+            android:background="@drawable/ic_arrow_right" />
     </RelativeLayout>
 
     <View
@@ -138,11 +138,11 @@
             android:textSize="18sp" />
 
         <ImageView
-            android:layout_width="72px"
-            android:layout_height="72px"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:layout_alignParentEnd="true"
             android:layout_centerVertical="true"
-            android:background="@mipmap/right" />
+            android:background="@drawable/ic_arrow_right" />
     </RelativeLayout>
 
     <View
