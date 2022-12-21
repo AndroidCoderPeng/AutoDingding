@@ -16,6 +16,7 @@ import com.pengxh.autodingding.adapter.BaseFragmentAdapter;
 import com.pengxh.autodingding.databinding.ActivityMainBinding;
 import com.pengxh.autodingding.fragment.DingDingFragment;
 import com.pengxh.autodingding.fragment.SettingsFragment;
+import com.pengxh.autodingding.fragment.WeChatFragment;
 import com.pengxh.autodingding.utils.Constant;
 import com.pengxh.autodingding.utils.DingDingUtil;
 
@@ -37,6 +38,7 @@ public class MainActivity extends AndroidxBaseActivity<ActivityMainBinding> {
     @Override
     protected void initData() {
         fragmentPages.add(new DingDingFragment());
+        fragmentPages.add(new WeChatFragment());
         fragmentPages.add(new SettingsFragment());
     }
 
