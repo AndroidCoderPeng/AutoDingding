@@ -25,7 +25,7 @@
         <ImageView
             android:id="@+id/titleRightView"
             style="@style/rightImageStyle"
-            android:background="@mipmap/settings" />
+            android:background="@drawable/ic_settings" />
     </RelativeLayout>
 
     <com.scwang.smartrefresh.layout.SmartRefreshLayout
