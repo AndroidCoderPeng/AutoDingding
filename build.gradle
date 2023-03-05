@@ -1,11 +1,14 @@
 // Top-level build file where you can add configuration options common to all sub-projects/modules.
 buildscript {
+    ext.kotlin_version = '1.6.10'
     repositories {
         maven { url 'http://maven.aliyun.com/nexus/content/groups/public/' }
         google()
+        mavenCentral()
     }
     dependencies {
         classpath 'com.android.tools.build:gradle:3.6.4'
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
         classpath 'org.greenrobot:greendao-gradle-plugin:3.3.0'
 
         // NOTE: Do not place your application dependencies here; they belong
@@ -16,8 +19,9 @@ buildscript {
 allprojects {
     repositories {
         maven { url 'http://maven.aliyun.com/nexus/content/groups/public/' }
-        google()
+        //依赖库
         maven { url 'https://jitpack.io' }
+        google()
     }
 }
 
