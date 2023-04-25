@@ -28,7 +28,6 @@ object DingDingUtil {
     }
 
     /**
-     * TODO
      * 检查手机上是否安装了指定的软件
      *
      * @param packageName 应用包名
@@ -42,8 +41,7 @@ object DingDingUtil {
             val packName = packageInfos[i].packageName
             packageNames.add(packName)
         }
-//        return packageNames.contains(packageName)
-        return true
+        return packageNames.contains(packageName)
     }
 
     /**

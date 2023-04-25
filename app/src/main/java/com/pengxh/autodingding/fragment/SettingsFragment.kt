@@ -16,7 +16,6 @@ import cn.bertsir.zbar.utils.QRUtils
 import com.pengxh.autodingding.BaseApplication
 import com.pengxh.autodingding.BuildConfig
 import com.pengxh.autodingding.R
-import com.pengxh.autodingding.greendao.HistoryRecordBeanDao
 import com.pengxh.autodingding.ui.HistoryRecordActivity
 import com.pengxh.autodingding.ui.NoticeRecordActivity
 import com.pengxh.autodingding.utils.Constant
@@ -30,8 +29,8 @@ import kotlinx.android.synthetic.main.fragment_settings.*
 
 class SettingsFragment : KotlinBaseFragment() {
 
-    private var historyBeanDao: HistoryRecordBeanDao? = null
-    private var notificationManager: NotificationManager? = null
+    private val historyBeanDao by lazy { BaseApplication.get().daoSession.historyRecordBeanDao }
+    private val notificationManager by lazy { requireContext().getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager }
 
     override fun setupTopBarLayout() {
 
@@ -44,9 +43,6 @@ class SettingsFragment : KotlinBaseFragment() {
     override fun initLayoutView(): Int = R.layout.fragment_settings
 
     override fun initData() {
-        historyBeanDao = BaseApplication.get().daoSession.historyRecordBeanDao
-        notificationManager =
-            requireContext().getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
         val emailAddress = SaveKeyValues.getValue(Constant.EMAIL_ADDRESS, "") as String
         if (!TextUtils.isEmpty(emailAddress)) {
             emailTextView.text = emailAddress
@@ -55,7 +51,7 @@ class SettingsFragment : KotlinBaseFragment() {
     }
 
     override fun initEvent() {
-        emailLayout.setOnClickListener { v ->
+        emailLayout.setOnClickListener {
             AlertInputDialog.Builder()
                 .setContext(requireContext())
                 .setTitle("设置邮箱")
@@ -85,7 +81,7 @@ class SettingsFragment : KotlinBaseFragment() {
             requireContext().navigatePageTo<NoticeRecordActivity>()
         }
 
-        introduceLayout.setOnClickListener { v ->
+        introduceLayout.setOnClickListener {
             AlertMessageDialog.Builder()
                 .setContext(requireContext())
                 .setTitle("功能介绍")
@@ -118,7 +114,7 @@ class SettingsFragment : KotlinBaseFragment() {
         } catch (e: Exception) {
             e.printStackTrace()
         }
-        updateCodeView.setOnLongClickListener { v ->
+        updateCodeView.setOnLongClickListener {
             val updateLink =
                 SaveKeyValues.getValue("updateLink", "https://www.pgyer.com/MBGt") as String
             AlertMessageDialog.Builder()
@@ -144,18 +140,14 @@ class SettingsFragment : KotlinBaseFragment() {
      */
     override fun onResume() {
         super.onResume()
-        recordSize.text = historyBeanDao?.loadAll()?.size.toString()
+        recordSize.text = historyBeanDao.loadAll().size.toString()
         noticeCheckBox.isChecked = notificationEnable()
         super.onResume()
     }
 
     //检测通知监听服务是否被授权
     private fun notificationEnable(): Boolean {
-        val packages: Set<String> =
-            NotificationManagerCompat.getEnabledListenerPackages(requireContext())
-        //        for (String aPackage : packages) {
-//            Log.d(TAG, "notificationEnable ===> "+aPackage);
-//        }
+        val packages = NotificationManagerCompat.getEnabledListenerPackages(requireContext())
         return packages.contains(requireContext().packageName)
     }
 
@@ -170,7 +162,7 @@ class SettingsFragment : KotlinBaseFragment() {
             mChannel.enableVibration(true)
             mChannel.vibrationPattern = longArrayOf(100, 200, 300)
             mChannel.lockscreenVisibility = Notification.VISIBILITY_PUBLIC //设置锁屏可见
-            notificationManager?.createNotificationChannel(mChannel)
+            notificationManager.createNotificationChannel(mChannel)
             Notification.Builder(requireContext(), id)
         } else {
             Notification.Builder(requireContext())
@@ -185,6 +177,6 @@ class SettingsFragment : KotlinBaseFragment() {
             .setAutoCancel(false)
         val notification = builder.build()
         notification.flags = Notification.FLAG_NO_CLEAR
-        notificationManager?.notify(Int.MAX_VALUE, notification)
+        notificationManager.notify(Int.MAX_VALUE, notification)
     }
 }

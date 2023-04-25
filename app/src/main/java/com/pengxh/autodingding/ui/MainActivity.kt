@@ -17,7 +17,6 @@ import com.pengxh.kt.lite.utils.ImmerseStatusBarUtil
 import com.pengxh.kt.lite.utils.SaveKeyValues
 import com.pengxh.kt.lite.widget.dialog.AlertMessageDialog
 import kotlinx.android.synthetic.main.activity_main.*
-import kotlinx.android.synthetic.main.activity_notice.titleView
 
 class MainActivity : KotlinBaseActivity() {
 
@@ -49,8 +48,7 @@ class MainActivity : KotlinBaseActivity() {
                     override fun onConfirmClick() {
                         SaveKeyValues.putValue("isFirst", false)
                     }
-                }).build()
-                .show()
+                }).build().show()
         }
     }
 
@@ -58,19 +56,22 @@ class MainActivity : KotlinBaseActivity() {
         bottomNavigation.setOnItemSelectedListener { item ->
             val itemId: Int = item.itemId
             if (itemId == R.id.nav_dingding) {
-                if (DingDingUtil.isAppAvailable(Constant.DINGDING)) {
-                    viewPager.currentItem = 0
-                    titleView.text = "钉钉打卡"
-                } else {
-                    showAlertDialog("手机没有安装《钉钉》软件，无法自动打卡")
-                }
+//                if (DingDingUtil.isAppAvailable(Constant.DINGDING)) {
+//                    viewPager.currentItem = 0
+//                    titleView.text = "钉钉打卡"
+//                } else {
+//                    showAlertDialog("手机没有安装《钉钉》软件，无法自动打卡")
+//                }
+                viewPager.currentItem = 0
+                titleView.text = "钉钉打卡"
             } else if (itemId == R.id.nav_wechat) {
-                if (DingDingUtil.isAppAvailable(Constant.WECHAT)) {
-                    viewPager.currentItem = 1
-                    titleView.text = "企业微信"
-                } else {
-                    showAlertDialog("手机没有安装《企业微信》，无法自动打卡")
-                }
+//                if (DingDingUtil.isAppAvailable(Constant.WECHAT)) {
+//                    viewPager.currentItem = 1
+//                    titleView.text = "企业微信"
+//                } else {
+//                    showAlertDialog("手机没有安装《企业微信》，无法自动打卡")
+//                }
+                showAlertDialog("未实现")
             } else if (itemId == R.id.nav_settings) {
                 viewPager.currentItem = 2
                 titleView.text = "其他设置"

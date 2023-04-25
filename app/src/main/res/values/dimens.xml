@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:tools="http://schemas.android.com/tools">
+    <!--字体大小-->
+    <dimen name="sp_10">10sp</dimen>
+    <dimen name="sp_12">12sp</dimen>
+    <dimen name="sp_14">14sp</dimen>
+    <dimen name="sp_16">16sp</dimen>
+    <dimen name="sp_18">18sp</dimen>
+    <dimen name="sp_20">20sp</dimen>
+    <dimen name="sp_22">22sp</dimen>
+
+    <!--控件边距-->
+    <dimen name="dp_1">1dp</dimen>
+    <dimen name="dp_2">2dp</dimen>
+    <dimen name="dp_3">3dp</dimen>
+    <dimen name="dp_5">5dp</dimen>
+    <dimen name="dp_7">7dp</dimen>
+    <dimen name="dp_10">10dp</dimen>
+    <dimen name="dp_15">15dp</dimen>
+    <dimen name="dp_20">20dp</dimen>
+    <dimen name="dp_25">25dp</dimen>
+    <dimen name="dp_30">30dp</dimen>
+    <dimen name="dp_35">35dp</dimen>
+    <dimen name="dp_40">40dp</dimen>
+    <dimen name="dp_45">45dp</dimen>
+    <dimen name="dp_50">50dp</dimen>
+    <dimen name="dp_55">55dp</dimen>
+    <dimen name="dp_60">60dp</dimen>
+    <dimen name="dp_70">70dp</dimen>
+    <dimen name="dp_75">75dp</dimen>
+    <dimen name="dp_80">80dp</dimen>
+    <dimen name="dp_100">100dp</dimen>
+    <dimen name="dp_125">125dp</dimen>
+    <dimen name="dp_150">150dp</dimen>
+    <dimen name="dp_200">200dp</dimen>
+
+    <!--分割线-->
+    <dimen name="dividerLine">1dp</dimen>
+
+    <!--边框-->
+    <dimen name="borderThickness">1px</dimen>
+
+    <!--title栏高度-->
+    <dimen name="titleViewHeight">45dp</dimen>
+
+    <!--普通列表Item Layout高度-->
+    <dimen name="itemLayoutHeight">56dp</dimen>
+
+    <!--折线/饼图/柱状图高度-->
+    <dimen name="AndroidChartHeight">255dp</dimen>
+
+    <!--png图标大小-->
+    <dimen name="pngSize" tools:ignore="PxUsage">80px</dimen>
+    <dimen name="homePngSize" tools:ignore="PxUsage">128px</dimen>
+</resources>

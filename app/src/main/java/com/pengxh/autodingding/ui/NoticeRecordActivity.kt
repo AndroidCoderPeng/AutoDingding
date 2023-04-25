@@ -8,19 +8,23 @@ import com.gyf.immersionbar.ImmersionBar
 import com.pengxh.autodingding.BaseApplication
 import com.pengxh.autodingding.R
 import com.pengxh.autodingding.bean.NotificationBean
-import com.pengxh.autodingding.greendao.DaoSession
+import com.pengxh.autodingding.greendao.NotificationBeanDao
+import com.pengxh.autodingding.utils.DividerItemDecoration
 import com.pengxh.kt.lite.adapter.NormalRecyclerAdapter
 import com.pengxh.kt.lite.adapter.ViewHolder
 import com.pengxh.kt.lite.base.KotlinBaseActivity
 import com.pengxh.kt.lite.extensions.convertColor
+import com.pengxh.kt.lite.extensions.dp2px
 import com.pengxh.kt.lite.utils.ImmerseStatusBarUtil
 import com.pengxh.kt.lite.utils.WeakReferenceHandler
 import kotlinx.android.synthetic.main.activity_notice.*
+import kotlinx.android.synthetic.main.include_base_title.*
 
 class NoticeRecordActivity : KotlinBaseActivity() {
 
+    private val context = this@NoticeRecordActivity
+    private val notificationBeanDao by lazy { BaseApplication.get().daoSession.notificationBeanDao }
     private lateinit var weakReferenceHandler: WeakReferenceHandler
-    private lateinit var daoSession: DaoSession
     private lateinit var noticeAdapter: NormalRecyclerAdapter<NotificationBean>
     private var dataBeans: MutableList<NotificationBean> = ArrayList()
     private var isRefresh = false
@@ -37,12 +41,13 @@ class NoticeRecordActivity : KotlinBaseActivity() {
 
     override fun initData() {
         weakReferenceHandler = WeakReferenceHandler(callback)
-        daoSession = BaseApplication.get().daoSession
         dataBeans = queryNotificationRecord()
         weakReferenceHandler.sendEmptyMessage(2022061901)
     }
 
     override fun initEvent() {
+        leftBackView.setOnClickListener { finish() }
+
         refreshLayout.setOnRefreshListener { refreshLayout ->
             isRefresh = true
             object : CountDownTimer(1000, 500) {
@@ -93,9 +98,7 @@ class NoticeRecordActivity : KotlinBaseActivity() {
                             R.layout.item_list_notice, dataBeans
                         ) {
                             override fun convertView(
-                                viewHolder: ViewHolder,
-                                position: Int,
-                                item: NotificationBean
+                                viewHolder: ViewHolder, position: Int, item: NotificationBean
                             ) {
                                 viewHolder.setText(R.id.titleView, "标题：${item.notificationTitle}")
                                     .setText(R.id.packageNameView, "包名：${item.packageName}")
@@ -103,6 +106,11 @@ class NoticeRecordActivity : KotlinBaseActivity() {
                                     .setText(R.id.postTimeView, item.postTime)
                             }
                         }
+                    notificationView.addItemDecoration(
+                        DividerItemDecoration(
+                            10f.dp2px(context).toFloat(), 10f.dp2px(context).toFloat()
+                        )
+                    )
                     notificationView.adapter = noticeAdapter
                 }
             }
@@ -111,7 +119,8 @@ class NoticeRecordActivity : KotlinBaseActivity() {
     }
 
     private fun queryNotificationRecord(): MutableList<NotificationBean> {
-        return daoSession.queryBuilder(NotificationBean::class.java)
+        return notificationBeanDao.queryBuilder()
+            .orderDesc(NotificationBeanDao.Properties.PostTime)
             .offset(offset * 15).limit(15).list()
     }
 }

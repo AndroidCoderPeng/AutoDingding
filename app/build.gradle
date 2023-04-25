@@ -12,8 +12,8 @@ android {
         applicationId "com.pengxh.autodingding"
         minSdkVersion 23
         targetSdkVersion 31
-        versionCode 7
-        versionName "1.3.3"
+        versionCode 8
+        versionName "1.3.4.0"
     }
 
     buildTypes {
@@ -62,15 +62,15 @@ android {
 }
 
 static def getBuildDate() {
-    SimpleDateFormat dateFormat = new SimpleDateFormat("yyyyMMddHHMM", Locale.CHINA)
+    SimpleDateFormat dateFormat = new SimpleDateFormat("yyyyMMdd", Locale.CHINA)
     return dateFormat.format(System.currentTimeMillis())
 }
 
 
 dependencies {
     implementation fileTree(include: ['*.jar'], dir: 'libs')
-    implementation 'com.github.AndroidCoderPeng:Kotlin-lite-lib:1.0.4'
-    implementation 'androidx.appcompat:appcompat:1.5.1'
+    implementation 'com.github.AndroidCoderPeng:Kotlin-lite-lib:1.0.4.1'
+    implementation 'androidx.appcompat:appcompat:1.6.1'
     implementation 'androidx.core:core-ktx:1.9.0'
     implementation 'com.google.android.material:material:1.6.1'
     //Google官方授权库
