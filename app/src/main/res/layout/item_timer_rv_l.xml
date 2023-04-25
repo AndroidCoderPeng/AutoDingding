@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="@dimen/itemLayoutHeight"
+    android:layout_marginHorizontal="@dimen/dp_7">
+
+    <TextView
+        android:id="@+id/timeView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerVertical="true"
+        android:text="08:00"
+        android:textColor="@color/black"
+        android:textSize="@dimen/sp_20" />
+
+    <Switch
+        android:id="@+id/timerSwitch"
+        style="@style/switchStyle"
+        android:thumb="@drawable/select_switch_circle"
+        android:track="@drawable/select_switch_background"
+        tools:ignore="UseSwitchCompatOrMaterialXml" />
+</RelativeLayout>
