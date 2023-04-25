@@ -11,7 +11,7 @@ import com.gyf.immersionbar.ImmersionBar
 import com.pengxh.autodingding.BaseApplication
 import com.pengxh.autodingding.R
 import com.pengxh.autodingding.bean.HistoryRecordBean
-import com.pengxh.autodingding.greendao.DaoSession
+import com.pengxh.autodingding.greendao.HistoryRecordBeanDao
 import com.pengxh.autodingding.utils.Constant
 import com.pengxh.autodingding.utils.ExcelUtils
 import com.pengxh.kt.lite.adapter.NormalRecyclerAdapter
@@ -35,9 +35,9 @@ class HistoryRecordActivity : KotlinBaseActivity() {
     private val images = intArrayOf(R.drawable.ic_delete, R.drawable.ic_export)
     private val titles = arrayOf("删除记录", "导出记录")
     private val excelTitle = arrayOf("uuid", "日期", "打卡信息")
+    private val historyRecordBeanDao by lazy { BaseApplication.get().daoSession.historyRecordBeanDao }
     private lateinit var easyPopupWindow: EasyPopupWindow
     private lateinit var weakReferenceHandler: WeakReferenceHandler
-    private lateinit var daoSession: DaoSession
     private lateinit var historyAdapter: NormalRecyclerAdapter<HistoryRecordBean>
     private var dataBeans: MutableList<HistoryRecordBean> = ArrayList()
     private var isRefresh = false
@@ -58,7 +58,6 @@ class HistoryRecordActivity : KotlinBaseActivity() {
 
     override fun initData() {
         weakReferenceHandler = WeakReferenceHandler(callback)
-        daoSession = BaseApplication.get().daoSession
         dataBeans = queryHistoryRecord()
         weakReferenceHandler.sendEmptyMessage(2022021403)
         easyPopupWindow = EasyPopupWindow(this)
@@ -91,7 +90,7 @@ class HistoryRecordActivity : KotlinBaseActivity() {
                                 .setOnDialogButtonClickListener(object :
                                     AlertControlDialog.OnDialogButtonClickListener {
                                     override fun onConfirmClick() {
-                                        daoSession.historyRecordBeanDao.deleteAll()
+                                        historyRecordBeanDao.deleteAll()
                                         dataBeans.clear()
                                         historyAdapter.notifyDataSetChanged()
                                         emptyView.visibility = View.VISIBLE
@@ -183,9 +182,7 @@ class HistoryRecordActivity : KotlinBaseActivity() {
                     historyAdapter = object :
                         NormalRecyclerAdapter<HistoryRecordBean>(R.layout.item_list, dataBeans) {
                         override fun convertView(
-                            viewHolder: ViewHolder,
-                            position: Int,
-                            item: HistoryRecordBean
+                            viewHolder: ViewHolder, position: Int, item: HistoryRecordBean
                         ) {
                             val message: String = item.message
                             if (!message.contains("成功")) {
@@ -205,7 +202,8 @@ class HistoryRecordActivity : KotlinBaseActivity() {
     }
 
     private fun queryHistoryRecord(): MutableList<HistoryRecordBean> {
-        return daoSession.queryBuilder(HistoryRecordBean::class.java)
+        return historyRecordBeanDao.queryBuilder()
+            .orderDesc(HistoryRecordBeanDao.Properties.Date)
             .offset(offset * 15).limit(15).list()
     }
 
