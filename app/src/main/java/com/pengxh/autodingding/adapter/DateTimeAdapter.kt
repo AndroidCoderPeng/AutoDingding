@@ -37,9 +37,13 @@ class DateTimeAdapter(context: Context, private val dataBeans: MutableList<DateT
         holder.timeView.text = timeBean.time
         holder.weekDayView.text = timeBean.weekDay
 
+        holder.itemView.setOnClickListener {
+            itemClickListener?.onItemClick(position)
+        }
+
         // 长按监听
-        holder.itemView.setOnLongClickListener { v ->
-            itemClickListener?.onItemLongClick(v, position)
+        holder.itemView.setOnLongClickListener {
+            itemClickListener?.onItemLongClick(it, position)
             true
         }
 
@@ -69,13 +73,15 @@ class DateTimeAdapter(context: Context, private val dataBeans: MutableList<DateT
         }
     }
 
-    private var itemClickListener: OnItemLongClickListener? = null
+    private var itemClickListener: OnItemClickListener? = null
 
-    fun setOnItemLongClickListener(listener: OnItemLongClickListener?) {
+    fun setOnItemClickListener(listener: OnItemClickListener?) {
         this.itemClickListener = listener
     }
 
-    interface OnItemLongClickListener {
+    interface OnItemClickListener {
+        fun onItemClick(index: Int)
+
         fun onItemLongClick(view: View?, index: Int)
     }
 

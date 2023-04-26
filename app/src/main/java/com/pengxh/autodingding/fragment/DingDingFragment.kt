@@ -2,6 +2,7 @@ package com.pengxh.autodingding.fragment
 
 import android.os.CountDownTimer
 import android.os.Handler
+import android.util.Log
 import android.view.View
 import com.pengxh.autodingding.BaseApplication
 import com.pengxh.autodingding.R
@@ -39,7 +40,7 @@ class DingDingFragment : KotlinBaseFragment() {
 
     override fun initData() {
         weakReferenceHandler = WeakReferenceHandler(callback)
-        dataBeans = getAutoDingdingTasks()
+        dataBeans = getAutoDingDingTasks()
         weakReferenceHandler.sendEmptyMessage(2023042601)
         //设置分割线
         weeklyRecyclerView.addItemDecoration(
@@ -48,12 +49,12 @@ class DingDingFragment : KotlinBaseFragment() {
     }
 
     override fun onResume() {
-        dataBeans = getAutoDingdingTasks()
+        dataBeans = getAutoDingDingTasks()
         weakReferenceHandler.sendEmptyMessage(2023042601)
         super.onResume()
     }
 
-    private fun getAutoDingdingTasks(): MutableList<DateTimeBean> {
+    private fun getAutoDingDingTasks(): MutableList<DateTimeBean> {
         return dateTimeBeanDao.queryBuilder()
             .orderDesc(DateTimeBeanDao.Properties.Date)
             .offset(offset * 15).limit(15).list()
@@ -70,8 +71,13 @@ class DingDingFragment : KotlinBaseFragment() {
                     emptyView.visibility = View.GONE
                     dateTimeAdapter = DateTimeAdapter(requireContext(), dataBeans)
                     weeklyRecyclerView.adapter = dateTimeAdapter
-                    dateTimeAdapter.setOnItemLongClickListener(object :
-                        DateTimeAdapter.OnItemLongClickListener {
+                    dateTimeAdapter.setOnItemClickListener(object :
+                        DateTimeAdapter.OnItemClickListener {
+                        override fun onItemClick(index: Int) {
+                            val uuid = dataBeans[index].uuid
+                            Log.d(kTag, "onItemClick: $uuid")
+                        }
+
                         override fun onItemLongClick(view: View?, index: Int) {
                             dateTimeBeanDao.delete(dataBeans[index])
                             dataBeans.removeAt(index)
@@ -97,7 +103,7 @@ class DingDingFragment : KotlinBaseFragment() {
             requireContext().navigatePageTo<AddTimerActivity>()
         }
 
-        refreshLayout.setOnRefreshListener { refreshLayout ->
+        refreshLayout.setOnRefreshListener {
             isRefresh = true
             object : CountDownTimer(1000, 500) {
                 override fun onTick(millisUntilFinished: Long) {}
@@ -105,22 +111,22 @@ class DingDingFragment : KotlinBaseFragment() {
                     isRefresh = false
                     dataBeans.clear()
                     offset = 0
-                    dataBeans = getAutoDingdingTasks()
-                    refreshLayout.finishRefresh()
+                    dataBeans = getAutoDingDingTasks()
+                    it.finishRefresh()
                     weakReferenceHandler.sendEmptyMessage(2023042601)
                 }
             }.start()
         }
 
-        refreshLayout.setOnLoadMoreListener { refreshLayout ->
+        refreshLayout.setOnLoadMoreListener {
             isLoadMore = true
             object : CountDownTimer(1000, 500) {
                 override fun onTick(millisUntilFinished: Long) {}
                 override fun onFinish() {
                     isLoadMore = false
                     offset++
-                    dataBeans.addAll(getAutoDingdingTasks())
-                    refreshLayout.finishLoadMore()
+                    dataBeans.addAll(getAutoDingDingTasks())
+                    it.finishLoadMore()
                     weakReferenceHandler.sendEmptyMessage(2023042601)
                 }
             }.start()
