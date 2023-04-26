@@ -135,6 +135,8 @@ class HistoryRecordActivity : KotlinBaseActivity() {
     }
 
     override fun initEvent() {
+        leftBackView.setOnClickListener { finish() }
+
         refreshLayout.setOnRefreshListener { refreshLayout ->
             isRefresh = true
             object : CountDownTimer(1000, 500) {

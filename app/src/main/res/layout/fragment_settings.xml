@@ -2,7 +2,7 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#F3F7FF"
+    android:background="@color/mainBackground"
     android:orientation="vertical">
 
     <RelativeLayout
@@ -10,7 +10,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="10dp"
-        android:layout_marginBottom="20dp"
+        android:layout_marginBottom="10dp"
         android:background="@color/white"
         android:paddingHorizontal="10dp"
         android:paddingVertical="15dp">
@@ -21,7 +21,7 @@
             android:gravity="center_vertical"
             android:text="邮箱设置"
             android:textColor="@color/colorText"
-            android:textSize="18sp" />
+            android:textSize="@dimen/sp_16" />
 
         <TextView
             android:id="@+id/emailTextView"
@@ -30,7 +30,7 @@
             android:layout_alignParentEnd="true"
             android:gravity="center_vertical"
             android:textColor="@color/colorText"
-            android:textSize="18sp" />
+            android:textSize="@dimen/sp_16" />
     </RelativeLayout>
 
     <RelativeLayout
@@ -47,7 +47,7 @@
             android:layout_centerVertical="true"
             android:text="打卡记录"
             android:textColor="@color/colorText"
-            android:textSize="18sp" />
+            android:textSize="@dimen/sp_16" />
 
         <TextView
             android:id="@+id/recordSize"
@@ -56,12 +56,42 @@
             android:layout_alignParentEnd="true"
             android:layout_centerVertical="true"
             android:textColor="@color/colorText"
-            android:textSize="18sp" />
+            android:textSize="@dimen/sp_16" />
     </RelativeLayout>
 
     <View
         android:layout_width="match_parent"
         android:layout_height="1px"
+        android:layout_marginStart="@dimen/dp_10"
+        android:background="#CCC" />
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/white"
+        android:paddingHorizontal="10dp"
+        android:paddingVertical="15dp">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:text="通知监听"
+            android:textColor="@color/colorText"
+            android:textSize="@dimen/sp_16" />
+
+        <CheckBox
+            android:id="@+id/noticeCheckBox"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:layout_centerVertical="true" />
+    </RelativeLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1px"
+        android:layout_marginStart="@dimen/dp_10"
         android:background="#CCC" />
 
     <RelativeLayout
@@ -78,7 +108,7 @@
             android:layout_centerVertical="true"
             android:text="所有通知"
             android:textColor="@color/colorText"
-            android:textSize="18sp" />
+            android:textSize="@dimen/sp_16" />
 
         <ImageView
             android:layout_width="wrap_content"
@@ -91,34 +121,7 @@
     <View
         android:layout_width="match_parent"
         android:layout_height="1px"
-        android:background="#CCC" />
-
-    <RelativeLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="@color/white"
-        android:paddingHorizontal="10dp"
-        android:paddingVertical="15dp">
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerVertical="true"
-            android:text="通知监听"
-            android:textColor="@color/colorText"
-            android:textSize="18sp" />
-
-        <CheckBox
-            android:id="@+id/noticeCheckBox"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentEnd="true"
-            android:layout_centerVertical="true" />
-    </RelativeLayout>
-
-    <View
-        android:layout_width="match_parent"
-        android:layout_height="1px"
+        android:layout_marginStart="@dimen/dp_10"
         android:background="#CCC" />
 
     <RelativeLayout
@@ -135,7 +138,7 @@
             android:layout_centerVertical="true"
             android:text="使用说明"
             android:textColor="@color/colorText"
-            android:textSize="18sp" />
+            android:textSize="@dimen/sp_16" />
 
         <ImageView
             android:layout_width="wrap_content"
@@ -148,6 +151,7 @@
     <View
         android:layout_width="match_parent"
         android:layout_height="1px"
+        android:layout_marginStart="@dimen/dp_10"
         android:background="#CCC" />
 
     <RelativeLayout
@@ -163,7 +167,7 @@
             android:gravity="center_vertical"
             android:text="当前版本"
             android:textColor="@color/colorText"
-            android:textSize="18sp" />
+            android:textSize="@dimen/sp_16" />
 
         <TextView
             android:id="@+id/appVersion"
@@ -172,7 +176,7 @@
             android:layout_alignParentEnd="true"
             android:gravity="center_vertical"
             android:textColor="@color/colorText"
-            android:textSize="18sp" />
+            android:textSize="@dimen/sp_16" />
     </RelativeLayout>
 
     <RelativeLayout

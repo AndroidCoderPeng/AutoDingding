@@ -1,159 +1,49 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/white"
+    android:background="@color/mainBackground"
     android:keepScreenOn="true"
     android:orientation="vertical">
 
-    <TextClock
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:fontFamily="monospace"
-        android:format24Hour="HH:mm:ss"
-        android:gravity="center"
-        android:padding="30dp"
-        android:text="--:--:--"
-        android:textColor="@color/colorText"
-        android:textSize="40sp"
-        android:textStyle="bold" />
+        android:layout_height="match_parent"
+        android:orientation="vertical">
 
-    <androidx.cardview.widget.CardView
+        <TextClock
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginVertical="@dimen/dp_50"
+            android:format24Hour="HH:mm:ss"
+            android:gravity="center_horizontal"
+            android:textColor="@color/black"
+            android:textSize="48sp" />
+
+        <TextView
+            android:id="@+id/countDownTipsView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="@dimen/dp_50"
+            android:gravity="center_horizontal"
+            android:text="19小时58分钟后自动打卡"
+            android:textColor="@color/black"
+            android:textSize="@dimen/sp_20"
+            android:visibility="gone" />
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/weeklyRecyclerView"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager" />
+    </LinearLayout>
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/addTimerButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="20dp"
-        android:layout_marginEnd="20dp"
-        app:cardCornerRadius="5dp"
-        app:cardElevation="10dp">
-
-        <RelativeLayout
-            android:id="@+id/startLayoutView"
-            android:layout_width="match_parent"
-            android:layout_height="170dp"
-            android:background="@mipmap/bg_2"
-            android:padding="5dp">
-
-            <RelativeLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content">
-
-                <ImageView
-                    android:id="@+id/v"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:background="@drawable/ic_clock" />
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_centerVertical="true"
-                    android:layout_toEndOf="@id/v"
-                    android:text="上班打卡"
-                    android:textColor="@color/white" />
-
-                <ImageView
-                    android:id="@+id/endAmDuty"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_alignParentEnd="true"
-                    android:background="@drawable/ic_stop" />
-            </RelativeLayout>
-
-            <TextView
-                android:id="@+id/startTimeView"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_centerInParent="true"
-                android:text="--"
-                android:textColor="@color/white"
-                android:textSize="50sp" />
-
-            <TextView
-                android:id="@+id/amTime"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentBottom="true"
-                android:text="--:--:--"
-                android:textColor="@color/white" />
-
-            <ImageView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentEnd="true"
-                android:layout_alignParentBottom="true"
-                android:background="@drawable/ic_dingding" />
-        </RelativeLayout>
-    </androidx.cardview.widget.CardView>
-
-    <View
-        android:layout_width="match_parent"
-        android:layout_height="30dp" />
-
-    <androidx.cardview.widget.CardView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="20dp"
-        android:layout_marginEnd="20dp"
-        app:cardCornerRadius="5dp"
-        app:cardElevation="10dp">
-
-        <RelativeLayout
-            android:id="@+id/endLayoutView"
-            android:layout_width="match_parent"
-            android:layout_height="170dp"
-            android:background="@mipmap/bg_2"
-            android:padding="5dp">
-
-            <RelativeLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content">
-
-                <ImageView
-                    android:id="@+id/vv"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:background="@drawable/ic_clock" />
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_centerVertical="true"
-                    android:layout_toEndOf="@id/vv"
-                    android:text="下班打卡"
-                    android:textColor="@color/white" />
-
-                <ImageView
-                    android:id="@+id/endPmDuty"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_alignParentEnd="true"
-                    android:background="@drawable/ic_stop" />
-            </RelativeLayout>
-
-            <TextView
-                android:id="@+id/endTimeView"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_centerInParent="true"
-                android:text="--"
-                android:textColor="@color/white"
-                android:textSize="50sp" />
-
-            <TextView
-                android:id="@+id/pmTime"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentBottom="true"
-                android:text="--:--:--"
-                android:textColor="@color/white" />
-
-            <ImageView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentEnd="true"
-                android:layout_alignParentBottom="true"
-                android:background="@drawable/ic_dingding" />
-        </RelativeLayout>
-    </androidx.cardview.widget.CardView>
-</LinearLayout>
+        android:layout_gravity="center_horizontal|bottom"
+        android:layout_margin="@dimen/dp_30"
+        android:src="@drawable/ic_add" />
+</FrameLayout>

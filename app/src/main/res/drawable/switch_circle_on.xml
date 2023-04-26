@@ -8,7 +8,7 @@
 
     <stroke
         android:width="2dp"
-        android:color="@color/iOSGreen" />
+        android:color="@color/colorAppThemeLight" />
 
     <solid android:color="#FFFFFF" />
 </shape>

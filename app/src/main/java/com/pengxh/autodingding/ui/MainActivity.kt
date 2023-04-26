@@ -8,9 +8,6 @@ import com.pengxh.autodingding.R
 import com.pengxh.autodingding.adapter.BaseFragmentAdapter
 import com.pengxh.autodingding.fragment.DingDingFragment
 import com.pengxh.autodingding.fragment.SettingsFragment
-import com.pengxh.autodingding.fragment.WeChatFragment
-import com.pengxh.autodingding.utils.Constant
-import com.pengxh.autodingding.utils.DingDingUtil
 import com.pengxh.kt.lite.base.KotlinBaseActivity
 import com.pengxh.kt.lite.extensions.convertColor
 import com.pengxh.kt.lite.utils.ImmerseStatusBarUtil
@@ -33,7 +30,6 @@ class MainActivity : KotlinBaseActivity() {
 
     override fun initData() {
         fragmentPages.add(DingDingFragment())
-        fragmentPages.add(WeChatFragment())
         fragmentPages.add(SettingsFragment())
 
         val isFirst = SaveKeyValues.getValue("isFirst", true) as Boolean
@@ -64,16 +60,8 @@ class MainActivity : KotlinBaseActivity() {
 //                }
                 viewPager.currentItem = 0
                 titleView.text = "钉钉打卡"
-            } else if (itemId == R.id.nav_wechat) {
-//                if (DingDingUtil.isAppAvailable(Constant.WECHAT)) {
-//                    viewPager.currentItem = 1
-//                    titleView.text = "企业微信"
-//                } else {
-//                    showAlertDialog("手机没有安装《企业微信》，无法自动打卡")
-//                }
-                showAlertDialog("未实现")
             } else if (itemId == R.id.nav_settings) {
-                viewPager.currentItem = 2
+                viewPager.currentItem = 1
                 titleView.text = "其他设置"
             }
             false
@@ -97,6 +85,11 @@ class MainActivity : KotlinBaseActivity() {
                 }
                 menuItem = bottomNavigation.menu.getItem(position)
                 menuItem!!.isChecked = true
+                if (position == 0) {
+                    titleView.text = "钉钉打卡"
+                } else {
+                    titleView.text = "其他设置"
+                }
             }
 
             override fun onPageScrollStateChanged(state: Int) {}

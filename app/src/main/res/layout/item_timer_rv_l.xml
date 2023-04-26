@@ -2,16 +2,40 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="@dimen/itemLayoutHeight"
-    android:layout_marginHorizontal="@dimen/dp_7">
+    android:layout_height="@dimen/dp_75"
+    android:layout_marginHorizontal="@dimen/dp_7"
+    android:background="@drawable/bg_solid_layout_white_radius_10">
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:layout_marginStart="@dimen/dp_10"
+        android:gravity="center_vertical"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/timeView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="@dimen/dp_2"
+            android:text="08:00"
+            android:textColor="@color/black"
+            android:textSize="@dimen/sp_20" />
+
+        <TextView
+            android:id="@+id/weekDayView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/dp_2"
+            android:text="周一" />
+    </LinearLayout>
 
     <TextView
-        android:id="@+id/timeView"
+        android:id="@+id/dateView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_centerVertical="true"
-        android:text="08:00"
-        android:textColor="@color/black"
+        android:layout_centerInParent="true"
+        android:text="2023-04-28"
         android:textSize="@dimen/sp_20" />
 
     <Switch

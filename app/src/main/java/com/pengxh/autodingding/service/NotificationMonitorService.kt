@@ -13,8 +13,6 @@ import com.pengxh.autodingding.BaseApplication
 import com.pengxh.autodingding.bean.HistoryRecordBean
 import com.pengxh.autodingding.bean.MailInfo
 import com.pengxh.autodingding.bean.NotificationBean
-import com.pengxh.autodingding.greendao.HistoryRecordBeanDao
-import com.pengxh.autodingding.greendao.NotificationBeanDao
 import com.pengxh.autodingding.ui.WelcomeActivity
 import com.pengxh.autodingding.utils.Constant
 import com.pengxh.autodingding.utils.MailInfoUtil
@@ -31,20 +29,15 @@ import java.util.*
  */
 class NotificationMonitorService : NotificationListenerService() {
 
-    companion object {
-        private const val TAG = "MonitorService"
-    }
-
-    private var recordBeanDao: HistoryRecordBeanDao? = null
-    private var notificationBeanDao: NotificationBeanDao? = null
+    private val kTag = "NotificationMonitorService"
+    private val historyRecordBeanDao by lazy { BaseApplication.get().daoSession.historyRecordBeanDao }
+    private val notificationBeanDao by lazy { BaseApplication.get().daoSession.notificationBeanDao }
 
     /**
      * 有可用的并且和通知管理器连接成功时回调
      */
     override fun onListenerConnected() {
-        Log.d(TAG, "onListenerConnected")
-        recordBeanDao = BaseApplication.get().daoSession.historyRecordBeanDao
-        notificationBeanDao = BaseApplication.get().daoSession.notificationBeanDao
+        Log.d(kTag, "onListenerConnected")
     }
 
     /**
@@ -64,24 +57,24 @@ class NotificationMonitorService : NotificationListenerService() {
         notificationBean.notificationTitle = extras.getString(Notification.EXTRA_TITLE)
         notificationBean.notificationMsg = notificationText
         notificationBean.postTime = System.currentTimeMillis().timestampToCompleteDate()
-        notificationBeanDao?.save(notificationBean)
+        notificationBeanDao.save(notificationBean)
 
 //        if (packageName.equals("com.tencent.mobileqq")) {
         if (packageName == "com.alibaba.android.rimet") {
             if (notificationText == null || notificationText == "") {
                 return
             }
-            Log.d(TAG, "onNotificationPosted ===> $notificationText")
+            Log.d(kTag, "onNotificationPosted ===> $notificationText")
             if (notificationText.contains("考勤打卡")) {
                 //保存打卡记录
                 val bean = HistoryRecordBean()
                 bean.uuid = UUID.randomUUID().toString()
                 bean.date = System.currentTimeMillis().timestampToCompleteDate()
                 bean.message = notificationText
-                recordBeanDao?.save(bean)
+                historyRecordBeanDao.save(bean)
                 val emailAddress = SaveKeyValues.getValue(Constant.EMAIL_ADDRESS, "") as String
                 if (TextUtils.isEmpty(emailAddress)) {
-                    Log.d(TAG, "邮箱地址为空")
+                    Log.d(kTag, "邮箱地址为空")
                 } else {
                     //发送打卡成功的邮件
                     Thread {
@@ -103,7 +96,7 @@ class NotificationMonitorService : NotificationListenerService() {
     override fun onNotificationRemoved(sbn: StatusBarNotification) {}
 
     override fun onListenerDisconnected() {
-        Log.d(TAG, "onListenerDisconnected")
+        Log.d(kTag, "onListenerDisconnected")
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
             // 通知侦听器断开连接 - 请求重新绑定
             requestRebind(

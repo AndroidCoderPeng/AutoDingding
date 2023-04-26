@@ -1,0 +1,94 @@
+package com.pengxh.autodingding.ui
+
+import android.annotation.SuppressLint
+import com.gyf.immersionbar.ImmersionBar
+import com.pengxh.autodingding.BaseApplication
+import com.pengxh.autodingding.R
+import com.pengxh.autodingding.bean.DateTimeBean
+import com.pengxh.autodingding.extensions.appendZero
+import com.pengxh.autodingding.extensions.convertToWeek
+import com.pengxh.kt.lite.base.KotlinBaseActivity
+import com.pengxh.kt.lite.extensions.convertColor
+import com.pengxh.kt.lite.utils.ImmerseStatusBarUtil
+import com.pengxh.kt.lite.widget.dialog.AlertControlDialog
+import kotlinx.android.synthetic.main.activity_add_timer.*
+import kotlinx.android.synthetic.main.include_base_title.*
+import java.util.*
+
+@SuppressLint("SetTextI18n")
+class AddTimerActivity : KotlinBaseActivity() {
+
+    private val dateTimeBeanDao by lazy { BaseApplication.get().daoSession.dateTimeBeanDao }
+
+    override fun initData() {
+        ImmerseStatusBarUtil.setColor(
+            this, R.color.colorAppThemeLight.convertColor(this)
+        )
+        ImmersionBar.with(this).statusBarDarkFont(false).init()
+        titleView.text = "新建定时"
+    }
+
+    override fun initEvent() {
+        leftBackView.setOnClickListener { finish() }
+
+        val calendar = Calendar.getInstance()
+        //设置默认显示日期
+        val month = (calendar.get(Calendar.MONTH) + 1).appendZero()
+        val dayOfMonth = calendar.get(Calendar.DAY_OF_MONTH).appendZero()
+        selectedDateView.text = "${calendar.get(Calendar.YEAR)}-${month}-${dayOfMonth}"
+
+        datePicker.init(
+            calendar.get(Calendar.YEAR),
+            calendar.get(Calendar.MONTH),
+            calendar.get(Calendar.DAY_OF_MONTH)
+        ) { _, year, monthOfYear, dayOfMonth ->
+            selectedDateView.text =
+                "${year}-${(monthOfYear + 1).appendZero()}-${dayOfMonth.appendZero()}"
+        }
+
+        //设置默认显示时间
+        selectedTimeView.text = "${timePicker.hour.appendZero()}:${timePicker.minute.appendZero()}"
+        timePicker.setOnTimeChangedListener { _, hourOfDay, minute ->
+            selectedTimeView.text = "${hourOfDay.appendZero()}:${minute.appendZero()}"
+        }
+
+        saveTimerButton.setOnClickListener {
+            val time = "${selectedDateView.text} ${selectedTimeView.text}"
+
+            AlertControlDialog.Builder()
+                .setContext(this)
+                .setTitle("温馨提示")
+                .setMessage("确定保存${time}为自动打卡任务吗？")
+                .setNegativeButton("修改")
+                .setPositiveButton("确定")
+                .setOnDialogButtonClickListener(
+                    object : AlertControlDialog.OnDialogButtonClickListener {
+                        override fun onConfirmClick() {
+                            val bean = DateTimeBean()
+                            bean.uuid = UUID.randomUUID().toString()
+                            bean.date = selectedDateView.text.toString()
+                            bean.time = selectedTimeView.text.toString()
+                            bean.weekDay = selectedDateView.text.toString().convertToWeek()
+
+                            dateTimeBeanDao.insert(bean)
+                            finish()
+                        }
+
+                        override fun onCancelClick() {
+
+                        }
+                    }
+                ).build().show()
+        }
+    }
+
+    override fun initLayoutView(): Int = R.layout.activity_add_timer
+
+    override fun observeRequestState() {
+
+    }
+
+    override fun setupTopBarLayout() {
+
+    }
+}

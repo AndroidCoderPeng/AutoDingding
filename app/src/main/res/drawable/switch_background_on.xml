@@ -6,5 +6,5 @@
 
     <corners android:radius="20dp" />
 
-    <solid android:color="@color/iOSGreen" />
+    <solid android:color="@color/colorAppThemeLight" />
 </shape>

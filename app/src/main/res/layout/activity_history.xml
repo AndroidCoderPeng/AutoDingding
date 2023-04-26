@@ -4,24 +4,32 @@
     android:id="@+id/parentLayout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#FFFFFF"
+    android:background="@color/mainBackground"
     android:orientation="vertical">
 
     <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="46dp"
+        android:layout_height="@dimen/titleViewHeight"
         android:background="@color/colorAppThemeLight">
+
+        <ImageView
+            android:id="@+id/leftBackView"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:paddingHorizontal="@dimen/dp_10"
+            android:rotation="-180"
+            android:src="@drawable/ic_right_white" />
 
         <TextView
             android:id="@+id/titleView"
-            android:layout_width="match_parent"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
             android:background="@color/colorAppThemeLight"
-            android:gravity="center"
             android:paddingVertical="10dp"
             android:text="@string/app_name"
             android:textColor="@color/white"
-            android:textSize="18sp" />
+            android:textSize="@dimen/sp_16" />
 
         <ImageView
             android:id="@+id/titleRightView"

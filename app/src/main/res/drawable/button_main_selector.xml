@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item android:state_pressed="false">
+        <shape>
+            <corners android:radius="@dimen/dp_5" />
+            <solid android:color="#0094FF" />
+        </shape>
+    </item>
+
+    <item android:state_pressed="true">
+        <shape>
+            <corners android:radius="@dimen/dp_5" />
+            <!-- 点击按钮时候改变背景色50% -->
+            <solid android:color="#800094FF" />
+        </shape>
+    </item>
+</selector>
