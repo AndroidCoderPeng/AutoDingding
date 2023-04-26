@@ -1,21 +1,13 @@
 package com.pengxh.autodingding.fragment
 
-import android.app.Notification
-import android.app.NotificationChannel
-import android.app.NotificationManager
-import android.content.Context
 import android.content.Intent
-import android.graphics.Bitmap
-import android.graphics.BitmapFactory
 import android.net.Uri
-import android.os.Build
-import android.provider.Settings
 import android.text.TextUtils
-import androidx.core.app.NotificationManagerCompat
 import cn.bertsir.zbar.utils.QRUtils
 import com.pengxh.autodingding.BaseApplication
 import com.pengxh.autodingding.BuildConfig
 import com.pengxh.autodingding.R
+import com.pengxh.autodingding.extensions.notificationEnable
 import com.pengxh.autodingding.ui.HistoryRecordActivity
 import com.pengxh.autodingding.ui.NoticeRecordActivity
 import com.pengxh.autodingding.utils.Constant
@@ -30,7 +22,6 @@ import kotlinx.android.synthetic.main.fragment_settings.*
 class SettingsFragment : KotlinBaseFragment() {
 
     private val historyBeanDao by lazy { BaseApplication.get().daoSession.historyRecordBeanDao }
-    private val notificationManager by lazy { requireContext().getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager }
 
     override fun setupTopBarLayout() {
 
@@ -95,21 +86,10 @@ class SettingsFragment : KotlinBaseFragment() {
                     }
                 ).build().show()
         }
-        if (!notificationEnable()) {
-            try {
-                //打开通知监听设置页面
-                requireContext().startActivity(Intent(Settings.ACTION_NOTIFICATION_LISTENER_SETTINGS))
-            } catch (e: Exception) {
-                e.printStackTrace()
-            }
-        } else {
-            //创建常住通知栏
-            createNotification()
-        }
 
         //先识别出来备用
         try {
-            val codeValue: String = QRUtils.getInstance().decodeQRcode(updateCodeView)
+            val codeValue = QRUtils.getInstance().decodeQRcode(updateCodeView)
             SaveKeyValues.putValue("updateLink", codeValue)
         } catch (e: Exception) {
             e.printStackTrace()
@@ -141,42 +121,7 @@ class SettingsFragment : KotlinBaseFragment() {
     override fun onResume() {
         super.onResume()
         recordSize.text = historyBeanDao.loadAll().size.toString()
-        noticeCheckBox.isChecked = notificationEnable()
+        noticeCheckBox.isChecked = requireContext().notificationEnable()
         super.onResume()
-    }
-
-    //检测通知监听服务是否被授权
-    private fun notificationEnable(): Boolean {
-        val packages = NotificationManagerCompat.getEnabledListenerPackages(requireContext())
-        return packages.contains(requireContext().packageName)
-    }
-
-    private fun createNotification() {
-        //Android8.0以上必须添加 渠道 才能显示通知栏
-        val builder: Notification.Builder = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            //创建渠道
-            val name: String = requireContext().resources.getString(R.string.app_name)
-            val id = name + "_DefaultNotificationChannel"
-            val mChannel = NotificationChannel(id, name, NotificationManager.IMPORTANCE_DEFAULT)
-            mChannel.setShowBadge(true)
-            mChannel.enableVibration(true)
-            mChannel.vibrationPattern = longArrayOf(100, 200, 300)
-            mChannel.lockscreenVisibility = Notification.VISIBILITY_PUBLIC //设置锁屏可见
-            notificationManager.createNotificationChannel(mChannel)
-            Notification.Builder(requireContext(), id)
-        } else {
-            Notification.Builder(requireContext())
-        }
-        val bitmap: Bitmap =
-            BitmapFactory.decodeResource(requireContext().resources, R.mipmap.logo_round)
-        builder.setContentTitle("钉钉打卡通知监听已打开")
-            .setContentText("如果通知消失，请重新开启应用")
-            .setWhen(System.currentTimeMillis())
-            .setLargeIcon(bitmap)
-            .setSmallIcon(R.mipmap.logo_round)
-            .setAutoCancel(false)
-        val notification = builder.build()
-        notification.flags = Notification.FLAG_NO_CLEAR
-        notificationManager.notify(Int.MAX_VALUE, notification)
     }
 }

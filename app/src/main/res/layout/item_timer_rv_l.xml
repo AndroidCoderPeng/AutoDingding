@@ -2,7 +2,7 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="@dimen/dp_75"
+    android:layout_height="@dimen/dp_80"
     android:layout_marginHorizontal="@dimen/dp_7"
     android:background="@drawable/bg_solid_layout_white_radius_10">
 

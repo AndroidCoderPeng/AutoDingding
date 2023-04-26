@@ -11,7 +11,6 @@ import android.text.TextUtils
 import android.util.Log
 import com.pengxh.autodingding.BaseApplication
 import com.pengxh.autodingding.bean.HistoryRecordBean
-import com.pengxh.autodingding.bean.MailInfo
 import com.pengxh.autodingding.bean.NotificationBean
 import com.pengxh.autodingding.ui.WelcomeActivity
 import com.pengxh.autodingding.utils.Constant
@@ -29,7 +28,7 @@ import java.util.*
  */
 class NotificationMonitorService : NotificationListenerService() {
 
-    private val kTag = "NotificationMonitorService"
+    private val kTag = "MonitorService"
     private val historyRecordBeanDao by lazy { BaseApplication.get().daoSession.historyRecordBeanDao }
     private val notificationBeanDao by lazy { BaseApplication.get().daoSession.notificationBeanDao }
 
@@ -64,7 +63,6 @@ class NotificationMonitorService : NotificationListenerService() {
             if (notificationText == null || notificationText == "") {
                 return
             }
-            Log.d(kTag, "onNotificationPosted ===> $notificationText")
             if (notificationText.contains("考勤打卡")) {
                 //保存打卡记录
                 val bean = HistoryRecordBean()
@@ -78,8 +76,7 @@ class NotificationMonitorService : NotificationListenerService() {
                 } else {
                     //发送打卡成功的邮件
                     Thread {
-                        val mailInfo: MailInfo =
-                            MailInfoUtil.createMail(emailAddress, notificationText)
+                        val mailInfo = MailInfoUtil.createMail(emailAddress, notificationText)
                         MailSender.sendTextMail(mailInfo)
                     }.start()
                     val intent = Intent(this, WelcomeActivity::class.java)
@@ -99,9 +96,7 @@ class NotificationMonitorService : NotificationListenerService() {
         Log.d(kTag, "onListenerDisconnected")
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
             // 通知侦听器断开连接 - 请求重新绑定
-            requestRebind(
-                ComponentName(this, NotificationListenerService::class.java)
-            )
+            requestRebind(ComponentName(this, NotificationListenerService::class.java))
         }
     }
 }
