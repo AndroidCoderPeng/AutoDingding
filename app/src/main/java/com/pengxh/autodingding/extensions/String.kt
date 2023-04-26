@@ -9,6 +9,7 @@ import com.pengxh.autodingding.utils.DingDingUtil
 import java.text.ParseException
 import java.text.SimpleDateFormat
 import java.util.*
+import kotlin.math.abs
 
 fun String.convertToWeek(): String {
     val format = SimpleDateFormat("yyyy-MM-dd", Locale.CHINA)
@@ -28,6 +29,19 @@ fun String.convertToWeek(): String {
         7 -> return "周六"
         else -> "错误"
     }
+}
+
+/**
+ * 时间差-小时
+ * */
+fun String.diffCurrentTime(): Int {
+    if (this.isBlank()) {
+        return 0
+    }
+    val simpleDateFormat = SimpleDateFormat("yyyy-MM-dd HH:mm", Locale.CHINA)
+    val date = simpleDateFormat.parse(this)
+    val diff = abs(System.currentTimeMillis() - date.time)
+    return (diff / (3600000)).toInt()
 }
 
 /**

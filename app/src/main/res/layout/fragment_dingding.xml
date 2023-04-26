@@ -27,10 +27,9 @@
             android:layout_height="wrap_content"
             android:layout_marginBottom="@dimen/dp_50"
             android:gravity="center_horizontal"
-            android:text="19小时58分钟后自动打卡"
+            android:text="0小时0分钟后自动打卡"
             android:textColor="@color/black"
-            android:textSize="@dimen/sp_20"
-            android:visibility="gone" />
+            android:textSize="@dimen/sp_20" />
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/weeklyRecyclerView"

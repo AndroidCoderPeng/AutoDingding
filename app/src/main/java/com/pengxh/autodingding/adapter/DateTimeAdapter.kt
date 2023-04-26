@@ -5,6 +5,8 @@ import android.content.Context
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.CompoundButton
+import android.widget.Switch
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.pengxh.autodingding.R
@@ -42,6 +44,10 @@ class DateTimeAdapter(context: Context) : RecyclerView.Adapter<DateTimeAdapter.I
             itemClickListener?.onItemLongClick(v, position)
             true
         }
+
+        holder.timerSwitch.setOnCheckedChangeListener { buttonView, isChecked ->
+            itemClickListener?.onSwitchStatusChanged(position, buttonView, isChecked)
+        }
     }
 
     private var itemClickListener: OnItemLongClickListener? = null
@@ -51,6 +57,8 @@ class DateTimeAdapter(context: Context) : RecyclerView.Adapter<DateTimeAdapter.I
     }
 
     interface OnItemLongClickListener {
+        fun onSwitchStatusChanged(index: Int, buttonView: CompoundButton, isChecked: Boolean)
+
         fun onItemLongClick(view: View?, index: Int)
     }
 
@@ -58,5 +66,6 @@ class DateTimeAdapter(context: Context) : RecyclerView.Adapter<DateTimeAdapter.I
         var timeView: TextView = itemView.findViewById(R.id.timeView)
         var dateView: TextView = itemView.findViewById(R.id.dateView)
         var weekDayView: TextView = itemView.findViewById(R.id.weekDayView)
+        var timerSwitch: Switch = itemView.findViewById(R.id.timerSwitch)
     }
 }

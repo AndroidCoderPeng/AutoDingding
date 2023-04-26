@@ -10,7 +10,6 @@ import com.pengxh.autodingding.extensions.convertToWeek
 import com.pengxh.kt.lite.base.KotlinBaseActivity
 import com.pengxh.kt.lite.extensions.convertColor
 import com.pengxh.kt.lite.utils.ImmerseStatusBarUtil
-import com.pengxh.kt.lite.widget.dialog.AlertControlDialog
 import kotlinx.android.synthetic.main.activity_add_timer.*
 import kotlinx.android.synthetic.main.include_base_title.*
 import java.util.*
@@ -53,32 +52,14 @@ class AddTimerActivity : KotlinBaseActivity() {
         }
 
         saveTimerButton.setOnClickListener {
-            val time = "${selectedDateView.text} ${selectedTimeView.text}"
+            val bean = DateTimeBean()
+            bean.uuid = UUID.randomUUID().toString()
+            bean.date = selectedDateView.text.toString()
+            bean.time = selectedTimeView.text.toString()
+            bean.weekDay = selectedDateView.text.toString().convertToWeek()
 
-            AlertControlDialog.Builder()
-                .setContext(this)
-                .setTitle("温馨提示")
-                .setMessage("确定保存${time}为自动打卡任务吗？")
-                .setNegativeButton("修改")
-                .setPositiveButton("确定")
-                .setOnDialogButtonClickListener(
-                    object : AlertControlDialog.OnDialogButtonClickListener {
-                        override fun onConfirmClick() {
-                            val bean = DateTimeBean()
-                            bean.uuid = UUID.randomUUID().toString()
-                            bean.date = selectedDateView.text.toString()
-                            bean.time = selectedTimeView.text.toString()
-                            bean.weekDay = selectedDateView.text.toString().convertToWeek()
-
-                            dateTimeBeanDao.insert(bean)
-                            finish()
-                        }
-
-                        override fun onCancelClick() {
-
-                        }
-                    }
-                ).build().show()
+            dateTimeBeanDao.insert(bean)
+            finish()
         }
     }
 

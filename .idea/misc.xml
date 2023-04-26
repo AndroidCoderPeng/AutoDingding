@@ -23,8 +23,13 @@
         <entry key="app/src/main/res/drawable/ic_settings.xml" value="0.18802083333333333" />
         <entry key="app/src/main/res/drawable/ic_tab_wechat.xml" value="0.1415" />
         <entry key="app/src/main/res/drawable/select_switch_background.xml" value="0.1415" />
+        <entry key="app/src/main/res/drawable/select_switch_circle.xml" value="0.1415" />
         <entry key="app/src/main/res/drawable/swich_background_on.xml" value="0.1415" />
         <entry key="app/src/main/res/drawable/switch_circle_on.xml" value="0.1415" />
+        <entry key="app/src/main/res/drawable/switch_common_thumb.xml" value="0.1415" />
+        <entry key="app/src/main/res/drawable/switch_common_track.xml" value="0.1415" />
+        <entry key="app/src/main/res/drawable/switch_common_track_selected.xml" value="0.1415" />
+        <entry key="app/src/main/res/drawable/switch_common_track_unselected.xml" value="0.1415" />
         <entry key="app/src/main/res/layout/activity_add_timer.xml" value="0.335" />
         <entry key="app/src/main/res/layout/activity_history.xml" value="0.25" />
         <entry key="app/src/main/res/layout/activity_main.xml" value="0.21979166666666666" />
@@ -37,7 +42,7 @@
         <entry key="app/src/main/res/layout/include_title.xml" value="0.16770833333333332" />
         <entry key="app/src/main/res/layout/item_list.xml" value="0.2203125" />
         <entry key="app/src/main/res/layout/item_list_notice.xml" value="0.24583333333333332" />
-        <entry key="app/src/main/res/layout/item_timer_rv_l.xml" value="0.375" />
+        <entry key="app/src/main/res/layout/item_timer_rv_l.xml" value="0.25" />
         <entry key="app/src/main/res/layout/item_weekly_rv_l.xml" value="0.24479166666666666" />
         <entry key="app/src/main/res/menu/bottom_nav_menu.xml" value="0.20701754385964913" />
       </map>

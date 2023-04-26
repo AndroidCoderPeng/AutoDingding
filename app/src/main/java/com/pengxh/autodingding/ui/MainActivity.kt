@@ -94,9 +94,7 @@ class MainActivity : KotlinBaseActivity() {
         viewPager.offscreenPageLimit = fragmentPages.size
         viewPager.addOnPageChangeListener(object : ViewPager.OnPageChangeListener {
             override fun onPageScrolled(
-                position: Int,
-                positionOffset: Float,
-                positionOffsetPixels: Int
+                position: Int, positionOffset: Float, positionOffsetPixels: Int
             ) {
             }
 

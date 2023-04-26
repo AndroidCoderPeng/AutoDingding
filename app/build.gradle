@@ -76,9 +76,7 @@ dependencies {
     //Google官方授权库
     implementation 'pub.devrel:easypermissions:3.0.0'
     implementation 'androidx.recyclerview:recyclerview:1.2.1'
-    implementation 'androidx.cardview:cardview:1.0.0'
     implementation 'com.google.code.gson:gson:2.9.0'
-    implementation 'com.jzxiang.pickerview:TimePickerDialog:1.0.1'
     implementation 'com.sun.mail:android-mail:1.5.5'
     implementation 'com.sun.mail:android-activation:1.5.5'
     //异步响应式

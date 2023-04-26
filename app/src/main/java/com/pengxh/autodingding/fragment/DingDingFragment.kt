@@ -2,28 +2,26 @@ package com.pengxh.autodingding.fragment
 
 import android.os.Handler
 import android.view.View
+import android.widget.CompoundButton
 import com.pengxh.autodingding.BaseApplication
 import com.pengxh.autodingding.R
 import com.pengxh.autodingding.adapter.DateTimeAdapter
 import com.pengxh.autodingding.bean.DateTimeBean
+import com.pengxh.autodingding.extensions.diffCurrentTime
 import com.pengxh.autodingding.greendao.DateTimeBeanDao
 import com.pengxh.autodingding.ui.AddTimerActivity
 import com.pengxh.autodingding.utils.VerticalMarginItemDecoration
 import com.pengxh.kt.lite.base.KotlinBaseFragment
 import com.pengxh.kt.lite.extensions.dp2px
 import com.pengxh.kt.lite.extensions.navigatePageTo
-import com.pengxh.kt.lite.extensions.show
 import com.pengxh.kt.lite.utils.WeakReferenceHandler
 import kotlinx.android.synthetic.main.fragment_dingding.*
 
 class DingDingFragment : KotlinBaseFragment() {
 
-    companion object {
-        lateinit var weakReferenceHandler: WeakReferenceHandler
-    }
-
     private val kTag = "DingDingFragment"
     private val dateTimeBeanDao by lazy { BaseApplication.get().daoSession.dateTimeBeanDao }
+    private lateinit var weakReferenceHandler: WeakReferenceHandler
     private lateinit var dateTimeAdapter: DateTimeAdapter
     private var dataBeans: MutableList<DateTimeBean> = ArrayList()
 
@@ -62,9 +60,20 @@ class DingDingFragment : KotlinBaseFragment() {
                     dateTimeBeanDao.delete(dataBeans[index])
                     dataBeans.removeAt(index)
                     dateTimeAdapter.notifyItemRemoved(index)
-                    dateTimeAdapter.notifyItemRangeChanged(
-                        index, dataBeans.size - index
-                    )
+                    dateTimeAdapter.notifyItemRangeChanged(index, dataBeans.size - index)
+                }
+
+                override fun onSwitchStatusChanged(
+                    index: Int, buttonView: CompoundButton, isChecked: Boolean
+                ) {
+                    if (isChecked) {
+                        val timeBean = dataBeans[index]
+                        val time = "${timeBean.date} ${timeBean.time}"
+                        //0小时0分钟后自动打卡
+                        countDownTipsView.text = "${time.diffCurrentTime()}小时0分钟后自动打卡"
+                    } else {
+                        countDownTipsView.text = "无自动打卡任务"
+                    }
                 }
             })
         }
@@ -164,19 +173,4 @@ class DingDingFragment : KotlinBaseFragment() {
 //            "已有任务在进行中".show(requireContext())
 //        }
 //    }
-
-    /**
-     * 计算时间差
-     *
-     * @param fixedTime 结束时间
-     */
-    private fun deltaTime(fixedTime: Long): Long {
-        val currentTime = System.currentTimeMillis() / 1000
-        if (fixedTime > currentTime) {
-            return fixedTime - currentTime
-        } else {
-            "时间设置异常".show(requireContext())
-        }
-        return 0L
-    }
 }
