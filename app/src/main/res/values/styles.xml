@@ -45,6 +45,5 @@
         <item name="android:layout_height">wrap_content</item>
         <item name="android:layout_alignParentEnd">true</item>
         <item name="android:layout_centerVertical">true</item>
-        <item name="android:layout_marginEnd">@dimen/dp_10</item>
     </style>
 </resources>

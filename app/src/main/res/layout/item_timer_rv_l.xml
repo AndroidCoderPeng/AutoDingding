@@ -1,47 +1,82 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="@dimen/dp_80"
+    android:layout_height="wrap_content"
     android:layout_marginHorizontal="@dimen/dp_7"
-    android:background="@drawable/bg_solid_layout_white_radius_10">
+    app:cardCornerRadius="@dimen/dp_10">
 
     <LinearLayout
-        android:layout_width="wrap_content"
-        android:layout_height="match_parent"
-        android:layout_marginStart="@dimen/dp_10"
-        android:gravity="center_vertical"
-        android:orientation="vertical">
-
-        <TextView
-            android:id="@+id/timeView"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="@dimen/dp_2"
-            android:text="08:00"
-            android:textColor="@color/black"
-            android:textSize="@dimen/sp_20" />
-
-        <TextView
-            android:id="@+id/weekDayView"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/dp_2"
-            android:text="周一" />
-    </LinearLayout>
-
-    <TextView
-        android:id="@+id/dateView"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_centerInParent="true"
-        android:text="2023-04-28"
-        android:textSize="@dimen/sp_20" />
+        android:orientation="vertical"
+        android:paddingHorizontal="@dimen/dp_7">
 
-    <Switch
-        android:id="@+id/timerSwitch"
-        style="@style/switchStyle"
-        android:thumb="@drawable/select_switch_circle"
-        android:track="@drawable/select_switch_background"
-        tools:ignore="UseSwitchCompatOrMaterialXml" />
-</RelativeLayout>
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/dp_80">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:gravity="center_vertical"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/dateView"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="@dimen/dp_2"
+                    android:text="2023-04-28" />
+
+                <TextView
+                    android:id="@+id/weekDayView"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/dp_2"
+                    android:text="周一" />
+            </LinearLayout>
+
+            <TextView
+                android:id="@+id/timeView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true"
+                android:text="08:00"
+                android:textColor="@color/black"
+                android:textSize="@dimen/sp_20" />
+
+            <Switch
+                android:id="@+id/timerSwitch"
+                style="@style/switchStyle"
+                android:thumb="@drawable/select_switch_circle"
+                android:track="@drawable/select_switch_background"
+                tools:ignore="UseSwitchCompatOrMaterialXml" />
+        </RelativeLayout>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1px"
+            android:layout_marginBottom="@dimen/dp_7"
+            android:background="@color/gray" />
+
+        <TextView
+            android:id="@+id/countDownTextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="0小时0分钟后自动打卡" />
+
+        <com.google.android.material.progressindicator.LinearProgressIndicator
+            android:id="@+id/countDownProgress"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginVertical="@dimen/dp_7"
+            android:indeterminate="false"
+            app:indicatorColor="@color/colorAppThemeLight"
+            app:trackColor="@color/mainBackground"
+            app:trackCornerRadius="@dimen/dp_3"
+            app:trackThickness="@dimen/dp_7" />
+    </LinearLayout>
+</androidx.cardview.widget.CardView>
+

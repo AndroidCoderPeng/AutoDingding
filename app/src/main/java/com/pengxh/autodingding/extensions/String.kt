@@ -32,16 +32,15 @@ fun String.convertToWeek(): String {
 }
 
 /**
- * 时间差-小时
+ * 时间差-秒
  * */
-fun String.diffCurrentTime(): Int {
+fun String.diffCurrentMillis(): Long {
     if (this.isBlank()) {
         return 0
     }
     val simpleDateFormat = SimpleDateFormat("yyyy-MM-dd HH:mm", Locale.CHINA)
-    val date = simpleDateFormat.parse(this)
-    val diff = abs(System.currentTimeMillis() - date.time)
-    return (diff / (3600000)).toInt()
+    val date = simpleDateFormat.parse(this)!!
+    return abs(System.currentTimeMillis() - date.time)
 }
 
 /**

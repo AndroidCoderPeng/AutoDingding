@@ -1,13 +1,12 @@
 package com.pengxh.autodingding.fragment
 
+import android.os.CountDownTimer
 import android.os.Handler
 import android.view.View
-import android.widget.CompoundButton
 import com.pengxh.autodingding.BaseApplication
 import com.pengxh.autodingding.R
 import com.pengxh.autodingding.adapter.DateTimeAdapter
 import com.pengxh.autodingding.bean.DateTimeBean
-import com.pengxh.autodingding.extensions.diffCurrentTime
 import com.pengxh.autodingding.greendao.DateTimeBeanDao
 import com.pengxh.autodingding.ui.AddTimerActivity
 import com.pengxh.autodingding.utils.VerticalMarginItemDecoration
@@ -24,6 +23,9 @@ class DingDingFragment : KotlinBaseFragment() {
     private lateinit var weakReferenceHandler: WeakReferenceHandler
     private lateinit var dateTimeAdapter: DateTimeAdapter
     private var dataBeans: MutableList<DateTimeBean> = ArrayList()
+    private var isRefresh = false
+    private var isLoadMore = false
+    private var offset = 0 // 本地数据库分页从0开始
 
     override fun setupTopBarLayout() {
 
@@ -37,45 +39,55 @@ class DingDingFragment : KotlinBaseFragment() {
 
     override fun initData() {
         weakReferenceHandler = WeakReferenceHandler(callback)
-        dateTimeAdapter = DateTimeAdapter(requireContext())
+        dataBeans = getAutoDingdingTasks()
+        weakReferenceHandler.sendEmptyMessage(2023042601)
         //设置分割线
         weeklyRecyclerView.addItemDecoration(
-            VerticalMarginItemDecoration(10f.dp2px(requireContext()), 0)
+            VerticalMarginItemDecoration(1f.dp2px(requireContext()), 7f.dp2px(requireContext()))
         )
     }
 
     override fun onResume() {
-        dataBeans = dateTimeBeanDao.queryBuilder().orderDesc(DateTimeBeanDao.Properties.Date).list()
+        dataBeans = getAutoDingdingTasks()
         weakReferenceHandler.sendEmptyMessage(2023042601)
         super.onResume()
     }
 
+    private fun getAutoDingdingTasks(): MutableList<DateTimeBean> {
+        return dateTimeBeanDao.queryBuilder()
+            .orderDesc(DateTimeBeanDao.Properties.Date)
+            .offset(offset * 15).limit(15).list()
+    }
+
     private val callback = Handler.Callback {
         if (it.what == 2023042601) {
-            dateTimeAdapter.setupDateTimeData(dataBeans)
-            weeklyRecyclerView.adapter = dateTimeAdapter
-            dateTimeAdapter.setOnItemLongClickListener(object :
-                DateTimeAdapter.OnItemLongClickListener {
-                override fun onItemLongClick(view: View?, index: Int) {
-                    dateTimeBeanDao.delete(dataBeans[index])
-                    dataBeans.removeAt(index)
-                    dateTimeAdapter.notifyItemRemoved(index)
-                    dateTimeAdapter.notifyItemRangeChanged(index, dataBeans.size - index)
+            if (isRefresh) {
+                dateTimeAdapter.notifyDataSetChanged()
+            } else { //首次加载数据
+                if (dataBeans.size == 0) {
+                    emptyView.visibility = View.VISIBLE
+                } else {
+                    emptyView.visibility = View.GONE
+                    dateTimeAdapter = DateTimeAdapter(requireContext(), dataBeans)
+                    weeklyRecyclerView.adapter = dateTimeAdapter
+                    dateTimeAdapter.setOnItemLongClickListener(object :
+                        DateTimeAdapter.OnItemLongClickListener {
+                        override fun onItemLongClick(view: View?, index: Int) {
+                            dateTimeBeanDao.delete(dataBeans[index])
+                            dataBeans.removeAt(index)
+                            dateTimeAdapter.notifyItemRemoved(index)
+                            dateTimeAdapter.notifyItemRangeChanged(
+                                index, dataBeans.size - index
+                            )
+                            if (dataBeans.size == 0) {
+                                emptyView.visibility = View.VISIBLE
+                            } else {
+                                emptyView.visibility = View.GONE
+                            }
+                        }
+                    })
                 }
-
-                override fun onSwitchStatusChanged(
-                    index: Int, buttonView: CompoundButton, isChecked: Boolean
-                ) {
-                    if (isChecked) {
-                        val timeBean = dataBeans[index]
-                        val time = "${timeBean.date} ${timeBean.time}"
-                        //0小时0分钟后自动打卡
-                        countDownTipsView.text = "${time.diffCurrentTime()}小时0分钟后自动打卡"
-                    } else {
-                        countDownTipsView.text = "无自动打卡任务"
-                    }
-                }
-            })
+            }
         }
         true
     }
@@ -83,6 +95,35 @@ class DingDingFragment : KotlinBaseFragment() {
     override fun initEvent() {
         addTimerButton.setOnClickListener {
             requireContext().navigatePageTo<AddTimerActivity>()
+        }
+
+        refreshLayout.setOnRefreshListener { refreshLayout ->
+            isRefresh = true
+            object : CountDownTimer(1000, 500) {
+                override fun onTick(millisUntilFinished: Long) {}
+                override fun onFinish() {
+                    isRefresh = false
+                    dataBeans.clear()
+                    offset = 0
+                    dataBeans = getAutoDingdingTasks()
+                    refreshLayout.finishRefresh()
+                    weakReferenceHandler.sendEmptyMessage(2023042601)
+                }
+            }.start()
+        }
+
+        refreshLayout.setOnLoadMoreListener { refreshLayout ->
+            isLoadMore = true
+            object : CountDownTimer(1000, 500) {
+                override fun onTick(millisUntilFinished: Long) {}
+                override fun onFinish() {
+                    isLoadMore = false
+                    offset++
+                    dataBeans.addAll(getAutoDingdingTasks())
+                    refreshLayout.finishLoadMore()
+                    weakReferenceHandler.sendEmptyMessage(2023042601)
+                }
+            }.start()
         }
 
 //        startLayoutView.setOnClickListener { v ->

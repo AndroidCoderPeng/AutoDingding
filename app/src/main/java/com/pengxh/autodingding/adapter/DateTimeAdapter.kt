@@ -1,27 +1,25 @@
 package com.pengxh.autodingding.adapter
 
-import android.annotation.SuppressLint
 import android.content.Context
+import android.os.CountDownTimer
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.CompoundButton
 import android.widget.Switch
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
+import com.google.android.material.progressindicator.LinearProgressIndicator
 import com.pengxh.autodingding.R
 import com.pengxh.autodingding.bean.DateTimeBean
+import com.pengxh.autodingding.extensions.diffCurrentMillis
 
-class DateTimeAdapter(context: Context) : RecyclerView.Adapter<DateTimeAdapter.ItemViewHolder>() {
+class DateTimeAdapter(context: Context, private val dataBeans: MutableList<DateTimeBean>) :
+    RecyclerView.Adapter<DateTimeAdapter.ItemViewHolder>() {
 
-    private var dataBeans: MutableList<DateTimeBean> = ArrayList()
+    private val kTag = "DateTimeAdapter"
     private var layoutInflater: LayoutInflater = LayoutInflater.from(context)
-
-    @SuppressLint("NotifyDataSetChanged")
-    fun setupDateTimeData(beans: MutableList<DateTimeBean>) {
-        this.dataBeans = beans
-        notifyDataSetChanged()
-    }
+    private lateinit var countDownTimer: CountDownTimer
 
     override fun getItemCount(): Int = dataBeans.size
 
@@ -35,8 +33,8 @@ class DateTimeAdapter(context: Context) : RecyclerView.Adapter<DateTimeAdapter.I
 
     override fun onBindViewHolder(holder: ItemViewHolder, position: Int) {
         val timeBean = dataBeans[position]
-        holder.timeView.text = timeBean.time
         holder.dateView.text = timeBean.date
+        holder.timeView.text = timeBean.time
         holder.weekDayView.text = timeBean.weekDay
 
         // 长按监听
@@ -45,8 +43,29 @@ class DateTimeAdapter(context: Context) : RecyclerView.Adapter<DateTimeAdapter.I
             true
         }
 
-        holder.timerSwitch.setOnCheckedChangeListener { buttonView, isChecked ->
-            itemClickListener?.onSwitchStatusChanged(position, buttonView, isChecked)
+        holder.timerSwitch.setOnCheckedChangeListener { _, isChecked ->
+            val time = "${timeBean.date} ${timeBean.time}"
+            val diffCurrentMillis = time.diffCurrentMillis()
+            Log.d(kTag, "onBindViewHolder: $diffCurrentMillis")
+            if (isChecked) {
+//                holder.countDownTextView.text = "0小时${diffCurrentTime}分钟后自动打卡"
+                holder.countDownProgress.max = diffCurrentMillis.toInt()
+                countDownTimer = object : CountDownTimer(diffCurrentMillis, 1) {
+                    override fun onTick(millisUntilFinished: Long) {
+//                        holder.countDownTextView.text =
+//                            "${(diffCurrentMillis - millisUntilFinished)}"
+                        holder.countDownProgress.progress = (
+                                diffCurrentMillis - millisUntilFinished).toInt()
+                    }
+
+                    override fun onFinish() {
+
+                    }
+                }.start()
+            } else {
+//                holder.countDownTextView.text = "0小时0分钟后自动打卡"
+                countDownTimer.cancel()
+            }
         }
     }
 
@@ -57,8 +76,6 @@ class DateTimeAdapter(context: Context) : RecyclerView.Adapter<DateTimeAdapter.I
     }
 
     interface OnItemLongClickListener {
-        fun onSwitchStatusChanged(index: Int, buttonView: CompoundButton, isChecked: Boolean)
-
         fun onItemLongClick(view: View?, index: Int)
     }
 
@@ -67,5 +84,9 @@ class DateTimeAdapter(context: Context) : RecyclerView.Adapter<DateTimeAdapter.I
         var dateView: TextView = itemView.findViewById(R.id.dateView)
         var weekDayView: TextView = itemView.findViewById(R.id.weekDayView)
         var timerSwitch: Switch = itemView.findViewById(R.id.timerSwitch)
+        var countDownTextView: TextView = itemView.findViewById(R.id.countDownTextView)
+        var countDownProgress: LinearProgressIndicator = itemView.findViewById(
+            R.id.countDownProgress
+        )
     }
 }
