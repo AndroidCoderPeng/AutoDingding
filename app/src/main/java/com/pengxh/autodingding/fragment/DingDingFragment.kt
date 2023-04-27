@@ -1,6 +1,5 @@
 package com.pengxh.autodingding.fragment
 
-import android.os.CountDownTimer
 import android.os.Handler
 import android.view.View
 import com.pengxh.autodingding.BaseApplication
@@ -24,9 +23,6 @@ class DingDingFragment : KotlinBaseFragment() {
     private lateinit var weakReferenceHandler: WeakReferenceHandler
     private lateinit var dateTimeAdapter: DateTimeAdapter
     private var dataBeans: MutableList<DateTimeBean> = ArrayList()
-    private var isRefresh = false
-    private var isLoadMore = false
-    private var offset = 0 // 本地数据库分页从0开始
 
     override fun setupTopBarLayout() {
 
@@ -55,43 +51,35 @@ class DingDingFragment : KotlinBaseFragment() {
     }
 
     private fun getAutoDingDingTasks(): MutableList<DateTimeBean> {
-        return dateTimeBeanDao.queryBuilder()
-            .orderDesc(DateTimeBeanDao.Properties.Date)
-            .offset(offset * 15).limit(15).list()
+        return dateTimeBeanDao.queryBuilder().orderDesc(DateTimeBeanDao.Properties.Date).list()
     }
 
     private val callback = Handler.Callback {
         if (it.what == 2023042601) {
-            if (isRefresh) {
-                dateTimeAdapter.notifyDataSetChanged()
-            } else { //首次加载数据
-                if (dataBeans.size == 0) {
-                    emptyView.visibility = View.VISIBLE
-                } else {
-                    emptyView.visibility = View.GONE
-                    dateTimeAdapter = DateTimeAdapter(requireContext(), dataBeans)
-                    weeklyRecyclerView.adapter = dateTimeAdapter
-                    dateTimeAdapter.setOnItemClickListener(object :
-                        DateTimeAdapter.OnItemClickListener {
-                        override fun onItemClick(index: Int) {
-                            requireContext().navigatePageTo<UpdateTimerTaskActivity>(dataBeans[index].uuid)
-                        }
+            if (dataBeans.size == 0) {
+                emptyView.visibility = View.VISIBLE
+            } else {
+                emptyView.visibility = View.GONE
+                dateTimeAdapter = DateTimeAdapter(requireContext(), dataBeans)
+                weeklyRecyclerView.adapter = dateTimeAdapter
+                dateTimeAdapter.setOnItemClickListener(object :
+                    DateTimeAdapter.OnItemClickListener {
+                    override fun onItemClick(layoutPosition: Int) {
+                        requireContext().navigatePageTo<UpdateTimerTaskActivity>(dataBeans[layoutPosition].uuid)
+                    }
 
-                        override fun onItemLongClick(view: View?, index: Int) {
-                            dateTimeBeanDao.delete(dataBeans[index])
-                            dataBeans.removeAt(index)
-                            dateTimeAdapter.notifyItemRemoved(index)
-                            dateTimeAdapter.notifyItemRangeChanged(
-                                index, dataBeans.size - index
-                            )
-                            if (dataBeans.size == 0) {
-                                emptyView.visibility = View.VISIBLE
-                            } else {
-                                emptyView.visibility = View.GONE
-                            }
+                    override fun onItemLongClick(view: View?, layoutPosition: Int) {
+                        dateTimeBeanDao.delete(dataBeans[layoutPosition])
+                        dataBeans.removeAt(layoutPosition)
+                        dateTimeAdapter.notifyItemRemoved(layoutPosition)
+                        dateTimeAdapter.notifyItemChanged(layoutPosition)
+                        if (dataBeans.size == 0) {
+                            emptyView.visibility = View.VISIBLE
+                        } else {
+                            emptyView.visibility = View.GONE
                         }
-                    })
-                }
+                    }
+                })
             }
         }
         true
@@ -100,35 +88,6 @@ class DingDingFragment : KotlinBaseFragment() {
     override fun initEvent() {
         addTimerButton.setOnClickListener {
             requireContext().navigatePageTo<AddTimerTaskActivity>()
-        }
-
-        refreshLayout.setOnRefreshListener {
-            isRefresh = true
-            object : CountDownTimer(1000, 500) {
-                override fun onTick(millisUntilFinished: Long) {}
-                override fun onFinish() {
-                    isRefresh = false
-                    dataBeans.clear()
-                    offset = 0
-                    dataBeans = getAutoDingDingTasks()
-                    it.finishRefresh()
-                    weakReferenceHandler.sendEmptyMessage(2023042601)
-                }
-            }.start()
-        }
-
-        refreshLayout.setOnLoadMoreListener {
-            isLoadMore = true
-            object : CountDownTimer(1000, 500) {
-                override fun onTick(millisUntilFinished: Long) {}
-                override fun onFinish() {
-                    isLoadMore = false
-                    offset++
-                    dataBeans.addAll(getAutoDingDingTasks())
-                    it.finishLoadMore()
-                    weakReferenceHandler.sendEmptyMessage(2023042601)
-                }
-            }.start()
         }
 
 //        startLayoutView.setOnClickListener { v ->

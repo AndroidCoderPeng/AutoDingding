@@ -80,9 +80,9 @@ class DateTimeAdapter(context: Context, private val dataBeans: MutableList<DateT
     }
 
     interface OnItemClickListener {
-        fun onItemClick(index: Int)
+        fun onItemClick(layoutPosition: Int)
 
-        fun onItemLongClick(view: View?, index: Int)
+        fun onItemLongClick(view: View?, layoutPosition: Int)
     }
 
     inner class ItemViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
