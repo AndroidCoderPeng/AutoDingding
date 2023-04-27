@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_marginHorizontal="@dimen/dp_7"
@@ -15,28 +14,15 @@
 
         <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="@dimen/dp_80">
+            android:layout_height="@dimen/dp_80"
+            android:gravity="center_vertical">
 
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:gravity="center_vertical"
-                android:orientation="vertical">
-
-                <TextView
-                    android:id="@+id/dateView"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginBottom="@dimen/dp_2"
-                    android:text="2023-04-28" />
-
-                <TextView
-                    android:id="@+id/weekDayView"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="@dimen/dp_2"
-                    android:text="周一" />
-            </LinearLayout>
+            <TextView
+                android:id="@+id/dateView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:text="2023-04-28" />
 
             <TextView
                 android:id="@+id/timeView"
@@ -47,12 +33,13 @@
                 android:textColor="@color/black"
                 android:textSize="@dimen/sp_20" />
 
-            <Switch
-                android:id="@+id/timerSwitch"
-                style="@style/switchStyle"
-                android:thumb="@drawable/select_switch_circle"
-                android:track="@drawable/select_switch_background"
-                tools:ignore="UseSwitchCompatOrMaterialXml" />
+            <TextView
+                android:id="@+id/weekDayView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentEnd="true"
+                android:layout_centerVertical="true"
+                android:text="周一" />
         </RelativeLayout>
 
         <View

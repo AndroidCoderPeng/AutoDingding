@@ -31,6 +31,19 @@ fun String.convertToWeek(): String {
     }
 }
 
+fun String.isEarlierThenCurrent(): Boolean {
+    try {
+        val dateFormat = SimpleDateFormat("yyyy-MM-dd HH:mm", Locale.CHINA)
+        val date = dateFormat.parse(this)!!
+        val t1 = date.time
+        val t2 = System.currentTimeMillis()
+        return (t1 - t2) < 0
+    } catch (e: ParseException) {
+        e.printStackTrace()
+    }
+    return false
+}
+
 /**
  * 时间差-秒
  * */

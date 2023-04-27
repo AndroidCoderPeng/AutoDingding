@@ -45,9 +45,12 @@ class DingDingFragment : KotlinBaseFragment() {
     }
 
     override fun onResume() {
+        super.onResume()
         dataBeans = getAutoDingDingTasks()
         weakReferenceHandler.sendEmptyMessage(2023042601)
-        super.onResume()
+
+        //启动全部定时任务
+
     }
 
     private fun getAutoDingDingTasks(): MutableList<DateTimeBean> {
@@ -83,6 +86,11 @@ class DingDingFragment : KotlinBaseFragment() {
             }
         }
         true
+    }
+
+    override fun onPause() {
+        super.onPause()
+        dateTimeAdapter.stopCountDownTimer()
     }
 
     override fun initEvent() {

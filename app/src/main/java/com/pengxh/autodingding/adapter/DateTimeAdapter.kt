@@ -1,25 +1,26 @@
 package com.pengxh.autodingding.adapter
 
 import android.content.Context
+import android.graphics.Color
 import android.os.CountDownTimer
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Switch
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.progressindicator.LinearProgressIndicator
 import com.pengxh.autodingding.R
 import com.pengxh.autodingding.bean.DateTimeBean
 import com.pengxh.autodingding.extensions.diffCurrentMillis
+import com.pengxh.autodingding.extensions.isEarlierThenCurrent
 
 class DateTimeAdapter(context: Context, private val dataBeans: MutableList<DateTimeBean>) :
     RecyclerView.Adapter<DateTimeAdapter.ItemViewHolder>() {
 
     private val kTag = "DateTimeAdapter"
     private var layoutInflater: LayoutInflater = LayoutInflater.from(context)
-    private lateinit var countDownTimer: CountDownTimer
+    private var countDownTimer: CountDownTimer? = null
 
     override fun getItemCount(): Int = dataBeans.size
 
@@ -47,30 +48,29 @@ class DateTimeAdapter(context: Context, private val dataBeans: MutableList<DateT
             true
         }
 
-        holder.timerSwitch.setOnCheckedChangeListener { _, isChecked ->
-            val time = "${timeBean.date} ${timeBean.time}"
+        val time = "${timeBean.date} ${timeBean.time}"
+        if (time.isEarlierThenCurrent()) {
+            holder.countDownTextView.text = "任务已过期"
+            holder.countDownTextView.setTextColor(Color.RED)
+        } else {
             val diffCurrentMillis = time.diffCurrentMillis()
-            Log.d(kTag, "onBindViewHolder: $diffCurrentMillis")
-            if (isChecked) {
-//                holder.countDownTextView.text = "0小时${diffCurrentTime}分钟后自动打卡"
-                holder.countDownProgress.max = diffCurrentMillis.toInt()
-                countDownTimer = object : CountDownTimer(diffCurrentMillis, 1) {
-                    override fun onTick(millisUntilFinished: Long) {
-//                        holder.countDownTextView.text =
-//                            "${(diffCurrentMillis - millisUntilFinished)}"
-                        holder.countDownProgress.progress = (
-                                diffCurrentMillis - millisUntilFinished).toInt()
-                    }
+            holder.countDownProgress.max = diffCurrentMillis.toInt()
+            countDownTimer = object : CountDownTimer(diffCurrentMillis, 1) {
+                override fun onTick(millisUntilFinished: Long) {
+                    holder.countDownProgress.progress =
+                        (diffCurrentMillis - millisUntilFinished).toInt()
+                }
 
-                    override fun onFinish() {
+                override fun onFinish() {
 
-                    }
-                }.start()
-            } else {
-//                holder.countDownTextView.text = "0小时0分钟后自动打卡"
-                countDownTimer.cancel()
-            }
+                }
+            }.start()
         }
+    }
+
+    fun stopCountDownTimer() {
+        countDownTimer?.cancel()
+        Log.d(kTag, "countDownTimer => 已取消")
     }
 
     private var itemClickListener: OnItemClickListener? = null
@@ -89,7 +89,6 @@ class DateTimeAdapter(context: Context, private val dataBeans: MutableList<DateT
         var timeView: TextView = itemView.findViewById(R.id.timeView)
         var dateView: TextView = itemView.findViewById(R.id.dateView)
         var weekDayView: TextView = itemView.findViewById(R.id.weekDayView)
-        var timerSwitch: Switch = itemView.findViewById(R.id.timerSwitch)
         var countDownTextView: TextView = itemView.findViewById(R.id.countDownTextView)
         var countDownProgress: LinearProgressIndicator = itemView.findViewById(
             R.id.countDownProgress
