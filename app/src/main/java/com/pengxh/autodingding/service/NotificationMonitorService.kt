@@ -12,10 +12,10 @@ import android.util.Log
 import com.pengxh.autodingding.BaseApplication
 import com.pengxh.autodingding.bean.HistoryRecordBean
 import com.pengxh.autodingding.bean.NotificationBean
+import com.pengxh.autodingding.extensions.sendTextMail
 import com.pengxh.autodingding.ui.WelcomeActivity
 import com.pengxh.autodingding.utils.Constant
-import com.pengxh.autodingding.utils.MailInfoUtil
-import com.pengxh.autodingding.utils.MailSender
+import com.pengxh.autodingding.utils.MailInfoCreator
 import com.pengxh.kt.lite.extensions.timestampToCompleteDate
 import com.pengxh.kt.lite.utils.SaveKeyValues
 import java.util.*
@@ -76,8 +76,8 @@ class NotificationMonitorService : NotificationListenerService() {
                 } else {
                     //发送打卡成功的邮件
                     Thread {
-                        val mailInfo = MailInfoUtil.createMail(emailAddress, notificationText)
-                        MailSender.sendTextMail(mailInfo)
+                        val mailInfo = MailInfoCreator.createMail(emailAddress, notificationText)
+                        mailInfo.sendTextMail()
                     }.start()
                     val intent = Intent(this, WelcomeActivity::class.java)
                     intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK

@@ -23,7 +23,7 @@ class DingDingFragment : KotlinBaseFragment() {
     private val kTag = "DingDingFragment"
     private val dateTimeBeanDao by lazy { BaseApplication.get().daoSession.dateTimeBeanDao }
     private lateinit var weakReferenceHandler: WeakReferenceHandler
-    private lateinit var dateTimeAdapter: DateTimeAdapter
+    private var dateTimeAdapter: DateTimeAdapter? = null
     private var dataBeans: MutableList<DateTimeBean> = ArrayList()
 
     override fun setupTopBarLayout() {
@@ -64,7 +64,7 @@ class DingDingFragment : KotlinBaseFragment() {
                 emptyView.visibility = View.GONE
                 dateTimeAdapter = DateTimeAdapter(requireContext(), dataBeans)
                 weeklyRecyclerView.adapter = dateTimeAdapter
-                dateTimeAdapter.setOnItemClickListener(object :
+                dateTimeAdapter?.setOnItemClickListener(object :
                     DateTimeAdapter.OnItemClickListener {
                     override fun onItemClick(layoutPosition: Int) {
                         requireContext().navigatePageTo<UpdateTimerTaskActivity>(dataBeans[layoutPosition].uuid)
@@ -73,8 +73,8 @@ class DingDingFragment : KotlinBaseFragment() {
                     override fun onItemLongClick(view: View?, layoutPosition: Int) {
                         dateTimeBeanDao.delete(dataBeans[layoutPosition])
                         dataBeans.removeAt(layoutPosition)
-                        dateTimeAdapter.notifyItemRemoved(layoutPosition)
-                        dateTimeAdapter.notifyItemChanged(layoutPosition)
+                        dateTimeAdapter?.notifyItemRemoved(layoutPosition)
+                        dateTimeAdapter?.notifyItemChanged(layoutPosition)
                         if (dataBeans.size == 0) {
                             emptyView.visibility = View.VISIBLE
                         } else {
@@ -93,7 +93,7 @@ class DingDingFragment : KotlinBaseFragment() {
 
     override fun onPause() {
         super.onPause()
-        dateTimeAdapter.stopCountDownTimer()
+        dateTimeAdapter?.stopCountDownTimer()
     }
 
     override fun initEvent() {

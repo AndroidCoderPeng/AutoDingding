@@ -11,6 +11,7 @@ import com.gyf.immersionbar.ImmersionBar
 import com.pengxh.autodingding.BaseApplication
 import com.pengxh.autodingding.R
 import com.pengxh.autodingding.bean.HistoryRecordBean
+import com.pengxh.autodingding.extensions.writeObjToExcel
 import com.pengxh.autodingding.greendao.HistoryRecordBeanDao
 import com.pengxh.autodingding.utils.Constant
 import com.pengxh.autodingding.utils.ExcelUtils
@@ -46,8 +47,7 @@ class HistoryRecordActivity : KotlinBaseActivity() {
 
     override fun setupTopBarLayout() {
         ImmerseStatusBarUtil.setColor(
-            this,
-            R.color.colorAppThemeLight.convertColor(this)
+            this, R.color.colorAppThemeLight.convertColor(this)
         )
         ImmersionBar.with(this).statusBarDarkFont(false).init()
         titleView.text = "打卡记录"
@@ -211,13 +211,13 @@ class HistoryRecordActivity : KotlinBaseActivity() {
 
     private fun exportToEmail(historyBeans: List<HistoryRecordBean>) {
         //{"date":"2020-04-15","message":"考勤打卡:11:42 下班打卡 早退","uuid":"26btND0uLqU"},{"date":"2020-04-15","message":"考勤打卡:16:32 下班打卡 早退","uuid":"UTWQJzCfTl9"}
-        val dir: File =
-            File(this.getExternalFilesDir(Environment.DIRECTORY_DOCUMENTS), "DingRecord")
+        val dir = File(this.getExternalFilesDir(Environment.DIRECTORY_DOCUMENTS), "DingRecord")
         if (!dir.exists()) {
             dir.mkdir()
         }
-        ExcelUtils.initExcel("$dir/打卡记录表.xls", excelTitle)
+
         val fileName = "$dir/打卡记录表.xls"
-        ExcelUtils.writeObjListToExcel(this, historyBeans, fileName)
+        ExcelUtils.initExcel(fileName, excelTitle)
+        writeObjToExcel(historyBeans, fileName)
     }
 }
