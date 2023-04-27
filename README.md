@@ -7,24 +7,24 @@
 # 使用注意事项：
 #### 1、请先确认好通知栏监听已开启，如不开启将无法监听打卡成功的通知。（首次启动会有提示，会直接跳转到系统通知监听页面，打开开关就好了。放心，不会有其他窃密小动作）
 
-![打开通知监听](https://github.com/AndroidCoderPeng/AutoDingding/blob/master/demoImage/1.jpg)
-![打开通知监听](https://github.com/AndroidCoderPeng/AutoDingding/blob/master/demoImage/2.jpg)
+![打开通知监听](https://github.com/AndroidCoderPeng/AutoDingding/blob/master/appImage/1.jpg)
+![打开通知监听](https://github.com/AndroidCoderPeng/AutoDingding/blob/master/appImage/2.jpg)
 
 #### 2、钉钉设置为“极速打卡”。
 
 #### 3、设置打卡结果通知邮箱（经自测试，邮箱设置支持QQ邮箱和163邮箱，别的邮箱有需要的可以自行测试）
 
-![添加邮箱](https://github.com/AndroidCoderPeng/AutoDingding/blob/master/demoImage/3.jpg)
+![添加邮箱](https://github.com/AndroidCoderPeng/AutoDingding/blob/master/appImage/3.jpg)
 
 #### 好了，基本设置就是这样了，附一张主页面，如下：
 
-![主页面](https://github.com/AndroidCoderPeng/AutoDingding/blob/master/demoImage/4.jpg)
-![主页面](https://github.com/AndroidCoderPeng/AutoDingding/blob/master/demoImage/5.jpg)
+![主页面](https://github.com/AndroidCoderPeng/AutoDingding/blob/master/appImage/4.jpg)
+![主页面](https://github.com/AndroidCoderPeng/AutoDingding/blob/master/appImage/5.jpg)
 
 #### 4、打卡结果如下：
 
 #### a、打卡成功
 
-![打卡成功](https://github.com/AndroidCoderPeng/AutoDingding/blob/master/demoImage/6.png)
+![打卡成功](https://github.com/AndroidCoderPeng/AutoDingding/blob/master/appImage/6.png)
 
 #### b、打卡失败（失败原因有很多，比如，钉钉账号被自己另一个手机挤下去，再比如，钉钉未设置极速打卡，或者钉钉应用内部打卡通知或者手机通知被关闭，或者钉钉打卡手机又2个以上，因为钉钉最多只能有两个常用打卡手机等等情况都会导致打卡失败，所以，在使用本软件之前，最好先自行测试一两天没确认没问题之后再使用，谢谢理解！）
