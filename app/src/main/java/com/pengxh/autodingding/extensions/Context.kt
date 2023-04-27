@@ -14,6 +14,10 @@ import com.pengxh.kt.lite.utils.SaveKeyValues
 import jxl.Workbook
 import jxl.WorkbookSettings
 import jxl.write.*
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import java.io.File
 import java.io.FileInputStream
 import java.io.InputStream
@@ -97,10 +101,12 @@ fun Context.writeObjToExcel(objList: List<HistoryRecordBean>, fileName: String) 
             "邮箱未填写，无法导出".show(this)
             return
         }
-        Thread {
-            val mailInfo = MailInfoCreator.createAttachMail(emailAddress, file)
-            mailInfo.sendAccessoryMail()
-        }.start()
+        CoroutineScope(Dispatchers.Main).launch {
+            withContext(Dispatchers.IO) {
+                val mailInfo = MailInfoCreator.createAttachMail(emailAddress, file)
+                mailInfo.sendAccessoryMail()
+            }
+        }
     } catch (e: Exception) {
         e.printStackTrace()
     } finally {

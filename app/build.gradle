@@ -101,4 +101,6 @@ dependencies {
     //邮件
     implementation 'com.sun.mail:android-mail:1.6.6'
     implementation 'com.sun.mail:android-activation:1.6.6'
+    //Kotlin协程
+    implementation 'androidx.lifecycle:lifecycle-runtime-ktx:2.5.1'
 }

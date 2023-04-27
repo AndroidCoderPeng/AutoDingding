@@ -18,6 +18,10 @@ import com.pengxh.autodingding.utils.Constant
 import com.pengxh.autodingding.utils.MailInfoCreator
 import com.pengxh.kt.lite.extensions.timestampToCompleteDate
 import com.pengxh.kt.lite.utils.SaveKeyValues
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import java.util.*
 
 /**
@@ -73,14 +77,19 @@ class NotificationMonitorService : NotificationListenerService() {
                 Log.d(kTag, "邮箱地址为空")
             } else {
                 //发送打卡成功的邮件
-                Thread {
-                    val mailInfo =
-                        MailInfoCreator.createMail(emailAddress, notificationText)
-                    mailInfo.sendTextMail()
-                }.start()
-                val intent = Intent(this, WelcomeActivity::class.java)
-                intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
-                startActivity(intent)
+                CoroutineScope(Dispatchers.Main).launch {
+                    withContext(Dispatchers.IO) {
+                        val mailInfo = MailInfoCreator.createMail(emailAddress, notificationText)
+                        mailInfo.sendTextMail()
+                    }
+
+                    //TODO 不生效
+                    val intent = Intent(
+                        this@NotificationMonitorService, WelcomeActivity::class.java
+                    )
+                    intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
+                    startActivity(intent)
+                }
             }
         }
     }
