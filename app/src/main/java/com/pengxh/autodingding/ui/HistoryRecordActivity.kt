@@ -14,6 +14,7 @@ import com.pengxh.autodingding.bean.HistoryRecordBean
 import com.pengxh.autodingding.extensions.writeObjToExcel
 import com.pengxh.autodingding.greendao.HistoryRecordBeanDao
 import com.pengxh.autodingding.utils.Constant
+import com.pengxh.autodingding.utils.DividerItemDecoration
 import com.pengxh.autodingding.utils.ExcelUtils
 import com.pengxh.kt.lite.adapter.NormalRecyclerAdapter
 import com.pengxh.kt.lite.adapter.ViewHolder
@@ -182,20 +183,26 @@ class HistoryRecordActivity : KotlinBaseActivity() {
                 } else {
                     emptyView.visibility = View.GONE
                     historyAdapter = object :
-                        NormalRecyclerAdapter<HistoryRecordBean>(R.layout.item_list, dataBeans) {
+                        NormalRecyclerAdapter<HistoryRecordBean>(
+                            R.layout.item_history_rv_l,
+                            dataBeans
+                        ) {
                         override fun convertView(
                             viewHolder: ViewHolder, position: Int, item: HistoryRecordBean
                         ) {
                             val message: String = item.message
                             if (!message.contains("成功")) {
-                                viewHolder.setBackgroundColor(
+                                viewHolder.setImageResource(
                                     R.id.tagView, R.drawable.bg_textview_error
                                 )
                             }
-                            viewHolder.setText(R.id.noticeMessage, message)
-                                .setText(R.id.noticeDate, item.date)
+                            viewHolder.setText(R.id.noticeMessageView, message)
+                                .setText(R.id.noticeDateView, item.date)
                         }
                     }
+                    historyRecordView.addItemDecoration(
+                        DividerItemDecoration(10f.dp2px(context).toFloat(), 0f)
+                    )
                     historyRecordView.adapter = historyAdapter
                 }
             }

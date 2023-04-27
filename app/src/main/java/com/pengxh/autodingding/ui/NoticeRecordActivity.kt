@@ -95,7 +95,7 @@ class NoticeRecordActivity : KotlinBaseActivity() {
                     emptyView.visibility = View.GONE
                     noticeAdapter =
                         object : NormalRecyclerAdapter<NotificationBean>(
-                            R.layout.item_list_notice, dataBeans
+                            R.layout.item_notice_rv_l, dataBeans
                         ) {
                             override fun convertView(
                                 viewHolder: ViewHolder, position: Int, item: NotificationBean

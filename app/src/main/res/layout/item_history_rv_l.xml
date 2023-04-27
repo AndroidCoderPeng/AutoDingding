@@ -3,11 +3,10 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="@color/white"
-    android:padding="10dp">
+    android:padding="@dimen/dp_10">
 
     <TextView
-        android:id="@+id/noticeMessage"
+        android:id="@+id/noticeMessageView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="下班打卡成功"
@@ -16,15 +15,15 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
-        android:id="@+id/noticeDate"
+        android:id="@+id/noticeDateView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@id/noticeMessage"
+        android:layout_below="@id/noticeMessageView"
         android:layout_marginTop="5dp"
         android:text="2020年2月12日"
         android:textColorHint="#C0C0C0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/noticeMessage" />
+        app:layout_constraintTop_toBottomOf="@id/noticeMessageView" />
 
     <ImageView
         android:id="@+id/tagView"
