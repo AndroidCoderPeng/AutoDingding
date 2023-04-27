@@ -58,31 +58,29 @@ class NotificationMonitorService : NotificationListenerService() {
         notificationBean.postTime = System.currentTimeMillis().timestampToCompleteDate()
         notificationBeanDao.save(notificationBean)
 
-//        if (packageName == "com.tencent.mobileqq") {
-        if (packageName == "com.alibaba.android.rimet") {
-            if (notificationText == null || notificationText == "") {
-                return
-            }
-            if (notificationText.contains("考勤打卡")) {
-                //保存打卡记录
-                val bean = HistoryRecordBean()
-                bean.uuid = UUID.randomUUID().toString()
-                bean.date = System.currentTimeMillis().timestampToCompleteDate()
-                bean.message = notificationText
-                historyRecordBeanDao.save(bean)
-                val emailAddress = SaveKeyValues.getValue(Constant.EMAIL_ADDRESS, "") as String
-                if (TextUtils.isEmpty(emailAddress)) {
-                    Log.d(kTag, "邮箱地址为空")
-                } else {
-                    //发送打卡成功的邮件
-                    Thread {
-                        val mailInfo = MailInfoCreator.createMail(emailAddress, notificationText)
-                        mailInfo.sendTextMail()
-                    }.start()
-                    val intent = Intent(this, WelcomeActivity::class.java)
-                    intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
-                    startActivity(intent)
-                }
+        if (notificationText == null || notificationText == "") {
+            return
+        }
+        if (notificationText.contains("考勤打卡")) {
+            //保存打卡记录
+            val bean = HistoryRecordBean()
+            bean.uuid = UUID.randomUUID().toString()
+            bean.date = System.currentTimeMillis().timestampToCompleteDate()
+            bean.message = notificationText
+            historyRecordBeanDao.save(bean)
+            val emailAddress = SaveKeyValues.getValue(Constant.EMAIL_ADDRESS, "") as String
+            if (TextUtils.isEmpty(emailAddress)) {
+                Log.d(kTag, "邮箱地址为空")
+            } else {
+                //发送打卡成功的邮件
+                Thread {
+                    val mailInfo =
+                        MailInfoCreator.createMail(emailAddress, notificationText)
+                    mailInfo.sendTextMail()
+                }.start()
+                val intent = Intent(this, WelcomeActivity::class.java)
+                intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
+                startActivity(intent)
             }
         }
     }
