@@ -10,27 +10,23 @@ import com.pengxh.autodingding.extensions.convertToWeek
 import com.pengxh.kt.lite.base.KotlinBaseActivity
 import com.pengxh.kt.lite.extensions.convertColor
 import com.pengxh.kt.lite.utils.ImmerseStatusBarUtil
-import kotlinx.android.synthetic.main.activity_add_timer.*
+import kotlinx.android.synthetic.main.activity_add_timer_task.*
 import kotlinx.android.synthetic.main.include_base_title.*
 import java.util.*
 
 @SuppressLint("SetTextI18n")
-class AddTimerActivity : KotlinBaseActivity() {
+class AddTimerTaskActivity : KotlinBaseActivity() {
 
     private val dateTimeBeanDao by lazy { BaseApplication.get().daoSession.dateTimeBeanDao }
+    private val calendar by lazy { Calendar.getInstance() }
 
     override fun initData() {
-        ImmerseStatusBarUtil.setColor(
-            this, R.color.colorAppThemeLight.convertColor(this)
-        )
-        ImmersionBar.with(this).statusBarDarkFont(false).init()
-        titleView.text = "新建定时"
+
     }
 
     override fun initEvent() {
         leftBackView.setOnClickListener { finish() }
 
-        val calendar = Calendar.getInstance()
         //设置默认显示日期
         val month = (calendar.get(Calendar.MONTH) + 1).appendZero()
         val dayOfMonth = calendar.get(Calendar.DAY_OF_MONTH).appendZero()
@@ -63,13 +59,17 @@ class AddTimerActivity : KotlinBaseActivity() {
         }
     }
 
-    override fun initLayoutView(): Int = R.layout.activity_add_timer
+    override fun initLayoutView(): Int = R.layout.activity_add_timer_task
 
     override fun observeRequestState() {
 
     }
 
     override fun setupTopBarLayout() {
-
+        ImmerseStatusBarUtil.setColor(
+            this, R.color.colorAppThemeLight.convertColor(this)
+        )
+        ImmersionBar.with(this).statusBarDarkFont(false).init()
+        titleView.text = "新建定时任务"
     }
 }

@@ -37,7 +37,8 @@
         <activity android:name=".ui.MainActivity" />
         <activity android:name=".ui.HistoryRecordActivity" />
         <activity android:name=".ui.NoticeRecordActivity" />
-        <activity android:name=".ui.AddTimerActivity" />
+        <activity android:name=".ui.AddTimerTaskActivity" />
+        <activity android:name=".ui.UpdateTimerTaskActivity" />
 
         <service
             android:name=".service.NotificationMonitorService"

@@ -98,6 +98,6 @@
             android:layout_alignParentBottom="true"
             android:layout_marginHorizontal="@dimen/dp_75"
             android:layout_marginVertical="@dimen/dp_30"
-            android:text="添加定时" />
+            android:text="添加定时任务" />
     </RelativeLayout>
 </LinearLayout>

@@ -2,14 +2,14 @@ package com.pengxh.autodingding.fragment
 
 import android.os.CountDownTimer
 import android.os.Handler
-import android.util.Log
 import android.view.View
 import com.pengxh.autodingding.BaseApplication
 import com.pengxh.autodingding.R
 import com.pengxh.autodingding.adapter.DateTimeAdapter
 import com.pengxh.autodingding.bean.DateTimeBean
 import com.pengxh.autodingding.greendao.DateTimeBeanDao
-import com.pengxh.autodingding.ui.AddTimerActivity
+import com.pengxh.autodingding.ui.AddTimerTaskActivity
+import com.pengxh.autodingding.ui.UpdateTimerTaskActivity
 import com.pengxh.autodingding.utils.VerticalMarginItemDecoration
 import com.pengxh.kt.lite.base.KotlinBaseFragment
 import com.pengxh.kt.lite.extensions.dp2px
@@ -74,8 +74,7 @@ class DingDingFragment : KotlinBaseFragment() {
                     dateTimeAdapter.setOnItemClickListener(object :
                         DateTimeAdapter.OnItemClickListener {
                         override fun onItemClick(index: Int) {
-                            val uuid = dataBeans[index].uuid
-                            Log.d(kTag, "onItemClick: $uuid")
+                            requireContext().navigatePageTo<UpdateTimerTaskActivity>(dataBeans[index].uuid)
                         }
 
                         override fun onItemLongClick(view: View?, index: Int) {
@@ -100,7 +99,7 @@ class DingDingFragment : KotlinBaseFragment() {
 
     override fun initEvent() {
         addTimerButton.setOnClickListener {
-            requireContext().navigatePageTo<AddTimerActivity>()
+            requireContext().navigatePageTo<AddTimerTaskActivity>()
         }
 
         refreshLayout.setOnRefreshListener {

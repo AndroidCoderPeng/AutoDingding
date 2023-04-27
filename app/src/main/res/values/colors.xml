@@ -15,7 +15,7 @@
     <color name="colorListItem">#171717</color>
     <color name="colorText">#333333</color>
     <color name="colorLine">#313131</color>
-    <color name="colorAppThemeLight">#0094FF</color>
+    <color name="colorAppThemeLight">#007AFF</color>
     <color name="iOSGreen">#4DDC64</color>
     <color name="mainBackground">#F5F5F5</color>
 </resources>
