@@ -50,9 +50,6 @@ class DingDingFragment : KotlinBaseFragment() {
         super.onResume()
         dataBeans = getAutoDingDingTasks()
         weakReferenceHandler.sendEmptyMessage(2023042601)
-
-        //启动全部定时任务
-
     }
 
     private fun getAutoDingDingTasks(): MutableList<DateTimeBean> {

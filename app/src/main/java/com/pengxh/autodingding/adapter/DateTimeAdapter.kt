@@ -65,8 +65,7 @@ class DateTimeAdapter(context: Context, private val dataBeans: MutableList<DateT
                     holder.countDownProgress.progress =
                         (diffCurrentMillis - millisUntilFinished).toInt()
 
-                    holder.countDownTextView.text =
-                        "${millisUntilFinished / 1000}秒后自动打卡"
+                    holder.countDownTextView.text = "${millisUntilFinished / 1000}秒后自动打卡"
                 }
 
                 override fun onFinish() {
