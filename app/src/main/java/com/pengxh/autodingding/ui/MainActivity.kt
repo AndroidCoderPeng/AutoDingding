@@ -15,9 +15,11 @@ import androidx.viewpager.widget.ViewPager
 import com.gyf.immersionbar.ImmersionBar
 import com.pengxh.autodingding.R
 import com.pengxh.autodingding.adapter.BaseFragmentAdapter
+import com.pengxh.autodingding.extensions.isAppAvailable
 import com.pengxh.autodingding.extensions.notificationEnable
 import com.pengxh.autodingding.fragment.DingDingFragment
 import com.pengxh.autodingding.fragment.SettingsFragment
+import com.pengxh.autodingding.utils.Constant
 import com.pengxh.kt.lite.base.KotlinBaseActivity
 import com.pengxh.kt.lite.extensions.convertColor
 import com.pengxh.kt.lite.utils.ImmerseStatusBarUtil
@@ -55,6 +57,11 @@ class MainActivity : KotlinBaseActivity() {
         fragmentPages.add(DingDingFragment())
         fragmentPages.add(SettingsFragment())
 
+        if (!isAppAvailable(Constant.DING_DING)) {
+            showAlertDialog("手机没有安装《钉钉》软件，无法自动打卡")
+            return
+        }
+
         val isFirst = SaveKeyValues.getValue("isFirst", true) as Boolean
         if (isFirst) {
             AlertMessageDialog.Builder()
@@ -75,13 +82,11 @@ class MainActivity : KotlinBaseActivity() {
         bottomNavigation.setOnItemSelectedListener { item ->
             val itemId: Int = item.itemId
             if (itemId == R.id.nav_dingding) {
-//                if (DingDingUtil.isAppAvailable(Constant.DINGDING)) {
-//                    viewPager.currentItem = 0
-//                    titleView.text = "钉钉打卡"
-//                } else {
-//                    showAlertDialog("手机没有安装《钉钉》软件，无法自动打卡")
-//                }
-                viewPager.currentItem = 0
+                if (isAppAvailable(Constant.DING_DING)) {
+                    viewPager.currentItem = 0
+                } else {
+                    showAlertDialog("手机没有安装《钉钉》软件，无法自动打卡")
+                }
                 titleView.text = "钉钉打卡"
             } else if (itemId == R.id.nav_settings) {
                 viewPager.currentItem = 1

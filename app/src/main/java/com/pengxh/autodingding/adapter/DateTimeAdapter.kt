@@ -1,5 +1,6 @@
 package com.pengxh.autodingding.adapter
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.graphics.Color
 import android.os.CountDownTimer
@@ -15,6 +16,7 @@ import com.pengxh.autodingding.bean.DateTimeBean
 import com.pengxh.autodingding.extensions.diffCurrentMillis
 import com.pengxh.autodingding.extensions.isEarlierThenCurrent
 
+@SuppressLint("SetTextI18n")
 class DateTimeAdapter(context: Context, private val dataBeans: MutableList<DateTimeBean>) :
     RecyclerView.Adapter<DateTimeAdapter.ItemViewHolder>() {
 
@@ -54,15 +56,21 @@ class DateTimeAdapter(context: Context, private val dataBeans: MutableList<DateT
             holder.countDownTextView.setTextColor(Color.RED)
         } else {
             val diffCurrentMillis = time.diffCurrentMillis()
+
+            holder.countDownTextView.setTextColor(Color.BLUE)
+
             holder.countDownProgress.max = diffCurrentMillis.toInt()
             countDownTimer = object : CountDownTimer(diffCurrentMillis, 1) {
                 override fun onTick(millisUntilFinished: Long) {
                     holder.countDownProgress.progress =
                         (diffCurrentMillis - millisUntilFinished).toInt()
+
+                    holder.countDownTextView.text =
+                        "${millisUntilFinished / 1000}秒后自动打卡"
                 }
 
                 override fun onFinish() {
-
+                    itemClickListener?.onCountDownFinish()
                 }
             }.start()
         }
@@ -83,6 +91,8 @@ class DateTimeAdapter(context: Context, private val dataBeans: MutableList<DateT
         fun onItemClick(layoutPosition: Int)
 
         fun onItemLongClick(view: View?, layoutPosition: Int)
+
+        fun onCountDownFinish()
     }
 
     inner class ItemViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {

@@ -6,9 +6,11 @@ import com.pengxh.autodingding.BaseApplication
 import com.pengxh.autodingding.R
 import com.pengxh.autodingding.adapter.DateTimeAdapter
 import com.pengxh.autodingding.bean.DateTimeBean
+import com.pengxh.autodingding.extensions.openApplication
 import com.pengxh.autodingding.greendao.DateTimeBeanDao
 import com.pengxh.autodingding.ui.AddTimerTaskActivity
 import com.pengxh.autodingding.ui.UpdateTimerTaskActivity
+import com.pengxh.autodingding.utils.Constant
 import com.pengxh.autodingding.utils.VerticalMarginItemDecoration
 import com.pengxh.kt.lite.base.KotlinBaseFragment
 import com.pengxh.kt.lite.extensions.dp2px
@@ -82,6 +84,10 @@ class DingDingFragment : KotlinBaseFragment() {
                             emptyView.visibility = View.GONE
                         }
                     }
+
+                    override fun onCountDownFinish() {
+                        requireContext().openApplication(Constant.DING_DING)
+                    }
                 })
             }
         }
@@ -97,93 +103,5 @@ class DingDingFragment : KotlinBaseFragment() {
         addTimerButton.setOnClickListener {
             requireContext().navigatePageTo<AddTimerTaskActivity>()
         }
-
-//        startLayoutView.setOnClickListener { v ->
-//            //设置上班时间
-//            TimePickerDialog.Builder()
-//                .setWheelItemTextSize(15)
-//                .setCyclic(false)
-//                .setMinMillseconds(System.currentTimeMillis())
-//                .setMaxMillseconds(System.currentTimeMillis() + Constant.ONE_WEEK)
-//                .setType(Type.ALL)
-//                .setCallBack { _: TimePickerDialog?, millSeconds: Long ->
-//                    amTime.text = millSeconds.timestampToDate()
-//                    //计算时间差
-//                    onDuty(millSeconds)
-//                }.build().show(childFragmentManager, "year_month_day_hour_minute")
-//        }
-//
-//        endLayoutView.setOnClickListener { v ->
-//            //设置下班时间
-//            TimePickerDialog.Builder()
-//                .setWheelItemTextSize(15)
-//                .setCyclic(false)
-//                .setMinMillseconds(System.currentTimeMillis())
-//                .setMaxMillseconds(System.currentTimeMillis() + Constant.ONE_WEEK)
-//                .setType(Type.ALL)
-//                .setCallBack { _: TimePickerDialog?, millSeconds: Long ->
-//                    pmTime.text = millSeconds.timestampToDate()
-//                    //计算时间差
-//                    offDuty(millSeconds)
-//                }.build().show(childFragmentManager, "year_month_day_hour_minute")
-//        }
-//
-//        endAmDuty.setOnClickListener { v ->
-//            amCountDownTimer?.cancel()
-//            startTimeView.text = "--"
-//        }
-//
-//        endPmDuty.setOnClickListener { v ->
-//            pmCountDownTimer?.cancel()
-//            endTimeView.text = "--"
-//        }
     }
-
-//    private fun onDuty(millSeconds: Long) {
-//        val deltaTime = deltaTime(millSeconds / 1000)
-//        if (deltaTime == 0L) {
-//            return
-//        }
-//        //显示倒计时
-//        val text: String = startTimeView.text.toString()
-//        if (text == "--") {
-//            amCountDownTimer = object : CountDownTimer(deltaTime * 1000, 1000) {
-//                override fun onTick(l: Long) {
-//                    startTimeView.text = (l / 1000).toInt().toString()
-//                }
-//
-//                override fun onFinish() {
-//                    startTimeView.text = "--"
-//                    DingDingUtil.openDingDing(Constant.DINGDING)
-//                }
-//            }
-//            amCountDownTimer?.start()
-//        } else {
-//            "已有任务在进行中".show(requireContext())
-//        }
-//    }
-//
-//    private fun offDuty(millSeconds: Long) {
-//        val deltaTime = deltaTime(millSeconds / 1000)
-//        if (deltaTime == 0L) {
-//            return
-//        }
-//        //显示倒计时
-//        val text: String = endTimeView.text.toString()
-//        if (text == "--") {
-//            pmCountDownTimer = object : CountDownTimer(deltaTime * 1000, 1000) {
-//                override fun onTick(l: Long) {
-//                    endTimeView.text = (l / 1000).toInt().toString()
-//                }
-//
-//                override fun onFinish() {
-//                    endTimeView.text = "--"
-//                    DingDingUtil.openDingDing(Constant.DINGDING)
-//                }
-//            }
-//            pmCountDownTimer?.start()
-//        } else {
-//            "已有任务在进行中".show(requireContext())
-//        }
-//    }
 }

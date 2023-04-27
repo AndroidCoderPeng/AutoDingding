@@ -52,7 +52,7 @@
             android:id="@+id/countDownTextView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="0小时0分钟后自动打卡" />
+            android:text="0秒后自动打卡" />
 
         <com.google.android.material.progressindicator.LinearProgressIndicator
             android:id="@+id/countDownProgress"

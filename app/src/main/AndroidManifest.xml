@@ -14,6 +14,9 @@
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
     <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <uses-permission
+        android:name="android.permission.QUERY_ALL_PACKAGES"
+        tools:ignore="QueryAllPackagesPermission" />
 
 
     <application
@@ -51,4 +54,10 @@
             </intent-filter>
         </service>
     </application>
+
+    <queries>
+        <package android:name="com.alibaba.android.rimet" />
+        <package android:name="com.tencent.wework" />
+        <package android:name="com.tencent.mobileqq" />
+    </queries>
 </manifest>
