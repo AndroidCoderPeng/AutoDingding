@@ -184,8 +184,7 @@ class HistoryRecordActivity : KotlinBaseActivity() {
                     emptyView.visibility = View.GONE
                     historyAdapter = object :
                         NormalRecyclerAdapter<HistoryRecordBean>(
-                            R.layout.item_history_rv_l,
-                            dataBeans
+                            R.layout.item_history_rv_l, dataBeans
                         ) {
                         override fun convertView(
                             viewHolder: ViewHolder, position: Int, item: HistoryRecordBean

@@ -1,6 +1,5 @@
 package com.pengxh.autodingding.extensions
 
-import android.util.Log
 import com.pengxh.autodingding.bean.MailInfo
 import com.pengxh.autodingding.utils.EmailAuthenticator
 import java.util.*
@@ -47,7 +46,6 @@ fun MailInfo.sendTextMail() {
 
 // 发送带附件的邮件
 fun MailInfo.sendAccessoryMail() {
-    Log.d("MailSender", "sendAccessoryMail: 发送带附件的邮件")
     // 判断是否需要身份验证
     var authenticator: EmailAuthenticator? = null
     val p = this.properties
