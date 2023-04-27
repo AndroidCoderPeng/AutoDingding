@@ -58,7 +58,7 @@ class NotificationMonitorService : NotificationListenerService() {
         notificationBean.postTime = System.currentTimeMillis().timestampToCompleteDate()
         notificationBeanDao.save(notificationBean)
 
-//        if (packageName.equals("com.tencent.mobileqq")) {
+//        if (packageName == "com.tencent.mobileqq") {
         if (packageName == "com.alibaba.android.rimet") {
             if (notificationText == null || notificationText == "") {
                 return

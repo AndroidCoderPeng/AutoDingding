@@ -58,7 +58,7 @@ class MainActivity : KotlinBaseActivity() {
         fragmentPages.add(SettingsFragment())
 
         if (!isAppAvailable(Constant.DING_DING)) {
-            showAlertDialog("手机没有安装《钉钉》软件，无法自动打卡")
+            showAlertDialog()
             return
         }
 
@@ -85,7 +85,7 @@ class MainActivity : KotlinBaseActivity() {
                 if (isAppAvailable(Constant.DING_DING)) {
                     viewPager.currentItem = 0
                 } else {
-                    showAlertDialog("手机没有安装《钉钉》软件，无法自动打卡")
+                    showAlertDialog()
                 }
                 titleView.text = "钉钉打卡"
             } else if (itemId == R.id.nav_settings) {
@@ -128,11 +128,11 @@ class MainActivity : KotlinBaseActivity() {
 
     }
 
-    private fun showAlertDialog(message: String) {
+    private fun showAlertDialog() {
         AlertMessageDialog.Builder()
             .setContext(this)
             .setTitle("温馨提醒")
-            .setMessage(message)
+            .setMessage("手机没有安装《钉钉》软件，无法自动打卡")
             .setPositiveButton("知道了")
             .setOnDialogButtonClickListener(object :
                 AlertMessageDialog.OnDialogButtonClickListener {
