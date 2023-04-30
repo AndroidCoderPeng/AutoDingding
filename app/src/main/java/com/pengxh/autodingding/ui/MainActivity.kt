@@ -1,14 +1,6 @@
 package com.pengxh.autodingding.ui
 
-import android.app.Notification
-import android.app.NotificationChannel
-import android.app.NotificationManager
-import android.content.Context
-import android.content.Intent
-import android.graphics.Bitmap
-import android.graphics.BitmapFactory
-import android.os.Build
-import android.provider.Settings
+import android.view.KeyEvent
 import android.view.MenuItem
 import androidx.fragment.app.Fragment
 import androidx.viewpager.widget.ViewPager
@@ -16,12 +8,12 @@ import com.gyf.immersionbar.ImmersionBar
 import com.pengxh.autodingding.R
 import com.pengxh.autodingding.adapter.BaseFragmentAdapter
 import com.pengxh.autodingding.extensions.isAppAvailable
-import com.pengxh.autodingding.extensions.notificationEnable
 import com.pengxh.autodingding.fragment.DingDingFragment
 import com.pengxh.autodingding.fragment.SettingsFragment
 import com.pengxh.autodingding.utils.Constant
 import com.pengxh.kt.lite.base.KotlinBaseActivity
 import com.pengxh.kt.lite.extensions.convertColor
+import com.pengxh.kt.lite.extensions.show
 import com.pengxh.kt.lite.utils.ImmerseStatusBarUtil
 import com.pengxh.kt.lite.utils.SaveKeyValues
 import com.pengxh.kt.lite.widget.dialog.AlertMessageDialog
@@ -31,29 +23,17 @@ class MainActivity : KotlinBaseActivity() {
 
     private var menuItem: MenuItem? = null
     private val fragmentPages: MutableList<Fragment> = ArrayList()
-    private val notificationManager by lazy { getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager }
+    private var clickTime: Long = 0
 
     override fun setupTopBarLayout() {
         ImmerseStatusBarUtil.setColor(
             this, R.color.colorAppThemeLight.convertColor(this)
         )
         ImmersionBar.with(this).statusBarDarkFont(false).init()
-        titleView.text = "钉钉打卡"
+        titleView.text = "自动打卡"
     }
 
     override fun initData() {
-        if (!notificationEnable()) {
-            try {
-                //打开通知监听设置页面
-                startActivity(Intent(Settings.ACTION_NOTIFICATION_LISTENER_SETTINGS))
-            } catch (e: Exception) {
-                e.printStackTrace()
-            }
-        } else {
-            //创建常住通知栏
-            createNotification()
-        }
-
         fragmentPages.add(DingDingFragment())
         fragmentPages.add(SettingsFragment())
 
@@ -87,7 +67,7 @@ class MainActivity : KotlinBaseActivity() {
                 } else {
                     showAlertDialog()
                 }
-                titleView.text = "钉钉打卡"
+                titleView.text = "自动打卡"
             } else if (itemId == R.id.nav_settings) {
                 viewPager.currentItem = 1
                 titleView.text = "其他设置"
@@ -112,7 +92,7 @@ class MainActivity : KotlinBaseActivity() {
                 menuItem = bottomNavigation.menu.getItem(position)
                 menuItem!!.isChecked = true
                 if (position == 0) {
-                    titleView.text = "钉钉打卡"
+                    titleView.text = "自动打卡"
                 } else {
                     titleView.text = "其他设置"
                 }
@@ -142,32 +122,15 @@ class MainActivity : KotlinBaseActivity() {
             }).build().show()
     }
 
-    private fun createNotification() {
-        //Android8.0以上必须添加 渠道 才能显示通知栏
-        val builder: Notification.Builder = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            //创建渠道
-            val name = resources.getString(R.string.app_name)
-            val id = name + "_DefaultNotificationChannel"
-            val mChannel = NotificationChannel(id, name, NotificationManager.IMPORTANCE_DEFAULT)
-            mChannel.setShowBadge(true)
-            mChannel.enableVibration(true)
-            mChannel.vibrationPattern = longArrayOf(100, 200, 300)
-            mChannel.lockscreenVisibility = Notification.VISIBILITY_PUBLIC //设置锁屏可见
-            notificationManager.createNotificationChannel(mChannel)
-            Notification.Builder(this, id)
-        } else {
-            Notification.Builder(this)
-        }
-        val bitmap: Bitmap =
-            BitmapFactory.decodeResource(resources, R.mipmap.logo_round)
-        builder.setContentTitle("钉钉打卡通知监听已打开")
-            .setContentText("如果通知消失，请重新开启应用")
-            .setWhen(System.currentTimeMillis())
-            .setLargeIcon(bitmap)
-            .setSmallIcon(R.mipmap.logo_round)
-            .setAutoCancel(false)
-        val notification = builder.build()
-        notification.flags = Notification.FLAG_NO_CLEAR
-        notificationManager.notify(Int.MAX_VALUE, notification)
+    override fun onKeyDown(keyCode: Int, event: KeyEvent?): Boolean {
+        return if (keyCode == KeyEvent.KEYCODE_BACK) {
+            if (System.currentTimeMillis() - clickTime > 2000) {
+                "再按一次退出应用".show(this)
+                clickTime = System.currentTimeMillis()
+                true
+            } else {
+                super.onKeyDown(keyCode, event)
+            }
+        } else super.onKeyDown(keyCode, event)
     }
 }

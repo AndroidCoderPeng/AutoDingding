@@ -1,7 +1,15 @@
 package com.pengxh.autodingding.fragment
 
+import android.app.Notification
+import android.app.NotificationChannel
+import android.app.NotificationManager
+import android.content.Context
 import android.content.Intent
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
 import android.net.Uri
+import android.os.Build
+import android.provider.Settings
 import android.text.TextUtils
 import cn.bertsir.zbar.utils.QRUtils
 import com.pengxh.autodingding.BaseApplication
@@ -21,6 +29,8 @@ import kotlinx.android.synthetic.main.fragment_settings.*
 
 class SettingsFragment : KotlinBaseFragment() {
 
+    private val kTag = "SettingsFragment"
+    private val notificationManager by lazy { requireContext().getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager }
     private val historyBeanDao by lazy { BaseApplication.get().daoSession.historyRecordBeanDao }
 
     override fun setupTopBarLayout() {
@@ -38,6 +48,11 @@ class SettingsFragment : KotlinBaseFragment() {
         if (!TextUtils.isEmpty(emailAddress)) {
             emailTextView.text = emailAddress
         }
+
+        noticeCheckBox.setOnClickListener {
+            startActivity(Intent(Settings.ACTION_NOTIFICATION_LISTENER_SETTINGS))
+        }
+
         appVersion.text = BuildConfig.VERSION_NAME
     }
 
@@ -121,7 +136,40 @@ class SettingsFragment : KotlinBaseFragment() {
     override fun onResume() {
         super.onResume()
         recordSize.text = historyBeanDao.loadAll().size.toString()
-        noticeCheckBox.isChecked = requireContext().notificationEnable()
-        super.onResume()
+        if (requireContext().notificationEnable()) {
+            noticeCheckBox.isChecked = true
+            createNotification()
+        } else {
+            //取消通知栏
+            notificationManager.cancel(Int.MAX_VALUE)
+        }
+    }
+
+    private fun createNotification() {
+        //Android8.0以上必须添加 渠道 才能显示通知栏
+        val builder: Notification.Builder = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            //创建渠道
+            val name = resources.getString(R.string.app_name)
+            val id = name + "_DefaultNotificationChannel"
+            val mChannel = NotificationChannel(id, name, NotificationManager.IMPORTANCE_DEFAULT)
+            mChannel.setShowBadge(true)
+            mChannel.enableVibration(false)
+            mChannel.lockscreenVisibility = Notification.VISIBILITY_PUBLIC //设置锁屏可见
+            notificationManager.createNotificationChannel(mChannel)
+            Notification.Builder(requireContext(), id)
+        } else {
+            Notification.Builder(requireContext())
+        }
+        val bitmap: Bitmap =
+            BitmapFactory.decodeResource(resources, R.mipmap.logo_round)
+        builder.setContentTitle("钉钉打卡通知监听已打开")
+            .setContentText("如果通知消失，请重新开启应用")
+            .setWhen(System.currentTimeMillis())
+            .setLargeIcon(bitmap)
+            .setSmallIcon(R.mipmap.logo_round)
+            .setAutoCancel(false)
+        val notification = builder.build()
+        notification.flags = Notification.FLAG_NO_CLEAR
+        notificationManager.notify(Int.MAX_VALUE, notification)
     }
 }

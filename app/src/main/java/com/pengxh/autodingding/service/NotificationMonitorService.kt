@@ -73,7 +73,7 @@ class NotificationMonitorService : NotificationListenerService() {
             bean.message = notificationText
             historyRecordBeanDao.save(bean)
             val emailAddress = SaveKeyValues.getValue(Constant.EMAIL_ADDRESS, "") as String
-            if (TextUtils.isEmpty(emailAddress)) {
+            if (emailAddress.isBlank()) {
                 Log.d(kTag, "邮箱地址为空")
             } else {
                 //发送打卡成功的邮件
