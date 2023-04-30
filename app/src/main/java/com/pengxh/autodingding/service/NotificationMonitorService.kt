@@ -7,7 +7,6 @@ import android.os.Build
 import android.os.Bundle
 import android.service.notification.NotificationListenerService
 import android.service.notification.StatusBarNotification
-import android.text.TextUtils
 import android.util.Log
 import com.pengxh.autodingding.BaseApplication
 import com.pengxh.autodingding.bean.HistoryRecordBean
@@ -83,7 +82,7 @@ class NotificationMonitorService : NotificationListenerService() {
                         mailInfo.sendTextMail()
                     }
 
-                    //TODO 不生效
+                    //TODO Android 10不允许后台启动Activity
                     val intent = Intent(
                         this@NotificationMonitorService, WelcomeActivity::class.java
                     )

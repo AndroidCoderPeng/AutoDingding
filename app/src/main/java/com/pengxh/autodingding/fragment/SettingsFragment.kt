@@ -49,10 +49,6 @@ class SettingsFragment : KotlinBaseFragment() {
             emailTextView.text = emailAddress
         }
 
-        noticeCheckBox.setOnClickListener {
-            startActivity(Intent(Settings.ACTION_NOTIFICATION_LISTENER_SETTINGS))
-        }
-
         appVersion.text = BuildConfig.VERSION_NAME
     }
 
@@ -81,6 +77,21 @@ class SettingsFragment : KotlinBaseFragment() {
 
         historyLayout.setOnClickListener {
             requireContext().navigatePageTo<HistoryRecordActivity>()
+        }
+
+        floatCheckBox.setOnClickListener {
+            val sdkInt = Build.VERSION.SDK_INT
+            if (sdkInt >= Build.VERSION_CODES.O) {
+                startActivity(Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION))
+            } else if (sdkInt >= Build.VERSION_CODES.M) {
+                val intent = Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION)
+                intent.data = Uri.parse("package:" + requireContext().packageName)
+                startActivity(intent)
+            }
+        }
+
+        noticeCheckBox.setOnClickListener {
+            startActivity(Intent(Settings.ACTION_NOTIFICATION_LISTENER_SETTINGS))
         }
 
         notificationLayout.setOnClickListener {
@@ -130,12 +141,16 @@ class SettingsFragment : KotlinBaseFragment() {
         }
     }
 
+
     /**
      * 每次切换到此页面都需要重新计算记录
      */
     override fun onResume() {
         super.onResume()
         recordSize.text = historyBeanDao.loadAll().size.toString()
+
+        floatCheckBox.isChecked = Settings.canDrawOverlays(requireContext())
+
         if (requireContext().notificationEnable()) {
             noticeCheckBox.isChecked = true
             createNotification()
