@@ -9,10 +9,10 @@ import com.pengxh.autodingding.BaseApplication
 import com.pengxh.autodingding.R
 import com.pengxh.autodingding.bean.NotificationBean
 import com.pengxh.autodingding.greendao.NotificationBeanDao
-import com.pengxh.autodingding.utils.DividerItemDecoration
 import com.pengxh.kt.lite.adapter.NormalRecyclerAdapter
 import com.pengxh.kt.lite.adapter.ViewHolder
 import com.pengxh.kt.lite.base.KotlinBaseActivity
+import com.pengxh.kt.lite.divider.ItemDecoration
 import com.pengxh.kt.lite.extensions.convertColor
 import com.pengxh.kt.lite.extensions.dp2px
 import com.pengxh.kt.lite.utils.ImmerseStatusBarUtil
@@ -107,9 +107,7 @@ class NoticeRecordActivity : KotlinBaseActivity() {
                             }
                         }
                     notificationView.addItemDecoration(
-                        DividerItemDecoration(
-                            10f.dp2px(context).toFloat(), 10f.dp2px(context).toFloat()
-                        )
+                        ItemDecoration(10f.dp2px(context).toFloat(), 10f.dp2px(context).toFloat())
                     )
                     notificationView.adapter = noticeAdapter
                 }

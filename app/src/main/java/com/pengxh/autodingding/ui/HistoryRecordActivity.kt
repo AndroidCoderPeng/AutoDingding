@@ -14,11 +14,11 @@ import com.pengxh.autodingding.bean.HistoryRecordBean
 import com.pengxh.autodingding.extensions.writeObjToExcel
 import com.pengxh.autodingding.greendao.HistoryRecordBeanDao
 import com.pengxh.autodingding.utils.Constant
-import com.pengxh.autodingding.utils.DividerItemDecoration
 import com.pengxh.autodingding.utils.ExcelUtils
 import com.pengxh.kt.lite.adapter.NormalRecyclerAdapter
 import com.pengxh.kt.lite.adapter.ViewHolder
 import com.pengxh.kt.lite.base.KotlinBaseActivity
+import com.pengxh.kt.lite.divider.ItemDecoration
 import com.pengxh.kt.lite.extensions.convertColor
 import com.pengxh.kt.lite.extensions.dp2px
 import com.pengxh.kt.lite.extensions.show
@@ -200,7 +200,7 @@ class HistoryRecordActivity : KotlinBaseActivity() {
                         }
                     }
                     historyRecordView.addItemDecoration(
-                        DividerItemDecoration(10f.dp2px(context).toFloat(), 0f)
+                        ItemDecoration(10f.dp2px(context).toFloat(), 0f)
                     )
                     historyRecordView.adapter = historyAdapter
                 }

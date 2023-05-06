@@ -11,8 +11,8 @@ import com.pengxh.autodingding.greendao.DateTimeBeanDao
 import com.pengxh.autodingding.ui.AddTimerTaskActivity
 import com.pengxh.autodingding.ui.UpdateTimerTaskActivity
 import com.pengxh.autodingding.utils.Constant
-import com.pengxh.autodingding.utils.VerticalMarginItemDecoration
 import com.pengxh.kt.lite.base.KotlinBaseFragment
+import com.pengxh.kt.lite.divider.VerticalMarginItemDecoration
 import com.pengxh.kt.lite.extensions.dp2px
 import com.pengxh.kt.lite.extensions.navigatePageTo
 import com.pengxh.kt.lite.utils.WeakReferenceHandler
