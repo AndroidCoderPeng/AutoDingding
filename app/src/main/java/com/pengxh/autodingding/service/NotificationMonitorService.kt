@@ -82,7 +82,6 @@ class NotificationMonitorService : NotificationListenerService() {
                         mailInfo.sendTextMail()
                     }
 
-                    //TODO Android 10不允许后台启动Activity
                     val intent = Intent(
                         this@NotificationMonitorService, WelcomeActivity::class.java
                     )

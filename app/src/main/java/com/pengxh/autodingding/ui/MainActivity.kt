@@ -1,5 +1,7 @@
 package com.pengxh.autodingding.ui
 
+import android.content.Intent
+import android.util.Log
 import android.view.KeyEvent
 import android.view.MenuItem
 import androidx.fragment.app.Fragment
@@ -10,6 +12,7 @@ import com.pengxh.autodingding.adapter.BaseFragmentAdapter
 import com.pengxh.autodingding.extensions.isAppAvailable
 import com.pengxh.autodingding.fragment.DingDingFragment
 import com.pengxh.autodingding.fragment.SettingsFragment
+import com.pengxh.autodingding.service.FloatingWindowService
 import com.pengxh.autodingding.utils.Constant
 import com.pengxh.kt.lite.base.KotlinBaseActivity
 import com.pengxh.kt.lite.extensions.convertColor
@@ -19,8 +22,10 @@ import com.pengxh.kt.lite.utils.SaveKeyValues
 import com.pengxh.kt.lite.widget.dialog.AlertMessageDialog
 import kotlinx.android.synthetic.main.activity_main.*
 
+
 class MainActivity : KotlinBaseActivity() {
 
+    private val kTag = "MainActivity"
     private var menuItem: MenuItem? = null
     private val fragmentPages: MutableList<Fragment> = ArrayList()
     private var clickTime: Long = 0
@@ -56,6 +61,13 @@ class MainActivity : KotlinBaseActivity() {
                     }
                 }).build().show()
         }
+
+        startService(Intent(this, FloatingWindowService::class.java))
+    }
+
+    override fun onNewIntent(intent: Intent?) {
+        super.onNewIntent(intent)
+        Log.d(kTag, "onNewIntent => 回到前台")
     }
 
     override fun initEvent() {

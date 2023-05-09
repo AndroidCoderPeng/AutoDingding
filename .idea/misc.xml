@@ -43,6 +43,7 @@
         <entry key="app/src/main/res/layout/fragment_wechat.xml" value="0.16770833333333332" />
         <entry key="app/src/main/res/layout/include_title.xml" value="0.16770833333333332" />
         <entry key="app/src/main/res/layout/item_list.xml" value="0.2203125" />
+        <entry key="app/src/main/res/layout/window_floating.xml" value="1.0" />
         <entry key="app/src/main/res/menu/bottom_nav_menu.xml" value="0.20701754385964913" />
       </map>
     </option>
