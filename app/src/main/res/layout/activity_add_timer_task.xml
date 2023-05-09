@@ -8,96 +8,100 @@
 
     <include layout="@layout/include_base_title" />
 
-    <LinearLayout
+    <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginHorizontal="@dimen/dp_7"
-        android:layout_marginTop="@dimen/dp_7"
-        android:background="@drawable/bg_solid_layout_white_radius_10"
-        android:gravity="center_horizontal"
-        android:orientation="vertical">
+        android:layout_height="wrap_content">
 
-        <RelativeLayout
-            android:layout_width="match_parent"
-            android:layout_height="@dimen/titleViewHeight"
-            android:paddingHorizontal="@dimen/dp_7">
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:gravity="center_vertical"
-                android:text="选择日期"
-                android:textColor="@color/colorText"
-                android:textSize="@dimen/sp_16" />
-
-            <TextView
-                android:id="@+id/selectedDateView"
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:layout_alignParentEnd="true"
-                android:gravity="center_vertical"
-                android:textSize="@dimen/sp_16" />
-        </RelativeLayout>
-
-        <!-- mm/dd/yyyy -->
-        <DatePicker
-            android:id="@+id/datePicker"
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:calendarViewShown="false"
-            android:datePickerMode="spinner"
-            android:minDate="01/01/2023" />
-    </LinearLayout>
+            android:orientation="vertical">
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginHorizontal="@dimen/dp_7"
-        android:layout_marginTop="@dimen/dp_7"
-        android:background="@drawable/bg_solid_layout_white_radius_10"
-        android:gravity="center_horizontal"
-        android:orientation="vertical">
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="@dimen/dp_7"
+                android:layout_marginTop="@dimen/dp_7"
+                android:background="@drawable/bg_solid_layout_white_radius_10"
+                android:gravity="center_horizontal"
+                android:orientation="vertical">
 
-        <RelativeLayout
-            android:layout_width="match_parent"
-            android:layout_height="@dimen/titleViewHeight"
-            android:paddingHorizontal="@dimen/dp_7">
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/titleViewHeight"
+                    android:paddingHorizontal="@dimen/dp_7">
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:gravity="center_vertical"
-                android:text="选择时间"
-                android:textColor="@color/colorText"
-                android:textSize="@dimen/sp_16" />
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:gravity="center_vertical"
+                        android:text="选择日期"
+                        android:textColor="@color/colorText"
+                        android:textSize="@dimen/sp_16" />
 
-            <TextView
-                android:id="@+id/selectedTimeView"
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:layout_alignParentEnd="true"
-                android:gravity="center_vertical"
-                android:textSize="@dimen/sp_16" />
-        </RelativeLayout>
+                    <TextView
+                        android:id="@+id/selectedDateView"
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:layout_alignParentEnd="true"
+                        android:gravity="center_vertical"
+                        android:textSize="@dimen/sp_16" />
+                </RelativeLayout>
 
-        <TimePicker
-            android:id="@+id/timePicker"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:timePickerMode="spinner" />
-    </LinearLayout>
+                <!-- mm/dd/yyyy -->
+                <DatePicker
+                    android:id="@+id/datePicker"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:calendarViewShown="false"
+                    android:datePickerMode="spinner"
+                    android:minDate="01/01/2023" />
+            </LinearLayout>
 
-    <RelativeLayout
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1">
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="@dimen/dp_7"
+                android:layout_marginTop="@dimen/dp_7"
+                android:background="@drawable/bg_solid_layout_white_radius_10"
+                android:gravity="center_horizontal"
+                android:orientation="vertical">
 
-        <Button
-            android:id="@+id/saveTimerButton"
-            style="@style/MainButtonStyle"
-            android:layout_alignParentBottom="true"
-            android:layout_marginHorizontal="@dimen/dp_75"
-            android:layout_marginVertical="@dimen/dp_30"
-            android:text="添加定时任务" />
-    </RelativeLayout>
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/titleViewHeight"
+                    android:paddingHorizontal="@dimen/dp_7">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:gravity="center_vertical"
+                        android:text="选择时间"
+                        android:textColor="@color/colorText"
+                        android:textSize="@dimen/sp_16" />
+
+                    <TextView
+                        android:id="@+id/selectedTimeView"
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:layout_alignParentEnd="true"
+                        android:gravity="center_vertical"
+                        android:textSize="@dimen/sp_16" />
+                </RelativeLayout>
+
+                <TimePicker
+                    android:id="@+id/timePicker"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:timePickerMode="spinner" />
+            </LinearLayout>
+
+            <Button
+                android:id="@+id/saveTimerButton"
+                style="@style/MainButtonStyle"
+                android:layout_marginHorizontal="@dimen/dp_10"
+                android:layout_marginVertical="@dimen/dp_20"
+                android:text="添加定时任务" />
+        </LinearLayout>
+    </androidx.core.widget.NestedScrollView>
 </LinearLayout>
