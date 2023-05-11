@@ -11,7 +11,6 @@ import android.net.Uri
 import android.os.Build
 import android.provider.Settings
 import android.text.TextUtils
-import cn.bertsir.zbar.utils.QRUtils
 import com.pengxh.autodingding.BaseApplication
 import com.pengxh.autodingding.BuildConfig
 import com.pengxh.autodingding.R
@@ -85,7 +84,7 @@ class SettingsFragment : KotlinBaseFragment() {
                 startActivity(Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION))
             } else if (sdkInt >= Build.VERSION_CODES.M) {
                 val intent = Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION)
-                intent.data = Uri.parse("package:" + requireContext().packageName)
+                intent.data = Uri.parse("package:${requireContext().packageName}")
                 startActivity(intent)
             }
         }
@@ -113,16 +112,8 @@ class SettingsFragment : KotlinBaseFragment() {
                 ).build().show()
         }
 
-        //先识别出来备用
-        try {
-            val codeValue = QRUtils.getInstance().decodeQRcode(updateCodeView)
-            SaveKeyValues.putValue("updateLink", codeValue)
-        } catch (e: Exception) {
-            e.printStackTrace()
-        }
         updateCodeView.setOnLongClickListener {
-            val updateLink =
-                SaveKeyValues.getValue("updateLink", "https://www.pgyer.com/MBGt") as String
+            val updateLink = "https://www.pgyer.com/MBGt"
             AlertMessageDialog.Builder()
                 .setContext(requireContext())
                 .setTitle("识别结果")
