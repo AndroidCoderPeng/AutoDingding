@@ -9,6 +9,7 @@ import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.net.Uri
 import android.os.Build
+import android.os.Bundle
 import android.provider.Settings
 import android.text.TextUtils
 import com.pengxh.autodingding.BaseApplication
@@ -24,7 +25,16 @@ import com.pengxh.kt.lite.extensions.show
 import com.pengxh.kt.lite.utils.SaveKeyValues
 import com.pengxh.kt.lite.widget.dialog.AlertInputDialog
 import com.pengxh.kt.lite.widget.dialog.AlertMessageDialog
-import kotlinx.android.synthetic.main.fragment_settings.*
+import kotlinx.android.synthetic.main.fragment_settings.appVersion
+import kotlinx.android.synthetic.main.fragment_settings.emailLayout
+import kotlinx.android.synthetic.main.fragment_settings.emailTextView
+import kotlinx.android.synthetic.main.fragment_settings.floatCheckBox
+import kotlinx.android.synthetic.main.fragment_settings.historyLayout
+import kotlinx.android.synthetic.main.fragment_settings.introduceLayout
+import kotlinx.android.synthetic.main.fragment_settings.noticeCheckBox
+import kotlinx.android.synthetic.main.fragment_settings.notificationLayout
+import kotlinx.android.synthetic.main.fragment_settings.recordSize
+import kotlinx.android.synthetic.main.fragment_settings.updateCodeView
 
 class SettingsFragment : KotlinBaseFragment() {
 
@@ -42,7 +52,7 @@ class SettingsFragment : KotlinBaseFragment() {
 
     override fun initLayoutView(): Int = R.layout.fragment_settings
 
-    override fun initData() {
+    override fun initData(savedInstanceState: Bundle?) {
         val emailAddress = SaveKeyValues.getValue(Constant.EMAIL_ADDRESS, "") as String
         if (!TextUtils.isEmpty(emailAddress)) {
             emailTextView.text = emailAddress

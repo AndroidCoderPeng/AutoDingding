@@ -1,6 +1,7 @@
 package com.pengxh.autodingding.ui
 
 import android.annotation.SuppressLint
+import android.os.Bundle
 import com.gyf.immersionbar.ImmersionBar
 import com.pengxh.autodingding.BaseApplication
 import com.pengxh.autodingding.R
@@ -23,7 +24,7 @@ class UpdateTimerTaskActivity : KotlinBaseActivity() {
     private val calendar by lazy { Calendar.getInstance() }
     private lateinit var dateTimeBean: DateTimeBean
 
-    override fun initData() {
+    override fun initData(savedInstanceState: Bundle?) {
         val taskUuid = intent.getStringExtra(Constant.INTENT_PARAM)!!
         dateTimeBean = dateTimeBeanDao.queryBuilder().where(
             DateTimeBeanDao.Properties.Uuid.eq(taskUuid)

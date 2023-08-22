@@ -1,5 +1,6 @@
 package com.pengxh.autodingding.ui
 
+import android.os.Bundle
 import android.os.CountDownTimer
 import android.os.Handler
 import android.os.Message
@@ -17,8 +18,11 @@ import com.pengxh.kt.lite.extensions.convertColor
 import com.pengxh.kt.lite.extensions.dp2px
 import com.pengxh.kt.lite.utils.ImmerseStatusBarUtil
 import com.pengxh.kt.lite.utils.WeakReferenceHandler
-import kotlinx.android.synthetic.main.activity_notice.*
-import kotlinx.android.synthetic.main.include_base_title.*
+import kotlinx.android.synthetic.main.activity_notice.emptyView
+import kotlinx.android.synthetic.main.activity_notice.notificationView
+import kotlinx.android.synthetic.main.activity_notice.refreshLayout
+import kotlinx.android.synthetic.main.include_base_title.leftBackView
+import kotlinx.android.synthetic.main.include_base_title.titleView
 
 class NoticeRecordActivity : KotlinBaseActivity() {
 
@@ -39,7 +43,7 @@ class NoticeRecordActivity : KotlinBaseActivity() {
         titleView.text = "所有通知"
     }
 
-    override fun initData() {
+    override fun initData(savedInstanceState: Bundle?) {
         weakReferenceHandler = WeakReferenceHandler(callback)
         dataBeans = queryNotificationRecord()
         weakReferenceHandler.sendEmptyMessage(2022061901)

@@ -1,6 +1,7 @@
 package com.pengxh.autodingding.ui
 
 import android.content.Context
+import android.os.Bundle
 import android.os.CountDownTimer
 import android.os.Environment
 import android.os.Handler
@@ -28,7 +29,12 @@ import com.pengxh.kt.lite.utils.WeakReferenceHandler
 import com.pengxh.kt.lite.widget.EasyPopupWindow
 import com.pengxh.kt.lite.widget.dialog.AlertControlDialog
 import com.pengxh.kt.lite.widget.dialog.AlertMessageDialog
-import kotlinx.android.synthetic.main.activity_history.*
+import kotlinx.android.synthetic.main.activity_history.emptyView
+import kotlinx.android.synthetic.main.activity_history.historyRecordView
+import kotlinx.android.synthetic.main.activity_history.leftBackView
+import kotlinx.android.synthetic.main.activity_history.refreshLayout
+import kotlinx.android.synthetic.main.activity_history.titleRightView
+import kotlinx.android.synthetic.main.activity_history.titleView
 import java.io.File
 
 class HistoryRecordActivity : KotlinBaseActivity() {
@@ -57,7 +63,7 @@ class HistoryRecordActivity : KotlinBaseActivity() {
         }
     }
 
-    override fun initData() {
+    override fun initData(savedInstanceState: Bundle?) {
         weakReferenceHandler = WeakReferenceHandler(callback)
         dataBeans = queryHistoryRecord()
         weakReferenceHandler.sendEmptyMessage(2022021403)

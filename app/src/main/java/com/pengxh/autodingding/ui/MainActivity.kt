@@ -1,6 +1,7 @@
 package com.pengxh.autodingding.ui
 
 import android.content.Intent
+import android.os.Bundle
 import android.util.Log
 import android.view.KeyEvent
 import android.view.MenuItem
@@ -20,7 +21,9 @@ import com.pengxh.kt.lite.extensions.show
 import com.pengxh.kt.lite.utils.ImmerseStatusBarUtil
 import com.pengxh.kt.lite.utils.SaveKeyValues
 import com.pengxh.kt.lite.widget.dialog.AlertMessageDialog
-import kotlinx.android.synthetic.main.activity_main.*
+import kotlinx.android.synthetic.main.activity_main.bottomNavigation
+import kotlinx.android.synthetic.main.activity_main.titleView
+import kotlinx.android.synthetic.main.activity_main.viewPager
 
 
 class MainActivity : KotlinBaseActivity() {
@@ -38,7 +41,7 @@ class MainActivity : KotlinBaseActivity() {
         titleView.text = "自动打卡"
     }
 
-    override fun initData() {
+    override fun initData(savedInstanceState: Bundle?) {
         fragmentPages.add(DingDingFragment())
         fragmentPages.add(SettingsFragment())
 

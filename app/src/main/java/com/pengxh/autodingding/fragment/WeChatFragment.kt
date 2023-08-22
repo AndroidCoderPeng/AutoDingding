@@ -1,10 +1,11 @@
 package com.pengxh.autodingding.fragment
 
+import android.os.Bundle
 import com.pengxh.autodingding.R
 import com.pengxh.kt.lite.base.KotlinBaseFragment
 
 class WeChatFragment : KotlinBaseFragment() {
-    override fun initData() {
+    override fun initData(savedInstanceState: Bundle?) {
 
     }
 

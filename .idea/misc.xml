@@ -1,4 +1,3 @@
-<?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="DesignSurface">
     <option name="filePathToZoomLevelMap">
@@ -31,8 +30,14 @@
         <entry key="app/src/main/res/drawable/bg_textview.xml" value="0.2005" />
         <entry key="app/src/main/res/drawable/bg_textview_error.xml" value="0.2005" />
         <entry key="app/src/main/res/drawable/ic_arrow_right.xml" value="0.18802083333333333" />
+        <entry key="app/src/main/res/drawable/ic_delete.xml" value="0.2475" />
+        <entry key="app/src/main/res/drawable/ic_dingding.xml" value="0.2475" />
+        <entry key="app/src/main/res/drawable/ic_export.xml" value="0.2475" />
         <entry key="app/src/main/res/drawable/ic_outline_settings_24.xml" value="0.18802083333333333" />
+        <entry key="app/src/main/res/drawable/ic_right_white.xml" value="0.2475" />
         <entry key="app/src/main/res/drawable/ic_settings.xml" value="0.18802083333333333" />
+        <entry key="app/src/main/res/drawable/ic_stop.xml" value="0.2475" />
+        <entry key="app/src/main/res/drawable/ic_wechat.xml" value="0.2475" />
         <entry key="app/src/main/res/layout/activity_add_timer_task.xml" value="0.37604166666666666" />
         <entry key="app/src/main/res/layout/activity_history.xml" value="0.3581757508342603" />
         <entry key="app/src/main/res/layout/activity_main.xml" value="0.21979166666666666" />

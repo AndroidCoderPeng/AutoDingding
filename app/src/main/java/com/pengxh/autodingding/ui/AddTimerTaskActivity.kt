@@ -1,6 +1,7 @@
 package com.pengxh.autodingding.ui
 
 import android.annotation.SuppressLint
+import android.os.Bundle
 import com.gyf.immersionbar.ImmersionBar
 import com.pengxh.autodingding.BaseApplication
 import com.pengxh.autodingding.R
@@ -20,7 +21,7 @@ class AddTimerTaskActivity : KotlinBaseActivity() {
     private val dateTimeBeanDao by lazy { BaseApplication.get().daoSession.dateTimeBeanDao }
     private val calendar by lazy { Calendar.getInstance() }
 
-    override fun initData() {
+    override fun initData(savedInstanceState: Bundle?) {
 
     }
 

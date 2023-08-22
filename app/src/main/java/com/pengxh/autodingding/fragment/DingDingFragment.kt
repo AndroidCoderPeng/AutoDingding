@@ -1,5 +1,6 @@
 package com.pengxh.autodingding.fragment
 
+import android.os.Bundle
 import android.os.Handler
 import android.view.View
 import com.pengxh.autodingding.BaseApplication
@@ -16,7 +17,9 @@ import com.pengxh.kt.lite.divider.VerticalMarginItemDecoration
 import com.pengxh.kt.lite.extensions.dp2px
 import com.pengxh.kt.lite.extensions.navigatePageTo
 import com.pengxh.kt.lite.utils.WeakReferenceHandler
-import kotlinx.android.synthetic.main.fragment_dingding.*
+import kotlinx.android.synthetic.main.fragment_dingding.addTimerButton
+import kotlinx.android.synthetic.main.fragment_dingding.emptyView
+import kotlinx.android.synthetic.main.fragment_dingding.weeklyRecyclerView
 
 class DingDingFragment : KotlinBaseFragment() {
 
@@ -36,7 +39,7 @@ class DingDingFragment : KotlinBaseFragment() {
 
     override fun initLayoutView(): Int = R.layout.fragment_dingding
 
-    override fun initData() {
+    override fun initData(savedInstanceState: Bundle?) {
         weakReferenceHandler = WeakReferenceHandler(callback)
         dataBeans = getAutoDingDingTasks()
         weakReferenceHandler.sendEmptyMessage(2023042601)
