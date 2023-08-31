@@ -6,6 +6,7 @@ import com.gyf.immersionbar.ImmersionBar
 import com.pengxh.autodingding.BaseApplication
 import com.pengxh.autodingding.R
 import com.pengxh.autodingding.bean.DateTimeBean
+import com.pengxh.autodingding.databinding.ActivityUpdateTimerTaskBinding
 import com.pengxh.autodingding.extensions.appendZero
 import com.pengxh.autodingding.extensions.convertToWeek
 import com.pengxh.autodingding.greendao.DateTimeBeanDao
@@ -13,55 +14,55 @@ import com.pengxh.kt.lite.base.KotlinBaseActivity
 import com.pengxh.kt.lite.extensions.convertColor
 import com.pengxh.kt.lite.utils.Constant
 import com.pengxh.kt.lite.utils.ImmerseStatusBarUtil
-import kotlinx.android.synthetic.main.activity_update_timer_task.*
-import kotlinx.android.synthetic.main.include_base_title.*
 import java.util.*
 
 @SuppressLint("SetTextI18n")
-class UpdateTimerTaskActivity : KotlinBaseActivity() {
+class UpdateTimerTaskActivity : KotlinBaseActivity<ActivityUpdateTimerTaskBinding>() {
 
     private val dateTimeBeanDao by lazy { BaseApplication.get().daoSession.dateTimeBeanDao }
     private val calendar by lazy { Calendar.getInstance() }
     private lateinit var dateTimeBean: DateTimeBean
 
-    override fun initData(savedInstanceState: Bundle?) {
+    override fun initViewBinding(): ActivityUpdateTimerTaskBinding {
+        return ActivityUpdateTimerTaskBinding.inflate(layoutInflater)
+    }
+
+    override fun initOnCreate(savedInstanceState: Bundle?) {
         val taskUuid = intent.getStringExtra(Constant.INTENT_PARAM)!!
         dateTimeBean = dateTimeBeanDao.queryBuilder().where(
             DateTimeBeanDao.Properties.Uuid.eq(taskUuid)
         ).unique()
 
         //设置默认显示日期
-        selectedDateView.text = dateTimeBean.date
-        selectedTimeView.text = dateTimeBean.time
+        binding.selectedDateView.text = dateTimeBean.date
+        binding.selectedTimeView.text = dateTimeBean.time
     }
 
     override fun initEvent() {
-        leftBackView.setOnClickListener { finish() }
+        binding.titleInclude.leftBackView.setOnClickListener { finish() }
 
-        datePicker.init(
+        binding.datePicker.init(
             calendar.get(Calendar.YEAR),
             calendar.get(Calendar.MONTH),
             calendar.get(Calendar.DAY_OF_MONTH)
         ) { _, year, monthOfYear, dayOfMonth ->
-            selectedDateView.text =
+            binding.selectedDateView.text =
                 "${year}-${(monthOfYear + 1).appendZero()}-${dayOfMonth.appendZero()}"
         }
 
-        timePicker.setOnTimeChangedListener { _, hourOfDay, minute ->
-            selectedTimeView.text = "${hourOfDay.appendZero()}:${minute.appendZero()}"
+        binding.timePicker.setOnTimeChangedListener { _, hourOfDay, minute ->
+            binding.selectedTimeView.text = "${hourOfDay.appendZero()}:${minute.appendZero()}"
         }
 
-        updateTimerButton.setOnClickListener {
-            dateTimeBean.date = selectedDateView.text.toString()
-            dateTimeBean.time = selectedTimeView.text.toString()
-            dateTimeBean.weekDay = selectedDateView.text.toString().convertToWeek()
+        binding.updateTimerButton.setOnClickListener {
+            dateTimeBean.date = binding.selectedDateView.text.toString()
+            dateTimeBean.time = binding.selectedTimeView.text.toString()
+            dateTimeBean.weekDay = binding.selectedDateView.text.toString().convertToWeek()
 
             dateTimeBeanDao.update(dateTimeBean)
             finish()
         }
     }
-
-    override fun initLayoutView(): Int = R.layout.activity_update_timer_task
 
     override fun observeRequestState() {
 
@@ -72,6 +73,6 @@ class UpdateTimerTaskActivity : KotlinBaseActivity() {
             this, R.color.colorAppThemeLight.convertColor(this)
         )
         ImmersionBar.with(this).statusBarDarkFont(false).init()
-        titleView.text = "修改定时任务"
+        binding.titleInclude.titleView.text = "修改定时任务"
     }
 }

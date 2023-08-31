@@ -2,11 +2,13 @@ package com.pengxh.autodingding.fragment
 
 import android.os.Bundle
 import android.os.Handler
+import android.view.LayoutInflater
 import android.view.View
+import android.view.ViewGroup
 import com.pengxh.autodingding.BaseApplication
-import com.pengxh.autodingding.R
 import com.pengxh.autodingding.adapter.DateTimeAdapter
 import com.pengxh.autodingding.bean.DateTimeBean
+import com.pengxh.autodingding.databinding.FragmentDingdingBinding
 import com.pengxh.autodingding.extensions.openApplication
 import com.pengxh.autodingding.greendao.DateTimeBeanDao
 import com.pengxh.autodingding.ui.AddTimerTaskActivity
@@ -17,11 +19,8 @@ import com.pengxh.kt.lite.divider.VerticalMarginItemDecoration
 import com.pengxh.kt.lite.extensions.dp2px
 import com.pengxh.kt.lite.extensions.navigatePageTo
 import com.pengxh.kt.lite.utils.WeakReferenceHandler
-import kotlinx.android.synthetic.main.fragment_dingding.addTimerButton
-import kotlinx.android.synthetic.main.fragment_dingding.emptyView
-import kotlinx.android.synthetic.main.fragment_dingding.weeklyRecyclerView
 
-class DingDingFragment : KotlinBaseFragment() {
+class DingDingFragment : KotlinBaseFragment<FragmentDingdingBinding>() {
 
     private val kTag = "DingDingFragment"
     private val dateTimeBeanDao by lazy { BaseApplication.get().daoSession.dateTimeBeanDao }
@@ -37,14 +36,18 @@ class DingDingFragment : KotlinBaseFragment() {
 
     }
 
-    override fun initLayoutView(): Int = R.layout.fragment_dingding
+    override fun initViewBinding(
+        inflater: LayoutInflater, container: ViewGroup?
+    ): FragmentDingdingBinding {
+        return FragmentDingdingBinding.inflate(inflater, container, false)
+    }
 
-    override fun initData(savedInstanceState: Bundle?) {
+    override fun initOnCreate(savedInstanceState: Bundle?) {
         weakReferenceHandler = WeakReferenceHandler(callback)
         dataBeans = getAutoDingDingTasks()
         weakReferenceHandler.sendEmptyMessage(2023042601)
         //设置分割线
-        weeklyRecyclerView.addItemDecoration(
+        binding.weeklyRecyclerView.addItemDecoration(
             VerticalMarginItemDecoration(1f.dp2px(requireContext()), 7f.dp2px(requireContext()))
         )
     }
@@ -62,11 +65,11 @@ class DingDingFragment : KotlinBaseFragment() {
     private val callback = Handler.Callback {
         if (it.what == 2023042601) {
             if (dataBeans.size == 0) {
-                emptyView.visibility = View.VISIBLE
+                binding.emptyView.visibility = View.VISIBLE
             } else {
-                emptyView.visibility = View.GONE
+                binding.emptyView.visibility = View.GONE
                 dateTimeAdapter = DateTimeAdapter(requireContext(), dataBeans)
-                weeklyRecyclerView.adapter = dateTimeAdapter
+                binding.weeklyRecyclerView.adapter = dateTimeAdapter
                 dateTimeAdapter?.setOnItemClickListener(object :
                     DateTimeAdapter.OnItemClickListener {
                     override fun onItemClick(layoutPosition: Int) {
@@ -79,9 +82,9 @@ class DingDingFragment : KotlinBaseFragment() {
                         dateTimeAdapter?.notifyItemRemoved(layoutPosition)
                         dateTimeAdapter?.notifyItemChanged(layoutPosition)
                         if (dataBeans.size == 0) {
-                            emptyView.visibility = View.VISIBLE
+                            binding.emptyView.visibility = View.VISIBLE
                         } else {
-                            emptyView.visibility = View.GONE
+                            binding.emptyView.visibility = View.GONE
                         }
                     }
 
@@ -100,7 +103,7 @@ class DingDingFragment : KotlinBaseFragment() {
     }
 
     override fun initEvent() {
-        addTimerButton.setOnClickListener {
+        binding.addTimerButton.setOnClickListener {
             requireContext().navigatePageTo<AddTimerTaskActivity>()
         }
     }
