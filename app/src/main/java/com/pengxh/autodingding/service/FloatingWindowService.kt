@@ -13,6 +13,7 @@ import android.view.View
 import android.view.WindowManager
 import com.pengxh.autodingding.R
 import com.pengxh.autodingding.fragment.SettingsFragment
+import com.pengxh.kt.lite.extensions.dp2px
 import com.pengxh.kt.lite.extensions.getSystemService
 import com.pengxh.kt.lite.extensions.show
 
@@ -54,14 +55,14 @@ class FloatingWindowService : Service() {
             WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE,
             PixelFormat.TRANSLUCENT
         )
-        floatLayoutParams.gravity = Gravity.END
+        floatLayoutParams.gravity = Gravity.BOTTOM
         floatLayoutParams.x = 0
-        floatLayoutParams.y = 0
+        floatLayoutParams.y = 10f.dp2px(this)
 
         windowManager?.addView(floatView, floatLayoutParams)
 
         floatView?.setOnClickListener {
-            "此悬浮图标无实际功能，仅为绕过Android 10以上系统打卡之后无法回到桌面的问题".show(this)
+            "此悬浮标无实际功能，仅为绕过Android 10+系统打卡之后无法回到桌面的问题".show(this)
         }
     }
 }
