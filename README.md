@@ -20,7 +20,7 @@ Kotlin+Java混编实现的钉钉打卡小工具，解决您上班途中迟到问
 
 #### [旧版本(app-release.apk)](apk/app-release.apk)
 
-#### [新版本(AUTO_20230511_1.3.4.0.apk)](apk/release/AUTO_20230511_1.3.4.0.apk)
+#### [新版本(AUTO_20230902_1.3.5.apk)](apk/release/AUTO_20230902_1.3.5.apk)
 
 # 使用注意事项：
 
