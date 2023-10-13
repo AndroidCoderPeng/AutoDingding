@@ -12,6 +12,7 @@ import com.gyf.immersionbar.ImmersionBar
 import com.pengxh.autodingding.BaseApplication
 import com.pengxh.autodingding.R
 import com.pengxh.autodingding.bean.HistoryRecordBean
+import com.pengxh.autodingding.databinding.ActivityHistoryBinding
 import com.pengxh.autodingding.extensions.writeObjToExcel
 import com.pengxh.autodingding.greendao.HistoryRecordBeanDao
 import com.pengxh.autodingding.utils.Constant
@@ -29,15 +30,9 @@ import com.pengxh.kt.lite.utils.WeakReferenceHandler
 import com.pengxh.kt.lite.widget.EasyPopupWindow
 import com.pengxh.kt.lite.widget.dialog.AlertControlDialog
 import com.pengxh.kt.lite.widget.dialog.AlertMessageDialog
-import kotlinx.android.synthetic.main.activity_history.emptyView
-import kotlinx.android.synthetic.main.activity_history.historyRecordView
-import kotlinx.android.synthetic.main.activity_history.leftBackView
-import kotlinx.android.synthetic.main.activity_history.refreshLayout
-import kotlinx.android.synthetic.main.activity_history.titleRightView
-import kotlinx.android.synthetic.main.activity_history.titleView
 import java.io.File
 
-class HistoryRecordActivity : KotlinBaseActivity() {
+class HistoryRecordActivity : KotlinBaseActivity<ActivityHistoryBinding>() {
 
     private val context: Context = this@HistoryRecordActivity
     private val images = intArrayOf(R.drawable.ic_delete, R.drawable.ic_export)
@@ -52,18 +47,22 @@ class HistoryRecordActivity : KotlinBaseActivity() {
     private var isLoadMore = false
     private var offset = 0 // 本地数据库分页从0开始
 
+    override fun initViewBinding(): ActivityHistoryBinding {
+        return ActivityHistoryBinding.inflate(layoutInflater)
+    }
+
     override fun setupTopBarLayout() {
         ImmerseStatusBarUtil.setColor(
             this, R.color.colorAppThemeLight.convertColor(this)
         )
         ImmersionBar.with(this).statusBarDarkFont(false).init()
-        titleView.text = "打卡记录"
-        titleRightView.setOnClickListener {
-            easyPopupWindow.showAsDropDown(titleRightView, 0, 10f.dp2px(context))
+        binding.titleView.text = "打卡记录"
+        binding.titleRightView.setOnClickListener {
+            easyPopupWindow.showAsDropDown(binding.titleRightView, 0, 10f.dp2px(context))
         }
     }
 
-    override fun initData(savedInstanceState: Bundle?) {
+    override fun initOnCreate(savedInstanceState: Bundle?) {
         weakReferenceHandler = WeakReferenceHandler(callback)
         dataBeans = queryHistoryRecord()
         weakReferenceHandler.sendEmptyMessage(2022021403)
@@ -100,7 +99,7 @@ class HistoryRecordActivity : KotlinBaseActivity() {
                                         historyRecordBeanDao.deleteAll()
                                         dataBeans.clear()
                                         historyAdapter.notifyDataSetChanged()
-                                        emptyView.visibility = View.VISIBLE
+                                        binding.emptyView.visibility = View.VISIBLE
                                     }
 
                                     override fun onCancelClick() {
@@ -109,6 +108,7 @@ class HistoryRecordActivity : KotlinBaseActivity() {
                                 }).build().show()
                         }
                     }
+
                     1 -> {
                         val emailAddress =
                             SaveKeyValues.getValue(Constant.EMAIL_ADDRESS, "") as String
@@ -142,9 +142,9 @@ class HistoryRecordActivity : KotlinBaseActivity() {
     }
 
     override fun initEvent() {
-        leftBackView.setOnClickListener { finish() }
+        binding.leftBackView.setOnClickListener { finish() }
 
-        refreshLayout.setOnRefreshListener { refreshLayout ->
+        binding.refreshLayout.setOnRefreshListener { refreshLayout ->
             isRefresh = true
             object : CountDownTimer(1000, 500) {
                 override fun onTick(millisUntilFinished: Long) {}
@@ -158,7 +158,7 @@ class HistoryRecordActivity : KotlinBaseActivity() {
                 }
             }.start()
         }
-        refreshLayout.setOnLoadMoreListener { refreshLayout ->
+        binding.refreshLayout.setOnLoadMoreListener { refreshLayout ->
             isLoadMore = true
             object : CountDownTimer(1000, 500) {
                 override fun onTick(millisUntilFinished: Long) {}
@@ -173,8 +173,6 @@ class HistoryRecordActivity : KotlinBaseActivity() {
         }
     }
 
-    override fun initLayoutView(): Int = R.layout.activity_history
-
     override fun observeRequestState() {
 
     }
@@ -185,9 +183,9 @@ class HistoryRecordActivity : KotlinBaseActivity() {
                 historyAdapter.notifyDataSetChanged()
             } else { //首次加载数据
                 if (dataBeans.size == 0) {
-                    emptyView.visibility = View.VISIBLE
+                    binding.emptyView.visibility = View.VISIBLE
                 } else {
-                    emptyView.visibility = View.GONE
+                    binding.emptyView.visibility = View.GONE
                     historyAdapter = object :
                         NormalRecyclerAdapter<HistoryRecordBean>(
                             R.layout.item_history_rv_l, dataBeans
@@ -205,10 +203,10 @@ class HistoryRecordActivity : KotlinBaseActivity() {
                                 .setText(R.id.noticeDateView, item.date)
                         }
                     }
-                    historyRecordView.addItemDecoration(
+                    binding.historyRecordView.addItemDecoration(
                         ItemDecoration(10f.dp2px(context).toFloat(), 0f)
                     )
-                    historyRecordView.adapter = historyAdapter
+                    binding.historyRecordView.adapter = historyAdapter
                 }
             }
         }

@@ -1,19 +1,25 @@
 package com.pengxh.autodingding.fragment
 
 import android.os.Bundle
-import com.pengxh.autodingding.R
+import android.view.LayoutInflater
+import android.view.ViewGroup
+import com.pengxh.autodingding.databinding.FragmentWechatBinding
 import com.pengxh.kt.lite.base.KotlinBaseFragment
 
-class WeChatFragment : KotlinBaseFragment() {
-    override fun initData(savedInstanceState: Bundle?) {
-
-    }
-
+class WeChatFragment : KotlinBaseFragment<FragmentWechatBinding>() {
     override fun initEvent() {
 
     }
 
-    override fun initLayoutView(): Int = R.layout.fragment_wechat
+    override fun initOnCreate(savedInstanceState: Bundle?) {
+
+    }
+
+    override fun initViewBinding(
+        inflater: LayoutInflater, container: ViewGroup?
+    ): FragmentWechatBinding {
+        return FragmentWechatBinding.inflate(inflater, container, false)
+    }
 
     override fun observeRequestState() {
 

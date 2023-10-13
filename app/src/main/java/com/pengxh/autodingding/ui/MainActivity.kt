@@ -10,6 +10,7 @@ import androidx.viewpager.widget.ViewPager
 import com.gyf.immersionbar.ImmersionBar
 import com.pengxh.autodingding.R
 import com.pengxh.autodingding.adapter.BaseFragmentAdapter
+import com.pengxh.autodingding.databinding.ActivityMainBinding
 import com.pengxh.autodingding.extensions.isAppAvailable
 import com.pengxh.autodingding.fragment.DingDingFragment
 import com.pengxh.autodingding.fragment.SettingsFragment
@@ -21,27 +22,28 @@ import com.pengxh.kt.lite.extensions.show
 import com.pengxh.kt.lite.utils.ImmerseStatusBarUtil
 import com.pengxh.kt.lite.utils.SaveKeyValues
 import com.pengxh.kt.lite.widget.dialog.AlertMessageDialog
-import kotlinx.android.synthetic.main.activity_main.bottomNavigation
-import kotlinx.android.synthetic.main.activity_main.titleView
-import kotlinx.android.synthetic.main.activity_main.viewPager
 
 
-class MainActivity : KotlinBaseActivity() {
+class MainActivity : KotlinBaseActivity<ActivityMainBinding>() {
 
     private val kTag = "MainActivity"
     private var menuItem: MenuItem? = null
     private val fragmentPages: MutableList<Fragment> = ArrayList()
     private var clickTime: Long = 0
 
+    override fun initViewBinding(): ActivityMainBinding {
+        return ActivityMainBinding.inflate(layoutInflater)
+    }
+
     override fun setupTopBarLayout() {
         ImmerseStatusBarUtil.setColor(
             this, R.color.colorAppThemeLight.convertColor(this)
         )
         ImmersionBar.with(this).statusBarDarkFont(false).init()
-        titleView.text = "自动打卡"
+        binding.titleView.text = "自动打卡"
     }
 
-    override fun initData(savedInstanceState: Bundle?) {
+    override fun initOnCreate(savedInstanceState: Bundle?) {
         fragmentPages.add(DingDingFragment())
         fragmentPages.add(SettingsFragment())
 
@@ -74,25 +76,25 @@ class MainActivity : KotlinBaseActivity() {
     }
 
     override fun initEvent() {
-        bottomNavigation.setOnItemSelectedListener { item ->
+        binding.bottomNavigation.setOnItemSelectedListener { item ->
             val itemId: Int = item.itemId
             if (itemId == R.id.nav_dingding) {
                 if (isAppAvailable(Constant.DING_DING)) {
-                    viewPager.currentItem = 0
+                    binding.viewPager.currentItem = 0
                 } else {
                     showAlertDialog()
                 }
-                titleView.text = "自动打卡"
+                binding.titleView.text = "自动打卡"
             } else if (itemId == R.id.nav_settings) {
-                viewPager.currentItem = 1
-                titleView.text = "其他设置"
+                binding.viewPager.currentItem = 1
+                binding.titleView.text = "其他设置"
             }
             false
         }
         val fragmentAdapter = BaseFragmentAdapter(supportFragmentManager, fragmentPages)
-        viewPager.adapter = fragmentAdapter
-        viewPager.offscreenPageLimit = fragmentPages.size
-        viewPager.addOnPageChangeListener(object : ViewPager.OnPageChangeListener {
+        binding.viewPager.adapter = fragmentAdapter
+        binding.viewPager.offscreenPageLimit = fragmentPages.size
+        binding.viewPager.addOnPageChangeListener(object : ViewPager.OnPageChangeListener {
             override fun onPageScrolled(
                 position: Int, positionOffset: Float, positionOffsetPixels: Int
             ) {
@@ -102,22 +104,20 @@ class MainActivity : KotlinBaseActivity() {
                 if (menuItem != null) {
                     menuItem!!.isChecked = false
                 } else {
-                    bottomNavigation.menu.getItem(0).isChecked = false
+                    binding.bottomNavigation.menu.getItem(0).isChecked = false
                 }
-                menuItem = bottomNavigation.menu.getItem(position)
+                menuItem = binding.bottomNavigation.menu.getItem(position)
                 menuItem!!.isChecked = true
                 if (position == 0) {
-                    titleView.text = "自动打卡"
+                    binding.titleView.text = "自动打卡"
                 } else {
-                    titleView.text = "其他设置"
+                    binding.titleView.text = "其他设置"
                 }
             }
 
             override fun onPageScrollStateChanged(state: Int) {}
         })
     }
-
-    override fun initLayoutView(): Int = R.layout.activity_main
 
     override fun observeRequestState() {
 

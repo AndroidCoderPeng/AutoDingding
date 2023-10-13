@@ -207,26 +207,4 @@
             android:textColor="@color/colorText"
             android:textSize="@dimen/sp_16" />
     </RelativeLayout>
-
-    <RelativeLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent">
-
-        <ImageView
-            android:id="@+id/updateCodeView"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerInParent="true"
-            android:background="@mipmap/update_code" />
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@id/updateCodeView"
-            android:layout_centerHorizontal="true"
-            android:layout_marginTop="10dp"
-            android:paddingVertical="5dp"
-            android:text="长按识别二维码，获取最新应用下载地址"
-            android:textColor="@color/colorText" />
-    </RelativeLayout>
 </LinearLayout>

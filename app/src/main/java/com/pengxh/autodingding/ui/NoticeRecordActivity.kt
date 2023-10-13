@@ -9,6 +9,7 @@ import com.gyf.immersionbar.ImmersionBar
 import com.pengxh.autodingding.BaseApplication
 import com.pengxh.autodingding.R
 import com.pengxh.autodingding.bean.NotificationBean
+import com.pengxh.autodingding.databinding.ActivityNoticeBinding
 import com.pengxh.autodingding.greendao.NotificationBeanDao
 import com.pengxh.kt.lite.adapter.NormalRecyclerAdapter
 import com.pengxh.kt.lite.adapter.ViewHolder
@@ -18,13 +19,8 @@ import com.pengxh.kt.lite.extensions.convertColor
 import com.pengxh.kt.lite.extensions.dp2px
 import com.pengxh.kt.lite.utils.ImmerseStatusBarUtil
 import com.pengxh.kt.lite.utils.WeakReferenceHandler
-import kotlinx.android.synthetic.main.activity_notice.emptyView
-import kotlinx.android.synthetic.main.activity_notice.notificationView
-import kotlinx.android.synthetic.main.activity_notice.refreshLayout
-import kotlinx.android.synthetic.main.include_base_title.leftBackView
-import kotlinx.android.synthetic.main.include_base_title.titleView
 
-class NoticeRecordActivity : KotlinBaseActivity() {
+class NoticeRecordActivity : KotlinBaseActivity<ActivityNoticeBinding>() {
 
     private val context = this@NoticeRecordActivity
     private val notificationBeanDao by lazy { BaseApplication.get().daoSession.notificationBeanDao }
@@ -35,24 +31,28 @@ class NoticeRecordActivity : KotlinBaseActivity() {
     private var isLoadMore = false
     private var offset = 0 // 本地数据库分页从0开始
 
+    override fun initViewBinding(): ActivityNoticeBinding {
+        return ActivityNoticeBinding.inflate(layoutInflater)
+    }
+
     override fun setupTopBarLayout() {
         ImmerseStatusBarUtil.setColor(
             this, R.color.colorAppThemeLight.convertColor(this)
         )
         ImmersionBar.with(this).statusBarDarkFont(false).init()
-        titleView.text = "所有通知"
+        binding.titleInclude.titleView.text = "所有通知"
     }
 
-    override fun initData(savedInstanceState: Bundle?) {
+    override fun initOnCreate(savedInstanceState: Bundle?) {
         weakReferenceHandler = WeakReferenceHandler(callback)
         dataBeans = queryNotificationRecord()
         weakReferenceHandler.sendEmptyMessage(2022061901)
     }
 
     override fun initEvent() {
-        leftBackView.setOnClickListener { finish() }
+        binding.titleInclude.leftBackView.setOnClickListener { finish() }
 
-        refreshLayout.setOnRefreshListener { refreshLayout ->
+        binding.refreshLayout.setOnRefreshListener { refreshLayout ->
             isRefresh = true
             object : CountDownTimer(1000, 500) {
                 override fun onTick(millisUntilFinished: Long) {}
@@ -67,7 +67,7 @@ class NoticeRecordActivity : KotlinBaseActivity() {
             }.start()
         }
 
-        refreshLayout.setOnLoadMoreListener { refreshLayout ->
+        binding.refreshLayout.setOnLoadMoreListener { refreshLayout ->
             isLoadMore = true
             object : CountDownTimer(1000, 500) {
                 override fun onTick(millisUntilFinished: Long) {}
@@ -82,8 +82,6 @@ class NoticeRecordActivity : KotlinBaseActivity() {
         }
     }
 
-    override fun initLayoutView(): Int = R.layout.activity_notice
-
     override fun observeRequestState() {
 
     }
@@ -94,9 +92,9 @@ class NoticeRecordActivity : KotlinBaseActivity() {
                 noticeAdapter.notifyDataSetChanged()
             } else { //首次加载数据
                 if (dataBeans.size == 0) {
-                    emptyView.visibility = View.VISIBLE
+                    binding.emptyView.visibility = View.VISIBLE
                 } else {
-                    emptyView.visibility = View.GONE
+                    binding.emptyView.visibility = View.GONE
                     noticeAdapter =
                         object : NormalRecyclerAdapter<NotificationBean>(
                             R.layout.item_notice_rv_l, dataBeans
@@ -110,10 +108,10 @@ class NoticeRecordActivity : KotlinBaseActivity() {
                                     .setText(R.id.postTimeView, item.postTime)
                             }
                         }
-                    notificationView.addItemDecoration(
+                    binding.notificationView.addItemDecoration(
                         ItemDecoration(10f.dp2px(context).toFloat(), 10f.dp2px(context).toFloat())
                     )
-                    notificationView.adapter = noticeAdapter
+                    binding.notificationView.adapter = noticeAdapter
                 }
             }
         }

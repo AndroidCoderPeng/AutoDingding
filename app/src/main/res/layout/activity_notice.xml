@@ -7,7 +7,9 @@
     android:background="@color/mainBackground"
     android:orientation="vertical">
 
-    <include layout="@layout/include_base_title" />
+    <include
+        android:id="@+id/titleInclude"
+        layout="@layout/include_base_title" />
 
     <com.scwang.smartrefresh.layout.SmartRefreshLayout
         android:id="@+id/refreshLayout"

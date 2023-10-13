@@ -11,12 +11,12 @@ import android.os.Build
 object Constant {
     val USER_PERMISSIONS = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
         arrayOf(
-            Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.QUERY_ALL_PACKAGES,
+            Manifest.permission.QUERY_ALL_PACKAGES,
             Manifest.permission.SYSTEM_ALERT_WINDOW
         )
     } else {
         arrayOf(
-            Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.SYSTEM_ALERT_WINDOW
+            Manifest.permission.SYSTEM_ALERT_WINDOW
         )
     }
 

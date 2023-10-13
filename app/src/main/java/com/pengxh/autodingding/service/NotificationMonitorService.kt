@@ -11,17 +11,17 @@ import android.util.Log
 import com.pengxh.autodingding.BaseApplication
 import com.pengxh.autodingding.bean.HistoryRecordBean
 import com.pengxh.autodingding.bean.NotificationBean
+import com.pengxh.autodingding.extensions.createMail
 import com.pengxh.autodingding.extensions.sendTextMail
 import com.pengxh.autodingding.ui.WelcomeActivity
 import com.pengxh.autodingding.utils.Constant
-import com.pengxh.autodingding.utils.MailInfoCreator
 import com.pengxh.kt.lite.extensions.timestampToCompleteDate
 import com.pengxh.kt.lite.utils.SaveKeyValues
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import java.util.*
+import java.util.UUID
 
 /**
  * @description: 状态栏监听服务
@@ -78,8 +78,7 @@ class NotificationMonitorService : NotificationListenerService() {
                 //发送打卡成功的邮件
                 CoroutineScope(Dispatchers.Main).launch {
                     withContext(Dispatchers.IO) {
-                        val mailInfo = MailInfoCreator.createMail(emailAddress, notificationText)
-                        mailInfo.sendTextMail()
+                        notificationText.createMail(emailAddress).sendTextMail()
                     }
 
                     val intent = Intent(

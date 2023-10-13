@@ -8,12 +8,17 @@ import android.text.TextUtils
 import androidx.core.app.NotificationManagerCompat
 import com.pengxh.autodingding.bean.HistoryRecordBean
 import com.pengxh.autodingding.utils.Constant
-import com.pengxh.autodingding.utils.MailInfoCreator
 import com.pengxh.kt.lite.extensions.show
 import com.pengxh.kt.lite.utils.SaveKeyValues
 import jxl.Workbook
 import jxl.WorkbookSettings
-import jxl.write.*
+import jxl.write.Border
+import jxl.write.BorderLineStyle
+import jxl.write.Label
+import jxl.write.WritableCellFormat
+import jxl.write.WritableFont
+import jxl.write.WritableSheet
+import jxl.write.WritableWorkbook
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -103,8 +108,7 @@ fun Context.writeObjToExcel(objList: List<HistoryRecordBean>, fileName: String) 
         }
         CoroutineScope(Dispatchers.Main).launch {
             withContext(Dispatchers.IO) {
-                val mailInfo = MailInfoCreator.createAttachMail(emailAddress, file)
-                mailInfo.sendAccessoryMail()
+                file.createAttachMail(emailAddress).sendAccessoryMail()
             }
         }
     } catch (e: Exception) {
