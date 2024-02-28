@@ -2,16 +2,14 @@ package com.pengxh.autodingding.ui
 
 import android.annotation.SuppressLint
 import android.os.Bundle
-import com.gyf.immersionbar.ImmersionBar
 import com.pengxh.autodingding.BaseApplication
 import com.pengxh.autodingding.R
 import com.pengxh.autodingding.bean.DateTimeBean
 import com.pengxh.autodingding.databinding.ActivityAddTimerTaskBinding
-import com.pengxh.autodingding.extensions.appendZero
 import com.pengxh.autodingding.extensions.convertToWeek
+import com.pengxh.autodingding.extensions.initImmersionBar
 import com.pengxh.kt.lite.base.KotlinBaseActivity
-import com.pengxh.kt.lite.extensions.convertColor
-import com.pengxh.kt.lite.utils.ImmerseStatusBarUtil
+import com.pengxh.kt.lite.extensions.appendZero
 import java.util.*
 
 @SuppressLint("SetTextI18n")
@@ -69,10 +67,7 @@ class AddTimerTaskActivity : KotlinBaseActivity<ActivityAddTimerTaskBinding>() {
     }
 
     override fun setupTopBarLayout() {
-        ImmerseStatusBarUtil.setColor(
-            this, R.color.colorAppThemeLight.convertColor(this)
-        )
-        ImmersionBar.with(this).statusBarDarkFont(false).init()
+        binding.rootView.initImmersionBar(this, false, R.color.colorAppThemeLight)
         binding.titleInclude.titleView.text = "新建定时任务"
     }
 }

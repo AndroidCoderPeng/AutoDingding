@@ -7,19 +7,17 @@ import android.view.KeyEvent
 import android.view.MenuItem
 import androidx.fragment.app.Fragment
 import androidx.viewpager.widget.ViewPager
-import com.gyf.immersionbar.ImmersionBar
 import com.pengxh.autodingding.R
 import com.pengxh.autodingding.adapter.BaseFragmentAdapter
 import com.pengxh.autodingding.databinding.ActivityMainBinding
+import com.pengxh.autodingding.extensions.initImmersionBar
 import com.pengxh.autodingding.extensions.isAppAvailable
 import com.pengxh.autodingding.fragment.DingDingFragment
 import com.pengxh.autodingding.fragment.SettingsFragment
 import com.pengxh.autodingding.service.FloatingWindowService
 import com.pengxh.autodingding.utils.Constant
 import com.pengxh.kt.lite.base.KotlinBaseActivity
-import com.pengxh.kt.lite.extensions.convertColor
 import com.pengxh.kt.lite.extensions.show
-import com.pengxh.kt.lite.utils.ImmerseStatusBarUtil
 import com.pengxh.kt.lite.utils.SaveKeyValues
 import com.pengxh.kt.lite.widget.dialog.AlertMessageDialog
 
@@ -36,10 +34,7 @@ class MainActivity : KotlinBaseActivity<ActivityMainBinding>() {
     }
 
     override fun setupTopBarLayout() {
-        ImmerseStatusBarUtil.setColor(
-            this, R.color.colorAppThemeLight.convertColor(this)
-        )
-        ImmersionBar.with(this).statusBarDarkFont(false).init()
+        binding.rootView.initImmersionBar(this, false, R.color.colorAppThemeLight)
         binding.titleView.text = "自动打卡"
     }
 

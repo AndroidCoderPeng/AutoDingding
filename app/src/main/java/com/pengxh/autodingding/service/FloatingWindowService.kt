@@ -57,7 +57,7 @@ class FloatingWindowService : Service() {
         )
         floatLayoutParams.gravity = Gravity.BOTTOM
         floatLayoutParams.x = 0
-        floatLayoutParams.y = 10f.dp2px(this)
+        floatLayoutParams.y = 10.dp2px(this)
 
         windowManager?.addView(floatView, floatLayoutParams)
 

@@ -1,23 +1,21 @@
 package com.pengxh.autodingding.ui
 
+import android.graphics.Color
 import android.os.Bundle
 import android.os.CountDownTimer
 import android.os.Handler
 import android.os.Message
 import android.view.View
-import com.gyf.immersionbar.ImmersionBar
 import com.pengxh.autodingding.BaseApplication
 import com.pengxh.autodingding.R
 import com.pengxh.autodingding.bean.NotificationBean
 import com.pengxh.autodingding.databinding.ActivityNoticeBinding
+import com.pengxh.autodingding.extensions.initImmersionBar
 import com.pengxh.autodingding.greendao.NotificationBeanDao
 import com.pengxh.kt.lite.adapter.NormalRecyclerAdapter
 import com.pengxh.kt.lite.adapter.ViewHolder
 import com.pengxh.kt.lite.base.KotlinBaseActivity
-import com.pengxh.kt.lite.divider.ItemDecoration
-import com.pengxh.kt.lite.extensions.convertColor
-import com.pengxh.kt.lite.extensions.dp2px
-import com.pengxh.kt.lite.utils.ImmerseStatusBarUtil
+import com.pengxh.kt.lite.divider.RecyclerViewItemDivider
 import com.pengxh.kt.lite.utils.WeakReferenceHandler
 
 class NoticeRecordActivity : KotlinBaseActivity<ActivityNoticeBinding>() {
@@ -36,10 +34,7 @@ class NoticeRecordActivity : KotlinBaseActivity<ActivityNoticeBinding>() {
     }
 
     override fun setupTopBarLayout() {
-        ImmerseStatusBarUtil.setColor(
-            this, R.color.colorAppThemeLight.convertColor(this)
-        )
-        ImmersionBar.with(this).statusBarDarkFont(false).init()
+        binding.rootView.initImmersionBar(this, false, R.color.colorAppThemeLight)
         binding.titleInclude.titleView.text = "所有通知"
     }
 
@@ -109,7 +104,7 @@ class NoticeRecordActivity : KotlinBaseActivity<ActivityNoticeBinding>() {
                             }
                         }
                     binding.notificationView.addItemDecoration(
-                        ItemDecoration(10f.dp2px(context).toFloat(), 10f.dp2px(context).toFloat())
+                        RecyclerViewItemDivider(1, Color.LTGRAY)
                     )
                     binding.notificationView.adapter = noticeAdapter
                 }

@@ -1,6 +1,7 @@
 package com.pengxh.autodingding.ui
 
 import android.content.Context
+import android.graphics.Color
 import android.os.Bundle
 import android.os.CountDownTimer
 import android.os.Environment
@@ -8,11 +9,11 @@ import android.os.Handler
 import android.os.Message
 import android.text.TextUtils
 import android.view.View
-import com.gyf.immersionbar.ImmersionBar
 import com.pengxh.autodingding.BaseApplication
 import com.pengxh.autodingding.R
 import com.pengxh.autodingding.bean.HistoryRecordBean
 import com.pengxh.autodingding.databinding.ActivityHistoryBinding
+import com.pengxh.autodingding.extensions.initImmersionBar
 import com.pengxh.autodingding.extensions.writeObjToExcel
 import com.pengxh.autodingding.greendao.HistoryRecordBeanDao
 import com.pengxh.autodingding.utils.Constant
@@ -20,11 +21,9 @@ import com.pengxh.autodingding.utils.ExcelUtils
 import com.pengxh.kt.lite.adapter.NormalRecyclerAdapter
 import com.pengxh.kt.lite.adapter.ViewHolder
 import com.pengxh.kt.lite.base.KotlinBaseActivity
-import com.pengxh.kt.lite.divider.ItemDecoration
-import com.pengxh.kt.lite.extensions.convertColor
+import com.pengxh.kt.lite.divider.RecyclerViewItemDivider
 import com.pengxh.kt.lite.extensions.dp2px
 import com.pengxh.kt.lite.extensions.show
-import com.pengxh.kt.lite.utils.ImmerseStatusBarUtil
 import com.pengxh.kt.lite.utils.SaveKeyValues
 import com.pengxh.kt.lite.utils.WeakReferenceHandler
 import com.pengxh.kt.lite.widget.EasyPopupWindow
@@ -39,7 +38,7 @@ class HistoryRecordActivity : KotlinBaseActivity<ActivityHistoryBinding>() {
     private val titles = arrayOf("删除记录", "导出记录")
     private val excelTitle = arrayOf("uuid", "日期", "打卡信息")
     private val historyRecordBeanDao by lazy { BaseApplication.get().daoSession.historyRecordBeanDao }
-    private lateinit var easyPopupWindow: EasyPopupWindow
+    private val easyPopupWindow by lazy { EasyPopupWindow(this) }
     private lateinit var weakReferenceHandler: WeakReferenceHandler
     private lateinit var historyAdapter: NormalRecyclerAdapter<HistoryRecordBean>
     private var dataBeans: MutableList<HistoryRecordBean> = ArrayList()
@@ -52,13 +51,10 @@ class HistoryRecordActivity : KotlinBaseActivity<ActivityHistoryBinding>() {
     }
 
     override fun setupTopBarLayout() {
-        ImmerseStatusBarUtil.setColor(
-            this, R.color.colorAppThemeLight.convertColor(this)
-        )
-        ImmersionBar.with(this).statusBarDarkFont(false).init()
+        binding.rootView.initImmersionBar(this, false, R.color.colorAppThemeLight)
         binding.titleView.text = "打卡记录"
         binding.titleRightView.setOnClickListener {
-            easyPopupWindow.showAsDropDown(binding.titleRightView, 0, 10f.dp2px(context))
+            easyPopupWindow.showAsDropDown(binding.titleRightView, 0, 10.dp2px(context))
         }
     }
 
@@ -66,10 +62,11 @@ class HistoryRecordActivity : KotlinBaseActivity<ActivityHistoryBinding>() {
         weakReferenceHandler = WeakReferenceHandler(callback)
         dataBeans = queryHistoryRecord()
         weakReferenceHandler.sendEmptyMessage(2022021403)
-        easyPopupWindow = EasyPopupWindow(this)
-        easyPopupWindow.setPopupMenuItem(images, titles)
-        easyPopupWindow.setOnPopupWindowClickListener(object :
-            EasyPopupWindow.OnPopupWindowClickListener {
+
+        val items = ArrayList<EasyPopupWindow.MenuItem>()
+        items.add(EasyPopupWindow.MenuItem(images[0], titles[0]))
+        items.add(EasyPopupWindow.MenuItem(images[1], titles[1]))
+        easyPopupWindow.set(items, object : EasyPopupWindow.OnPopupWindowClickListener {
             override fun onPopupItemClicked(position: Int) {
                 when (position) {
                     0 -> {
@@ -204,7 +201,7 @@ class HistoryRecordActivity : KotlinBaseActivity<ActivityHistoryBinding>() {
                         }
                     }
                     binding.historyRecordView.addItemDecoration(
-                        ItemDecoration(10f.dp2px(context).toFloat(), 0f)
+                        RecyclerViewItemDivider(1, Color.LTGRAY)
                     )
                     binding.historyRecordView.adapter = historyAdapter
                 }

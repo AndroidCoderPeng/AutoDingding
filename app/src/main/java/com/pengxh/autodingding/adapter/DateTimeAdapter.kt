@@ -21,7 +21,7 @@ class DateTimeAdapter(context: Context, private val dataBeans: MutableList<DateT
     RecyclerView.Adapter<DateTimeAdapter.ItemViewHolder>() {
 
     private val kTag = "DateTimeAdapter"
-    private var layoutInflater: LayoutInflater = LayoutInflater.from(context)
+    private var layoutInflater = LayoutInflater.from(context)
     private var countDownTimer: CountDownTimer? = null
 
     override fun getItemCount(): Int = dataBeans.size
