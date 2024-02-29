@@ -13,7 +13,7 @@ import com.pengxh.autodingding.bean.HistoryRecordBean
 import com.pengxh.autodingding.bean.NotificationBean
 import com.pengxh.autodingding.extensions.createMail
 import com.pengxh.autodingding.extensions.sendTextMail
-import com.pengxh.autodingding.ui.WelcomeActivity
+import com.pengxh.autodingding.ui.MainActivity
 import com.pengxh.autodingding.utils.Constant
 import com.pengxh.kt.lite.extensions.timestampToCompleteDate
 import com.pengxh.kt.lite.utils.SaveKeyValues
@@ -61,7 +61,7 @@ class NotificationMonitorService : NotificationListenerService() {
         notificationBean.postTime = System.currentTimeMillis().timestampToCompleteDate()
         notificationBeanDao.save(notificationBean)
 
-        if (notificationText == null || notificationText == "") {
+        if (notificationText.isNullOrBlank()) {
             return
         }
         if (notificationText.contains("考勤打卡")) {
@@ -82,7 +82,7 @@ class NotificationMonitorService : NotificationListenerService() {
                     }
 
                     val intent = Intent(
-                        this@NotificationMonitorService, WelcomeActivity::class.java
+                        this@NotificationMonitorService, MainActivity::class.java
                     )
                     intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
                     startActivity(intent)

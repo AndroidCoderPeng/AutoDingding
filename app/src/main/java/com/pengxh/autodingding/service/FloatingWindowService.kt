@@ -11,11 +11,10 @@ import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
 import android.view.WindowManager
+import android.widget.Toast
 import com.pengxh.autodingding.R
 import com.pengxh.autodingding.fragment.SettingsFragment
-import com.pengxh.kt.lite.extensions.dp2px
 import com.pengxh.kt.lite.extensions.getSystemService
-import com.pengxh.kt.lite.extensions.show
 
 
 class FloatingWindowService : Service() {
@@ -23,7 +22,7 @@ class FloatingWindowService : Service() {
     private val kTag = "FloatingWindowService"
     private var floatView: View? = null
     private val windowManager by lazy { getSystemService<WindowManager>() }
-    private val layoutInflater by lazy { getSystemService<LayoutInflater>() }
+    private val layoutInflater by lazy { LayoutInflater.from(this) }
 
     override fun onBind(intent: Intent?): IBinder? {
         return null
@@ -36,13 +35,14 @@ class FloatingWindowService : Service() {
                 SettingsFragment.weakReferenceHandler.sendEmptyMessage(20230831)
                 return super.onStartCommand(intent, flags, startId)
             }
-            initFloatingView()
+            floatView = layoutInflater.inflate(R.layout.window_floating, null)
+
+            initFloatingView(floatView!!)
         }
         return super.onStartCommand(intent, flags, startId)
     }
 
-    private fun initFloatingView() {
-        floatView = layoutInflater?.inflate(R.layout.window_floating, null)
+    private fun initFloatingView(view: View) {
         val layoutType = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY
         } else {
@@ -56,13 +56,15 @@ class FloatingWindowService : Service() {
             PixelFormat.TRANSLUCENT
         )
         floatLayoutParams.gravity = Gravity.BOTTOM
-        floatLayoutParams.x = 0
-        floatLayoutParams.y = 10.dp2px(this)
 
-        windowManager?.addView(floatView, floatLayoutParams)
+        windowManager?.addView(view, floatLayoutParams)
 
-        floatView?.setOnClickListener {
-            "此悬浮标无实际功能，仅为绕过Android 10+系统打卡之后无法回到桌面的问题".show(this)
+        view.setOnClickListener {
+            Toast.makeText(
+                this,
+                "无实际功能，仅为绕过Android 10+系统打卡之后无法回到桌面的问题",
+                Toast.LENGTH_SHORT
+            ).show()
         }
     }
 }

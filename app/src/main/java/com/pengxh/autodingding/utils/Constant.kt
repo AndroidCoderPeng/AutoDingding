@@ -1,25 +1,11 @@
 package com.pengxh.autodingding.utils
 
-import android.Manifest
-import android.os.Build
-
 /**
  * @author: Pengxh
  * @email: 290677893@qq.com
  * @date: 2019/12/29 12:42
  */
 object Constant {
-    val USER_PERMISSIONS = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
-        arrayOf(
-            Manifest.permission.QUERY_ALL_PACKAGES,
-            Manifest.permission.SYSTEM_ALERT_WINDOW
-        )
-    } else {
-        arrayOf(
-            Manifest.permission.SYSTEM_ALERT_WINDOW
-        )
-    }
-
     //发送者邮箱账号
     const val USER_MAIL_ACCOUNT = "2570806855@qq.com"
 

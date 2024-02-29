@@ -28,7 +28,7 @@
         android:usesCleartextTraffic="true"
         tools:ignore="GoogleAppIndexingWarning">
         <activity
-            android:name=".ui.WelcomeActivity"
+            android:name=".ui.MainActivity"
             android:exported="true"
             android:launchMode="singleTop">
             <intent-filter>
@@ -37,7 +37,6 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".ui.MainActivity" />
         <activity android:name=".ui.HistoryRecordActivity" />
         <activity android:name=".ui.NoticeRecordActivity" />
         <activity android:name=".ui.AddTimerTaskActivity" />
