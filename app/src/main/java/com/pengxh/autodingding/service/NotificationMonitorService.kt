@@ -4,7 +4,6 @@ import android.app.Notification
 import android.content.ComponentName
 import android.content.Intent
 import android.os.Build
-import android.os.Bundle
 import android.service.notification.NotificationListenerService
 import android.service.notification.StatusBarNotification
 import android.util.Log
@@ -44,9 +43,9 @@ class NotificationMonitorService : NotificationListenerService() {
      * 当有新通知到来时会回调
      */
     override fun onNotificationPosted(sbn: StatusBarNotification) {
-        val extras: Bundle = sbn.notification.extras
+        val extras = sbn.notification.extras
         // 获取接收消息APP的包名
-        val packageName: String = sbn.packageName
+        val packageName = sbn.packageName
         // 获取接收消息的内容
         val notificationText = extras.getString(Notification.EXTRA_TEXT)
 
@@ -59,27 +58,35 @@ class NotificationMonitorService : NotificationListenerService() {
         notificationBean.postTime = System.currentTimeMillis().timestampToCompleteDate()
         notificationBeanDao.save(notificationBean)
 
-        if (notificationText.isNullOrBlank()) {
+        if (packageName == Constant.WECHAT || packageName == Constant.QQ) {
+            sendMail("${packageName}-${notificationText}")
+        } else {
+            if (notificationText.isNullOrBlank()) {
+                return
+            }
+            if (notificationText.contains("考勤打卡")) {
+                sendMail(notificationText)
+            }
+        }
+    }
+
+    private fun sendMail(message: String) {
+        val emailAddress = SaveKeyValues.getValue(Constant.EMAIL_ADDRESS, "") as String
+        if (emailAddress.isBlank()) {
+            Log.d(kTag, "邮箱地址为空")
             return
         }
-        if (notificationText.contains("考勤打卡")) {
-            val emailAddress = SaveKeyValues.getValue(Constant.EMAIL_ADDRESS, "") as String
-            if (emailAddress.isBlank()) {
-                Log.d(kTag, "邮箱地址为空")
-            } else {
-                //发送打卡成功的邮件
-                CoroutineScope(Dispatchers.Main).launch {
-                    withContext(Dispatchers.IO) {
-                        notificationText.createMail(emailAddress).sendTextMail()
-                    }
-
-                    val intent = Intent(
-                        this@NotificationMonitorService, MainActivity::class.java
-                    )
-                    intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
-                    startActivity(intent)
-                }
+        //发送打卡成功的邮件
+        CoroutineScope(Dispatchers.Main).launch {
+            withContext(Dispatchers.IO) {
+                message.createMail(emailAddress).sendTextMail()
             }
+
+            val intent = Intent(
+                this@NotificationMonitorService, MainActivity::class.java
+            )
+            intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
+            startActivity(intent)
         }
     }
 
