@@ -37,7 +37,6 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".ui.HistoryRecordActivity" />
         <activity android:name=".ui.NoticeRecordActivity" />
         <activity android:name=".ui.AddTimerTaskActivity" />
         <activity android:name=".ui.UpdateTimerTaskActivity" />

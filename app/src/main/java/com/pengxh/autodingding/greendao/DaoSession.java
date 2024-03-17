@@ -2,7 +2,6 @@ package com.pengxh.autodingding.greendao;
 
 import com.pengxh.autodingding.bean.DateTimeBean;
 import com.pengxh.autodingding.bean.DingTaskLogBean;
-import com.pengxh.autodingding.bean.HistoryRecordBean;
 import com.pengxh.autodingding.bean.NotificationBean;
 
 import org.greenrobot.greendao.AbstractDao;
@@ -17,19 +16,17 @@ import java.util.Map;
 
 /**
  * {@inheritDoc}
- * 
+ *
  * @see org.greenrobot.greendao.AbstractDaoSession
  */
 public class DaoSession extends AbstractDaoSession {
 
     private final DaoConfig dateTimeBeanDaoConfig;
     private final DaoConfig dingTaskLogBeanDaoConfig;
-    private final DaoConfig historyRecordBeanDaoConfig;
     private final DaoConfig notificationBeanDaoConfig;
 
     private final DateTimeBeanDao dateTimeBeanDao;
     private final DingTaskLogBeanDao dingTaskLogBeanDao;
-    private final HistoryRecordBeanDao historyRecordBeanDao;
     private final NotificationBeanDao notificationBeanDao;
 
     public DaoSession(Database db, IdentityScopeType type, Map<Class<? extends AbstractDao<?, ?>>, DaoConfig>
@@ -42,27 +39,21 @@ public class DaoSession extends AbstractDaoSession {
         dingTaskLogBeanDaoConfig = daoConfigMap.get(DingTaskLogBeanDao.class).clone();
         dingTaskLogBeanDaoConfig.initIdentityScope(type);
 
-        historyRecordBeanDaoConfig = daoConfigMap.get(HistoryRecordBeanDao.class).clone();
-        historyRecordBeanDaoConfig.initIdentityScope(type);
-
         notificationBeanDaoConfig = daoConfigMap.get(NotificationBeanDao.class).clone();
         notificationBeanDaoConfig.initIdentityScope(type);
 
         dateTimeBeanDao = new DateTimeBeanDao(dateTimeBeanDaoConfig, this);
         dingTaskLogBeanDao = new DingTaskLogBeanDao(dingTaskLogBeanDaoConfig, this);
-        historyRecordBeanDao = new HistoryRecordBeanDao(historyRecordBeanDaoConfig, this);
         notificationBeanDao = new NotificationBeanDao(notificationBeanDaoConfig, this);
 
         registerDao(DateTimeBean.class, dateTimeBeanDao);
         registerDao(DingTaskLogBean.class, dingTaskLogBeanDao);
-        registerDao(HistoryRecordBean.class, historyRecordBeanDao);
         registerDao(NotificationBean.class, notificationBeanDao);
     }
-    
+
     public void clear() {
         dateTimeBeanDaoConfig.clearIdentityScope();
         dingTaskLogBeanDaoConfig.clearIdentityScope();
-        historyRecordBeanDaoConfig.clearIdentityScope();
         notificationBeanDaoConfig.clearIdentityScope();
     }
 
@@ -72,10 +63,6 @@ public class DaoSession extends AbstractDaoSession {
 
     public DingTaskLogBeanDao getDingTaskLogBeanDao() {
         return dingTaskLogBeanDao;
-    }
-
-    public HistoryRecordBeanDao getHistoryRecordBeanDao() {
-        return historyRecordBeanDao;
     }
 
     public NotificationBeanDao getNotificationBeanDao() {

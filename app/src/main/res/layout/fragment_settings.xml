@@ -8,16 +8,16 @@
     <RelativeLayout
         android:id="@+id/emailLayout"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="@dimen/itemLayoutHeight"
         android:layout_marginTop="10dp"
         android:layout_marginBottom="10dp"
         android:background="@color/white"
-        android:paddingHorizontal="10dp"
-        android:paddingVertical="15dp">
+        android:paddingHorizontal="10dp">
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
             android:gravity="center_vertical"
             android:text="邮箱设置"
             android:textColor="@color/colorText"
@@ -28,49 +28,17 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentEnd="true"
+            android:layout_centerVertical="true"
             android:gravity="center_vertical"
             android:textColor="@color/colorText"
             android:textSize="@dimen/sp_16" />
     </RelativeLayout>
 
     <RelativeLayout
-        android:id="@+id/historyLayout"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="@dimen/itemLayoutHeight"
         android:background="@color/white"
-        android:paddingHorizontal="10dp"
-        android:paddingVertical="15dp">
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerVertical="true"
-            android:text="打卡记录"
-            android:textColor="@color/colorText"
-            android:textSize="@dimen/sp_16" />
-
-        <TextView
-            android:id="@+id/recordSize"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentEnd="true"
-            android:layout_centerVertical="true"
-            android:textColor="@color/colorText"
-            android:textSize="@dimen/sp_16" />
-    </RelativeLayout>
-
-    <View
-        android:layout_width="match_parent"
-        android:layout_height="1px"
-        android:layout_marginStart="@dimen/dp_10"
-        android:background="#CCC" />
-
-    <RelativeLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="@color/white"
-        android:paddingHorizontal="10dp"
-        android:paddingVertical="10dp">
+        android:paddingHorizontal="10dp">
 
         <TextView
             android:layout_width="wrap_content"
@@ -96,10 +64,9 @@
 
     <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="@dimen/itemLayoutHeight"
         android:background="@color/white"
-        android:paddingHorizontal="10dp"
-        android:paddingVertical="10dp">
+        android:paddingHorizontal="10dp">
 
         <TextView
             android:layout_width="wrap_content"
@@ -126,10 +93,9 @@
     <RelativeLayout
         android:id="@+id/notificationLayout"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="@dimen/itemLayoutHeight"
         android:background="@color/white"
-        android:paddingHorizontal="10dp"
-        android:paddingVertical="15dp">
+        android:paddingHorizontal="10dp">
 
         <TextView
             android:layout_width="wrap_content"
@@ -156,10 +122,9 @@
     <RelativeLayout
         android:id="@+id/introduceLayout"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="@dimen/itemLayoutHeight"
         android:background="@color/white"
-        android:paddingHorizontal="10dp"
-        android:paddingVertical="15dp">
+        android:paddingHorizontal="10dp">
 
         <TextView
             android:layout_width="wrap_content"
@@ -185,14 +150,14 @@
 
     <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="@dimen/itemLayoutHeight"
         android:background="@color/white"
-        android:paddingHorizontal="10dp"
-        android:paddingVertical="15dp">
+        android:paddingHorizontal="10dp">
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
             android:gravity="center_vertical"
             android:text="当前版本"
             android:textColor="@color/colorText"
@@ -203,6 +168,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentEnd="true"
+            android:layout_centerVertical="true"
             android:gravity="center_vertical"
             android:textColor="@color/colorText"
             android:textSize="@dimen/sp_16" />

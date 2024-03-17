@@ -2,6 +2,7 @@ package com.pengxh.autodingding.ui
 
 import android.annotation.SuppressLint
 import android.os.Bundle
+import android.widget.DatePicker
 import com.pengxh.autodingding.BaseApplication
 import com.pengxh.autodingding.R
 import com.pengxh.autodingding.bean.DateTimeBean
@@ -23,25 +24,22 @@ class AddTimerTaskActivity : KotlinBaseActivity<ActivityAddTimerTaskBinding>() {
     }
 
     override fun initOnCreate(savedInstanceState: Bundle?) {
-
-    }
-
-    override fun initEvent() {
-        binding.titleInclude.leftBackView.setOnClickListener { finish() }
-
         //设置默认显示日期
         val month = (calendar.get(Calendar.MONTH) + 1).appendZero()
         val dayOfMonth = calendar.get(Calendar.DAY_OF_MONTH).appendZero()
         binding.selectedDateView.text = "${calendar.get(Calendar.YEAR)}-${month}-${dayOfMonth}"
-
         binding.datePicker.init(
             calendar.get(Calendar.YEAR),
             calendar.get(Calendar.MONTH),
-            calendar.get(Calendar.DAY_OF_MONTH)
-        ) { _, year, monthOfYear, dayOfMonth ->
-            binding.selectedDateView.text =
-                "${year}-${(monthOfYear + 1).appendZero()}-${dayOfMonth.appendZero()}"
-        }
+            calendar.get(Calendar.DAY_OF_MONTH),
+            object : DatePicker.OnDateChangedListener {
+                override fun onDateChanged(
+                    view: DatePicker?, year: Int, monthOfYear: Int, dayOfMonth: Int
+                ) {
+                    binding.selectedDateView.text =
+                        "${year}-${(monthOfYear + 1).appendZero()}-${dayOfMonth.appendZero()}"
+                }
+            })
 
         //设置默认显示时间
         binding.selectedTimeView.text =
@@ -49,6 +47,10 @@ class AddTimerTaskActivity : KotlinBaseActivity<ActivityAddTimerTaskBinding>() {
         binding.timePicker.setOnTimeChangedListener { _, hourOfDay, minute ->
             binding.selectedTimeView.text = "${hourOfDay.appendZero()}:${minute.appendZero()}"
         }
+    }
+
+    override fun initEvent() {
+        binding.titleInclude.leftBackView.setOnClickListener { finish() }
 
         binding.saveTimerButton.setOnClickListener {
             val bean = DateTimeBean()

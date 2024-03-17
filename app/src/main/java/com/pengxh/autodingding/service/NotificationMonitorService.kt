@@ -9,7 +9,6 @@ import android.service.notification.NotificationListenerService
 import android.service.notification.StatusBarNotification
 import android.util.Log
 import com.pengxh.autodingding.BaseApplication
-import com.pengxh.autodingding.bean.HistoryRecordBean
 import com.pengxh.autodingding.bean.NotificationBean
 import com.pengxh.autodingding.extensions.createMail
 import com.pengxh.autodingding.extensions.sendTextMail
@@ -32,7 +31,6 @@ import java.util.UUID
 class NotificationMonitorService : NotificationListenerService() {
 
     private val kTag = "MonitorService"
-    private val historyRecordBeanDao by lazy { BaseApplication.get().daoSession.historyRecordBeanDao }
     private val notificationBeanDao by lazy { BaseApplication.get().daoSession.notificationBeanDao }
 
     /**
@@ -65,12 +63,6 @@ class NotificationMonitorService : NotificationListenerService() {
             return
         }
         if (notificationText.contains("考勤打卡")) {
-            //保存打卡记录
-            val bean = HistoryRecordBean()
-            bean.uuid = UUID.randomUUID().toString()
-            bean.date = System.currentTimeMillis().timestampToCompleteDate()
-            bean.message = notificationText
-            historyRecordBeanDao.save(bean)
             val emailAddress = SaveKeyValues.getValue(Constant.EMAIL_ADDRESS, "") as String
             if (emailAddress.isBlank()) {
                 Log.d(kTag, "邮箱地址为空")

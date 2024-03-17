@@ -5,7 +5,6 @@ import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.content.Context
 import android.content.Intent
-import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.net.Uri
 import android.os.Build
@@ -16,12 +15,10 @@ import android.provider.Settings
 import android.text.TextUtils
 import android.view.LayoutInflater
 import android.view.ViewGroup
-import com.pengxh.autodingding.BaseApplication
 import com.pengxh.autodingding.BuildConfig
 import com.pengxh.autodingding.R
 import com.pengxh.autodingding.databinding.FragmentSettingsBinding
 import com.pengxh.autodingding.extensions.notificationEnable
-import com.pengxh.autodingding.ui.HistoryRecordActivity
 import com.pengxh.autodingding.ui.NoticeRecordActivity
 import com.pengxh.autodingding.utils.Constant
 import com.pengxh.kt.lite.base.KotlinBaseFragment
@@ -36,7 +33,6 @@ class SettingsFragment : KotlinBaseFragment<FragmentSettingsBinding>(), Handler.
 
     private val kTag = "SettingsFragment"
     private val notificationManager by lazy { requireContext().getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager }
-    private val historyBeanDao by lazy { BaseApplication.get().daoSession.historyRecordBeanDao }
 
     companion object {
         lateinit var weakReferenceHandler: WeakReferenceHandler
@@ -97,10 +93,6 @@ class SettingsFragment : KotlinBaseFragment<FragmentSettingsBinding>(), Handler.
                 }).build().show()
         }
 
-        binding.historyLayout.setOnClickListener {
-            requireContext().navigatePageTo<HistoryRecordActivity>()
-        }
-
         binding.floatCheckBox.setOnClickListener {
             openFloatWindowPermission()
         }
@@ -145,8 +137,6 @@ class SettingsFragment : KotlinBaseFragment<FragmentSettingsBinding>(), Handler.
      */
     override fun onResume() {
         super.onResume()
-        binding.recordSize.text = historyBeanDao.loadAll().size.toString()
-
         binding.floatCheckBox.isChecked = Settings.canDrawOverlays(requireContext())
 
         if (requireContext().notificationEnable()) {
@@ -160,7 +150,7 @@ class SettingsFragment : KotlinBaseFragment<FragmentSettingsBinding>(), Handler.
 
     private fun createNotification() {
         //Android8.0以上必须添加 渠道 才能显示通知栏
-        val builder: Notification.Builder = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+        val builder = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             //创建渠道
             val name = resources.getString(R.string.app_name)
             val id = name + "_DefaultNotificationChannel"
@@ -173,8 +163,7 @@ class SettingsFragment : KotlinBaseFragment<FragmentSettingsBinding>(), Handler.
         } else {
             Notification.Builder(requireContext())
         }
-        val bitmap: Bitmap =
-            BitmapFactory.decodeResource(resources, R.mipmap.logo_round)
+        val bitmap = BitmapFactory.decodeResource(resources, R.mipmap.logo_round)
         builder.setContentTitle("钉钉打卡通知监听已打开")
             .setContentText("如果通知消失，请重新开启应用")
             .setWhen(System.currentTimeMillis())
