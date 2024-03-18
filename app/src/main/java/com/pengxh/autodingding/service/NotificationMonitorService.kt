@@ -10,6 +10,7 @@ import android.util.Log
 import com.pengxh.autodingding.BaseApplication
 import com.pengxh.autodingding.bean.NotificationBean
 import com.pengxh.autodingding.extensions.createMail
+import com.pengxh.autodingding.extensions.openApplication
 import com.pengxh.autodingding.extensions.sendTextMail
 import com.pengxh.autodingding.ui.MainActivity
 import com.pengxh.autodingding.utils.Constant
@@ -59,7 +60,7 @@ class NotificationMonitorService : NotificationListenerService() {
         notificationBeanDao.save(notificationBean)
 
         if (packageName == Constant.WECHAT || packageName == Constant.QQ) {
-            sendMail("${packageName}-${notificationText}")
+            openApplication(Constant.DING_DING)
         } else {
             if (notificationText.isNullOrBlank()) {
                 return
