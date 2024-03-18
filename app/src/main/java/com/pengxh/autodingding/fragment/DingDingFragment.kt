@@ -1,6 +1,5 @@
 package com.pengxh.autodingding.fragment
 
-import android.graphics.Color
 import android.os.Bundle
 import android.os.Handler
 import android.view.LayoutInflater
@@ -16,7 +15,7 @@ import com.pengxh.autodingding.ui.AddTimerTaskActivity
 import com.pengxh.autodingding.ui.UpdateTimerTaskActivity
 import com.pengxh.autodingding.utils.Constant
 import com.pengxh.kt.lite.base.KotlinBaseFragment
-import com.pengxh.kt.lite.divider.RecyclerViewItemDivider
+import com.pengxh.kt.lite.divider.RecyclerViewItemOffsets
 import com.pengxh.kt.lite.extensions.navigatePageTo
 import com.pengxh.kt.lite.utils.WeakReferenceHandler
 
@@ -48,7 +47,7 @@ class DingDingFragment : KotlinBaseFragment<FragmentDingdingBinding>() {
         weakReferenceHandler.sendEmptyMessage(2023042601)
         //设置分割线
         binding.weeklyRecyclerView.addItemDecoration(
-            RecyclerViewItemDivider(1, Color.LTGRAY)
+            RecyclerViewItemOffsets(0, 30, 0, 0)
         )
     }
 
