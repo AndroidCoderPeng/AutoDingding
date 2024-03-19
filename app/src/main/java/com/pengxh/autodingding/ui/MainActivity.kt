@@ -14,7 +14,6 @@ import com.pengxh.autodingding.extensions.initImmersionBar
 import com.pengxh.autodingding.extensions.isAppAvailable
 import com.pengxh.autodingding.fragment.DingDingFragment
 import com.pengxh.autodingding.fragment.SettingsFragment
-import com.pengxh.autodingding.service.FloatingWindowService
 import com.pengxh.autodingding.utils.Constant
 import com.pengxh.kt.lite.base.KotlinBaseActivity
 import com.pengxh.kt.lite.extensions.show
@@ -29,6 +28,11 @@ class MainActivity : KotlinBaseActivity<ActivityMainBinding>() {
     private val fragmentPages: MutableList<Fragment> = ArrayList()
     private var clickTime: Long = 0
 
+    init {
+        fragmentPages.add(DingDingFragment())
+        fragmentPages.add(SettingsFragment())
+    }
+
     override fun initViewBinding(): ActivityMainBinding {
         return ActivityMainBinding.inflate(layoutInflater)
     }
@@ -39,9 +43,6 @@ class MainActivity : KotlinBaseActivity<ActivityMainBinding>() {
     }
 
     override fun initOnCreate(savedInstanceState: Bundle?) {
-        fragmentPages.add(DingDingFragment())
-        fragmentPages.add(SettingsFragment())
-
         if (!isAppAvailable(Constant.DING_DING)) {
             showAlertDialog()
             return
@@ -61,8 +62,6 @@ class MainActivity : KotlinBaseActivity<ActivityMainBinding>() {
                     }
                 }).build().show()
         }
-
-        startService(Intent(this, FloatingWindowService::class.java))
     }
 
     override fun onNewIntent(intent: Intent?) {

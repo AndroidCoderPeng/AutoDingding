@@ -15,6 +15,7 @@ import com.pengxh.autodingding.extensions.sendTextMail
 import com.pengxh.autodingding.ui.MainActivity
 import com.pengxh.autodingding.utils.Constant
 import com.pengxh.kt.lite.extensions.timestampToCompleteDate
+import com.pengxh.kt.lite.extensions.toJson
 import com.pengxh.kt.lite.utils.SaveKeyValues
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -58,6 +59,8 @@ class NotificationMonitorService : NotificationListenerService() {
         notificationBean.notificationMsg = notificationText
         notificationBean.postTime = System.currentTimeMillis().timestampToCompleteDate()
         notificationBeanDao.save(notificationBean)
+
+        Log.d(kTag, notificationBean.toJson())
 
         if (packageName == Constant.WECHAT || packageName == Constant.QQ) {
             openApplication(Constant.DING_DING)

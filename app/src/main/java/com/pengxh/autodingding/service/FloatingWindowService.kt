@@ -5,22 +5,18 @@ import android.content.Intent
 import android.graphics.PixelFormat
 import android.os.Build
 import android.os.IBinder
-import android.provider.Settings
-import android.util.Log
 import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
 import android.view.WindowManager
-import android.widget.Toast
 import com.pengxh.autodingding.R
-import com.pengxh.autodingding.fragment.SettingsFragment
 import com.pengxh.kt.lite.extensions.getSystemService
+import com.pengxh.kt.lite.extensions.show
 
 
 class FloatingWindowService : Service() {
 
     private val kTag = "FloatingWindowService"
-    private var floatView: View? = null
     private val windowManager by lazy { getSystemService<WindowManager>() }
     private val layoutInflater by lazy { LayoutInflater.from(this) }
 
@@ -29,16 +25,8 @@ class FloatingWindowService : Service() {
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
-        Log.d(kTag, "onStartCommand => $startId")
-        if (floatView == null) {
-            if (!Settings.canDrawOverlays(this)) {
-                SettingsFragment.weakReferenceHandler.sendEmptyMessage(20230831)
-                return super.onStartCommand(intent, flags, startId)
-            }
-            floatView = layoutInflater.inflate(R.layout.window_floating, null)
-
-            initFloatingView(floatView!!)
-        }
+        val floatView = layoutInflater.inflate(R.layout.window_floating, null)
+        initFloatingView(floatView)
         return super.onStartCommand(intent, flags, startId)
     }
 
@@ -60,11 +48,7 @@ class FloatingWindowService : Service() {
         windowManager?.addView(view, floatLayoutParams)
 
         view.setOnClickListener {
-            Toast.makeText(
-                this,
-                "无实际功能，仅为绕过Android 10+系统打卡之后无法回到桌面的问题",
-                Toast.LENGTH_SHORT
-            ).show()
+            "无实际功能，仅为绕过Android 10+系统打卡之后无法回到桌面的问题".show(this)
         }
     }
 }
