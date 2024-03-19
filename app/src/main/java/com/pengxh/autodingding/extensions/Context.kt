@@ -3,6 +3,7 @@ package com.pengxh.autodingding.extensions
 import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
+import android.content.pm.ApplicationInfo
 import android.content.pm.ResolveInfo
 import androidx.core.app.NotificationManagerCompat
 
@@ -21,10 +22,12 @@ fun Context.isAppAvailable(packageName: String): Boolean {
     val packageManager = this.packageManager
     //获取所有已安装程序的包信息
     val packages = packageManager.getInstalledPackages(0)
-    val packageNames: MutableList<String> = ArrayList()
-    for (i in packages.indices) {
-        val packName = packages[i].packageName
-        packageNames.add(packName)
+    val packageNames = ArrayList<String>()
+    packages.forEach {
+        if (it.applicationInfo.flags and ApplicationInfo.FLAG_SYSTEM == 0) {
+            //非系统应用
+            packageNames.add(it.packageName)
+        }
     }
     return packageNames.contains(packageName)
 }

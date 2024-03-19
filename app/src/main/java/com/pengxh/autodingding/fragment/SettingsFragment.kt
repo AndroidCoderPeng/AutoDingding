@@ -9,8 +9,6 @@ import android.graphics.BitmapFactory
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
-import android.os.Handler
-import android.os.Message
 import android.provider.Settings
 import android.text.TextUtils
 import android.view.LayoutInflater
@@ -19,31 +17,20 @@ import com.pengxh.autodingding.BuildConfig
 import com.pengxh.autodingding.R
 import com.pengxh.autodingding.databinding.FragmentSettingsBinding
 import com.pengxh.autodingding.extensions.notificationEnable
+import com.pengxh.autodingding.service.FloatingWindowService
 import com.pengxh.autodingding.ui.NoticeRecordActivity
 import com.pengxh.autodingding.utils.Constant
 import com.pengxh.kt.lite.base.KotlinBaseFragment
 import com.pengxh.kt.lite.extensions.navigatePageTo
 import com.pengxh.kt.lite.extensions.show
 import com.pengxh.kt.lite.utils.SaveKeyValues
-import com.pengxh.kt.lite.utils.WeakReferenceHandler
 import com.pengxh.kt.lite.widget.dialog.AlertInputDialog
 import com.pengxh.kt.lite.widget.dialog.AlertMessageDialog
 
-class SettingsFragment : KotlinBaseFragment<FragmentSettingsBinding>(), Handler.Callback {
+class SettingsFragment : KotlinBaseFragment<FragmentSettingsBinding>() {
 
     private val kTag = "SettingsFragment"
     private val notificationManager by lazy { requireContext().getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager }
-
-    companion object {
-        lateinit var weakReferenceHandler: WeakReferenceHandler
-    }
-
-    override fun handleMessage(msg: Message): Boolean {
-        if (msg.what == 20230831) {
-            openFloatWindowPermission()
-        }
-        return true
-    }
 
     override fun setupTopBarLayout() {
 
@@ -60,8 +47,6 @@ class SettingsFragment : KotlinBaseFragment<FragmentSettingsBinding>(), Handler.
     }
 
     override fun initOnCreate(savedInstanceState: Bundle?) {
-        weakReferenceHandler = WeakReferenceHandler(this)
-
         val emailAddress = SaveKeyValues.getValue(Constant.EMAIL_ADDRESS, "") as String
         if (!TextUtils.isEmpty(emailAddress)) {
             binding.emailTextView.text = emailAddress
@@ -93,8 +78,10 @@ class SettingsFragment : KotlinBaseFragment<FragmentSettingsBinding>(), Handler.
                 }).build().show()
         }
 
-        binding.floatCheckBox.setOnClickListener {
-            openFloatWindowPermission()
+        binding.floatCheckBox.setOnCheckedChangeListener { _, isChecked ->
+            if (isChecked) {
+                openFloatWindowPermission()
+            }
         }
 
         binding.noticeCheckBox.setOnClickListener {
@@ -122,22 +109,26 @@ class SettingsFragment : KotlinBaseFragment<FragmentSettingsBinding>(), Handler.
     }
 
     private fun openFloatWindowPermission() {
-        val sdkInt = Build.VERSION.SDK_INT
-        if (sdkInt >= Build.VERSION_CODES.O) {
-            startActivity(Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION))
-        } else if (sdkInt >= Build.VERSION_CODES.M) {
-            val intent = Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION)
-            intent.data = Uri.parse("package:${requireContext().packageName}")
-            startActivity(intent)
+        if (!Settings.canDrawOverlays(requireContext())) {
+            val sdkInt = Build.VERSION.SDK_INT
+            if (sdkInt >= Build.VERSION_CODES.O) {
+                startActivity(Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION))
+            } else if (sdkInt >= Build.VERSION_CODES.M) {
+                val intent = Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION)
+                intent.data = Uri.parse("package:${requireContext().packageName}")
+                startActivity(intent)
+            }
         }
     }
 
-    /**
-     * 每次切换到此页面都需要重新计算记录
-     */
     override fun onResume() {
         super.onResume()
         binding.floatCheckBox.isChecked = Settings.canDrawOverlays(requireContext())
+        if (binding.floatCheckBox.isChecked) {
+            requireContext().startService(
+                Intent(requireContext(), FloatingWindowService::class.java)
+            )
+        }
 
         if (requireContext().notificationEnable()) {
             binding.noticeCheckBox.isChecked = true

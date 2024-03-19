@@ -27,20 +27,20 @@ Kotlin+Java混编实现的钉钉打卡小工具，解决您上班途中迟到问
 
 1、请先确认悬浮窗权限已开启，如不开启将Android 10以上系统可能会出现闪退或者仅能打卡一次且没有邮件通知的问题。（找到"自动打卡"软件，打开悬浮窗权限即可）
 
-![打开悬浮窗权限](appImage/1.jpg)
+![Screenshot_2024-03-19-09-02-42-81_fc704e6b13c4fb26bf5e411f75da84f2.jpg](appImage/Screenshot_2024-03-19-09-02-42-81_fc704e6b13c4fb26bf5e411f75da84f2.jpg)
 
 2、请先确认好通知栏监听已开启，如不开启将无法监听打卡成功的通知。（"其他设置"可以直接跳转到系统通知监听页面，打开开关就好了。放心，不会有其他窃密小动作），然后设置钉钉设置为“极速打卡”。
 
-![打开通知监听](appImage/2.jpg)
+![Screenshot_2024-03-19-09-03-02-56_fc704e6b13c4fb26bf5e411f75da84f2.jpg](appImage/Screenshot_2024-03-19-09-03-02-56_fc704e6b13c4fb26bf5e411f75da84f2.jpg)
 
 3、设置打卡结果通知邮箱（经自测试，邮箱设置支持QQ邮箱和163邮箱，别的邮箱有需要的可以自行测试）
 
-![添加邮箱](appImage/3.jpg)  
+![Screenshot_2024-03-19-09-03-20-89_28207dbc726d79bfd22d0f80719fc3af.jpg](appImage/Screenshot_2024-03-19-09-03-20-89_28207dbc726d79bfd22d0f80719fc3af.jpg)
 
 好了，基本设置就是这样了，附一张主页面，如下：
 
-![主页面](appImage/4.jpg)
-![主页面](appImage/5.jpg)  
+![Screenshot_2024-03-19-09-04-16-20_28207dbc726d79bfd22d0f80719fc3af.jpg](appImage/Screenshot_2024-03-19-09-04-16-20_28207dbc726d79bfd22d0f80719fc3af.jpg)
+![Screenshot_2024-03-19-09-04-24-97_28207dbc726d79bfd22d0f80719fc3af.jpg](appImage/Screenshot_2024-03-19-09-04-24-97_28207dbc726d79bfd22d0f80719fc3af.jpg)
 
 4、打卡结果如下：
 
