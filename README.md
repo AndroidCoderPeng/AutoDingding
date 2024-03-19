@@ -19,7 +19,9 @@ Kotlin+Java混编实现的钉钉打卡小工具，解决您上班途中迟到问
 
 #### [旧版本（小于 Android 10）(app-release.apk)](apk/app-release.apk)
 
-#### [新版本（大于等于 Android 10）(AUTO_20240229_1.3.7.apk)](apk/release/AUTO_20240229_1.3.7.apk)
+#### [新版本（不小于 Android 10）(AUTO_20240229_1.3.7.apk)](apk/release/AUTO_20240229_1.3.7.apk)
+
+#### [Beta版本（不小于 Android 10，可以通过监听QQ或者微信信息，内容随意，唤起钉钉打卡，经测试，不咋稳定，慎用！）](apk/beta/AUTO_20240319_beta.apk)
 
 #### 有问题联系：QQ（290677893）
 
@@ -40,7 +42,7 @@ Kotlin+Java混编实现的钉钉打卡小工具，解决您上班途中迟到问
 好了，基本设置就是这样了，附一张主页面，如下：
 
 ![Screenshot_2024-03-19-09-04-16-20_28207dbc726d79bfd22d0f80719fc3af.jpg](appImage/Screenshot_2024-03-19-09-04-16-20_28207dbc726d79bfd22d0f80719fc3af.jpg)
-![Screenshot_2024-03-19-09-04-24-97_28207dbc726d79bfd22d0f80719fc3af.jpg](appImage/Screenshot_2024-03-19-09-04-24-97_28207dbc726d79bfd22d0f80719fc3af.jpg)
+![Screenshot_2024-03-19-09-37-51-48_28207dbc726d79bfd22d0f80719fc3af.jpg](appImage/Screenshot_2024-03-19-09-37-51-48_28207dbc726d79bfd22d0f80719fc3af.jpg)
 
 4、打卡结果如下：
 
