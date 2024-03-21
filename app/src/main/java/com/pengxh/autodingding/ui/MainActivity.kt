@@ -39,7 +39,7 @@ class MainActivity : KotlinBaseActivity<ActivityMainBinding>() {
 
     override fun setupTopBarLayout() {
         binding.rootView.initImmersionBar(this, false, R.color.colorAppThemeLight)
-        binding.titleView.text = "自动打卡"
+        binding.titleView.setTitle("自动打卡")
     }
 
     override fun initOnCreate(savedInstanceState: Bundle?) {
@@ -78,10 +78,10 @@ class MainActivity : KotlinBaseActivity<ActivityMainBinding>() {
                 } else {
                     showAlertDialog()
                 }
-                binding.titleView.text = "自动打卡"
+                binding.titleView.setTitle("自动打卡")
             } else if (itemId == R.id.nav_settings) {
                 binding.viewPager.currentItem = 1
-                binding.titleView.text = "其他设置"
+                binding.titleView.setTitle("其他设置")
             }
             false
         }
@@ -103,9 +103,9 @@ class MainActivity : KotlinBaseActivity<ActivityMainBinding>() {
                 menuItem = binding.bottomNavigation.menu.getItem(position)
                 menuItem!!.isChecked = true
                 if (position == 0) {
-                    binding.titleView.text = "自动打卡"
+                    binding.titleView.setTitle("自动打卡")
                 } else {
-                    binding.titleView.text = "其他设置"
+                    binding.titleView.setTitle("其他设置")
                 }
             }
 

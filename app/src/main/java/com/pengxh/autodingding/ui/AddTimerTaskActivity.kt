@@ -11,6 +11,7 @@ import com.pengxh.autodingding.extensions.convertToWeek
 import com.pengxh.autodingding.extensions.initImmersionBar
 import com.pengxh.kt.lite.base.KotlinBaseActivity
 import com.pengxh.kt.lite.extensions.appendZero
+import com.pengxh.kt.lite.widget.TitleBarView
 import java.util.*
 
 @SuppressLint("SetTextI18n")
@@ -50,8 +51,6 @@ class AddTimerTaskActivity : KotlinBaseActivity<ActivityAddTimerTaskBinding>() {
     }
 
     override fun initEvent() {
-        binding.titleInclude.leftBackView.setOnClickListener { finish() }
-
         binding.saveTimerButton.setOnClickListener {
             val bean = DateTimeBean()
             bean.uuid = UUID.randomUUID().toString()
@@ -70,6 +69,14 @@ class AddTimerTaskActivity : KotlinBaseActivity<ActivityAddTimerTaskBinding>() {
 
     override fun setupTopBarLayout() {
         binding.rootView.initImmersionBar(this, false, R.color.colorAppThemeLight)
-        binding.titleInclude.titleView.text = "新建定时任务"
+        binding.titleView.setOnClickListener(object : TitleBarView.OnClickListener {
+            override fun onLeftClick() {
+                finish()
+            }
+
+            override fun onRightClick() {
+
+            }
+        })
     }
 }

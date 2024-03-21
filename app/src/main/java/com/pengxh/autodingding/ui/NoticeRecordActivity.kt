@@ -17,6 +17,7 @@ import com.pengxh.kt.lite.adapter.ViewHolder
 import com.pengxh.kt.lite.base.KotlinBaseActivity
 import com.pengxh.kt.lite.divider.RecyclerViewItemDivider
 import com.pengxh.kt.lite.utils.WeakReferenceHandler
+import com.pengxh.kt.lite.widget.TitleBarView
 
 class NoticeRecordActivity : KotlinBaseActivity<ActivityNoticeBinding>() {
 
@@ -35,7 +36,15 @@ class NoticeRecordActivity : KotlinBaseActivity<ActivityNoticeBinding>() {
 
     override fun setupTopBarLayout() {
         binding.rootView.initImmersionBar(this, false, R.color.colorAppThemeLight)
-        binding.titleInclude.titleView.text = "所有通知"
+        binding.titleView.setOnClickListener(object : TitleBarView.OnClickListener {
+            override fun onLeftClick() {
+                finish()
+            }
+
+            override fun onRightClick() {
+
+            }
+        })
     }
 
     override fun initOnCreate(savedInstanceState: Bundle?) {
@@ -45,8 +54,6 @@ class NoticeRecordActivity : KotlinBaseActivity<ActivityNoticeBinding>() {
     }
 
     override fun initEvent() {
-        binding.titleInclude.leftBackView.setOnClickListener { finish() }
-
         binding.refreshLayout.setOnRefreshListener { refreshLayout ->
             isRefresh = true
             object : CountDownTimer(1000, 500) {

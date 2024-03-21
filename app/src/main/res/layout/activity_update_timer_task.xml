@@ -1,14 +1,24 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/rootView"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/mainBackground"
     android:orientation="vertical">
 
-    <include
-        android:id="@+id/titleInclude"
-        layout="@layout/include_base_title" />
+    <com.pengxh.kt.lite.widget.TitleBarView
+        android:id="@+id/titleView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/colorAppThemeLight"
+        app:tbv_left_image="@drawable/ic_title_left"
+        app:tbv_only_show_title="false"
+        app:tbv_show_left_image="true"
+        app:tbv_show_right_image="false"
+        app:tbv_text="修改定时任务"
+        app:tbv_text_color="@color/white"
+        app:tbv_text_size="@dimen/sp_16" />
 
     <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"

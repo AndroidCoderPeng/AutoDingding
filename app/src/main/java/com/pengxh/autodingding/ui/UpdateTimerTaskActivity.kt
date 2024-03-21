@@ -12,6 +12,7 @@ import com.pengxh.autodingding.greendao.DateTimeBeanDao
 import com.pengxh.kt.lite.base.KotlinBaseActivity
 import com.pengxh.kt.lite.extensions.appendZero
 import com.pengxh.kt.lite.utils.Constant
+import com.pengxh.kt.lite.widget.TitleBarView
 import java.util.*
 
 @SuppressLint("SetTextI18n")
@@ -37,8 +38,6 @@ class UpdateTimerTaskActivity : KotlinBaseActivity<ActivityUpdateTimerTaskBindin
     }
 
     override fun initEvent() {
-        binding.titleInclude.leftBackView.setOnClickListener { finish() }
-
         binding.datePicker.init(
             calendar.get(Calendar.YEAR),
             calendar.get(Calendar.MONTH),
@@ -68,6 +67,14 @@ class UpdateTimerTaskActivity : KotlinBaseActivity<ActivityUpdateTimerTaskBindin
 
     override fun setupTopBarLayout() {
         binding.rootView.initImmersionBar(this, false, R.color.colorAppThemeLight)
-        binding.titleInclude.titleView.text = "修改定时任务"
+        binding.titleView.setOnClickListener(object : TitleBarView.OnClickListener {
+            override fun onLeftClick() {
+                finish()
+            }
+
+            override fun onRightClick() {
+
+            }
+        })
     }
 }

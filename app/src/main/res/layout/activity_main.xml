@@ -7,16 +7,15 @@
     android:background="@color/mainBackground"
     android:orientation="vertical">
 
-    <TextView
+    <com.pengxh.kt.lite.widget.TitleBarView
         android:id="@+id/titleView"
         android:layout_width="match_parent"
-        android:layout_height="@dimen/titleViewHeight"
+        android:layout_height="wrap_content"
         android:background="@color/colorAppThemeLight"
-        android:gravity="center"
-        android:paddingVertical="10dp"
-        android:text="@string/app_name"
-        android:textColor="@color/white"
-        android:textSize="@dimen/sp_16" />
+        app:tbv_only_show_title="true"
+        app:tbv_text="@string/app_name"
+        app:tbv_text_color="@color/white"
+        app:tbv_text_size="@dimen/sp_16" />
 
     <androidx.viewpager.widget.ViewPager
         android:id="@+id/viewPager"
