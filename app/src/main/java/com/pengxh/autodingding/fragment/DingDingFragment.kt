@@ -2,6 +2,7 @@ package com.pengxh.autodingding.fragment
 
 import android.os.Bundle
 import android.os.Handler
+import android.os.Message
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -19,7 +20,7 @@ import com.pengxh.kt.lite.divider.RecyclerViewItemOffsets
 import com.pengxh.kt.lite.extensions.navigatePageTo
 import com.pengxh.kt.lite.utils.WeakReferenceHandler
 
-class DingDingFragment : KotlinBaseFragment<FragmentDingdingBinding>() {
+class DingDingFragment : KotlinBaseFragment<FragmentDingdingBinding>(), Handler.Callback {
 
     private val kTag = "DingDingFragment"
     private val dateTimeBeanDao by lazy { BaseApplication.get().daoSession.dateTimeBeanDao }
@@ -42,12 +43,12 @@ class DingDingFragment : KotlinBaseFragment<FragmentDingdingBinding>() {
     }
 
     override fun initOnCreate(savedInstanceState: Bundle?) {
-        weakReferenceHandler = WeakReferenceHandler(callback)
+        weakReferenceHandler = WeakReferenceHandler(this)
         dataBeans = getAutoDingDingTasks()
         weakReferenceHandler.sendEmptyMessage(2023042601)
         //设置分割线
         binding.weeklyRecyclerView.addItemDecoration(
-            RecyclerViewItemOffsets(0, 30, 0, 0)
+            RecyclerViewItemOffsets(0, 10, 0, 20)
         )
     }
 
@@ -61,8 +62,8 @@ class DingDingFragment : KotlinBaseFragment<FragmentDingdingBinding>() {
         return dateTimeBeanDao.queryBuilder().orderDesc(DateTimeBeanDao.Properties.Date).list()
     }
 
-    private val callback = Handler.Callback {
-        if (it.what == 2023042601) {
+    override fun handleMessage(msg: Message): Boolean {
+        if (msg.what == 2023042601) {
             if (dataBeans.size == 0) {
                 binding.emptyView.visibility = View.VISIBLE
             } else {
@@ -71,15 +72,14 @@ class DingDingFragment : KotlinBaseFragment<FragmentDingdingBinding>() {
                 binding.weeklyRecyclerView.adapter = dateTimeAdapter
                 dateTimeAdapter?.setOnItemClickListener(object :
                     DateTimeAdapter.OnItemClickListener {
-                    override fun onItemClick(layoutPosition: Int) {
-                        requireContext().navigatePageTo<UpdateTimerTaskActivity>(dataBeans[layoutPosition].uuid)
+                    override fun onItemClick(position: Int) {
+                        requireContext().navigatePageTo<UpdateTimerTaskActivity>(dataBeans[position].uuid)
                     }
 
-                    override fun onItemLongClick(view: View?, layoutPosition: Int) {
-                        dateTimeBeanDao.delete(dataBeans[layoutPosition])
-                        dataBeans.removeAt(layoutPosition)
-                        dateTimeAdapter?.notifyItemRemoved(layoutPosition)
-                        dateTimeAdapter?.notifyItemChanged(layoutPosition)
+                    override fun onItemLongClick(position: Int) {
+                        dateTimeBeanDao.delete(dataBeans[position])
+                        dataBeans.removeAt(position)
+                        dateTimeAdapter?.notifyDataSetChanged()
                         if (dataBeans.size == 0) {
                             binding.emptyView.visibility = View.VISIBLE
                         } else {
@@ -93,7 +93,7 @@ class DingDingFragment : KotlinBaseFragment<FragmentDingdingBinding>() {
                 })
             }
         }
-        true
+        return true
     }
 
     override fun onPause() {

@@ -1,6 +1,5 @@
 package com.pengxh.autodingding.adapter
 
-import android.annotation.SuppressLint
 import android.content.Context
 import android.graphics.Color
 import android.os.CountDownTimer
@@ -16,7 +15,6 @@ import com.pengxh.autodingding.bean.DateTimeBean
 import com.pengxh.autodingding.extensions.diffCurrentMillis
 import com.pengxh.autodingding.extensions.isEarlierThenCurrent
 
-@SuppressLint("SetTextI18n")
 class DateTimeAdapter(context: Context, private val dataBeans: MutableList<DateTimeBean>) :
     RecyclerView.Adapter<DateTimeAdapter.ItemViewHolder>() {
 
@@ -46,7 +44,7 @@ class DateTimeAdapter(context: Context, private val dataBeans: MutableList<DateT
 
         // 长按监听
         holder.itemView.setOnLongClickListener {
-            itemClickListener?.onItemLongClick(it, position)
+            itemClickListener?.onItemLongClick(position)
             true
         }
 
@@ -87,9 +85,9 @@ class DateTimeAdapter(context: Context, private val dataBeans: MutableList<DateT
     }
 
     interface OnItemClickListener {
-        fun onItemClick(layoutPosition: Int)
+        fun onItemClick(position: Int)
 
-        fun onItemLongClick(view: View?, layoutPosition: Int)
+        fun onItemLongClick(position: Int)
 
         fun onCountDownFinish()
     }
