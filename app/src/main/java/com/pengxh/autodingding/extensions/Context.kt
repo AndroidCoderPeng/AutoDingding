@@ -5,7 +5,10 @@ import android.content.Context
 import android.content.Intent
 import android.content.pm.ApplicationInfo
 import android.content.pm.ResolveInfo
+import android.provider.Settings
+import android.text.TextUtils.SimpleStringSplitter
 import androidx.core.app.NotificationManagerCompat
+
 
 /**
  * 检测通知监听服务是否被授权
@@ -13,6 +16,27 @@ import androidx.core.app.NotificationManagerCompat
 fun Context.notificationEnable(): Boolean {
     val packages = NotificationManagerCompat.getEnabledListenerPackages(this)
     return packages.contains(this.packageName)
+}
+
+/**
+ * 检测辅助服务服务是否被授权
+ * */
+fun Context.accessibilityEnable(): Boolean {
+    val service = "com.pengxh.autodingding/com.pengxh.autodingding.service.AutoWeChatService"
+    val settingValue = Settings.Secure.getString(
+        this.contentResolver, Settings.Secure.ENABLED_ACCESSIBILITY_SERVICES
+    )
+    if (settingValue != null) {
+        val stringColonSplitter = SimpleStringSplitter(':')
+        stringColonSplitter.setString(settingValue)
+        while (stringColonSplitter.hasNext()) {
+            val accessibilityService = stringColonSplitter.next()
+            if (accessibilityService.equals(service, true)) {
+                return true
+            }
+        }
+    }
+    return false
 }
 
 /**

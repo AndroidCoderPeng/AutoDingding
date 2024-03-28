@@ -49,17 +49,16 @@ class NotificationMonitorService : NotificationListenerService() {
         val packageName = sbn.packageName
         // 获取接收消息的内容
         val notificationText = extras.getString(Notification.EXTRA_TEXT)
-
-        //保存所有通知信息
-        val notificationBean = NotificationBean()
-        notificationBean.uuid = UUID.randomUUID().toString()
-        notificationBean.packageName = packageName
-        notificationBean.notificationTitle = extras.getString(Notification.EXTRA_TITLE)
-        notificationBean.notificationMsg = notificationText
-        notificationBean.postTime = System.currentTimeMillis().timestampToCompleteDate()
-        notificationBeanDao.save(notificationBean)
-
-        if (packageName == Constant.WECHAT || packageName == Constant.QQ) {
+        if (packageName == Constant.DING_DING) {
+            //保存通知信息
+            val notificationBean = NotificationBean()
+            notificationBean.uuid = UUID.randomUUID().toString()
+            notificationBean.packageName = packageName
+            notificationBean.notificationTitle = extras.getString(Notification.EXTRA_TITLE)
+            notificationBean.notificationMsg = notificationText
+            notificationBean.postTime = System.currentTimeMillis().timestampToCompleteDate()
+            notificationBeanDao.save(notificationBean)
+        } else if (packageName == Constant.WECHAT || packageName == Constant.QQ) {
             openApplication(Constant.DING_DING)
         } else {
             if (notificationText.isNullOrBlank()) {

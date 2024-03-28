@@ -163,7 +163,6 @@ class SettingsFragment : KotlinBaseFragment<FragmentSettingsBinding>() {
             .setAutoCancel(false)
         val notification = builder.build()
         notification.flags = Notification.FLAG_NO_CLEAR
-        //TODO 权限
         notificationManager.notify(Int.MAX_VALUE, notification)
     }
 }
