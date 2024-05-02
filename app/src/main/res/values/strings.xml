@@ -3,7 +3,7 @@
     <string name="notification_monitor_service_name">打卡通知监听服务</string>
     <string name="accessibility_service_name">打卡辅助服务</string>
     <string name="about">
-        Tips：由于本人单位不再使用钉钉，测试不尽仔细，如有问题请联系QQ：290677893。\n
+        Tips：由于本人单位不再使用钉钉，测试不尽仔细，如有问题请加QQ群：560354109。\n
         1、请先确认好通知栏监听已开启，如不开启将无法监听打卡成功的通知。\n
         2、调起钉钉实现自动打卡，屏幕需要一直亮着，可以把屏幕亮度调到最暗，只要不把App退到后台就行。\n
         3、将钉钉软件设置为“极速打卡”。打卡时间不要早于你设置钉钉打卡的最早时间，否则会出现打卡失败。\n

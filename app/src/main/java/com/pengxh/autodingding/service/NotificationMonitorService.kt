@@ -50,6 +50,10 @@ class NotificationMonitorService : NotificationListenerService() {
         // 获取接收消息的内容
         val notificationText = extras.getString(Notification.EXTRA_TEXT)
         if (packageName == Constant.DING_DING) {
+            if (notificationText.isNullOrBlank()) {
+                return
+            }
+
             //保存通知信息
             val notificationBean = NotificationBean()
             notificationBean.uuid = UUID.randomUUID().toString()
@@ -58,15 +62,12 @@ class NotificationMonitorService : NotificationListenerService() {
             notificationBean.notificationMsg = notificationText
             notificationBean.postTime = System.currentTimeMillis().timestampToCompleteDate()
             notificationBeanDao.save(notificationBean)
-        } else if (packageName == Constant.WECHAT || packageName == Constant.QQ) {
-            openApplication(Constant.DING_DING)
-        } else {
-            if (notificationText.isNullOrBlank()) {
-                return
-            }
-            if (notificationText.contains("考勤打卡")) {
+
+            if (notificationText.contains("成功")) {
                 sendMail(notificationText)
             }
+        } else if (packageName == Constant.WECHAT || packageName == Constant.QQ) {
+            openApplication(Constant.DING_DING)
         }
     }
 
@@ -98,7 +99,7 @@ class NotificationMonitorService : NotificationListenerService() {
     override fun onListenerDisconnected() {
         Log.d(kTag, "onListenerDisconnected")
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-            // 通知侦听器断开连接 - 请求重新绑定
+            // 通知监听断开连接 - 请求重新绑定
             requestRebind(ComponentName(this, NotificationListenerService::class.java))
         }
     }
