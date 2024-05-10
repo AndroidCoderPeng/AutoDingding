@@ -19,18 +19,19 @@ class FloatingWindowService : Service() {
     private val kTag = "FloatingWindowService"
     private val windowManager by lazy { getSystemService<WindowManager>() }
     private val layoutInflater by lazy { LayoutInflater.from(this) }
+    private var floatView: View? = null
 
     override fun onBind(intent: Intent?): IBinder? {
         return null
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
-        val floatView = layoutInflater.inflate(R.layout.window_floating, null)
+        floatView = layoutInflater.inflate(R.layout.window_floating, null)
         initFloatingView(floatView)
-        return super.onStartCommand(intent, flags, startId)
+        return START_STICKY
     }
 
-    private fun initFloatingView(view: View) {
+    private fun initFloatingView(view: View?) {
         val layoutType = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY
         } else {
@@ -45,10 +46,11 @@ class FloatingWindowService : Service() {
         )
         floatLayoutParams.gravity = Gravity.BOTTOM
 
-        windowManager?.addView(view, floatLayoutParams)
-
-        view.setOnClickListener {
-            "无实际功能，仅为绕过Android 10+系统打卡之后无法回到桌面的问题".show(this)
+        view?.apply {
+            windowManager?.addView(this, floatLayoutParams)
+            this.setOnClickListener {
+                "无实际功能，仅为绕过Android 10+系统打卡之后无法回到桌面的问题".show(this@FloatingWindowService)
+            }
         }
     }
 }

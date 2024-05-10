@@ -11,14 +11,31 @@ android {
         applicationId "com.pengxh.autodingding"
         minSdkVersion 23
         targetSdkVersion 33
-        versionCode 138
-        versionName "1.3.8"
+        versionCode 139
+        versionName "1.3.9"
+        flavorDimensions "versionCode"
+    }
+
+    signingConfigs {
+        release {
+            storeFile file('autodingding.jks')
+            storePassword '123456789'
+            keyAlias 'key0'
+            keyPassword '123456789'
+        }
     }
 
     buildTypes {
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+    }
+
+    def id = "com.android.${createRandomCode()}"
+    productFlavors {
+        auto {
+            applicationId = id
         }
     }
 
@@ -59,11 +76,20 @@ android {
     }
 }
 
+static def createRandomCode() {
+    def alphabetsInLowerCase = "abcdefghijklmnopqrstuvwxyz"
+    def randomString = ''
+    for (int i = 0; i < 10; i++) {
+        def randomIndex = (int) (Math.random() * alphabetsInLowerCase.length())
+        randomString += alphabetsInLowerCase.charAt(randomIndex)
+    }
+    return randomString
+}
+
 static def getBuildDate() {
     SimpleDateFormat dateFormat = new SimpleDateFormat("yyyyMMdd", Locale.CHINA)
     return dateFormat.format(System.currentTimeMillis())
 }
-
 
 dependencies {
     implementation fileTree(include: ['*.jar'], dir: 'libs')

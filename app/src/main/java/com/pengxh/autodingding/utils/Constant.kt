@@ -15,7 +15,6 @@ object Constant {
     //发送者邮箱地址
     const val MAIL_FROM_ADDRESS = "2570806855@qq.com"
 
-    const val PERMISSIONS_CODE = 999
     const val EMAIL_ADDRESS = "emailAddress"
 
     const val DING_DING = "com.alibaba.android.rimet"

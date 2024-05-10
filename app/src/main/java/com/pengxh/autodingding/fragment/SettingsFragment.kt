@@ -17,6 +17,7 @@ import com.pengxh.autodingding.BuildConfig
 import com.pengxh.autodingding.R
 import com.pengxh.autodingding.databinding.FragmentSettingsBinding
 import com.pengxh.autodingding.extensions.notificationEnable
+import com.pengxh.autodingding.service.AutoSignInService
 import com.pengxh.autodingding.service.FloatingWindowService
 import com.pengxh.autodingding.ui.NoticeRecordActivity
 import com.pengxh.autodingding.utils.Constant
@@ -88,6 +89,12 @@ class SettingsFragment : KotlinBaseFragment<FragmentSettingsBinding>() {
             startActivity(Intent(Settings.ACTION_NOTIFICATION_LISTENER_SETTINGS))
         }
 
+        binding.autoServiceCheckBox.setOnClickListener {
+            if (!AutoSignInService.isServiceRunning) {
+                startActivity(Intent(Settings.ACTION_ACCESSIBILITY_SETTINGS))
+            }
+        }
+
         binding.notificationLayout.setOnClickListener {
             requireContext().navigatePageTo<NoticeRecordActivity>()
         }
@@ -137,6 +144,8 @@ class SettingsFragment : KotlinBaseFragment<FragmentSettingsBinding>() {
             //取消通知栏
             notificationManager.cancel(Int.MAX_VALUE)
         }
+
+        binding.autoServiceCheckBox.isChecked = AutoSignInService.isServiceRunning
     }
 
     private fun createNotification() {
