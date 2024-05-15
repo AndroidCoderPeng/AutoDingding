@@ -1,6 +1,7 @@
 package com.pengxh.autodingding.service
 
 import android.accessibilityservice.AccessibilityService
+import android.content.Intent
 import android.util.Log
 import android.view.accessibility.AccessibilityEvent
 import android.view.accessibility.AccessibilityNodeInfo
@@ -51,7 +52,12 @@ class AutoSignInService : AccessibilityService() {
     }
 
     override fun onInterrupt() {
-        Log.d(kTag, "onInterrupt: 辅助服务已断开")
+
+    }
+
+    override fun onUnbind(intent: Intent?): Boolean {
+        Log.d(kTag, "onUnbind: 辅助服务已断开")
         isServiceRunning = false
+        return super.onUnbind(intent)
     }
 }

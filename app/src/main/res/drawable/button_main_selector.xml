@@ -4,7 +4,7 @@
     <item android:state_pressed="false">
         <shape>
             <corners android:radius="@dimen/dp_5" />
-            <solid android:color="#0094FF" />
+            <solid android:color="#007AFF" />
         </shape>
     </item>
 
@@ -12,7 +12,7 @@
         <shape>
             <corners android:radius="@dimen/dp_5" />
             <!-- 点击按钮时候改变背景色50% -->
-            <solid android:color="#800094FF" />
+            <solid android:color="#80007AFF" />
         </shape>
     </item>
 </selector>

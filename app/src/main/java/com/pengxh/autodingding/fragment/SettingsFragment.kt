@@ -79,20 +79,18 @@ class SettingsFragment : KotlinBaseFragment<FragmentSettingsBinding>() {
                 }).build().show()
         }
 
-        binding.floatCheckBox.setOnCheckedChangeListener { _, isChecked ->
+        binding.floatSwitch.setOnCheckedChangeListener { _, isChecked ->
             if (isChecked) {
                 openFloatWindowPermission()
             }
         }
 
-        binding.noticeCheckBox.setOnClickListener {
+        binding.noticeSwitch.setOnClickListener {
             startActivity(Intent(Settings.ACTION_NOTIFICATION_LISTENER_SETTINGS))
         }
 
-        binding.autoServiceCheckBox.setOnClickListener {
-            if (!AutoSignInService.isServiceRunning) {
-                startActivity(Intent(Settings.ACTION_ACCESSIBILITY_SETTINGS))
-            }
+        binding.autoServiceSwitch.setOnClickListener {
+            startActivity(Intent(Settings.ACTION_ACCESSIBILITY_SETTINGS))
         }
 
         binding.notificationLayout.setOnClickListener {
@@ -130,22 +128,22 @@ class SettingsFragment : KotlinBaseFragment<FragmentSettingsBinding>() {
 
     override fun onResume() {
         super.onResume()
-        binding.floatCheckBox.isChecked = Settings.canDrawOverlays(requireContext())
-        if (binding.floatCheckBox.isChecked) {
+        binding.floatSwitch.isChecked = Settings.canDrawOverlays(requireContext())
+        if (binding.floatSwitch.isChecked) {
             requireContext().startService(
                 Intent(requireContext(), FloatingWindowService::class.java)
             )
         }
 
         if (requireContext().notificationEnable()) {
-            binding.noticeCheckBox.isChecked = true
+            binding.noticeSwitch.isChecked = true
             createNotification()
         } else {
             //取消通知栏
             notificationManager.cancel(Int.MAX_VALUE)
         }
 
-        binding.autoServiceCheckBox.isChecked = AutoSignInService.isServiceRunning
+        binding.autoServiceSwitch.isChecked = AutoSignInService.isServiceRunning
     }
 
     private fun createNotification() {

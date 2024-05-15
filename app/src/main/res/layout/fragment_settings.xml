@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/mainBackground"
@@ -48,12 +49,15 @@
             android:textColor="@color/colorText"
             android:textSize="@dimen/sp_16" />
 
-        <CheckBox
-            android:id="@+id/floatCheckBox"
+        <Switch
+            android:id="@+id/floatSwitch"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentEnd="true"
-            android:layout_centerVertical="true" />
+            android:layout_centerVertical="true"
+            android:thumb="@drawable/select_switch_circle"
+            android:track="@drawable/select_switch_background"
+            tools:ignore="UseSwitchCompatOrMaterialXml" />
     </RelativeLayout>
 
     <View
@@ -76,12 +80,15 @@
             android:textColor="@color/colorText"
             android:textSize="@dimen/sp_16" />
 
-        <CheckBox
-            android:id="@+id/noticeCheckBox"
+        <Switch
+            android:id="@+id/noticeSwitch"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentEnd="true"
-            android:layout_centerVertical="true" />
+            android:layout_centerVertical="true"
+            android:thumb="@drawable/select_switch_circle"
+            android:track="@drawable/select_switch_background"
+            tools:ignore="UseSwitchCompatOrMaterialXml" />
     </RelativeLayout>
 
     <View
@@ -104,12 +111,15 @@
             android:textColor="@color/colorText"
             android:textSize="@dimen/sp_16" />
 
-        <CheckBox
-            android:id="@+id/autoServiceCheckBox"
+        <Switch
+            android:id="@+id/autoServiceSwitch"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentEnd="true"
-            android:layout_centerVertical="true" />
+            android:layout_centerVertical="true"
+            android:thumb="@drawable/select_switch_circle"
+            android:track="@drawable/select_switch_background"
+            tools:ignore="UseSwitchCompatOrMaterialXml" />
     </RelativeLayout>
 
     <View
