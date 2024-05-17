@@ -4,15 +4,15 @@
     "type": "APK",
     "kind": "Directory"
   },
-  "applicationId": "com.android.oedorbisup",
+  "applicationId": "com.android.yqdarqfjvj",
   "variantName": "autoRelease",
   "elements": [
     {
       "type": "SINGLE",
       "filters": [],
-      "versionCode": 139,
-      "versionName": "1.3.9",
-      "outputFile": "AUTO_20240510_1.3.9.apk"
+      "versionCode": 140,
+      "versionName": "1.4.0",
+      "outputFile": "AUTO_20240517_1.4.0.apk"
     }
   ]
 }
