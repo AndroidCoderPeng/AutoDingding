@@ -14,10 +14,12 @@ import com.pengxh.autodingding.extensions.openApplication
 import com.pengxh.autodingding.extensions.sendTextMail
 import com.pengxh.autodingding.ui.MainActivity
 import com.pengxh.autodingding.utils.Constant
+import com.pengxh.kt.lite.extensions.show
 import com.pengxh.kt.lite.extensions.timestampToCompleteDate
 import com.pengxh.kt.lite.utils.SaveKeyValues
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.util.UUID
@@ -64,30 +66,26 @@ class NotificationMonitorService : NotificationListenerService() {
             notificationBeanDao.save(notificationBean)
 
             if (notificationText.contains("成功")) {
-                sendMail(notificationText)
+                val intent = Intent(this, MainActivity::class.java)
+                intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
+                startActivity(intent)
+
+                val emailAddress = SaveKeyValues.getValue(Constant.EMAIL_ADDRESS, "") as String
+                if (emailAddress.isEmpty()) {
+                    "邮箱地址为空".show(this)
+                    return
+                }
+                //发送打卡成功的邮件
+                CoroutineScope(Dispatchers.Main).launch {
+                    "即将发送打卡邮件，请注意查收".show(this@NotificationMonitorService)
+                    delay(3000)
+                    withContext(Dispatchers.IO) {
+                        notificationText.createMail(emailAddress).sendTextMail()
+                    }
+                }
             }
         } else if (packageName == Constant.WECHAT || packageName == Constant.QQ) {
             openApplication(Constant.DING_DING)
-        }
-    }
-
-    private fun sendMail(message: String) {
-        val emailAddress = SaveKeyValues.getValue(Constant.EMAIL_ADDRESS, "") as String
-        if (emailAddress.isBlank()) {
-            Log.d(kTag, "邮箱地址为空")
-            return
-        }
-        //发送打卡成功的邮件
-        CoroutineScope(Dispatchers.Main).launch {
-            withContext(Dispatchers.IO) {
-                message.createMail(emailAddress).sendTextMail()
-            }
-
-            val intent = Intent(
-                this@NotificationMonitorService, MainActivity::class.java
-            )
-            intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
-            startActivity(intent)
         }
     }
 

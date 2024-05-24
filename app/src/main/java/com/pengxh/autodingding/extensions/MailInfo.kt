@@ -1,5 +1,6 @@
 package com.pengxh.autodingding.extensions
 
+import com.pengxh.autodingding.BuildConfig
 import com.pengxh.autodingding.bean.MailInfo
 import com.pengxh.autodingding.utils.EmailAuthenticator
 import java.util.Date
@@ -39,7 +40,7 @@ fun MailInfo.sendTextMail() {
         mailMessage.subject = mailSubject
         mailMessage.sentDate = Date()
         // 设置邮件消息的主要内容
-        val mailContent = this.content
+        val mailContent = "${this.content}，工具本版：${BuildConfig.VERSION_NAME}"
         mailMessage.setText(mailContent)
         Transport.send(mailMessage)
     } catch (ex: MessagingException) {
