@@ -25,8 +25,15 @@ class FloatingWindowService : Service() {
         return null
     }
 
-    override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
+    override fun onCreate() {
+        super.onCreate()
         floatView = layoutInflater.inflate(R.layout.window_floating, null)
+    }
+
+    override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
+        if (floatView == null) {
+            floatView = layoutInflater.inflate(R.layout.window_floating, null)
+        }
         initFloatingView(floatView)
         return START_STICKY
     }
@@ -46,11 +53,13 @@ class FloatingWindowService : Service() {
         )
         floatLayoutParams.gravity = Gravity.BOTTOM
 
-        view?.apply {
-            windowManager?.addView(this, floatLayoutParams)
-            this.setOnClickListener {
-                "无实际功能，仅为绕过Android 10+系统打卡之后无法回到桌面的问题".show(this@FloatingWindowService)
+        try {
+            windowManager?.addView(view, floatLayoutParams)
+            view?.setOnClickListener {
+                "无实际功能，仅为绕过Android 10+系统打卡之后无法回到桌面的问题".show(this)
             }
+        } catch (e: IllegalStateException) {
+            e.printStackTrace()
         }
     }
 }
