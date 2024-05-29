@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">自动打卡</string>
+    <string name="app_name">钉钉自动打卡</string>
     <string name="notification_monitor_service_name">打卡通知监听服务</string>
     <string name="accessibility_service_name">打卡辅助服务</string>
     <string name="about">

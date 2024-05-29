@@ -7,6 +7,10 @@ import android.os.Build
 import android.service.notification.NotificationListenerService
 import android.service.notification.StatusBarNotification
 import android.util.Log
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.LifecycleOwner
+import androidx.lifecycle.LifecycleRegistry
+import androidx.lifecycle.lifecycleScope
 import com.pengxh.autodingding.BaseApplication
 import com.pengxh.autodingding.bean.NotificationBean
 import com.pengxh.autodingding.extensions.createMail
@@ -14,10 +18,10 @@ import com.pengxh.autodingding.extensions.openApplication
 import com.pengxh.autodingding.extensions.sendTextMail
 import com.pengxh.autodingding.ui.MainActivity
 import com.pengxh.autodingding.utils.Constant
+import com.pengxh.autodingding.utils.CountDownTimerManager
 import com.pengxh.kt.lite.extensions.show
 import com.pengxh.kt.lite.extensions.timestampToCompleteDate
 import com.pengxh.kt.lite.utils.SaveKeyValues
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -30,9 +34,15 @@ import java.util.UUID
  * @email: 290677893@qq.com
  * @date: 2019/12/25 23:17
  */
-class NotificationMonitorService : NotificationListenerService() {
+class NotificationMonitorService : NotificationListenerService(), LifecycleOwner {
 
     private val kTag = "MonitorService"
+    private val registry = LifecycleRegistry(this)
+
+    override fun getLifecycle(): Lifecycle {
+        return registry
+    }
+
     private val notificationBeanDao by lazy { BaseApplication.get().daoSession.notificationBeanDao }
 
     /**
@@ -66,9 +76,7 @@ class NotificationMonitorService : NotificationListenerService() {
             notificationBeanDao.save(notificationBean)
 
             if (notificationText.contains("成功")) {
-                val intent = Intent(this, MainActivity::class.java)
-                intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
-                startActivity(intent)
+                backToMainActivity()
 
                 val emailAddress = SaveKeyValues.getValue(Constant.EMAIL_ADDRESS, "") as String
                 if (emailAddress.isEmpty()) {
@@ -76,7 +84,7 @@ class NotificationMonitorService : NotificationListenerService() {
                     return
                 }
                 //发送打卡成功的邮件
-                CoroutineScope(Dispatchers.Main).launch {
+                lifecycleScope.launch(Dispatchers.Main) {
                     "即将发送打卡邮件，请注意查收".show(this@NotificationMonitorService)
                     delay(3000)
                     withContext(Dispatchers.IO) {
@@ -87,6 +95,13 @@ class NotificationMonitorService : NotificationListenerService() {
         } else if (packageName == Constant.WECHAT || packageName == Constant.QQ) {
             openApplication(Constant.DING_DING)
         }
+    }
+
+    private fun backToMainActivity() {
+        CountDownTimerManager.get.cancelTimer()
+        val intent = Intent(this, MainActivity::class.java)
+        intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
+        startActivity(intent)
     }
 
     /**

@@ -8,6 +8,7 @@ import android.content.pm.ResolveInfo
 import android.provider.Settings
 import android.text.TextUtils.SimpleStringSplitter
 import androidx.core.app.NotificationManagerCompat
+import com.pengxh.autodingding.utils.CountDownTimerManager
 
 
 /**
@@ -60,6 +61,8 @@ fun Context.isAppAvailable(packageName: String): Boolean {
  * 打开指定包名的apk
  */
 fun Context.openApplication(packageName: String) {
+//    WakeLockManager.get.wakeUpScreen(this)
+
     val packageManager = this.packageManager
     val resolveIntent = Intent(Intent.ACTION_MAIN, null)
     resolveIntent.addCategory(Intent.CATEGORY_LAUNCHER)
@@ -77,4 +80,6 @@ fun Context.openApplication(packageName: String) {
     val cn = ComponentName(packageName, className)
     intent.component = cn
     this.startActivity(intent)
+    //倒计时，记录在钉钉界面停留的时间，超过20s，自动回到打卡工具，并记录异常日志
+    CountDownTimerManager.get.startTimer(this, 20 * 1000L, 1000)
 }

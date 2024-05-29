@@ -16,6 +16,7 @@ object Constant {
     const val MAIL_FROM_ADDRESS = "2570806855@qq.com"
 
     const val EMAIL_ADDRESS = "emailAddress"
+    const val INTENT_PARAM = "intentParam"
 
     const val DING_DING = "com.alibaba.android.rimet"
     const val WECHAT = "com.tencent.wework"
