@@ -61,6 +61,7 @@ class NotificationMonitorService : NotificationListenerService(), LifecycleOwner
         val packageName = sbn.packageName
         // 获取接收消息的内容
         val notificationText = extras.getString(Notification.EXTRA_TEXT)
+        Log.d(kTag, "onNotificationPosted: $notificationText")
         if (packageName == Constant.DING_DING) {
             if (notificationText.isNullOrBlank()) {
                 return

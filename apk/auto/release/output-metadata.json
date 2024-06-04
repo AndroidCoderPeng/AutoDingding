@@ -4,15 +4,15 @@
     "type": "APK",
     "kind": "Directory"
   },
-  "applicationId": "com.android.hhsuihzkby",
+  "applicationId": "com.android.iobcyommlz",
   "variantName": "autoRelease",
   "elements": [
     {
       "type": "SINGLE",
       "filters": [],
-      "versionCode": 141,
-      "versionName": "1.4.1",
-      "outputFile": "AUTO_20240524_1.4.1.apk"
+      "versionCode": 142,
+      "versionName": "1.4.2",
+      "outputFile": "AUTO_20240604_1.4.2.apk"
     }
   ]
 }

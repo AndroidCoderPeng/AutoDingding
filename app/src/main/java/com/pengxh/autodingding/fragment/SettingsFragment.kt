@@ -13,6 +13,7 @@ import android.provider.Settings
 import android.text.TextUtils
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import android.view.WindowManager
 import com.pengxh.autodingding.BuildConfig
 import com.pengxh.autodingding.R
 import com.pengxh.autodingding.databinding.FragmentSettingsBinding
@@ -23,6 +24,7 @@ import com.pengxh.autodingding.ui.NoticeRecordActivity
 import com.pengxh.autodingding.utils.Constant
 import com.pengxh.kt.lite.base.KotlinBaseFragment
 import com.pengxh.kt.lite.extensions.navigatePageTo
+import com.pengxh.kt.lite.extensions.setScreenBrightness
 import com.pengxh.kt.lite.extensions.show
 import com.pengxh.kt.lite.utils.SaveKeyValues
 import com.pengxh.kt.lite.widget.dialog.AlertInputDialog
@@ -91,6 +93,16 @@ class SettingsFragment : KotlinBaseFragment<FragmentSettingsBinding>() {
 
         binding.autoServiceSwitch.setOnClickListener {
             startActivity(Intent(Settings.ACTION_ACCESSIBILITY_SETTINGS))
+        }
+
+        binding.turnoffLightSwitch.setOnCheckedChangeListener { _, isChecked ->
+            if (isChecked) {
+                //最低亮度
+                requireActivity().window.setScreenBrightness(WindowManager.LayoutParams.BRIGHTNESS_OVERRIDE_OFF)
+            } else {
+                //恢复默认亮度
+                requireActivity().window.setScreenBrightness(WindowManager.LayoutParams.BRIGHTNESS_OVERRIDE_NONE)
+            }
         }
 
         binding.notificationLayout.setOnClickListener {
