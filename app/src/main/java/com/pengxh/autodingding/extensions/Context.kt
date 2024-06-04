@@ -61,8 +61,6 @@ fun Context.isAppAvailable(packageName: String): Boolean {
  * 打开指定包名的apk
  */
 fun Context.openApplication(packageName: String) {
-//    WakeLockManager.get.wakeUpScreen(this)
-
     val packageManager = this.packageManager
     val resolveIntent = Intent(Intent.ACTION_MAIN, null)
     resolveIntent.addCategory(Intent.CATEGORY_LAUNCHER)

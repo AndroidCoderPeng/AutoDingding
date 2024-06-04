@@ -84,20 +84,6 @@ class DateTimeAdapter(context: Context, private val dataBeans: MutableList<DateT
                 }
             }.start()
             countDownTimerHashMap[timeBean.uuid] = countDownTimer
-
-//            var countDown = diffCurrentMillis
-//            val timer = Timer().schedule(object : TimerTask() {
-//                override fun run() {
-//
-//                    holder.countDownProgress.progress = countDown.toInt()
-//                    countDown--
-//                    if (countDown == 0L) {
-//                        itemClickListener?.onCountDownFinish()
-//                        holder.countDownTextView.text = "任务已过期"
-//                        holder.countDownTextView.setTextColor(Color.RED)
-//                    }
-//                }
-//            }, 0, 1)
         }
     }
 

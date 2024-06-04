@@ -15,8 +15,6 @@ import com.pengxh.autodingding.extensions.isAppAvailable
 import com.pengxh.autodingding.fragment.DingDingFragment
 import com.pengxh.autodingding.fragment.SettingsFragment
 import com.pengxh.autodingding.service.AutoSignInService
-import com.pengxh.autodingding.service.LocalForegroundService
-import com.pengxh.autodingding.service.RemoteForegroundService
 import com.pengxh.autodingding.utils.Constant
 import com.pengxh.kt.lite.base.KotlinBaseActivity
 import com.pengxh.kt.lite.extensions.show
@@ -69,10 +67,6 @@ class MainActivity : KotlinBaseActivity<ActivityMainBinding>() {
         if (!AutoSignInService.isServiceRunning) {
             startActivity(Intent(Settings.ACTION_ACCESSIBILITY_SETTINGS))
         }
-
-        //启动双进程后台保活
-        startService(Intent(this, LocalForegroundService::class.java))
-        startService(Intent(this, RemoteForegroundService::class.java))
     }
 
     override fun initEvent() {

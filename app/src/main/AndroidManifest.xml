@@ -9,7 +9,6 @@
     <uses-permission android:name="android.permission.SYSTEM_OVERLAY_WINDOW" />
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
-    <uses-permission android:name="android.permission.WAKE_LOCK"/>
 
     <application
         android:name=".BaseApplication"
@@ -57,17 +56,6 @@
                 android:name="android.accessibilityservice"
                 android:resource="@xml/auto_sign_in_service_config" />
         </service>
-
-        <service
-            android:name=".service.LocalForegroundService"
-            android:enabled="true"
-            android:exported="true" />
-
-        <service
-            android:name=".service.RemoteForegroundService"
-            android:enabled="true"
-            android:exported="true"
-            android:process=":remote" />
     </application>
 
     <queries>
