@@ -59,23 +59,19 @@ class NotificationMonitorService : NotificationListenerService(), LifecycleOwner
         val extras = sbn.notification.extras
         // 获取接收消息APP的包名
         val packageName = sbn.packageName
+        // 获取接收消息的标题
+        val title = extras.getString(Notification.EXTRA_TITLE) ?: ""
         // 获取接收消息的内容
         val notificationText = extras.getString(Notification.EXTRA_TEXT)
         Log.d(kTag, "onNotificationPosted: $notificationText")
+
+        if (notificationText.isNullOrBlank()) {
+            return
+        }
+
+        saveNotificationText(title, notificationText)
+
         if (packageName == Constant.DING_DING) {
-            if (notificationText.isNullOrBlank()) {
-                return
-            }
-
-            //保存通知信息
-            val notificationBean = NotificationBean()
-            notificationBean.uuid = UUID.randomUUID().toString()
-            notificationBean.packageName = packageName
-            notificationBean.notificationTitle = extras.getString(Notification.EXTRA_TITLE)
-            notificationBean.notificationMsg = notificationText
-            notificationBean.postTime = System.currentTimeMillis().timestampToCompleteDate()
-            notificationBeanDao.save(notificationBean)
-
             if (notificationText.contains("成功")) {
                 backToMainActivity()
 
@@ -95,6 +91,26 @@ class NotificationMonitorService : NotificationListenerService(), LifecycleOwner
             }
         } else if (packageName == Constant.WECHAT || packageName == Constant.QQ) {
             openApplication(Constant.DING_DING)
+        }
+    }
+
+    /**
+     * 保存通知信息
+     * */
+    private fun saveNotificationText(title: String, text: String) {
+        val notificationBean = NotificationBean()
+        notificationBean.uuid = UUID.randomUUID().toString()
+        notificationBean.packageName = packageName
+        notificationBean.notificationTitle = title
+        notificationBean.notificationMsg = text
+        notificationBean.postTime = System.currentTimeMillis().timestampToCompleteDate()
+
+        val type = SaveKeyValues.getValue(Constant.NOTICE_TYPE, 1) as Int
+        //只保存钉钉的消息
+        if (type == 1 && packageName == Constant.DING_DING) {
+            notificationBeanDao.save(notificationBean)
+        } else {
+            notificationBeanDao.save(notificationBean)
         }
     }
 
