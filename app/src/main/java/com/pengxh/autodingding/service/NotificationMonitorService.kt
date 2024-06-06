@@ -1,9 +1,7 @@
 package com.pengxh.autodingding.service
 
 import android.app.Notification
-import android.content.ComponentName
 import android.content.Intent
-import android.os.Build
 import android.service.notification.NotificationListenerService
 import android.service.notification.StatusBarNotification
 import android.util.Log
@@ -45,11 +43,16 @@ class NotificationMonitorService : NotificationListenerService(), LifecycleOwner
 
     private val notificationBeanDao by lazy { BaseApplication.get().daoSession.notificationBeanDao }
 
+    companion object {
+        var isServiceRunning = false
+    }
+
     /**
      * 有可用的并且和通知管理器连接成功时回调
      */
     override fun onListenerConnected() {
         Log.d(kTag, "onListenerConnected")
+        isServiceRunning = true
     }
 
     /**
@@ -69,9 +72,15 @@ class NotificationMonitorService : NotificationListenerService(), LifecycleOwner
             return
         }
 
-        saveNotificationText(title, notificationText)
-
         if (packageName == Constant.DING_DING) {
+            val notificationBean = NotificationBean()
+            notificationBean.uuid = UUID.randomUUID().toString()
+            notificationBean.packageName = packageName
+            notificationBean.notificationTitle = title
+            notificationBean.notificationMsg = notificationText
+            notificationBean.postTime = System.currentTimeMillis().timestampToCompleteDate()
+            notificationBeanDao.save(notificationBean)
+
             if (notificationText.contains("成功")) {
                 backToMainActivity()
 
@@ -94,26 +103,6 @@ class NotificationMonitorService : NotificationListenerService(), LifecycleOwner
         }
     }
 
-    /**
-     * 保存通知信息
-     * */
-    private fun saveNotificationText(title: String, text: String) {
-        val notificationBean = NotificationBean()
-        notificationBean.uuid = UUID.randomUUID().toString()
-        notificationBean.packageName = packageName
-        notificationBean.notificationTitle = title
-        notificationBean.notificationMsg = text
-        notificationBean.postTime = System.currentTimeMillis().timestampToCompleteDate()
-
-        val type = SaveKeyValues.getValue(Constant.NOTICE_TYPE, 1) as Int
-        //只保存钉钉的消息
-        if (type == 1 && packageName == Constant.DING_DING) {
-            notificationBeanDao.save(notificationBean)
-        } else {
-            notificationBeanDao.save(notificationBean)
-        }
-    }
-
     private fun backToMainActivity() {
         CountDownTimerManager.get.cancelTimer()
         val intent = Intent(this, MainActivity::class.java)
@@ -128,9 +117,6 @@ class NotificationMonitorService : NotificationListenerService(), LifecycleOwner
 
     override fun onListenerDisconnected() {
         Log.d(kTag, "onListenerDisconnected")
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-            // 通知监听断开连接 - 请求重新绑定
-            requestRebind(ComponentName(this, NotificationListenerService::class.java))
-        }
+        isServiceRunning = false
     }
 }

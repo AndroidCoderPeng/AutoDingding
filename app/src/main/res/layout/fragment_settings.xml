@@ -10,7 +10,7 @@
         android:id="@+id/emailLayout"
         android:layout_width="match_parent"
         android:layout_height="@dimen/itemLayoutHeight"
-        android:layout_marginTop="10dp"
+        android:layout_marginVertical="10dp"
         android:background="@color/white"
         android:paddingHorizontal="10dp">
 
@@ -33,50 +33,6 @@
             android:textColor="@color/colorText"
             android:textSize="@dimen/sp_16" />
     </RelativeLayout>
-
-    <View
-        android:layout_width="match_parent"
-        android:layout_height="1px"
-        android:layout_marginHorizontal="@dimen/dp_10"
-        android:background="#CCC" />
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="@dimen/itemLayoutHeight"
-        android:layout_marginBottom="10dp"
-        android:background="@color/white"
-        android:gravity="center_vertical"
-        android:paddingHorizontal="10dp">
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="通知设置"
-            android:textColor="@color/colorText"
-            android:textSize="@dimen/sp_16" />
-
-        <RadioGroup
-            android:id="@+id/radioGroup"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:gravity="center_vertical|end"
-            android:orientation="horizontal">
-
-            <RadioButton
-                android:id="@+id/allNoticeRadioButton"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginHorizontal="@dimen/dp_10"
-                android:text="所有通知" />
-
-            <RadioButton
-                android:id="@+id/dingNoticeRadioButton"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="只监听钉钉" />
-        </RadioGroup>
-    </LinearLayout>
 
     <RelativeLayout
         android:layout_width="match_parent"

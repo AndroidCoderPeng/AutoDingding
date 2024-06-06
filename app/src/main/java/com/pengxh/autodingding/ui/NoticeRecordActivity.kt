@@ -97,19 +97,18 @@ class NoticeRecordActivity : KotlinBaseActivity<ActivityNoticeBinding>() {
                     binding.emptyView.visibility = View.VISIBLE
                 } else {
                     binding.emptyView.visibility = View.GONE
-                    noticeAdapter =
-                        object : NormalRecyclerAdapter<NotificationBean>(
-                            R.layout.item_notice_rv_l, dataBeans
+                    noticeAdapter = object : NormalRecyclerAdapter<NotificationBean>(
+                        R.layout.item_notice_rv_l, dataBeans
+                    ) {
+                        override fun convertView(
+                            viewHolder: ViewHolder, position: Int, item: NotificationBean
                         ) {
-                            override fun convertView(
-                                viewHolder: ViewHolder, position: Int, item: NotificationBean
-                            ) {
-                                viewHolder.setText(R.id.titleView, "标题：${item.notificationTitle}")
-                                    .setText(R.id.packageNameView, "包名：${item.packageName}")
-                                    .setText(R.id.messageView, "内容：${item.notificationMsg}")
-                                    .setText(R.id.postTimeView, item.postTime)
-                            }
+                            viewHolder.setText(R.id.titleView, "标题：${item.notificationTitle}")
+                                .setText(R.id.packageNameView, "包名：${item.packageName}")
+                                .setText(R.id.messageView, "内容：${item.notificationMsg}")
+                                .setText(R.id.postTimeView, item.postTime)
                         }
+                    }
                     binding.notificationView.addItemDecoration(
                         RecyclerViewItemDivider(1, Color.LTGRAY)
                     )

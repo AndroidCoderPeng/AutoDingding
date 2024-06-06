@@ -43,7 +43,8 @@
         android:layout_below="@id/messageView"
         android:layout_marginTop="5dp"
         android:text="2022-06-19 19:53:00"
-        android:textColorHint="#C0C0C0"
+        android:textColor="#C0C0C0"
+        android:textSize="@dimen/sp_12"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@id/messageView" />
 </androidx.constraintlayout.widget.ConstraintLayout>

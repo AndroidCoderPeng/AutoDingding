@@ -17,9 +17,9 @@ import android.view.WindowManager
 import com.pengxh.autodingding.BuildConfig
 import com.pengxh.autodingding.R
 import com.pengxh.autodingding.databinding.FragmentSettingsBinding
-import com.pengxh.autodingding.extensions.notificationEnable
 import com.pengxh.autodingding.service.AutoSignInService
 import com.pengxh.autodingding.service.FloatingWindowService
+import com.pengxh.autodingding.service.NotificationMonitorService
 import com.pengxh.autodingding.ui.NoticeRecordActivity
 import com.pengxh.autodingding.utils.Constant
 import com.pengxh.kt.lite.base.KotlinBaseFragment
@@ -81,14 +81,6 @@ class SettingsFragment : KotlinBaseFragment<FragmentSettingsBinding>() {
                 }).build().show()
         }
 
-        binding.radioGroup.setOnCheckedChangeListener { _, checkedId ->
-            if (checkedId == binding.allNoticeRadioButton.id) {
-                SaveKeyValues.putValue(Constant.NOTICE_TYPE, 0)
-            } else {
-                SaveKeyValues.putValue(Constant.NOTICE_TYPE, 1)
-            }
-        }
-
         binding.floatSwitch.setOnCheckedChangeListener { _, isChecked ->
             if (isChecked) {
                 openFloatWindowPermission()
@@ -148,13 +140,6 @@ class SettingsFragment : KotlinBaseFragment<FragmentSettingsBinding>() {
 
     override fun onResume() {
         super.onResume()
-        val type = SaveKeyValues.getValue(Constant.NOTICE_TYPE, 1) as Int
-        if (type == 1) {
-            binding.dingNoticeRadioButton.isChecked = true
-        } else {
-            binding.allNoticeRadioButton.isChecked = true
-        }
-
         binding.floatSwitch.isChecked = Settings.canDrawOverlays(requireContext())
         if (binding.floatSwitch.isChecked) {
             requireContext().startService(
@@ -162,8 +147,8 @@ class SettingsFragment : KotlinBaseFragment<FragmentSettingsBinding>() {
             )
         }
 
-        if (requireContext().notificationEnable()) {
-            binding.noticeSwitch.isChecked = true
+        binding.noticeSwitch.isChecked = NotificationMonitorService.isServiceRunning
+        if (NotificationMonitorService.isServiceRunning) {
             createNotification()
         } else {
             //取消通知栏

@@ -1,8 +1,6 @@
 package com.pengxh.autodingding.ui
 
-import android.content.Intent
 import android.os.Bundle
-import android.provider.Settings
 import android.view.KeyEvent
 import android.view.MenuItem
 import androidx.fragment.app.Fragment
@@ -14,7 +12,6 @@ import com.pengxh.autodingding.extensions.initImmersionBar
 import com.pengxh.autodingding.extensions.isAppAvailable
 import com.pengxh.autodingding.fragment.DingDingFragment
 import com.pengxh.autodingding.fragment.SettingsFragment
-import com.pengxh.autodingding.service.AutoSignInService
 import com.pengxh.autodingding.utils.Constant
 import com.pengxh.kt.lite.base.KotlinBaseActivity
 import com.pengxh.kt.lite.extensions.show
@@ -64,9 +61,9 @@ class MainActivity : KotlinBaseActivity<ActivityMainBinding>() {
                 }).build().show()
         }
 
-        if (!AutoSignInService.isServiceRunning) {
-            startActivity(Intent(Settings.ACTION_ACCESSIBILITY_SETTINGS))
-        }
+//        if (!AutoSignInService.isServiceRunning) {
+//            startActivity(Intent(Settings.ACTION_ACCESSIBILITY_SETTINGS))
+//        }
     }
 
     override fun initEvent() {
