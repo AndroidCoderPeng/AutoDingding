@@ -3,12 +3,16 @@ package com.pengxh.autodingding.fragment
 import android.app.Notification
 import android.app.NotificationChannel
 import android.app.NotificationManager
+import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.graphics.BitmapFactory
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
+import android.os.Handler
+import android.os.Message
 import android.provider.Settings
 import android.text.TextUtils
 import android.view.LayoutInflater
@@ -17,6 +21,7 @@ import android.view.WindowManager
 import com.pengxh.autodingding.BuildConfig
 import com.pengxh.autodingding.R
 import com.pengxh.autodingding.databinding.FragmentSettingsBinding
+import com.pengxh.autodingding.extensions.notificationEnable
 import com.pengxh.autodingding.service.AutoSignInService
 import com.pengxh.autodingding.service.FloatingWindowService
 import com.pengxh.autodingding.service.NotificationMonitorService
@@ -27,12 +32,19 @@ import com.pengxh.kt.lite.extensions.navigatePageTo
 import com.pengxh.kt.lite.extensions.setScreenBrightness
 import com.pengxh.kt.lite.extensions.show
 import com.pengxh.kt.lite.utils.SaveKeyValues
+import com.pengxh.kt.lite.utils.WeakReferenceHandler
 import com.pengxh.kt.lite.widget.dialog.AlertInputDialog
 import com.pengxh.kt.lite.widget.dialog.AlertMessageDialog
 
-class SettingsFragment : KotlinBaseFragment<FragmentSettingsBinding>() {
+
+class SettingsFragment : KotlinBaseFragment<FragmentSettingsBinding>(), Handler.Callback {
 
     private val kTag = "SettingsFragment"
+
+    companion object {
+        var weakReferenceHandler: WeakReferenceHandler? = null
+    }
+
     private val notificationManager by lazy { requireContext().getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager }
 
     override fun setupTopBarLayout() {
@@ -50,6 +62,8 @@ class SettingsFragment : KotlinBaseFragment<FragmentSettingsBinding>() {
     }
 
     override fun initOnCreate(savedInstanceState: Bundle?) {
+        weakReferenceHandler = WeakReferenceHandler(this)
+
         val emailAddress = SaveKeyValues.getValue(Constant.EMAIL_ADDRESS, "") as String
         if (!TextUtils.isEmpty(emailAddress)) {
             binding.emailTextView.text = emailAddress
@@ -88,7 +102,40 @@ class SettingsFragment : KotlinBaseFragment<FragmentSettingsBinding>() {
         }
 
         binding.noticeSwitch.setOnClickListener {
-            startActivity(Intent(Settings.ACTION_NOTIFICATION_LISTENER_SETTINGS))
+            if (binding.noticeSwitch.isChecked) {
+                "服务器启动中，请稍后...".show(requireContext())
+                binding.noticeSwitch.isChecked = false
+            } else {
+                AlertMessageDialog.Builder()
+                    .setContext(requireContext())
+                    .setTitle("警告")
+                    .setMessage("关闭此服务，将不会监听打卡通知")
+                    .setPositiveButton("知道了")
+                    .setOnDialogButtonClickListener(object :
+                        AlertMessageDialog.OnDialogButtonClickListener {
+                        override fun onConfirmClick() {
+                            "服务器关闭中，请稍后...".show(requireContext())
+                            binding.noticeSwitch.isChecked = false
+                        }
+                    }).build().show()
+            }
+
+            if (!requireContext().notificationEnable()) {
+                startActivity(Intent(Settings.ACTION_NOTIFICATION_LISTENER_SETTINGS))
+            }
+
+            val component = ComponentName(requireContext(), NotificationMonitorService::class.java)
+            requireContext().packageManager.setComponentEnabledSetting(
+                component,
+                PackageManager.COMPONENT_ENABLED_STATE_DISABLED,
+                PackageManager.DONT_KILL_APP
+            )
+
+            requireContext().packageManager.setComponentEnabledSetting(
+                component,
+                PackageManager.COMPONENT_ENABLED_STATE_ENABLED,
+                PackageManager.DONT_KILL_APP
+            )
         }
 
         binding.autoServiceSwitch.setOnClickListener {
@@ -125,6 +172,21 @@ class SettingsFragment : KotlinBaseFragment<FragmentSettingsBinding>() {
         }
     }
 
+    override fun handleMessage(msg: Message): Boolean {
+        when (msg.what) {
+            2024060601 -> {
+                binding.noticeSwitch.isChecked = true
+                createNotification()
+            }
+
+            2024060602 -> {
+                binding.noticeSwitch.isChecked = false
+                notificationManager.cancel(Int.MAX_VALUE)
+            }
+        }
+        return true
+    }
+
     private fun openFloatWindowPermission() {
         if (!Settings.canDrawOverlays(requireContext())) {
             val sdkInt = Build.VERSION.SDK_INT
@@ -145,14 +207,6 @@ class SettingsFragment : KotlinBaseFragment<FragmentSettingsBinding>() {
             requireContext().startService(
                 Intent(requireContext(), FloatingWindowService::class.java)
             )
-        }
-
-        binding.noticeSwitch.isChecked = NotificationMonitorService.isServiceRunning
-        if (NotificationMonitorService.isServiceRunning) {
-            createNotification()
-        } else {
-            //取消通知栏
-            notificationManager.cancel(Int.MAX_VALUE)
         }
 
         binding.autoServiceSwitch.isChecked = AutoSignInService.isServiceRunning

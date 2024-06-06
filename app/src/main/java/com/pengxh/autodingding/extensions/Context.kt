@@ -5,7 +5,16 @@ import android.content.Context
 import android.content.Intent
 import android.content.pm.ApplicationInfo
 import android.content.pm.ResolveInfo
+import androidx.core.app.NotificationManagerCompat
 import com.pengxh.autodingding.utils.CountDownTimerManager
+
+/**
+ * 检测通知监听服务是否被授权
+ * */
+fun Context.notificationEnable(): Boolean {
+    val packages = NotificationManagerCompat.getEnabledListenerPackages(this)
+    return packages.contains(this.packageName)
+}
 
 /**
  * 检查手机上是否安装了指定的软件
