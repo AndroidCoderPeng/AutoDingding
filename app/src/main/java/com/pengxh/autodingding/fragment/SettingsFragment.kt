@@ -31,6 +31,7 @@ import com.pengxh.kt.lite.base.KotlinBaseFragment
 import com.pengxh.kt.lite.extensions.navigatePageTo
 import com.pengxh.kt.lite.extensions.setScreenBrightness
 import com.pengxh.kt.lite.extensions.show
+import com.pengxh.kt.lite.utils.LoadingDialogHub
 import com.pengxh.kt.lite.utils.SaveKeyValues
 import com.pengxh.kt.lite.utils.WeakReferenceHandler
 import com.pengxh.kt.lite.widget.dialog.AlertInputDialog
@@ -102,8 +103,12 @@ class SettingsFragment : KotlinBaseFragment<FragmentSettingsBinding>(), Handler.
         }
 
         binding.noticeSwitch.setOnClickListener {
+            if (!requireContext().notificationEnable()) {
+                startActivity(Intent(Settings.ACTION_NOTIFICATION_LISTENER_SETTINGS))
+            }
+
             if (binding.noticeSwitch.isChecked) {
-                "服务器启动中，请稍后...".show(requireContext())
+                LoadingDialogHub.show(requireActivity(), "服务器启动中，请稍后...")
                 binding.noticeSwitch.isChecked = false
             } else {
                 AlertMessageDialog.Builder()
@@ -114,14 +119,9 @@ class SettingsFragment : KotlinBaseFragment<FragmentSettingsBinding>(), Handler.
                     .setOnDialogButtonClickListener(object :
                         AlertMessageDialog.OnDialogButtonClickListener {
                         override fun onConfirmClick() {
-                            "服务器关闭中，请稍后...".show(requireContext())
                             binding.noticeSwitch.isChecked = false
                         }
                     }).build().show()
-            }
-
-            if (!requireContext().notificationEnable()) {
-                startActivity(Intent(Settings.ACTION_NOTIFICATION_LISTENER_SETTINGS))
             }
 
             val component = ComponentName(requireContext(), NotificationMonitorService::class.java)
@@ -175,6 +175,7 @@ class SettingsFragment : KotlinBaseFragment<FragmentSettingsBinding>(), Handler.
     override fun handleMessage(msg: Message): Boolean {
         when (msg.what) {
             2024060601 -> {
+                LoadingDialogHub.dismiss()
                 binding.noticeSwitch.isChecked = true
                 createNotification()
             }
