@@ -2,9 +2,6 @@ package com.pengxh.autodingding.fragment
 
 import android.content.Intent
 import android.os.Bundle
-import android.os.Handler
-import android.os.Message
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -20,17 +17,14 @@ import com.pengxh.autodingding.ui.UpdateTimerTaskActivity
 import com.pengxh.autodingding.utils.Constant
 import com.pengxh.kt.lite.base.KotlinBaseFragment
 import com.pengxh.kt.lite.divider.RecyclerViewItemOffsets
-import com.pengxh.kt.lite.utils.WeakReferenceHandler
 import com.pengxh.kt.lite.widget.dialog.AlertControlDialog
 
-class DingDingFragment : KotlinBaseFragment<FragmentDingdingBinding>(), Handler.Callback {
+class DingDingFragment : KotlinBaseFragment<FragmentDingdingBinding>() {
 
     private val kTag = "DingDingFragment"
     private val dateTimeBeanDao by lazy { BaseApplication.get().daoSession.dateTimeBeanDao }
-    private val weakReferenceHandler by lazy { WeakReferenceHandler(this) }
-    private var dateTimeAdapter: DateTimeAdapter? = null
+    private lateinit var dateTimeAdapter: DateTimeAdapter
     private var dataBeans: MutableList<DateTimeBean> = ArrayList()
-    private var isRefresh = false
     private var clickedPosition = 0
 
     override fun setupTopBarLayout() {
@@ -48,92 +42,79 @@ class DingDingFragment : KotlinBaseFragment<FragmentDingdingBinding>(), Handler.
     }
 
     override fun initOnCreate(savedInstanceState: Bundle?) {
-        getAutoDingDingTasks()
+        getAutoDingDingTasks(false)
     }
 
-    private fun getAutoDingDingTasks() {
-        val queryResult = dateTimeBeanDao.queryBuilder()
-            .orderDesc(DateTimeBeanDao.Properties.Date).list()
-        if (isRefresh) {
-            dateTimeAdapter?.setRefreshData(queryResult)
-            isRefresh = false
+    private fun getAutoDingDingTasks(isRefresh: Boolean) {
+        val queryResult = dateTimeBeanDao.queryBuilder().orderDesc(
+            DateTimeBeanDao.Properties.Date
+        ).list()
 
-            if (dataBeans.size == 0) {
-                binding.emptyView.visibility = View.VISIBLE
-            } else {
-                binding.emptyView.visibility = View.GONE
-            }
+        if (queryResult.size == 0) {
+            binding.emptyView.visibility = View.VISIBLE
+        } else {
+            binding.emptyView.visibility = View.GONE
+        }
+
+        if (isRefresh) {
+            dateTimeAdapter.setRefreshData(queryResult)
         } else {
             dataBeans = queryResult
-            weakReferenceHandler.sendEmptyMessage(2023042601)
+            dateTimeAdapter = DateTimeAdapter(requireContext(), dataBeans)
+            binding.weeklyRecyclerView.adapter = dateTimeAdapter
+            binding.weeklyRecyclerView.addItemDecoration(
+                RecyclerViewItemOffsets(0, 10, 0, 20)
+            )
+            dateTimeAdapter.setOnItemClickListener(object :
+                DateTimeAdapter.OnItemClickListener {
+                override fun onItemClick(position: Int) {
+                    val intent = Intent(requireContext(), UpdateTimerTaskActivity::class.java)
+                    intent.putExtra(Constant.INTENT_PARAM, dataBeans[position].uuid)
+                    updateTaskLauncher.launch(intent)
+                }
+
+                override fun onItemLongClick(position: Int) {
+                    //标记被点击的item位置
+                    clickedPosition = position
+                    AlertControlDialog.Builder()
+                        .setContext(requireContext())
+                        .setTitle("删除提示")
+                        .setMessage("确定要删除这个任务吗")
+                        .setNegativeButton("取消")
+                        .setPositiveButton("确定")
+                        .setOnDialogButtonClickListener(object :
+                            AlertControlDialog.OnDialogButtonClickListener {
+                            override fun onConfirmClick() {
+                                deleteTask(dataBeans[position])
+                            }
+
+                            override fun onCancelClick() {
+
+                            }
+                        }).build().show()
+                }
+
+                override fun onCountDownFinish() {
+                    requireContext().openApplication(Constant.DING_DING)
+                }
+            })
         }
-    }
-
-    override fun handleMessage(msg: Message): Boolean {
-        if (msg.what == 2023042601) {
-            if (dataBeans.size == 0) {
-                binding.emptyView.visibility = View.VISIBLE
-            } else {
-                binding.emptyView.visibility = View.GONE
-                dateTimeAdapter = DateTimeAdapter(requireContext(), dataBeans)
-                binding.weeklyRecyclerView.adapter = dateTimeAdapter
-                binding.weeklyRecyclerView.addItemDecoration(
-                    RecyclerViewItemOffsets(0, 10, 0, 20)
-                )
-                dateTimeAdapter?.setOnItemClickListener(object :
-                    DateTimeAdapter.OnItemClickListener {
-                    override fun onItemClick(position: Int) {
-                        val intent = Intent(requireContext(), UpdateTimerTaskActivity::class.java)
-                        intent.putExtra(Constant.INTENT_PARAM, dataBeans[position].uuid)
-                        updateTaskLauncher.launch(intent)
-                    }
-
-                    override fun onItemLongClick(position: Int) {
-                        //标记被点击的item位置
-                        clickedPosition = position
-                        AlertControlDialog.Builder()
-                            .setContext(requireContext())
-                            .setTitle("删除提示")
-                            .setMessage("确定要删除这个任务吗")
-                            .setNegativeButton("取消")
-                            .setPositiveButton("确定")
-                            .setOnDialogButtonClickListener(object :
-                                AlertControlDialog.OnDialogButtonClickListener {
-                                override fun onConfirmClick() {
-                                    deleteTask(dataBeans[position])
-                                }
-
-                                override fun onCancelClick() {
-
-                                }
-                            }).build().show()
-                    }
-
-                    override fun onCountDownFinish() {
-                        requireContext().openApplication(Constant.DING_DING)
-                    }
-                })
-            }
-        }
-        return true
     }
 
     private val updateTaskLauncher = registerForActivityResult(
         ActivityResultContracts.StartActivityForResult()
     ) {
-        Log.d(kTag, "updateTaskLauncher: ")
-        isRefresh = true
-        getAutoDingDingTasks()
+        getAutoDingDingTasks(true)
     }
 
     private fun deleteTask(bean: DateTimeBean) {
         dateTimeBeanDao.delete(bean)
         dataBeans.removeAt(clickedPosition)
-        dateTimeAdapter?.notifyItemRemoved(clickedPosition)
-        dateTimeAdapter?.notifyItemRangeChanged(
+        dateTimeAdapter.notifyItemRemoved(clickedPosition)
+        dateTimeAdapter.notifyItemRangeChanged(
             clickedPosition, dataBeans.size - clickedPosition
         )
-        dateTimeAdapter?.stopCountDownTimer(bean)
+        dateTimeAdapter.stopCountDownTimer(bean)
         if (dataBeans.size == 0) {
             binding.emptyView.visibility = View.VISIBLE
         } else {
@@ -150,8 +131,6 @@ class DingDingFragment : KotlinBaseFragment<FragmentDingdingBinding>(), Handler.
     private val addTaskLauncher = registerForActivityResult(
         ActivityResultContracts.StartActivityForResult()
     ) {
-        Log.d(kTag, "addTaskLauncher: ")
-        isRefresh = true
-        getAutoDingDingTasks()
+        getAutoDingDingTasks(true)
     }
 }
