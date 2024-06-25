@@ -74,15 +74,15 @@ class NotificationMonitorService : NotificationListenerService(), LifecycleOwner
             return
         }
 
-        if (packageName == Constant.DING_DING) {
-            val notificationBean = NotificationBean()
-            notificationBean.uuid = UUID.randomUUID().toString()
-            notificationBean.packageName = packageName
-            notificationBean.notificationTitle = title
-            notificationBean.notificationMsg = notificationText
-            notificationBean.postTime = System.currentTimeMillis().timestampToCompleteDate()
-            notificationBeanDao.save(notificationBean)
+        val notificationBean = NotificationBean()
+        notificationBean.uuid = UUID.randomUUID().toString()
+        notificationBean.packageName = packageName
+        notificationBean.notificationTitle = title
+        notificationBean.notificationMsg = notificationText
+        notificationBean.postTime = System.currentTimeMillis().timestampToCompleteDate()
+        notificationBeanDao.save(notificationBean)
 
+        if (packageName == Constant.DING_DING) {
             if (notificationText.contains("成功")) {
                 backToMainActivity()
 
