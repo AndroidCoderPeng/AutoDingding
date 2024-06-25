@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.graphics.Color
 import android.os.CountDownTimer
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -19,7 +20,7 @@ class DateTimeAdapter(context: Context, private val dataBeans: MutableList<DateT
     RecyclerView.Adapter<DateTimeAdapter.ItemViewHolder>() {
 
     private val kTag = "DateTimeAdapter"
-    private val countDownTimerHashMap by lazy { HashMap<String, CountDownTimer?>() }
+    private val countDownTimerHashMap by lazy { HashMap<String, CountDownTimer>() }
     private var layoutInflater = LayoutInflater.from(context)
 
     @SuppressLint("NotifyDataSetChanged")
@@ -66,8 +67,12 @@ class DateTimeAdapter(context: Context, private val dataBeans: MutableList<DateT
 
             holder.countDownProgress.max = diffCurrentMillis.toInt()
             //刷新列表先停止之前的定时器，否则会出现重复计时问题
-            val downTimer = countDownTimerHashMap[timeBean.uuid]
-            downTimer?.cancel()
+            if (countDownTimerHashMap.isNotEmpty()) {
+                Log.d(kTag, "onBindViewHolder: 批量取消定时器")
+                countDownTimerHashMap.forEach {
+                    it.value.cancel()
+                }
+            }
             //重新计时
             val countDownTimer = object : CountDownTimer(diffCurrentMillis, 1) {
                 override fun onTick(millisUntilFinished: Long) {
