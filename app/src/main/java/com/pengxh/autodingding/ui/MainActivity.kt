@@ -12,12 +12,14 @@ import com.pengxh.autodingding.adapter.BaseFragmentAdapter
 import com.pengxh.autodingding.databinding.ActivityMainBinding
 import com.pengxh.autodingding.extensions.initImmersionBar
 import com.pengxh.autodingding.extensions.isAppAvailable
+import com.pengxh.autodingding.fragment.AutoDingDingFragment
 import com.pengxh.autodingding.fragment.DingDingFragment
 import com.pengxh.autodingding.fragment.SettingsFragment
 import com.pengxh.autodingding.service.AutoSignInService
 import com.pengxh.autodingding.utils.Constant
 import com.pengxh.kt.lite.base.KotlinBaseActivity
 import com.pengxh.kt.lite.extensions.show
+import com.pengxh.kt.lite.utils.ActivityStackManager
 import com.pengxh.kt.lite.utils.SaveKeyValues
 import com.pengxh.kt.lite.widget.dialog.AlertMessageDialog
 
@@ -26,13 +28,7 @@ class MainActivity : KotlinBaseActivity<ActivityMainBinding>() {
 
     private val kTag = "MainActivity"
     private var menuItem: MenuItem? = null
-    private val fragmentPages: MutableList<Fragment> = ArrayList()
     private var clickTime: Long = 0
-
-    init {
-        fragmentPages.add(DingDingFragment())
-        fragmentPages.add(SettingsFragment())
-    }
 
     override fun initViewBinding(): ActivityMainBinding {
         return ActivityMainBinding.inflate(layoutInflater)
@@ -44,10 +40,24 @@ class MainActivity : KotlinBaseActivity<ActivityMainBinding>() {
     }
 
     override fun initOnCreate(savedInstanceState: Bundle?) {
+        ActivityStackManager.addActivity(this)
+
         if (!isAppAvailable(Constant.DING_DING)) {
             showAlertDialog()
             return
         }
+
+        val fragmentPages = ArrayList<Fragment>()
+        val b = SaveKeyValues.getValue(Constant.CHANGE_VERSION, false) as Boolean
+        if (b) {
+            fragmentPages.add(AutoDingDingFragment())
+        } else {
+            fragmentPages.add(DingDingFragment())
+        }
+        fragmentPages.add(SettingsFragment())
+        val fragmentAdapter = BaseFragmentAdapter(supportFragmentManager, fragmentPages)
+        binding.viewPager.adapter = fragmentAdapter
+        binding.viewPager.offscreenPageLimit = fragmentPages.size
 
         val isFirst = SaveKeyValues.getValue("isFirst", true) as Boolean
         if (isFirst) {
@@ -85,9 +95,7 @@ class MainActivity : KotlinBaseActivity<ActivityMainBinding>() {
             }
             false
         }
-        val fragmentAdapter = BaseFragmentAdapter(supportFragmentManager, fragmentPages)
-        binding.viewPager.adapter = fragmentAdapter
-        binding.viewPager.offscreenPageLimit = fragmentPages.size
+
         binding.viewPager.addOnPageChangeListener(object : ViewPager.OnPageChangeListener {
             override fun onPageScrolled(
                 position: Int, positionOffset: Float, positionOffsetPixels: Int

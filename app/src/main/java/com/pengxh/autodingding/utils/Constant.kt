@@ -17,6 +17,7 @@ object Constant {
 
     const val EMAIL_ADDRESS = "emailAddress"
     const val INTENT_PARAM = "intentParam"
+    const val CHANGE_VERSION = "ChangeVersion"
 
     const val DING_DING = "com.alibaba.android.rimet"
     const val WECHAT = "com.tencent.wework"

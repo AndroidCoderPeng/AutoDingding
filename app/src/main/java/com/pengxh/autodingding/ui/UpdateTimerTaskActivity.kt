@@ -11,6 +11,7 @@ import com.pengxh.autodingding.extensions.initImmersionBar
 import com.pengxh.autodingding.greendao.DateTimeBeanDao
 import com.pengxh.kt.lite.base.KotlinBaseActivity
 import com.pengxh.kt.lite.extensions.appendZero
+import com.pengxh.kt.lite.utils.ActivityStackManager
 import com.pengxh.kt.lite.utils.Constant
 import com.pengxh.kt.lite.widget.TitleBarView
 import java.util.*
@@ -27,6 +28,8 @@ class UpdateTimerTaskActivity : KotlinBaseActivity<ActivityUpdateTimerTaskBindin
     }
 
     override fun initOnCreate(savedInstanceState: Bundle?) {
+        ActivityStackManager.addActivity(this)
+
         val taskUuid = intent.getStringExtra(Constant.INTENT_PARAM)!!
         dateTimeBean = dateTimeBeanDao.queryBuilder().where(
             DateTimeBeanDao.Properties.Uuid.eq(taskUuid)

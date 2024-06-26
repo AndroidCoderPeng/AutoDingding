@@ -133,4 +133,11 @@ class DingDingFragment : KotlinBaseFragment<FragmentDingdingBinding>() {
     ) {
         getAutoDingDingTasks(true)
     }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        dataBeans.forEach {
+            dateTimeAdapter.stopCountDownTimer(it)
+        }
+    }
 }

@@ -152,6 +152,32 @@ class SettingsFragment : KotlinBaseFragment<FragmentSettingsBinding>(), Handler.
             }
         }
 
+        binding.exchangeProVersionSwitch.setOnClickListener {
+            "未实现".show(requireContext())
+//            AlertControlDialog.Builder()
+//                .setContext(requireContext())
+//                .setTitle("温馨提示")
+//                .setMessage("版本切换将会重新启动应用，且Pro版本和普通版本功能不互通，是否继续？")
+//                .setNegativeButton("取消")
+//                .setPositiveButton("确定")
+//                .setOnDialogButtonClickListener(
+//                    object : AlertControlDialog.OnDialogButtonClickListener {
+//                        override fun onConfirmClick() {
+//                            SaveKeyValues.putValue(
+//                                Constant.CHANGE_VERSION, binding.exchangeProVersionSwitch.isChecked
+//                            )
+//                            //退出应用
+//                            ActivityStackManager.finishAllActivity()
+//                            requireContext().navigatePageTo<MainActivity>()
+//                        }
+//
+//                        override fun onCancelClick() {
+//
+//                        }
+//                    }
+//                ).build().show()
+        }
+
         binding.notificationLayout.setOnClickListener {
             requireContext().navigatePageTo<NoticeRecordActivity>()
         }
@@ -209,6 +235,14 @@ class SettingsFragment : KotlinBaseFragment<FragmentSettingsBinding>(), Handler.
                 Intent(requireContext(), FloatingWindowService::class.java)
             )
         }
+
+        val b = SaveKeyValues.getValue(Constant.CHANGE_VERSION, false) as Boolean
+        if (b) {
+            binding.versionTipsView.text = "切换普通版"
+        } else {
+            binding.versionTipsView.text = "切换Pro版"
+        }
+        binding.exchangeProVersionSwitch.isChecked = b
 
         binding.autoServiceSwitch.isChecked = AutoSignInService.isServiceRunning
     }

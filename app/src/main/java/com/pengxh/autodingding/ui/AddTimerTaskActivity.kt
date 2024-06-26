@@ -11,6 +11,7 @@ import com.pengxh.autodingding.extensions.convertToWeek
 import com.pengxh.autodingding.extensions.initImmersionBar
 import com.pengxh.kt.lite.base.KotlinBaseActivity
 import com.pengxh.kt.lite.extensions.appendZero
+import com.pengxh.kt.lite.utils.ActivityStackManager
 import com.pengxh.kt.lite.widget.TitleBarView
 import java.util.*
 
@@ -25,6 +26,8 @@ class AddTimerTaskActivity : KotlinBaseActivity<ActivityAddTimerTaskBinding>() {
     }
 
     override fun initOnCreate(savedInstanceState: Bundle?) {
+        ActivityStackManager.addActivity(this)
+
         //设置默认显示日期
         val month = (calendar.get(Calendar.MONTH) + 1).appendZero()
         val dayOfMonth = calendar.get(Calendar.DAY_OF_MONTH).appendZero()

@@ -67,12 +67,8 @@ class DateTimeAdapter(context: Context, private val dataBeans: MutableList<DateT
 
             holder.countDownProgress.max = diffCurrentMillis.toInt()
             //刷新列表先停止之前的定时器，否则会出现重复计时问题
-            if (countDownTimerHashMap.isNotEmpty()) {
-                Log.d(kTag, "onBindViewHolder: 批量取消定时器")
-                countDownTimerHashMap.forEach {
-                    it.value.cancel()
-                }
-            }
+            countDownTimerHashMap[timeBean.uuid]?.cancel()
+
             //重新计时
             val countDownTimer = object : CountDownTimer(diffCurrentMillis, 1) {
                 override fun onTick(millisUntilFinished: Long) {
@@ -93,6 +89,7 @@ class DateTimeAdapter(context: Context, private val dataBeans: MutableList<DateT
     }
 
     fun stopCountDownTimer(bean: DateTimeBean) {
+        Log.d(kTag, "stopCountDownTimer: ${bean.date}-${bean.time}")
         countDownTimerHashMap[bean.uuid]?.cancel()
     }
 

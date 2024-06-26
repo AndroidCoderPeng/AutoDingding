@@ -16,6 +16,7 @@ import com.pengxh.kt.lite.adapter.NormalRecyclerAdapter
 import com.pengxh.kt.lite.adapter.ViewHolder
 import com.pengxh.kt.lite.base.KotlinBaseActivity
 import com.pengxh.kt.lite.divider.RecyclerViewItemDivider
+import com.pengxh.kt.lite.utils.ActivityStackManager
 import com.pengxh.kt.lite.utils.WeakReferenceHandler
 import com.pengxh.kt.lite.widget.TitleBarView
 
@@ -48,6 +49,8 @@ class NoticeRecordActivity : KotlinBaseActivity<ActivityNoticeBinding>() {
     }
 
     override fun initOnCreate(savedInstanceState: Bundle?) {
+        ActivityStackManager.addActivity(this)
+
         weakReferenceHandler = WeakReferenceHandler(callback)
         dataBeans = queryNotificationRecord()
         weakReferenceHandler.sendEmptyMessage(2022061901)
