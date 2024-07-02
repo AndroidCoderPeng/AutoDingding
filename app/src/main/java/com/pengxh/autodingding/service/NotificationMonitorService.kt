@@ -93,7 +93,7 @@ class NotificationMonitorService : NotificationListenerService(), LifecycleOwner
                 }
                 //发送打卡成功的邮件
                 lifecycleScope.launch(Dispatchers.Main) {
-                    "即将发送打卡邮件，请注意查收".show(this@NotificationMonitorService)
+                    "即将发送通知邮件，请注意查收".show(this@NotificationMonitorService)
                     delay(3000)
                     withContext(Dispatchers.IO) {
                         notificationText.createMail(emailAddress).sendTextMail()

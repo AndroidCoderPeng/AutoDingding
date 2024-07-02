@@ -5,11 +5,11 @@
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
     android:layout_gravity="center"
-    app:cardCornerRadius="10dp">
+    app:cardCornerRadius="@dimen/dp_15">
 
     <ImageView
         android:id="@+id/backView"
-        android:layout_width="20dp"
-        android:layout_height="20dp"
+        android:layout_width="@dimen/dp_30"
+        android:layout_height="@dimen/dp_30"
         android:src="@mipmap/logo" />
 </androidx.cardview.widget.CardView>

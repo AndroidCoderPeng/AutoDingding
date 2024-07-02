@@ -89,7 +89,7 @@ class DateTimeAdapter(context: Context, private val dataBeans: MutableList<DateT
     }
 
     fun stopCountDownTimer(bean: DateTimeBean) {
-        Log.d(kTag, "stopCountDownTimer: ${bean.date}-${bean.time}")
+        Log.d(kTag, "stopCountDownTimer: ${bean.date} ${bean.time}")
         countDownTimerHashMap[bean.uuid]?.cancel()
     }
 
