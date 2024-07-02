@@ -67,23 +67,22 @@ class NotificationMonitorService : NotificationListenerService(), LifecycleOwner
         // 获取接收消息的标题
         val title = extras.getString(Notification.EXTRA_TITLE) ?: ""
         // 获取接收消息的内容
-        val notificationText = extras.getString(Notification.EXTRA_TEXT)
-        Log.d(kTag, "onNotificationPosted: $notificationText")
-
-        if (notificationText.isNullOrBlank()) {
+        val notice = extras.getString(Notification.EXTRA_TEXT)
+        if (notice.isNullOrBlank() || notice == "如果通知消失，请重新开启应用") {
             return
         }
+        Log.d(kTag, "onNotificationPosted: $notice")
 
         val notificationBean = NotificationBean()
         notificationBean.uuid = UUID.randomUUID().toString()
         notificationBean.packageName = packageName
         notificationBean.notificationTitle = title
-        notificationBean.notificationMsg = notificationText
+        notificationBean.notificationMsg = notice
         notificationBean.postTime = System.currentTimeMillis().timestampToCompleteDate()
         notificationBeanDao.save(notificationBean)
 
         if (packageName == Constant.DING_DING) {
-            if (notificationText.contains("成功")) {
+            if (notice.contains("成功")) {
                 backToMainActivity()
 
                 val emailAddress = SaveKeyValues.getValue(Constant.EMAIL_ADDRESS, "") as String
@@ -96,7 +95,7 @@ class NotificationMonitorService : NotificationListenerService(), LifecycleOwner
                     "即将发送通知邮件，请注意查收".show(this@NotificationMonitorService)
                     delay(3000)
                     withContext(Dispatchers.IO) {
-                        notificationText.createMail(emailAddress).sendTextMail()
+                        notice.createMail(emailAddress).sendTextMail()
                     }
                 }
             }

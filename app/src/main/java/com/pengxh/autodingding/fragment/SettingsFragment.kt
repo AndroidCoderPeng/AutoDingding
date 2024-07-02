@@ -201,7 +201,11 @@ class SettingsFragment : KotlinBaseFragment<FragmentSettingsBinding>(), Handler.
     override fun handleMessage(msg: Message): Boolean {
         when (msg.what) {
             2024060601 -> {
-                LoadingDialogHub.dismiss()
+                try {
+                    LoadingDialogHub.dismiss()
+                } catch (e: UninitializedPropertyAccessException) {
+                    e.printStackTrace()
+                }
                 binding.noticeSwitch.isChecked = true
                 createNotification()
             }
