@@ -1,28 +1,30 @@
 package com.pengxh.autodingding.fragment
 
-import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.activity.result.contract.ActivityResultContracts
 import com.pengxh.autodingding.BaseApplication
 import com.pengxh.autodingding.adapter.DateTimeAdapter
 import com.pengxh.autodingding.bean.DateTimeBean
 import com.pengxh.autodingding.databinding.FragmentDingdingBinding
+import com.pengxh.autodingding.extensions.convertToWeek
 import com.pengxh.autodingding.extensions.openApplication
+import com.pengxh.autodingding.extensions.showDatePicker
 import com.pengxh.autodingding.greendao.DateTimeBeanDao
-import com.pengxh.autodingding.ui.AddTimerTaskActivity
-import com.pengxh.autodingding.ui.UpdateTimerTaskActivity
 import com.pengxh.autodingding.utils.Constant
+import com.pengxh.autodingding.utils.OnDateSelectedCallback
 import com.pengxh.kt.lite.base.KotlinBaseFragment
 import com.pengxh.kt.lite.divider.RecyclerViewItemOffsets
+import com.pengxh.kt.lite.extensions.dp2px
 import com.pengxh.kt.lite.widget.dialog.AlertControlDialog
+import java.util.UUID
 
 class DingDingFragment : KotlinBaseFragment<FragmentDingdingBinding>() {
 
     private val kTag = "DingDingFragment"
     private val dateTimeBeanDao by lazy { BaseApplication.get().daoSession.dateTimeBeanDao }
+    private val marginOffset by lazy { 10.dp2px(requireContext()) }
     private lateinit var dateTimeAdapter: DateTimeAdapter
     private var dataBeans: MutableList<DateTimeBean> = ArrayList()
     private var clickedPosition = 0
@@ -61,28 +63,63 @@ class DingDingFragment : KotlinBaseFragment<FragmentDingdingBinding>() {
         } else {
             dataBeans = queryResult
             dateTimeAdapter = DateTimeAdapter(requireContext(), dataBeans)
-            binding.weeklyRecyclerView.adapter = dateTimeAdapter
-            binding.weeklyRecyclerView.addItemDecoration(
-                RecyclerViewItemOffsets(0, 10, 0, 20)
+            binding.recyclerView.adapter = dateTimeAdapter
+            binding.recyclerView.addItemDecoration(
+                RecyclerViewItemOffsets(
+                    marginOffset, marginOffset shr 1, marginOffset, marginOffset shr 1
+                )
             )
-            dateTimeAdapter.setOnItemClickListener(object :
-                DateTimeAdapter.OnItemClickListener {
+            dateTimeAdapter.setOnItemClickListener(object : DateTimeAdapter.OnItemClickListener {
                 override fun onItemClick(position: Int) {
-                    val intent = Intent(requireContext(), UpdateTimerTaskActivity::class.java)
-                    intent.putExtra(Constant.INTENT_PARAM, dataBeans[position].uuid)
-                    updateTaskLauncher.launch(intent)
+                    AlertControlDialog.Builder()
+                        .setContext(requireContext())
+                        .setTitle("修改打卡任务")
+                        .setMessage("是否需要调整打卡时间？")
+                        .setNegativeButton("取消")
+                        .setPositiveButton("确定")
+                        .setOnDialogButtonClickListener(object :
+                            AlertControlDialog.OnDialogButtonClickListener {
+                            override fun onConfirmClick() {
+                                requireActivity().showDatePicker(
+                                    true, object : OnDateSelectedCallback {
+                                        override fun onTimePicked(vararg args: String) {
+                                            val dateTimeBean = dataBeans[position]
+
+                                            dateTimeBean.date = "${args[0]}-${args[1]}-${args[2]}"
+                                            dateTimeBean.time = "${args[3]}:${args[4]}"
+                                            dateTimeBean.weekDay = dateTimeBean.date.convertToWeek()
+
+                                            dateTimeBeanDao.update(dateTimeBean)
+                                            //刷新列表
+                                            getAutoDingDingTasks(true)
+                                        }
+                                    })
+                            }
+
+                            override fun onCancelClick() {
+                                requireActivity().showDatePicker(
+                                    false, object : OnDateSelectedCallback {
+                                        override fun onTimePicked(vararg args: String) {
+                                            val dateTimeBean = dataBeans[position]
+
+                                            dateTimeBean.date = "${args[0]}-${args[1]}-${args[2]}"
+                                            dateTimeBean.weekDay = dateTimeBean.date.convertToWeek()
+
+                                            dateTimeBeanDao.update(dateTimeBean)
+                                            //刷新列表
+                                            getAutoDingDingTasks(true)
+                                        }
+                                    })
+                            }
+                        }).build().show()
                 }
 
                 override fun onItemLongClick(position: Int) {
                     //标记被点击的item位置
                     clickedPosition = position
-                    AlertControlDialog.Builder()
-                        .setContext(requireContext())
-                        .setTitle("删除提示")
-                        .setMessage("确定要删除这个任务吗")
-                        .setNegativeButton("取消")
-                        .setPositiveButton("确定")
-                        .setOnDialogButtonClickListener(object :
+                    AlertControlDialog.Builder().setContext(requireContext()).setTitle("删除提示")
+                        .setMessage("确定要删除这个任务吗").setNegativeButton("取消")
+                        .setPositiveButton("确定").setOnDialogButtonClickListener(object :
                             AlertControlDialog.OnDialogButtonClickListener {
                             override fun onConfirmClick() {
                                 deleteTask(dataBeans[position])
@@ -99,12 +136,6 @@ class DingDingFragment : KotlinBaseFragment<FragmentDingdingBinding>() {
                 }
             })
         }
-    }
-
-    private val updateTaskLauncher = registerForActivityResult(
-        ActivityResultContracts.StartActivityForResult()
-    ) {
-        getAutoDingDingTasks(true)
     }
 
     private fun deleteTask(bean: DateTimeBean) {
@@ -124,14 +155,20 @@ class DingDingFragment : KotlinBaseFragment<FragmentDingdingBinding>() {
 
     override fun initEvent() {
         binding.addTimerButton.setOnClickListener {
-            addTaskLauncher.launch(Intent(requireContext(), AddTimerTaskActivity::class.java))
-        }
-    }
+            requireActivity().showDatePicker(true, object : OnDateSelectedCallback {
+                override fun onTimePicked(vararg args: String) {
+                    val bean = DateTimeBean()
+                    bean.uuid = UUID.randomUUID().toString()
+                    bean.date = "${args[0]}-${args[1]}-${args[2]}"
+                    bean.time = "${args[3]}:${args[4]}"
+                    bean.weekDay = bean.date.convertToWeek()
 
-    private val addTaskLauncher = registerForActivityResult(
-        ActivityResultContracts.StartActivityForResult()
-    ) {
-        getAutoDingDingTasks(true)
+                    dateTimeBeanDao.insert(bean)
+                    //刷新列表
+                    getAutoDingDingTasks(true)
+                }
+            })
+        }
     }
 
     override fun onDestroyView() {

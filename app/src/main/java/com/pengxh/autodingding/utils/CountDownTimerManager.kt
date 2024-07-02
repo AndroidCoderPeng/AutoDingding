@@ -67,5 +67,6 @@ class CountDownTimerManager private constructor() : LifecycleOwner {
 
     fun cancelTimer() {
         timer?.cancel()
+        Log.d(kTag, "cancelTimer: 取消超时定时器")
     }
 }

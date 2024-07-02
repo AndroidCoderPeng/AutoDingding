@@ -28,8 +28,6 @@
             </intent-filter>
         </activity>
         <activity android:name=".ui.NoticeRecordActivity" />
-        <activity android:name=".ui.AddTimerTaskActivity" />
-        <activity android:name=".ui.UpdateTimerTaskActivity" />
 
         <service
             android:name=".service.NotificationMonitorService"
