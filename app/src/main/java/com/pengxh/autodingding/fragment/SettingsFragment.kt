@@ -28,6 +28,7 @@ import com.pengxh.autodingding.service.NotificationMonitorService
 import com.pengxh.autodingding.ui.NoticeRecordActivity
 import com.pengxh.autodingding.utils.Constant
 import com.pengxh.kt.lite.base.KotlinBaseFragment
+import com.pengxh.kt.lite.extensions.convertColor
 import com.pengxh.kt.lite.extensions.navigatePageTo
 import com.pengxh.kt.lite.extensions.setScreenBrightness
 import com.pengxh.kt.lite.extensions.show
@@ -36,11 +37,13 @@ import com.pengxh.kt.lite.utils.SaveKeyValues
 import com.pengxh.kt.lite.utils.WeakReferenceHandler
 import com.pengxh.kt.lite.widget.dialog.AlertInputDialog
 import com.pengxh.kt.lite.widget.dialog.AlertMessageDialog
+import com.pengxh.kt.lite.widget.dialog.BottomActionSheet
 
 
 class SettingsFragment : KotlinBaseFragment<FragmentSettingsBinding>(), Handler.Callback {
 
     private val kTag = "SettingsFragment"
+    private val timeArray = arrayListOf("15s", "30s", "45s", "60s", "120s")
 
     companion object {
         var weakReferenceHandler: WeakReferenceHandler? = null
@@ -93,6 +96,20 @@ class SettingsFragment : KotlinBaseFragment<FragmentSettingsBinding>(), Handler.
                     }
 
                     override fun onCancelClick() {}
+                }).build().show()
+        }
+
+        binding.timeoutLayout.setOnClickListener {
+            BottomActionSheet.Builder()
+                .setContext(requireContext())
+                .setActionItemTitle(timeArray)
+                .setItemTextColor(R.color.colorAppThemeLight.convertColor(requireContext()))
+                .setOnActionSheetListener(object : BottomActionSheet.OnActionSheetListener {
+                    override fun onActionItemClick(position: Int) {
+                        val time = timeArray[position]
+                        binding.timeoutTextView.text = time
+                        SaveKeyValues.putValue(Constant.TIMEOUT, time)
+                    }
                 }).build().show()
         }
 
@@ -233,6 +250,8 @@ class SettingsFragment : KotlinBaseFragment<FragmentSettingsBinding>(), Handler.
 
     override fun onResume() {
         super.onResume()
+        binding.timeoutTextView.text = SaveKeyValues.getValue(Constant.TIMEOUT, "") as String
+
         binding.floatSwitch.isChecked = Settings.canDrawOverlays(requireContext())
         if (binding.floatSwitch.isChecked) {
             requireContext().startService(
