@@ -68,7 +68,7 @@ class NotificationMonitorService : NotificationListenerService(), LifecycleOwner
         val title = extras.getString(Notification.EXTRA_TITLE) ?: ""
         // 获取接收消息的内容
         val notice = extras.getString(Notification.EXTRA_TEXT)
-        if (notice.isNullOrBlank() || notice == "如果通知消失，请重新开启应用") {
+        if (notice.isNullOrBlank()) {
             return
         }
         Log.d(kTag, "onNotificationPosted: $notice")

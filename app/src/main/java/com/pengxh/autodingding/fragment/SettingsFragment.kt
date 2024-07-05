@@ -1,13 +1,8 @@
 package com.pengxh.autodingding.fragment
 
-import android.app.Notification
-import android.app.NotificationChannel
-import android.app.NotificationManager
 import android.content.ComponentName
-import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
-import android.graphics.BitmapFactory
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
@@ -49,8 +44,6 @@ class SettingsFragment : KotlinBaseFragment<FragmentSettingsBinding>(), Handler.
     companion object {
         var weakReferenceHandler: WeakReferenceHandler? = null
     }
-
-    private val notificationManager by lazy { requireContext().getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager }
 
     override fun setupTopBarLayout() {
         binding.rootView.initImmersionBar(this, true, R.color.white)
@@ -225,12 +218,10 @@ class SettingsFragment : KotlinBaseFragment<FragmentSettingsBinding>(), Handler.
                     e.printStackTrace()
                 }
                 binding.noticeSwitch.isChecked = true
-                createNotification()
             }
 
             2024060602 -> {
                 binding.noticeSwitch.isChecked = false
-                notificationManager.cancel(Int.MAX_VALUE)
             }
         }
         return true
@@ -251,7 +242,7 @@ class SettingsFragment : KotlinBaseFragment<FragmentSettingsBinding>(), Handler.
 
     override fun onResume() {
         super.onResume()
-        binding.timeoutTextView.text = SaveKeyValues.getValue(Constant.TIMEOUT, "") as String
+        binding.timeoutTextView.text = SaveKeyValues.getValue(Constant.TIMEOUT, "15s") as String
 
         binding.floatSwitch.isChecked = Settings.canDrawOverlays(requireContext())
         if (binding.floatSwitch.isChecked) {
@@ -269,32 +260,5 @@ class SettingsFragment : KotlinBaseFragment<FragmentSettingsBinding>(), Handler.
         binding.exchangeProVersionSwitch.isChecked = b
 
         binding.autoServiceSwitch.isChecked = AutoSignInService.isServiceRunning
-    }
-
-    private fun createNotification() {
-        //Android8.0以上必须添加 渠道 才能显示通知栏
-        val builder = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            //创建渠道
-            val name = resources.getString(R.string.app_name)
-            val id = name + "_DefaultNotificationChannel"
-            val mChannel = NotificationChannel(id, name, NotificationManager.IMPORTANCE_DEFAULT)
-            mChannel.setShowBadge(true)
-            mChannel.enableVibration(false)
-            mChannel.lockscreenVisibility = Notification.VISIBILITY_PUBLIC //设置锁屏可见
-            notificationManager.createNotificationChannel(mChannel)
-            Notification.Builder(requireContext(), id)
-        } else {
-            Notification.Builder(requireContext())
-        }
-        val bitmap = BitmapFactory.decodeResource(resources, R.mipmap.logo_round)
-        builder.setContentTitle("钉钉打卡通知监听已打开")
-            .setContentText("如果通知消失，请重新开启应用")
-            .setWhen(System.currentTimeMillis())
-            .setLargeIcon(bitmap)
-            .setSmallIcon(R.mipmap.logo_round)
-            .setAutoCancel(false)
-        val notification = builder.build()
-        notification.flags = Notification.FLAG_NO_CLEAR
-        notificationManager.notify(Int.MAX_VALUE, notification)
     }
 }
