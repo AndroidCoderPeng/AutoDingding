@@ -9,8 +9,9 @@ import com.pengxh.kt.lite.R
 import com.pengxh.kt.lite.extensions.binding
 import com.pengxh.kt.lite.extensions.resetParams
 
-class BottomSelectTimeSheet constructor(context: Context) :
-    Dialog(context, R.style.UserDefinedActionStyle) {
+class BottomSelectTimeSheet constructor(
+    context: Context, private val callback: OnTimeSelectedCallback
+) : Dialog(context, R.style.UserDefinedActionStyle) {
 
     private val binding: BottomSelectTimeSheetBinding by binding()
 
@@ -20,10 +21,19 @@ class BottomSelectTimeSheet constructor(context: Context) :
         setCancelable(true)
         setCanceledOnTouchOutside(true)
 
-
-
         binding.sheetConfirmView.setOnClickListener {
+            val startTime =
+                "${binding.startTimeSelectView.selectedHour}:${binding.startTimeSelectView.selectedMinute}"
+            val endTime =
+                "${binding.endTimeSelectView.selectedHour}:${binding.endTimeSelectView.selectedMinute}"
+
             //保存数据
+            callback.onTimePicked(startTime, endTime)
+            dismiss()
         }
+    }
+
+    interface OnTimeSelectedCallback {
+        fun onTimePicked(startTime: String, endTime: String)
     }
 }

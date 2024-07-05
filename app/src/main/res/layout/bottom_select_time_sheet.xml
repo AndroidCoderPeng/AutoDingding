@@ -1,14 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="@color/white"
-    android:orientation="vertical"
-    android:padding="@dimen/lib_dp_7">
+    android:background="@color/mainBackground"
+    android:orientation="vertical">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:background="@color/white"
         android:orientation="horizontal">
 
         <LinearLayout
@@ -19,23 +20,30 @@
 
             <TextView
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="@dimen/dp_45"
                 android:gravity="center"
                 android:paddingVertical="@dimen/dp_7"
                 android:text="开始时间"
                 android:textColor="@color/colorAppThemeLight"
                 android:textSize="@dimen/sp_16" />
 
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/borderThickness"
+                android:background="#C9C9C9" />
+
             <com.github.gzuliyujiang.wheelpicker.widget.TimeWheelLayout
                 android:id="@+id/startTimeSelectView"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content" />
+                android:layout_height="wrap_content"
+                app:wheel_itemTextColorSelected="@color/colorAppThemeLight" />
         </LinearLayout>
 
         <View
             android:layout_width="@dimen/borderThickness"
             android:layout_height="match_parent"
-            android:background="#CCCCCC" />
+            android:layout_marginTop="@dimen/dp_45"
+            android:background="#C9C9C9" />
 
         <LinearLayout
             android:layout_width="0dp"
@@ -45,26 +53,31 @@
 
             <TextView
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="@dimen/dp_45"
                 android:gravity="center"
-                android:paddingVertical="@dimen/dp_7"
                 android:text="结束时间"
                 android:textColor="@color/colorAppThemeLight"
                 android:textSize="@dimen/sp_16" />
 
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/borderThickness"
+                android:background="#C9C9C9" />
+
             <com.github.gzuliyujiang.wheelpicker.widget.TimeWheelLayout
                 android:id="@+id/endTimeSelectView"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content" />
+                android:layout_height="wrap_content"
+                app:wheel_itemTextColorSelected="@color/colorAppThemeLight" />
         </LinearLayout>
     </LinearLayout>
 
     <TextView
         android:id="@+id/sheetConfirmView"
         android:layout_width="match_parent"
-        android:layout_height="@dimen/lib_dp_45"
-        android:layout_marginVertical="@dimen/lib_dp_10"
-        android:background="@drawable/sheet_item_cancel_selector"
+        android:layout_height="@dimen/dp_45"
+        android:layout_marginTop="@dimen/lib_dp_10"
+        android:background="@color/white"
         android:fontFamily="sans-serif-black"
         android:gravity="center"
         android:text="确定"

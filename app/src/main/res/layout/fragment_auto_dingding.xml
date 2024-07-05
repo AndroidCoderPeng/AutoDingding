@@ -85,6 +85,6 @@
         android:padding="@dimen/dp_10"
         android:singleLine="true"
         android:text="请注意：工作日判断结果来自互联网，不能百分百确定正确性！请酌情使用，如有问题，请及时在QQ群反馈!"
-        android:textColor="@color/colorText"
+        android:textColor="@color/lib_hint_color"
         android:textSize="@dimen/sp_12" />
 </LinearLayout>
