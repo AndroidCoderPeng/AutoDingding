@@ -4,15 +4,15 @@
     "type": "APK",
     "kind": "Directory"
   },
-  "applicationId": "com.android.btwbhmsuof",
+  "applicationId": "com.android.jexkymovmy",
   "variantName": "autoRelease",
   "elements": [
     {
       "type": "SINGLE",
       "filters": [],
-      "versionCode": 145,
-      "versionName": "1.4.5",
-      "outputFile": "AUTO_20240702_1.4.5.apk"
+      "versionCode": 146,
+      "versionName": "1.4.6",
+      "outputFile": "AUTO_20240705_1.4.6.apk"
     }
   ]
 }
