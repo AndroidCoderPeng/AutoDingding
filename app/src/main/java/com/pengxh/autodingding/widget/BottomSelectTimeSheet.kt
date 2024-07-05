@@ -6,6 +6,7 @@ import android.os.Bundle
 import android.view.Gravity
 import com.pengxh.autodingding.databinding.BottomSelectTimeSheetBinding
 import com.pengxh.kt.lite.R
+import com.pengxh.kt.lite.extensions.appendZero
 import com.pengxh.kt.lite.extensions.binding
 import com.pengxh.kt.lite.extensions.resetParams
 
@@ -23,9 +24,9 @@ class BottomSelectTimeSheet constructor(
 
         binding.sheetConfirmView.setOnClickListener {
             val startTime =
-                "${binding.startTimeSelectView.selectedHour}:${binding.startTimeSelectView.selectedMinute}"
+                "${binding.startTimeSelectView.selectedHour}:${binding.startTimeSelectView.selectedMinute.appendZero()}"
             val endTime =
-                "${binding.endTimeSelectView.selectedHour}:${binding.endTimeSelectView.selectedMinute}"
+                "${binding.endTimeSelectView.selectedHour}:${binding.endTimeSelectView.selectedMinute.appendZero()}"
 
             //保存数据
             callback.onTimePicked(startTime, endTime)

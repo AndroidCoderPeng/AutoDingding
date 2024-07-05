@@ -9,7 +9,7 @@ import com.pengxh.autodingding.R
 import com.pengxh.autodingding.bean.TaskTimeBean
 import com.pengxh.kt.lite.adapter.ViewHolder
 
-class TaskTimeAdapter(context: Context, private val tasks: ArrayList<TaskTimeBean>) :
+class TaskTimeAdapter(context: Context, private val tasks: MutableList<TaskTimeBean>) :
     RecyclerView.Adapter<ViewHolder>() {
 
     private val TYPE_LAST_ITEM = 0
@@ -40,11 +40,6 @@ class TaskTimeAdapter(context: Context, private val tasks: ArrayList<TaskTimeBea
         tasks.clear()
         tasks.addAll(dataRows)
         notifyDataSetChanged()
-    }
-
-    fun setLoadMoreData(dataRows: MutableList<TaskTimeBean>) {
-        tasks.addAll(dataRows)
-        notifyItemRangeInserted(tasks.size, dataRows.size)
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
