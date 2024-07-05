@@ -1,7 +1,6 @@
 package com.pengxh.autodingding.fragment
 
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.lifecycle.ViewModelProvider
@@ -11,6 +10,7 @@ import com.pengxh.autodingding.bean.TaskTimeBean
 import com.pengxh.autodingding.databinding.FragmentAutoDingdingBinding
 import com.pengxh.autodingding.extensions.initImmersionBar
 import com.pengxh.autodingding.vm.DateDayViewModel
+import com.pengxh.autodingding.widget.BottomSelectTimeSheet
 import com.pengxh.kt.lite.base.KotlinBaseFragment
 import com.pengxh.kt.lite.divider.RecyclerViewItemOffsets
 import com.pengxh.kt.lite.extensions.dp2px
@@ -44,7 +44,7 @@ class AutoDingDingFragment : KotlinBaseFragment<FragmentAutoDingdingBinding>() {
         )
         taskTimeAdapter.setOnItemClickListener(object : TaskTimeAdapter.OnItemClickListener {
             override fun onAddTaskClick() {
-                Log.d(kTag, "onAddTaskClick: ")
+                BottomSelectTimeSheet(requireContext()).show()
             }
 
             override fun onItemClick(bean: TaskTimeBean) {

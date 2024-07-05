@@ -58,7 +58,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:fontFamily="sans-serif-black"
-                android:text="2024年7月5日 15点57分"
+                android:text="--:--"
                 android:textColor="@color/purple_500"
                 android:textSize="@dimen/sp_18" />
         </LinearLayout>
