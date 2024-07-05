@@ -27,6 +27,7 @@ public class DaoMaster extends AbstractDaoMaster {
         DateTimeBeanDao.createTable(db, ifNotExists);
         DingTaskLogBeanDao.createTable(db, ifNotExists);
         NotificationBeanDao.createTable(db, ifNotExists);
+        TaskTimeBeanDao.createTable(db, ifNotExists);
     }
 
     /**
@@ -36,6 +37,7 @@ public class DaoMaster extends AbstractDaoMaster {
         DateTimeBeanDao.dropTable(db, ifExists);
         DingTaskLogBeanDao.dropTable(db, ifExists);
         NotificationBeanDao.dropTable(db, ifExists);
+        TaskTimeBeanDao.dropTable(db, ifExists);
     }
 
     /**
@@ -57,6 +59,7 @@ public class DaoMaster extends AbstractDaoMaster {
         registerDaoClass(DateTimeBeanDao.class);
         registerDaoClass(DingTaskLogBeanDao.class);
         registerDaoClass(NotificationBeanDao.class);
+        registerDaoClass(TaskTimeBeanDao.class);
     }
 
     public DaoSession newSession() {
