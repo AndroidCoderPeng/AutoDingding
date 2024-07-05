@@ -48,9 +48,9 @@ class TaskTimeAdapter(context: Context, private val tasks: MutableList<TaskTimeB
             holder.setText(R.id.startTimeView, "开始时间：${item.startTime}")
                 .setText(R.id.endTimeView, "结束时间：${item.endTime}")
 
-            holder.itemView.setOnClickListener { itemClickListener?.onItemClick(item) }
+            holder.itemView.setOnClickListener { itemClickListener?.onItemClick(position) }
             holder.itemView.setOnLongClickListener {
-                itemClickListener?.onItemLongClick(item)
+                itemClickListener?.onItemLongClick(position)
                 true
             }
         } else {
@@ -68,8 +68,8 @@ class TaskTimeAdapter(context: Context, private val tasks: MutableList<TaskTimeB
     interface OnItemClickListener {
         fun onAddTaskClick()
 
-        fun onItemClick(bean: TaskTimeBean)
+        fun onItemClick(position: Int)
 
-        fun onItemLongClick(bean: TaskTimeBean)
+        fun onItemLongClick(position: Int)
     }
 }
