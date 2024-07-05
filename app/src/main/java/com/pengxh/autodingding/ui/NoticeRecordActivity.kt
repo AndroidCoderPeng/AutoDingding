@@ -36,7 +36,7 @@ class NoticeRecordActivity : KotlinBaseActivity<ActivityNoticeBinding>() {
     }
 
     override fun setupTopBarLayout() {
-        binding.rootView.initImmersionBar(this, false, R.color.colorAppThemeLight)
+        binding.rootView.initImmersionBar(this, true, R.color.white)
         binding.titleView.setOnClickListener(object : TitleBarView.OnClickListener {
             override fun onLeftClick() {
                 finish()
