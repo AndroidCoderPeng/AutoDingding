@@ -1,314 +1,324 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/rootView"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:background="@color/mainBackground"
-    android:orientation="vertical">
+    android:layout_height="match_parent">
 
-    <RelativeLayout
-        android:id="@+id/emailLayout"
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="@dimen/itemLayoutHeight"
-        android:background="@color/white"
-        android:paddingHorizontal="10dp">
+        android:layout_height="match_parent"
+        android:background="@color/mainBackground"
+        android:orientation="vertical">
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerVertical="true"
-            android:gravity="center_vertical"
-            android:text="邮箱设置"
-            android:textColor="@color/colorText"
-            android:textSize="@dimen/sp_16" />
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/dp_10" />
 
-        <TextView
-            android:id="@+id/emailTextView"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentEnd="true"
-            android:layout_centerVertical="true"
-            android:gravity="center_vertical"
-            android:textColor="@color/colorText"
-            android:textSize="@dimen/sp_16" />
-    </RelativeLayout>
+        <RelativeLayout
+            android:id="@+id/emailLayout"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/itemLayoutHeight"
+            android:background="@color/white"
+            android:paddingHorizontal="10dp">
 
-    <View
-        android:layout_width="match_parent"
-        android:layout_height="1px"
-        android:layout_marginHorizontal="@dimen/dp_10"
-        android:background="#CCC" />
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:gravity="center_vertical"
+                android:text="邮箱设置"
+                android:textColor="@color/colorText"
+                android:textSize="@dimen/sp_16" />
 
-    <RelativeLayout
-        android:id="@+id/timeoutLayout"
-        android:layout_width="match_parent"
-        android:layout_height="@dimen/itemLayoutHeight"
-        android:background="@color/white"
-        android:paddingHorizontal="10dp">
+            <TextView
+                android:id="@+id/emailTextView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentEnd="true"
+                android:layout_centerVertical="true"
+                android:gravity="center_vertical"
+                android:textColor="@color/colorText"
+                android:textSize="@dimen/sp_16" />
+        </RelativeLayout>
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerVertical="true"
-            android:gravity="center_vertical"
-            android:text="打卡超时时间"
-            android:textColor="@color/colorText"
-            android:textSize="@dimen/sp_16" />
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1px"
+            android:layout_marginHorizontal="@dimen/dp_10"
+            android:background="#CCC" />
 
-        <TextView
-            android:id="@+id/timeoutTextView"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentEnd="true"
-            android:layout_centerVertical="true"
-            android:gravity="center_vertical"
-            android:textColor="@color/colorText"
-            android:textSize="@dimen/sp_16" />
-    </RelativeLayout>
+        <RelativeLayout
+            android:id="@+id/timeoutLayout"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/itemLayoutHeight"
+            android:background="@color/white"
+            android:paddingHorizontal="10dp">
 
-    <View
-        android:layout_width="match_parent"
-        android:layout_height="@dimen/dp_10" />
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:gravity="center_vertical"
+                android:text="打卡超时时间"
+                android:textColor="@color/colorText"
+                android:textSize="@dimen/sp_16" />
 
-    <RelativeLayout
-        android:layout_width="match_parent"
-        android:layout_height="@dimen/itemLayoutHeight"
-        android:background="@color/white"
-        android:paddingHorizontal="10dp">
+            <TextView
+                android:id="@+id/timeoutTextView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentEnd="true"
+                android:layout_centerVertical="true"
+                android:gravity="center_vertical"
+                android:textColor="@color/colorText"
+                android:textSize="@dimen/sp_16" />
+        </RelativeLayout>
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerVertical="true"
-            android:text="悬浮图标"
-            android:textColor="@color/colorText"
-            android:textSize="@dimen/sp_16" />
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/dp_10" />
 
-        <Switch
-            android:id="@+id/floatSwitch"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentEnd="true"
-            android:layout_centerVertical="true"
-            android:thumb="@drawable/select_switch_circle"
-            android:track="@drawable/select_switch_background"
-            tools:ignore="UseSwitchCompatOrMaterialXml" />
-    </RelativeLayout>
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/itemLayoutHeight"
+            android:background="@color/white"
+            android:paddingHorizontal="10dp">
 
-    <View
-        android:layout_width="match_parent"
-        android:layout_height="1px"
-        android:layout_marginHorizontal="@dimen/dp_10"
-        android:background="#CCC" />
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:text="悬浮图标"
+                android:textColor="@color/colorText"
+                android:textSize="@dimen/sp_16" />
 
-    <RelativeLayout
-        android:layout_width="match_parent"
-        android:layout_height="@dimen/itemLayoutHeight"
-        android:background="@color/white"
-        android:paddingHorizontal="10dp">
+            <Switch
+                android:id="@+id/floatSwitch"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentEnd="true"
+                android:layout_centerVertical="true"
+                android:thumb="@drawable/select_switch_circle"
+                android:track="@drawable/select_switch_background"
+                tools:ignore="UseSwitchCompatOrMaterialXml" />
+        </RelativeLayout>
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerVertical="true"
-            android:text="通知监听"
-            android:textColor="@color/colorText"
-            android:textSize="@dimen/sp_16" />
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1px"
+            android:layout_marginHorizontal="@dimen/dp_10"
+            android:background="#CCC" />
 
-        <Switch
-            android:id="@+id/noticeSwitch"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentEnd="true"
-            android:layout_centerVertical="true"
-            android:thumb="@drawable/select_switch_circle"
-            android:track="@drawable/select_switch_background"
-            tools:ignore="UseSwitchCompatOrMaterialXml" />
-    </RelativeLayout>
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/itemLayoutHeight"
+            android:background="@color/white"
+            android:paddingHorizontal="10dp">
 
-    <View
-        android:layout_width="match_parent"
-        android:layout_height="1px"
-        android:layout_marginHorizontal="@dimen/dp_10"
-        android:background="#CCC" />
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:text="通知监听"
+                android:textColor="@color/colorText"
+                android:textSize="@dimen/sp_16" />
 
-    <RelativeLayout
-        android:layout_width="match_parent"
-        android:layout_height="@dimen/itemLayoutHeight"
-        android:background="@color/white"
-        android:paddingHorizontal="10dp">
+            <Switch
+                android:id="@+id/noticeSwitch"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentEnd="true"
+                android:layout_centerVertical="true"
+                android:thumb="@drawable/select_switch_circle"
+                android:track="@drawable/select_switch_background"
+                tools:ignore="UseSwitchCompatOrMaterialXml" />
+        </RelativeLayout>
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerVertical="true"
-            android:text="辅助服务"
-            android:textColor="@color/colorText"
-            android:textSize="@dimen/sp_16" />
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1px"
+            android:layout_marginHorizontal="@dimen/dp_10"
+            android:background="#CCC" />
 
-        <Switch
-            android:id="@+id/autoServiceSwitch"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentEnd="true"
-            android:layout_centerVertical="true"
-            android:thumb="@drawable/select_switch_circle"
-            android:track="@drawable/select_switch_background"
-            tools:ignore="UseSwitchCompatOrMaterialXml" />
-    </RelativeLayout>
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/itemLayoutHeight"
+            android:background="@color/white"
+            android:paddingHorizontal="10dp">
 
-    <View
-        android:layout_width="match_parent"
-        android:layout_height="1px"
-        android:layout_marginHorizontal="@dimen/dp_10"
-        android:background="#CCC" />
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:text="辅助服务"
+                android:textColor="@color/colorText"
+                android:textSize="@dimen/sp_16" />
 
-    <RelativeLayout
-        android:layout_width="match_parent"
-        android:layout_height="@dimen/itemLayoutHeight"
-        android:background="@color/white"
-        android:paddingHorizontal="10dp">
+            <Switch
+                android:id="@+id/autoServiceSwitch"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentEnd="true"
+                android:layout_centerVertical="true"
+                android:thumb="@drawable/select_switch_circle"
+                android:track="@drawable/select_switch_background"
+                tools:ignore="UseSwitchCompatOrMaterialXml" />
+        </RelativeLayout>
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerVertical="true"
-            android:text="调整亮度"
-            android:textColor="@color/colorText"
-            android:textSize="@dimen/sp_16" />
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1px"
+            android:layout_marginHorizontal="@dimen/dp_10"
+            android:background="#CCC" />
 
-        <Switch
-            android:id="@+id/turnoffLightSwitch"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentEnd="true"
-            android:layout_centerVertical="true"
-            android:thumb="@drawable/select_switch_circle"
-            android:track="@drawable/select_switch_background"
-            tools:ignore="UseSwitchCompatOrMaterialXml" />
-    </RelativeLayout>
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/itemLayoutHeight"
+            android:background="@color/white"
+            android:paddingHorizontal="10dp">
 
-    <View
-        android:layout_width="match_parent"
-        android:layout_height="1px"
-        android:layout_marginHorizontal="@dimen/dp_10"
-        android:background="#CCC"
-        android:visibility="gone" />
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:text="调整亮度"
+                android:textColor="@color/colorText"
+                android:textSize="@dimen/sp_16" />
 
-    <RelativeLayout
-        android:layout_width="match_parent"
-        android:layout_height="@dimen/itemLayoutHeight"
-        android:background="@color/white"
-        android:paddingHorizontal="10dp"
-        android:visibility="gone">
+            <Switch
+                android:id="@+id/turnoffLightSwitch"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentEnd="true"
+                android:layout_centerVertical="true"
+                android:thumb="@drawable/select_switch_circle"
+                android:track="@drawable/select_switch_background"
+                tools:ignore="UseSwitchCompatOrMaterialXml" />
+        </RelativeLayout>
 
-        <TextView
-            android:id="@+id/versionTipsView"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerVertical="true"
-            android:text="切换Pro版"
-            android:textColor="@color/colorText"
-            android:textSize="@dimen/sp_16" />
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1px"
+            android:layout_marginHorizontal="@dimen/dp_10"
+            android:background="#CCC"
+            android:visibility="gone" />
 
-        <Switch
-            android:id="@+id/exchangeProVersionSwitch"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentEnd="true"
-            android:layout_centerVertical="true"
-            android:thumb="@drawable/select_switch_circle"
-            android:track="@drawable/select_switch_background"
-            tools:ignore="UseSwitchCompatOrMaterialXml" />
-    </RelativeLayout>
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/itemLayoutHeight"
+            android:background="@color/white"
+            android:paddingHorizontal="10dp"
+            android:visibility="gone">
 
-    <View
-        android:layout_width="match_parent"
-        android:layout_height="1px"
-        android:layout_marginHorizontal="@dimen/dp_10"
-        android:background="#CCC" />
+            <TextView
+                android:id="@+id/versionTipsView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:text="切换Pro版"
+                android:textColor="@color/colorText"
+                android:textSize="@dimen/sp_16" />
 
-    <RelativeLayout
-        android:id="@+id/notificationLayout"
-        android:layout_width="match_parent"
-        android:layout_height="@dimen/itemLayoutHeight"
-        android:background="@color/white"
-        android:paddingHorizontal="10dp">
+            <Switch
+                android:id="@+id/exchangeProVersionSwitch"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentEnd="true"
+                android:layout_centerVertical="true"
+                android:thumb="@drawable/select_switch_circle"
+                android:track="@drawable/select_switch_background"
+                tools:ignore="UseSwitchCompatOrMaterialXml" />
+        </RelativeLayout>
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerVertical="true"
-            android:text="通知记录"
-            android:textColor="@color/colorText"
-            android:textSize="@dimen/sp_16" />
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1px"
+            android:layout_marginHorizontal="@dimen/dp_10"
+            android:background="#CCC" />
 
-        <ImageView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentEnd="true"
-            android:layout_centerVertical="true"
-            android:background="@drawable/ic_arrow_right" />
-    </RelativeLayout>
+        <RelativeLayout
+            android:id="@+id/notificationLayout"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/itemLayoutHeight"
+            android:background="@color/white"
+            android:paddingHorizontal="10dp">
 
-    <View
-        android:layout_width="match_parent"
-        android:layout_height="1px"
-        android:layout_marginHorizontal="@dimen/dp_10"
-        android:background="#CCC" />
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:text="通知记录"
+                android:textColor="@color/colorText"
+                android:textSize="@dimen/sp_16" />
 
-    <RelativeLayout
-        android:id="@+id/introduceLayout"
-        android:layout_width="match_parent"
-        android:layout_height="@dimen/itemLayoutHeight"
-        android:background="@color/white"
-        android:paddingHorizontal="10dp">
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentEnd="true"
+                android:layout_centerVertical="true"
+                android:background="@drawable/ic_arrow_right" />
+        </RelativeLayout>
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerVertical="true"
-            android:text="使用说明"
-            android:textColor="@color/colorText"
-            android:textSize="@dimen/sp_16" />
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1px"
+            android:layout_marginHorizontal="@dimen/dp_10"
+            android:background="#CCC" />
 
-        <ImageView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentEnd="true"
-            android:layout_centerVertical="true"
-            android:background="@drawable/ic_arrow_right" />
-    </RelativeLayout>
+        <RelativeLayout
+            android:id="@+id/introduceLayout"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/itemLayoutHeight"
+            android:background="@color/white"
+            android:paddingHorizontal="10dp">
 
-    <View
-        android:layout_width="match_parent"
-        android:layout_height="1px"
-        android:layout_marginHorizontal="@dimen/dp_10"
-        android:background="#CCC" />
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:text="使用说明"
+                android:textColor="@color/colorText"
+                android:textSize="@dimen/sp_16" />
 
-    <RelativeLayout
-        android:layout_width="match_parent"
-        android:layout_height="@dimen/itemLayoutHeight"
-        android:background="@color/white"
-        android:paddingHorizontal="10dp">
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentEnd="true"
+                android:layout_centerVertical="true"
+                android:background="@drawable/ic_arrow_right" />
+        </RelativeLayout>
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerVertical="true"
-            android:gravity="center_vertical"
-            android:text="当前版本"
-            android:textColor="@color/colorText"
-            android:textSize="@dimen/sp_16" />
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1px"
+            android:layout_marginHorizontal="@dimen/dp_10"
+            android:background="#CCC" />
 
-        <TextView
-            android:id="@+id/appVersion"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentEnd="true"
-            android:layout_centerVertical="true"
-            android:gravity="center_vertical"
-            android:textColor="@color/colorText"
-            android:textSize="@dimen/sp_16" />
-    </RelativeLayout>
-</LinearLayout>
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/itemLayoutHeight"
+            android:background="@color/white"
+            android:paddingHorizontal="10dp">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:gravity="center_vertical"
+                android:text="当前版本"
+                android:textColor="@color/colorText"
+                android:textSize="@dimen/sp_16" />
+
+            <TextView
+                android:id="@+id/appVersion"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentEnd="true"
+                android:layout_centerVertical="true"
+                android:gravity="center_vertical"
+                android:textColor="@color/colorText"
+                android:textSize="@dimen/sp_16" />
+        </RelativeLayout>
+    </LinearLayout>
+</androidx.core.widget.NestedScrollView>

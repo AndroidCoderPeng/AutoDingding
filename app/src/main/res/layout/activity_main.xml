@@ -7,16 +7,6 @@
     android:background="@color/mainBackground"
     android:orientation="vertical">
 
-    <com.pengxh.kt.lite.widget.TitleBarView
-        android:id="@+id/titleView"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="@color/colorAppThemeLight"
-        app:tbv_only_show_title="true"
-        app:tbv_text="@string/app_name"
-        app:tbv_text_color="@color/white"
-        app:tbv_text_size="@dimen/sp_16" />
-
     <androidx.viewpager.widget.ViewPager
         android:id="@+id/viewPager"
         android:layout_width="match_parent"
@@ -31,5 +21,4 @@
         app:itemIconTint="@drawable/bottom_text_color"
         app:itemTextColor="@drawable/bottom_text_color"
         app:menu="@menu/bottom_nav_menu" />
-
 </LinearLayout>

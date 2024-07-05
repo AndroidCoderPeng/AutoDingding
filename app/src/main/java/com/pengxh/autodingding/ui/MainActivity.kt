@@ -7,10 +7,10 @@ import android.view.KeyEvent
 import android.view.MenuItem
 import androidx.fragment.app.Fragment
 import androidx.viewpager.widget.ViewPager
+import com.gyf.immersionbar.ImmersionBar
 import com.pengxh.autodingding.R
 import com.pengxh.autodingding.adapter.BaseFragmentAdapter
 import com.pengxh.autodingding.databinding.ActivityMainBinding
-import com.pengxh.autodingding.extensions.initImmersionBar
 import com.pengxh.autodingding.extensions.isAppAvailable
 import com.pengxh.autodingding.fragment.AutoDingDingFragment
 import com.pengxh.autodingding.fragment.DingDingFragment
@@ -23,7 +23,6 @@ import com.pengxh.kt.lite.utils.ActivityStackManager
 import com.pengxh.kt.lite.utils.SaveKeyValues
 import com.pengxh.kt.lite.widget.dialog.AlertMessageDialog
 
-
 class MainActivity : KotlinBaseActivity<ActivityMainBinding>() {
 
     private val kTag = "MainActivity"
@@ -35,8 +34,7 @@ class MainActivity : KotlinBaseActivity<ActivityMainBinding>() {
     }
 
     override fun setupTopBarLayout() {
-        binding.rootView.initImmersionBar(this, false, R.color.colorAppThemeLight)
-        binding.titleView.setTitle("自动打卡")
+        ImmersionBar.with(this).statusBarDarkFont(true).init()
     }
 
     override fun initOnCreate(savedInstanceState: Bundle?) {
@@ -88,10 +86,8 @@ class MainActivity : KotlinBaseActivity<ActivityMainBinding>() {
                 } else {
                     showAlertDialog()
                 }
-                binding.titleView.setTitle("自动打卡")
             } else if (itemId == R.id.nav_settings) {
                 binding.viewPager.currentItem = 1
-                binding.titleView.setTitle("其他设置")
             }
             false
         }
@@ -110,11 +106,6 @@ class MainActivity : KotlinBaseActivity<ActivityMainBinding>() {
                 }
                 menuItem = binding.bottomNavigation.menu.getItem(position)
                 menuItem!!.isChecked = true
-                if (position == 0) {
-                    binding.titleView.setTitle("自动打卡")
-                } else {
-                    binding.titleView.setTitle("其他设置")
-                }
             }
 
             override fun onPageScrollStateChanged(state: Int) {}

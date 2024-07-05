@@ -21,6 +21,7 @@ import android.view.WindowManager
 import com.pengxh.autodingding.BuildConfig
 import com.pengxh.autodingding.R
 import com.pengxh.autodingding.databinding.FragmentSettingsBinding
+import com.pengxh.autodingding.extensions.initImmersionBar
 import com.pengxh.autodingding.extensions.notificationEnable
 import com.pengxh.autodingding.service.AutoSignInService
 import com.pengxh.autodingding.service.FloatingWindowService
@@ -52,7 +53,7 @@ class SettingsFragment : KotlinBaseFragment<FragmentSettingsBinding>(), Handler.
     private val notificationManager by lazy { requireContext().getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager }
 
     override fun setupTopBarLayout() {
-
+        binding.rootView.initImmersionBar(this, true, R.color.white)
     }
 
     override fun observeRequestState() {
