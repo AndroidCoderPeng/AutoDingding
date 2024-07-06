@@ -4,6 +4,7 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteStatement;
 
 import com.pengxh.autodingding.bean.TaskTimeBean;
+import com.pengxh.autodingding.utils.TimeConvert;
 
 import org.greenrobot.greendao.AbstractDao;
 import org.greenrobot.greendao.Property;
@@ -27,10 +28,11 @@ public class TaskTimeBeanDao extends AbstractDao<TaskTimeBean, Long> {
     public static class Properties {
         public final static Property Id = new Property(0, Long.class, "id", true, "_id");
         public final static Property Uuid = new Property(1, String.class, "uuid", false, "UUID");
-        public final static Property StartTime = new Property(2, String.class, "startTime", false, "START_TIME");
+        public final static Property StartTime = new Property(2, java.util.Date.class, "startTime", false, "START_TIME");
         public final static Property EndTime = new Property(3, String.class, "endTime", false, "END_TIME");
     }
 
+    private final TimeConvert startTimeConverter = new TimeConvert();
 
     public TaskTimeBeanDao(DaoConfig config) {
         super(config);
@@ -48,7 +50,7 @@ public class TaskTimeBeanDao extends AbstractDao<TaskTimeBean, Long> {
         db.execSQL("CREATE TABLE " + constraint + "\"TASK_TIME_BEAN\" (" + //
                 "\"_id\" INTEGER PRIMARY KEY AUTOINCREMENT ," + // 0: id
                 "\"UUID\" TEXT," + // 1: uuid
-                "\"START_TIME\" TEXT," + // 2: startTime
+                "\"START_TIME\" INTEGER," + // 2: startTime
                 "\"END_TIME\" TEXT);"); // 3: endTime
     }
 
@@ -76,7 +78,7 @@ public class TaskTimeBeanDao extends AbstractDao<TaskTimeBean, Long> {
 
         String startTime = entity.getStartTime();
         if (startTime != null) {
-            stmt.bindString(3, startTime);
+            stmt.bindLong(3, startTimeConverter.convertToDatabaseValue(startTime).getTime());
         }
 
         String endTime = entity.getEndTime();
@@ -101,7 +103,7 @@ public class TaskTimeBeanDao extends AbstractDao<TaskTimeBean, Long> {
 
         String startTime = entity.getStartTime();
         if (startTime != null) {
-            stmt.bindString(3, startTime);
+            stmt.bindLong(3, startTimeConverter.convertToDatabaseValue(startTime).getTime());
         }
 
         String endTime = entity.getEndTime();
@@ -120,7 +122,7 @@ public class TaskTimeBeanDao extends AbstractDao<TaskTimeBean, Long> {
         TaskTimeBean entity = new TaskTimeBean( //
                 cursor.isNull(offset + 0) ? null : cursor.getLong(offset + 0), // id
                 cursor.isNull(offset + 1) ? null : cursor.getString(offset + 1), // uuid
-                cursor.isNull(offset + 2) ? null : cursor.getString(offset + 2), // startTime
+                cursor.isNull(offset + 2) ? null : startTimeConverter.convertToEntityProperty(new java.util.Date(cursor.getLong(offset + 2))), // startTime
                 cursor.isNull(offset + 3) ? null : cursor.getString(offset + 3) // endTime
         );
         return entity;
@@ -130,7 +132,7 @@ public class TaskTimeBeanDao extends AbstractDao<TaskTimeBean, Long> {
     public void readEntity(Cursor cursor, TaskTimeBean entity, int offset) {
         entity.setId(cursor.isNull(offset + 0) ? null : cursor.getLong(offset + 0));
         entity.setUuid(cursor.isNull(offset + 1) ? null : cursor.getString(offset + 1));
-        entity.setStartTime(cursor.isNull(offset + 2) ? null : cursor.getString(offset + 2));
+        entity.setStartTime(cursor.isNull(offset + 2) ? null : startTimeConverter.convertToEntityProperty(new java.util.Date(cursor.getLong(offset + 2))));
         entity.setEndTime(cursor.isNull(offset + 3) ? null : cursor.getString(offset + 3));
     }
 

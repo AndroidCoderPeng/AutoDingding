@@ -1,8 +1,13 @@
 package com.pengxh.autodingding.bean;
 
+import com.pengxh.autodingding.utils.TimeConvert;
+
+import org.greenrobot.greendao.annotation.Convert;
 import org.greenrobot.greendao.annotation.Entity;
 import org.greenrobot.greendao.annotation.Generated;
 import org.greenrobot.greendao.annotation.Id;
+
+import java.util.Date;
 
 @Entity
 public class TaskTimeBean {
@@ -11,6 +16,7 @@ public class TaskTimeBean {
 
     private String uuid;
 
+    @Convert(converter = TimeConvert.class, columnType = Date.class)
     private String startTime;
     private String endTime;
 
