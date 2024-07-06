@@ -6,37 +6,4 @@
         <!-- 指定消失的动画xml -->
         <item name="android:windowExitAnimation">@anim/popup_hide</item>
     </style>
-
-    <!--按钮样式-->
-    <style name="MainButtonStyle">
-        <item name="android:layout_width">match_parent</item>
-        <item name="android:layout_height">@dimen/dp_40</item>
-        <item name="android:textColor">@color/white</item>
-        <item name="android:textSize">@dimen/sp_14</item>
-        <item name="android:background">@drawable/button_main_selector</item>
-    </style>
-
-    <!--等高RelativeLayout item容器样式-->
-    <style name="itemLayoutStyle">
-        <item name="android:layout_width">match_parent</item>
-        <item name="android:layout_height">46dp</item>
-        <item name="android:background">@color/white</item>
-    </style>
-
-    <!--APP内所有左边图片样式-->
-    <style name="leftImageStyle">
-        <item name="android:layout_width">80px</item>
-        <item name="android:layout_height">80px</item>
-        <item name="android:layout_centerVertical">true</item>
-        <item name="android:layout_marginStart">10dp</item>
-    </style>
-
-    <!--APP内所有右边小箭头样式-->
-    <style name="rightImageStyle">
-        <item name="android:layout_width">80px</item>
-        <item name="android:layout_height">80px</item>
-        <item name="android:layout_alignParentEnd">true</item>
-        <item name="android:layout_centerVertical">true</item>
-        <item name="android:layout_marginEnd">10dp</item>
-    </style>
 </resources>
