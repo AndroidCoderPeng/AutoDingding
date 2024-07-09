@@ -18,7 +18,6 @@ import com.pengxh.autodingding.R
 import com.pengxh.autodingding.databinding.FragmentSettingsBinding
 import com.pengxh.autodingding.extensions.initImmersionBar
 import com.pengxh.autodingding.extensions.notificationEnable
-import com.pengxh.autodingding.service.AutoSignInService
 import com.pengxh.autodingding.service.FloatingWindowService
 import com.pengxh.autodingding.service.NotificationMonitorService
 import com.pengxh.autodingding.ui.NoticeRecordActivity
@@ -149,10 +148,6 @@ class SettingsFragment : KotlinBaseFragment<FragmentSettingsBinding>(), Handler.
             )
         }
 
-        binding.autoServiceSwitch.setOnClickListener {
-            startActivity(Intent(Settings.ACTION_ACCESSIBILITY_SETTINGS))
-        }
-
         binding.turnoffLightSwitch.setOnCheckedChangeListener { _, isChecked ->
             if (isChecked) {
                 //最低亮度
@@ -258,7 +253,5 @@ class SettingsFragment : KotlinBaseFragment<FragmentSettingsBinding>(), Handler.
             binding.versionTipsView.text = "切换Pro版"
         }
         binding.exchangeProVersionSwitch.isChecked = b
-
-        binding.autoServiceSwitch.isChecked = AutoSignInService.isServiceRunning
     }
 }
