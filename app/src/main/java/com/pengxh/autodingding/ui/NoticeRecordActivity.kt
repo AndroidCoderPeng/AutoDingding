@@ -20,9 +20,8 @@ import com.pengxh.kt.lite.utils.ActivityStackManager
 import com.pengxh.kt.lite.utils.WeakReferenceHandler
 import com.pengxh.kt.lite.widget.TitleBarView
 
-class NoticeRecordActivity : KotlinBaseActivity<ActivityNoticeBinding>() {
+class NoticeRecordActivity : KotlinBaseActivity<ActivityNoticeBinding>(), Handler.Callback {
 
-    private val context = this@NoticeRecordActivity
     private val notificationBeanDao by lazy { BaseApplication.get().daoSession.notificationBeanDao }
     private lateinit var weakReferenceHandler: WeakReferenceHandler
     private lateinit var noticeAdapter: NormalRecyclerAdapter<NotificationBean>
@@ -51,7 +50,7 @@ class NoticeRecordActivity : KotlinBaseActivity<ActivityNoticeBinding>() {
     override fun initOnCreate(savedInstanceState: Bundle?) {
         ActivityStackManager.addActivity(this)
 
-        weakReferenceHandler = WeakReferenceHandler(callback)
+        weakReferenceHandler = WeakReferenceHandler(this)
         dataBeans = queryNotificationRecord()
         weakReferenceHandler.sendEmptyMessage(2022061901)
     }
@@ -91,7 +90,7 @@ class NoticeRecordActivity : KotlinBaseActivity<ActivityNoticeBinding>() {
 
     }
 
-    private val callback = Handler.Callback { msg: Message ->
+    override fun handleMessage(msg: Message): Boolean {
         if (msg.what == 2022061901) {
             if (isRefresh || isLoadMore) {
                 noticeAdapter.notifyDataSetChanged()
@@ -119,7 +118,7 @@ class NoticeRecordActivity : KotlinBaseActivity<ActivityNoticeBinding>() {
                 }
             }
         }
-        true
+        return true
     }
 
     private fun queryNotificationRecord(): MutableList<NotificationBean> {

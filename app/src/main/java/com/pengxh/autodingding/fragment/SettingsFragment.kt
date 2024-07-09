@@ -21,6 +21,7 @@ import com.pengxh.autodingding.extensions.notificationEnable
 import com.pengxh.autodingding.service.FloatingWindowService
 import com.pengxh.autodingding.service.NotificationMonitorService
 import com.pengxh.autodingding.ui.NoticeRecordActivity
+import com.pengxh.autodingding.ui.QuestionAndAnswerActivity
 import com.pengxh.autodingding.utils.Constant
 import com.pengxh.kt.lite.base.KotlinBaseFragment
 import com.pengxh.kt.lite.extensions.convertColor
@@ -189,18 +190,7 @@ class SettingsFragment : KotlinBaseFragment<FragmentSettingsBinding>(), Handler.
         }
 
         binding.introduceLayout.setOnClickListener {
-            AlertMessageDialog.Builder()
-                .setContext(requireContext())
-                .setTitle("功能介绍")
-                .setMessage(requireContext().getString(R.string.about))
-                .setPositiveButton("看完了")
-                .setOnDialogButtonClickListener(
-                    object : AlertMessageDialog.OnDialogButtonClickListener {
-                        override fun onConfirmClick() {
-
-                        }
-                    }
-                ).build().show()
+            requireContext().navigatePageTo<QuestionAndAnswerActivity>()
         }
     }
 
