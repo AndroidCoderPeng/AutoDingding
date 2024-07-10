@@ -2,7 +2,6 @@ package com.pengxh.autodingding.service
 
 import android.app.Notification
 import android.content.ComponentName
-import android.content.Intent
 import android.os.Build
 import android.service.notification.NotificationListenerService
 import android.service.notification.StatusBarNotification
@@ -10,23 +9,12 @@ import android.util.Log
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.LifecycleRegistry
-import androidx.lifecycle.lifecycleScope
 import com.pengxh.autodingding.BaseApplication
 import com.pengxh.autodingding.bean.NotificationBean
-import com.pengxh.autodingding.extensions.createMail
 import com.pengxh.autodingding.extensions.openApplication
-import com.pengxh.autodingding.extensions.sendTextMail
 import com.pengxh.autodingding.fragment.SettingsFragment
-import com.pengxh.autodingding.ui.MainActivity
 import com.pengxh.autodingding.utils.Constant
-import com.pengxh.autodingding.utils.CountDownTimerManager
-import com.pengxh.kt.lite.extensions.show
 import com.pengxh.kt.lite.extensions.timestampToCompleteDate
-import com.pengxh.kt.lite.utils.SaveKeyValues
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import java.util.UUID
 
 /**
@@ -81,34 +69,9 @@ class NotificationMonitorService : NotificationListenerService(), LifecycleOwner
         notificationBean.postTime = System.currentTimeMillis().timestampToCompleteDate()
         notificationBeanDao.save(notificationBean)
 
-        if (packageName == Constant.DING_DING) {
-            if (notice.contains("成功")) {
-                backToMainActivity()
-
-                val emailAddress = SaveKeyValues.getValue(Constant.EMAIL_ADDRESS, "") as String
-                if (emailAddress.isEmpty()) {
-                    "邮箱地址为空".show(this)
-                    return
-                }
-                //发送打卡成功的邮件
-                lifecycleScope.launch(Dispatchers.Main) {
-                    "即将发送通知邮件，请注意查收".show(this@NotificationMonitorService)
-                    delay(3000)
-                    withContext(Dispatchers.IO) {
-                        notice.createMail(emailAddress).sendTextMail()
-                    }
-                }
-            }
-        } else if (packageName == Constant.WECHAT || packageName == Constant.QQ) {
+        if (packageName == Constant.WECHAT || packageName == Constant.QQ) {
             openApplication(Constant.DING_DING)
         }
-    }
-
-    private fun backToMainActivity() {
-        CountDownTimerManager.get.cancelTimer()
-        val intent = Intent(this, MainActivity::class.java)
-        intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
-        startActivity(intent)
     }
 
     /**

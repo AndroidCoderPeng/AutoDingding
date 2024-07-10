@@ -3,6 +3,7 @@ package com.pengxh.autodingding.extensions
 import com.pengxh.autodingding.bean.MailInfo
 import com.pengxh.autodingding.utils.Constant
 import com.pengxh.kt.lite.extensions.timestampToDate
+import java.io.File
 import java.text.ParseException
 import java.text.SimpleDateFormat
 import java.util.Calendar
@@ -54,7 +55,7 @@ fun String.diffCurrentMillis(): Long {
     return abs(System.currentTimeMillis() - date.time)
 }
 
-fun String.createMail(toAddress: String): MailInfo {
+fun String.createTextMail(toAddress: String): MailInfo {
     val mailInfo = MailInfo()
     mailInfo.mailServerHost = "smtp.qq.com" //发送方邮箱服务器
     mailInfo.mailServerPort = "587" //发送方邮箱端口号
@@ -71,5 +72,22 @@ fun String.createMail(toAddress: String): MailInfo {
     }
     // 邮件文本
     mailInfo.content = content
+    return mailInfo
+}
+
+fun String.createAttachFileMail(toAddress: String, imagePath: String): MailInfo {
+    val mailInfo = MailInfo()
+    mailInfo.mailServerHost = "smtp.qq.com" //发送方邮箱服务器
+    mailInfo.mailServerPort = "587" //发送方邮箱端口号
+    mailInfo.isValidate = true
+    mailInfo.userName = Constant.USER_MAIL_ACCOUNT
+    mailInfo.password = Constant.PERMISSION_CODE
+    mailInfo.toAddress = toAddress // 接收者邮箱
+    mailInfo.fromAddress = Constant.MAIL_FROM_ADDRESS
+    mailInfo.subject = "自动打卡通知" // 邮件主题
+    // 邮件文本
+    mailInfo.content = this
+    //附件
+    mailInfo.attachFile = File(imagePath)
     return mailInfo
 }

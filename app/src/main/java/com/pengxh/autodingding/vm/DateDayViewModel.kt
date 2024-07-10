@@ -5,7 +5,7 @@ import androidx.lifecycle.MutableLiveData
 import com.google.gson.Gson
 import com.google.gson.JsonParser
 import com.google.gson.reflect.TypeToken
-import com.pengxh.autodingding.extensions.createMail
+import com.pengxh.autodingding.extensions.createTextMail
 import com.pengxh.autodingding.extensions.sendTextMail
 import com.pengxh.autodingding.model.DateDayModel
 import com.pengxh.autodingding.retrofit.RetrofitServiceManager
@@ -35,8 +35,8 @@ class DateDayViewModel : BaseViewModel() {
         if (response.isBlank()) {
             //返回值为空，发送邮件
             CoroutineScope(context).launch(Dispatchers.IO) {
-                "工作日判断接口返回值异常，无法确定自动打卡日期，请及时手动打卡！".createMail(emailAddress)
-                    .sendTextMail()
+                "工作日判断接口返回值异常，无法确定自动打卡日期，请及时手动打卡！"
+                    .createTextMail(emailAddress).sendTextMail()
             }
         }
 
@@ -53,7 +53,7 @@ class DateDayViewModel : BaseViewModel() {
             //请求失败，发送邮件
             CoroutineScope(context).launch(Dispatchers.IO) {
                 "工作日判断接口请求异常，错误码：${code}，无法确定自动打卡日期，请及时手动打卡！"
-                    .createMail(emailAddress).sendTextMail()
+                    .createTextMail(emailAddress).sendTextMail()
             }
         }
     }, {

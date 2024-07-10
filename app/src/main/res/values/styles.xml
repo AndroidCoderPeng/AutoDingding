@@ -1,9 +1,31 @@
 <resources>
+
     <style name="PopupAnimation">
         <!-- 指定显示的动画xml -->
         <item name="android:windowEnterAnimation">@anim/popup_show</item>
 
         <!-- 指定消失的动画xml -->
         <item name="android:windowExitAnimation">@anim/popup_hide</item>
+    </style>
+
+    <style name="OnePxActivityStyle" parent="Theme.AppCompat.Light.NoActionBar">
+        <!-- 窗体背景颜色为透明 -->
+        <item name="android:windowBackground">@android:color/transparent</item>
+        <!-- 窗体没有边框 -->
+        <item name="android:windowFrame">@null</item>
+        <!-- 窗体不包含标题栏 -->
+        <item name="android:windowNoTitle">true</item>
+        <!-- 窗体悬浮 -->
+        <item name="android:windowIsFloating">true</item>
+        <!-- 自定义TitleBar时去掉多余的阴影-->
+        <item name="android:windowContentOverlay">@null</item>
+        <!-- 不允许窗体背景变暗-->
+        <item name="android:backgroundDimEnabled">false</item>
+        <!-- 窗体切换无动画-->
+        <item name="android:windowAnimationStyle">@null</item>
+        <!-- 禁用窗口的预览动画-->
+        <item name="android:windowDisablePreview">true</item>
+        <item name="android:windowNoDisplay">false</item>
+        <item name="android:windowIsTranslucent">true</item>
     </style>
 </resources>
