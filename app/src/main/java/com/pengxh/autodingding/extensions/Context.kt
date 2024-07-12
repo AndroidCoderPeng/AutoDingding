@@ -5,6 +5,7 @@ import android.content.Context
 import android.content.Intent
 import android.content.pm.ApplicationInfo
 import android.content.pm.ResolveInfo
+import android.os.SystemClock
 import androidx.core.app.NotificationManagerCompat
 import com.pengxh.autodingding.ui.OnePixelActivity
 import com.pengxh.autodingding.utils.Constant
@@ -62,6 +63,7 @@ fun Context.openApplication(packageName: String) {
 
     val type = SaveKeyValues.getValue(Constant.EMAIL_TYPE, 0) as Int
     if (type == 1) {
+        SystemClock.sleep(3000)
         /***结束当前栈里所有Activity，启动一像素透明Activity，防止截屏挡住钉钉打卡界面********/
         ActivityStackManager.finishAllActivity()
         val i = Intent(this, OnePixelActivity::class.java)

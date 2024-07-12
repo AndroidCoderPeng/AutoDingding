@@ -39,7 +39,8 @@ class SkipConfirmService : AccessibilityService() {
             if (viewNodes.isNotEmpty()) {
                 //找到一个节点即可
                 val viewNode = viewNodes.first()
-                if (viewNode.text == "立即开始") {
+                if (viewNode.text == "立即开始" || viewNode.text == "打开") {
+                    Log.d(kTag, "onAccessibilityEvent: ${viewNode.text}")
                     viewNode.performAction(AccessibilityNodeInfo.ACTION_CLICK)
                 }
             }
