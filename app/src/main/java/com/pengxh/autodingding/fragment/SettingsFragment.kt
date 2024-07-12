@@ -20,6 +20,7 @@ import com.pengxh.autodingding.extensions.initImmersionBar
 import com.pengxh.autodingding.extensions.notificationEnable
 import com.pengxh.autodingding.service.FloatingWindowService
 import com.pengxh.autodingding.service.NotificationMonitorService
+import com.pengxh.autodingding.service.SkipConfirmService
 import com.pengxh.autodingding.ui.NoticeRecordActivity
 import com.pengxh.autodingding.ui.QuestionAndAnswerActivity
 import com.pengxh.autodingding.utils.Constant
@@ -93,6 +94,13 @@ class SettingsFragment : KotlinBaseFragment<FragmentSettingsBinding>(), Handler.
                 }).build().show()
         }
 
+        binding.emailTypeRadioGroup.setOnCheckedChangeListener { _, checkedId ->
+            when (checkedId) {
+                R.id.textEmailView -> SaveKeyValues.putValue(Constant.EMAIL_TYPE, 0)
+                R.id.imageEmailView -> SaveKeyValues.putValue(Constant.EMAIL_TYPE, 1)
+            }
+        }
+
         binding.timeoutLayout.setOnClickListener {
             BottomActionSheet.Builder()
                 .setContext(requireContext())
@@ -147,6 +155,10 @@ class SettingsFragment : KotlinBaseFragment<FragmentSettingsBinding>(), Handler.
                 PackageManager.COMPONENT_ENABLED_STATE_ENABLED,
                 PackageManager.DONT_KILL_APP
             )
+        }
+
+        binding.autoServiceSwitch.setOnClickListener {
+            startActivity(Intent(Settings.ACTION_ACCESSIBILITY_SETTINGS))
         }
 
         binding.turnoffLightSwitch.setOnCheckedChangeListener { _, isChecked ->
@@ -227,6 +239,13 @@ class SettingsFragment : KotlinBaseFragment<FragmentSettingsBinding>(), Handler.
 
     override fun onResume() {
         super.onResume()
+        val type = SaveKeyValues.getValue(Constant.EMAIL_TYPE, 0) as Int
+        if (type == 0) {
+            binding.textEmailView.isChecked = true
+        } else {
+            binding.imageEmailView.isChecked = true
+        }
+
         binding.timeoutTextView.text = SaveKeyValues.getValue(Constant.TIMEOUT, "15s") as String
 
         binding.floatSwitch.isChecked = Settings.canDrawOverlays(requireContext())
@@ -243,5 +262,7 @@ class SettingsFragment : KotlinBaseFragment<FragmentSettingsBinding>(), Handler.
             binding.versionTipsView.text = "切换Pro版"
         }
         binding.exchangeProVersionSwitch.isChecked = b
+
+        binding.autoServiceSwitch.isChecked = SkipConfirmService.isServiceRunning
     }
 }

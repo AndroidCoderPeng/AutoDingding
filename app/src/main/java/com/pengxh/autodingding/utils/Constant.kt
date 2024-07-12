@@ -21,6 +21,7 @@ object Constant {
     const val EMAIL_ADDRESS = "emailAddress"
     const val CHANGE_VERSION = "changeVersion"
     const val TIMEOUT = "timeout"
+    const val EMAIL_TYPE = "emailType"
 
     const val DING_DING = "com.alibaba.android.rimet"
     const val WECHAT = "com.tencent.wework"

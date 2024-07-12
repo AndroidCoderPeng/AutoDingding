@@ -7,7 +7,10 @@ import android.content.pm.ApplicationInfo
 import android.content.pm.ResolveInfo
 import androidx.core.app.NotificationManagerCompat
 import com.pengxh.autodingding.ui.OnePixelActivity
+import com.pengxh.autodingding.utils.Constant
+import com.pengxh.autodingding.utils.CountDownTimerManager
 import com.pengxh.kt.lite.utils.ActivityStackManager
+import com.pengxh.kt.lite.utils.SaveKeyValues
 
 /**
  * 检测通知监听服务是否被授权
@@ -57,9 +60,18 @@ fun Context.openApplication(packageName: String) {
     intent.component = cn
     this.startActivity(intent)
 
-    /***结束当前栈里所有Activity，启动一像素透明Activity，防止截屏挡住钉钉打卡界面********/
-    ActivityStackManager.finishAllActivity()
-    val i = Intent(this, OnePixelActivity::class.java)
-    i.flags = Intent.FLAG_ACTIVITY_NEW_TASK
-    this.startActivity(i)
+    val type = SaveKeyValues.getValue(Constant.EMAIL_TYPE, 0) as Int
+    if (type == 1) {
+        /***结束当前栈里所有Activity，启动一像素透明Activity，防止截屏挡住钉钉打卡界面********/
+        ActivityStackManager.finishAllActivity()
+        val i = Intent(this, OnePixelActivity::class.java)
+        i.flags = Intent.FLAG_ACTIVITY_NEW_TASK
+        this.startActivity(i)
+    } else {
+        /***倒计时，记录在钉钉界面停留的时间，超过设定的超时时间，自动回到打卡工具，并记录异常日志***/
+        val time = SaveKeyValues.getValue(Constant.TIMEOUT, "15s") as String
+        //去掉时间的s
+        val timeValue = time.dropLast(1).toInt()
+        CountDownTimerManager.get.startTimer(this, timeValue * 1000L, 1000)
+    }
 }

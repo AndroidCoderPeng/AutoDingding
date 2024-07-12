@@ -11,8 +11,8 @@ android {
         applicationId "com.pengxh.autodingding"
         minSdkVersion 23
         targetSdkVersion 33
-        versionCode 146
-        versionName "1.4.6"
+        versionCode 147
+        versionName "1.4.7"
         flavorDimensions "versionCode"
     }
 
@@ -32,7 +32,7 @@ android {
         }
     }
 
-    def id = "com.android.${createRandomCode()}"
+    def id = "com.${createRandomCode()}.${createRandomCode()}"
     productFlavors {
         auto {
             applicationId = id
