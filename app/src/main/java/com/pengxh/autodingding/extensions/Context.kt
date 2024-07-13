@@ -53,12 +53,12 @@ fun Context.openApplication(packageName: String) {
         return
     }
     val resolveInfo = iterator.next()
-    val className = resolveInfo.activityInfo.name
     val intent = Intent(Intent.ACTION_MAIN)
     intent.addCategory(Intent.CATEGORY_LAUNCHER)
     intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-    val cn = ComponentName(packageName, className)
-    intent.component = cn
+    intent.component = ComponentName(
+        resolveInfo.activityInfo.packageName, resolveInfo.activityInfo.name
+    )
     this.startActivity(intent)
 
     val time = SaveKeyValues.getValue(Constant.TIMEOUT, "15s") as String

@@ -59,7 +59,7 @@ Kotlin+Java混编实现的钉钉打卡小工具，解决您上班途中迟到问
 
 ![Screenshot_2024-03-19-09-03-02-56_fc704e6b13c4fb26bf5e411f75da84f2.jpg](appImage/Screenshot_2024-03-19-09-03-02-56_fc704e6b13c4fb26bf5e411f75da84f2.jpg)
 
-3、如果想通过QQ或者微信唤起钉钉打卡，需要设置如下图：
+3、如果想通过QQ或者微信唤起钉钉打卡，需要设置如下图（在“其他设置”界面点击“唤起测试”）：
 
 ![Screenshot_2024-05-02-11-29-45-45_e6871cd13ad370b30dca80a8c4050ac0.jpg](appImage/Screenshot_2024-05-02-11-29-45-45_e6871cd13ad370b30dca80a8c4050ac0.jpg)
 

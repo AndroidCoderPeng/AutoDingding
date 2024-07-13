@@ -3,6 +3,7 @@ package com.pengxh.autodingding.fragment
 import android.content.ComponentName
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.content.pm.ResolveInfo
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
@@ -159,6 +160,26 @@ class SettingsFragment : KotlinBaseFragment<FragmentSettingsBinding>(), Handler.
 
         binding.autoServiceSwitch.setOnClickListener {
             startActivity(Intent(Settings.ACTION_ACCESSIBILITY_SETTINGS))
+        }
+
+        binding.openTestLayout.setOnClickListener {
+            val packageManager = requireContext().packageManager
+            val resolveIntent = Intent(Intent.ACTION_MAIN, null)
+            resolveIntent.addCategory(Intent.CATEGORY_LAUNCHER)
+            resolveIntent.setPackage(Constant.DING_DING)
+            val apps = packageManager.queryIntentActivities(resolveIntent, 0)
+            val iterator: Iterator<ResolveInfo> = apps.iterator()
+            if (!iterator.hasNext()) {
+                return@setOnClickListener
+            }
+            val resolveInfo = iterator.next()
+            val intent = Intent(Intent.ACTION_MAIN)
+            intent.addCategory(Intent.CATEGORY_LAUNCHER)
+            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+            intent.component = ComponentName(
+                resolveInfo.activityInfo.packageName, resolveInfo.activityInfo.name
+            )
+            startActivity(intent)
         }
 
         binding.turnoffLightSwitch.setOnCheckedChangeListener { _, isChecked ->
