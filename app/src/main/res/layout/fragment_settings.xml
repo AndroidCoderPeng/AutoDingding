@@ -49,50 +49,6 @@
             android:background="#CCC" />
 
         <RelativeLayout
-            android:layout_width="match_parent"
-            android:layout_height="@dimen/itemLayoutHeight"
-            android:background="@color/white"
-            android:paddingHorizontal="10dp">
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_centerVertical="true"
-                android:gravity="center_vertical"
-                android:text="邮件类型"
-                android:textColor="@color/colorText"
-                android:textSize="@dimen/sp_16" />
-
-            <RadioGroup
-                android:id="@+id/emailTypeRadioGroup"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentEnd="true"
-                android:layout_centerVertical="true"
-                android:orientation="horizontal">
-
-                <RadioButton
-                    android:id="@+id/textEmailView"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginHorizontal="@dimen/dp_10"
-                    android:text="文本" />
-
-                <RadioButton
-                    android:id="@+id/imageEmailView"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="图片" />
-            </RadioGroup>
-        </RelativeLayout>
-
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="1px"
-            android:layout_marginHorizontal="@dimen/dp_10"
-            android:background="#CCC" />
-
-        <RelativeLayout
             android:id="@+id/timeoutLayout"
             android:layout_width="match_parent"
             android:layout_height="@dimen/itemLayoutHeight"
@@ -170,37 +126,6 @@
 
             <Switch
                 android:id="@+id/noticeSwitch"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentEnd="true"
-                android:layout_centerVertical="true"
-                android:thumb="@drawable/select_switch_circle"
-                android:track="@drawable/select_switch_background"
-                tools:ignore="UseSwitchCompatOrMaterialXml" />
-        </RelativeLayout>
-
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="1px"
-            android:layout_marginHorizontal="@dimen/dp_10"
-            android:background="#CCC" />
-
-        <RelativeLayout
-            android:layout_width="match_parent"
-            android:layout_height="@dimen/itemLayoutHeight"
-            android:background="@color/white"
-            android:paddingHorizontal="10dp">
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_centerVertical="true"
-                android:text="辅助服务"
-                android:textColor="@color/colorText"
-                android:textSize="@dimen/sp_16" />
-
-            <Switch
-                android:id="@+id/autoServiceSwitch"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentEnd="true"

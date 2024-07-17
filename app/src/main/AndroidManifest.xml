@@ -29,9 +29,6 @@
         </activity>
         <activity android:name=".ui.NoticeRecordActivity" />
         <activity android:name=".ui.QuestionAndAnswerActivity" />
-        <activity
-            android:name=".ui.OnePixelActivity"
-            android:theme="@style/OnePxActivityStyle" />
 
         <service
             android:name=".service.NotificationMonitorService"
@@ -45,26 +42,6 @@
         </service>
 
         <service android:name=".service.FloatingWindowService" />
-
-        <service
-            android:name=".service.SkipConfirmService"
-            android:enabled="true"
-            android:exported="true"
-            android:permission="android.permission.BIND_ACCESSIBILITY_SERVICE">
-            <intent-filter>
-                <action android:name="android.accessibilityservice.AccessibilityService" />
-            </intent-filter>
-            <meta-data
-                android:name="android.accessibilityservice"
-                android:resource="@xml/auto_sign_in_service_config" />
-        </service>
-
-        <!-- 注册截屏需要用到的前台服务 -->
-        <service
-            android:name=".service.ScreenShotService"
-            android:enabled="true"
-            android:exported="true"
-            android:foregroundServiceType="mediaProjection" />
 
         <receiver
             android:name=".utils.DateChangeReceiver"
