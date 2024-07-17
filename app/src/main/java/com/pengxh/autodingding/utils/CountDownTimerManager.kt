@@ -10,6 +10,7 @@ import androidx.lifecycle.LifecycleRegistry
 import androidx.lifecycle.lifecycleScope
 import com.pengxh.autodingding.extensions.createTextMail
 import com.pengxh.autodingding.extensions.sendTextMail
+import com.pengxh.autodingding.service.FloatingWindowService
 import com.pengxh.autodingding.ui.MainActivity
 import com.pengxh.kt.lite.extensions.show
 import com.pengxh.kt.lite.utils.SaveKeyValues
@@ -38,7 +39,11 @@ class CountDownTimerManager private constructor() : LifecycleOwner {
         Log.d(kTag, "startTimer: 开始倒计时")
         timer = object : CountDownTimer(millisInFuture, countDownInterval) {
             override fun onTick(millisUntilFinished: Long) {
-                Log.d(kTag, "onTick: ${millisUntilFinished / 1000}")
+                val tick = millisUntilFinished / 1000
+                val message = FloatingWindowService.weakReferenceHandler.obtainMessage()
+                message.what = 2024071701
+                message.obj = tick
+                FloatingWindowService.weakReferenceHandler.sendMessage(message)
             }
 
             override fun onFinish() {

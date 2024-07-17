@@ -5,42 +5,40 @@ import android.app.Service
 import android.content.Intent
 import android.graphics.PixelFormat
 import android.os.Build
+import android.os.Handler
 import android.os.IBinder
+import android.os.Message
 import android.view.LayoutInflater
 import android.view.MotionEvent
-import android.view.View
 import android.view.WindowManager
+import android.widget.TextView
 import com.pengxh.autodingding.R
+import com.pengxh.autodingding.utils.Constant
 import com.pengxh.kt.lite.extensions.getSystemService
-import com.pengxh.kt.lite.extensions.show
+import com.pengxh.kt.lite.utils.SaveKeyValues
+import com.pengxh.kt.lite.utils.WeakReferenceHandler
 
 
-class FloatingWindowService : Service() {
+class FloatingWindowService : Service(), Handler.Callback {
+
+    companion object {
+        lateinit var weakReferenceHandler: WeakReferenceHandler
+    }
 
     private val kTag = "FloatingWindowService"
     private val windowManager by lazy { getSystemService<WindowManager>() }
-    private val layoutInflater by lazy { LayoutInflater.from(this) }
-    private var floatView: View? = null
+    private val floatView by lazy {
+        LayoutInflater.from(this).inflate(R.layout.window_floating, null)
+    }
+    private val textView by lazy { floatView.findViewById<TextView>(R.id.timeView) }
 
     override fun onBind(intent: Intent?): IBinder? {
         return null
     }
 
-    override fun onCreate() {
-        super.onCreate()
-        floatView = layoutInflater.inflate(R.layout.window_floating, null)
-    }
-
-    override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
-        if (floatView == null) {
-            floatView = layoutInflater.inflate(R.layout.window_floating, null)
-        }
-        initFloatingView(floatView)
-        return START_STICKY
-    }
-
     @SuppressLint("ClickableViewAccessibility")
-    private fun initFloatingView(view: View?) {
+    override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
+        weakReferenceHandler = WeakReferenceHandler(this)
         val layoutType = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY
         } else {
@@ -55,14 +53,16 @@ class FloatingWindowService : Service() {
         )
 
         try {
-            windowManager?.addView(view, floatLayoutParams)
+            val time = SaveKeyValues.getValue(Constant.TIMEOUT, "15s") as String
+            textView.text = time
+            windowManager?.addView(floatView, floatLayoutParams)
 
             var lastX = 0
             var lastY = 0
             var paramX = 0
             var paramY = 0
 
-            view?.setOnTouchListener { _, event ->
+            floatView.setOnTouchListener { _, event ->
                 when (event.action) {
                     MotionEvent.ACTION_DOWN -> {
                         lastX = event.rawX.toInt()
@@ -77,16 +77,29 @@ class FloatingWindowService : Service() {
                         floatLayoutParams.x = paramX + dx
                         floatLayoutParams.y = paramY + dy
                         // 更新悬浮窗位置
-                        windowManager?.updateViewLayout(view, floatLayoutParams)
+                        windowManager?.updateViewLayout(floatView, floatLayoutParams)
                     }
                 }
                 false
             }
-            view?.setOnClickListener {
-                "无实际功能，仅为绕过Android 10+系统打卡之后无法回到桌面的问题".show(this)
-            }
         } catch (e: IllegalStateException) {
             e.printStackTrace()
         }
+        return START_STICKY
+    }
+
+    override fun handleMessage(msg: Message): Boolean {
+        when (msg.what) {
+            2024071701 -> {
+                val time = msg.obj as Long
+                textView.text = "${time}s"
+            }
+
+            2024071702 -> {
+                val time = msg.obj as String
+                textView.text = time
+            }
+        }
+        return true
     }
 }
