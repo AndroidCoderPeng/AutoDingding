@@ -97,7 +97,7 @@ class NotificationMonitorService : NotificationListenerService(), LifecycleOwner
                     }
                 }
             }
-        } else if (packageName == Constant.WECHAT || packageName == Constant.QQ) {
+        } else if (packageName == Constant.WECHAT || packageName == Constant.QQ || packageName == Constant.TIM) {
             openApplication(Constant.DING_DING)
         }
     }
