@@ -132,4 +132,6 @@ dependencies {
     implementation 'com.squareup.okhttp3:okhttp:4.9.0'
     //官方Json解析库
     implementation 'com.google.code.gson:gson:2.10.1'
+    //异常日志记录
+    implementation 'com.tencent.bugly:crashreport:latest.release'
 }

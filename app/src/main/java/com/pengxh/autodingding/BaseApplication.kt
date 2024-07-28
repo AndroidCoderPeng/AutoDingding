@@ -4,6 +4,7 @@ import android.app.Application
 import com.pengxh.autodingding.greendao.DaoMaster
 import com.pengxh.autodingding.greendao.DaoSession
 import com.pengxh.kt.lite.utils.SaveKeyValues
+import com.tencent.bugly.crashreport.CrashReport
 import kotlin.properties.Delegates
 
 /**
@@ -25,6 +26,7 @@ class BaseApplication : Application() {
         super.onCreate()
         application = this
         SaveKeyValues.initSharedPreferences(this)
+        CrashReport.initCrashReport(this, "ce38195468", false)
         initDataBase()
     }
 
