@@ -40,10 +40,11 @@ class CountDownTimerManager private constructor() : LifecycleOwner {
         timer = object : CountDownTimer(millisInFuture, countDownInterval) {
             override fun onTick(millisUntilFinished: Long) {
                 val tick = millisUntilFinished / 1000
-                val message = FloatingWindowService.weakReferenceHandler.obtainMessage()
+                val handler = FloatingWindowService.weakReferenceHandler ?: return
+                val message = handler.obtainMessage()
                 message.what = 2024071701
                 message.obj = tick
-                FloatingWindowService.weakReferenceHandler.sendMessage(message)
+                handler.sendMessage(message)
             }
 
             override fun onFinish() {

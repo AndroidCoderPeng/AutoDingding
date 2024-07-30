@@ -88,7 +88,7 @@ class DingDingFragment : KotlinBaseFragment<FragmentDingdingBinding>() {
                                             val dateTimeBean = dataBeans[position]
 
                                             dateTimeBean.date = "${args[0]}-${args[1]}-${args[2]}"
-                                            dateTimeBean.time = "${args[3]}:${args[4]}"
+                                            dateTimeBean.time = "${args[3]}:${args[4]}:${args[5]}"
                                             dateTimeBean.weekDay = dateTimeBean.date.convertToWeek()
 
                                             dateTimeBeanDao.update(dateTimeBean)
@@ -162,7 +162,7 @@ class DingDingFragment : KotlinBaseFragment<FragmentDingdingBinding>() {
                     val bean = DateTimeBean()
                     bean.uuid = UUID.randomUUID().toString()
                     bean.date = "${args[0]}-${args[1]}-${args[2]}"
-                    bean.time = "${args[3]}:${args[4]}"
+                    bean.time = "${args[3]}:${args[4]}:${args[5]}"
                     bean.weekDay = bean.date.convertToWeek()
 
                     dateTimeBeanDao.insert(bean)

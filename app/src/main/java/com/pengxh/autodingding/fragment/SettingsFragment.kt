@@ -105,10 +105,11 @@ class SettingsFragment : KotlinBaseFragment<FragmentSettingsBinding>(), Handler.
                         binding.timeoutTextView.text = time
                         SaveKeyValues.putValue(Constant.TIMEOUT, time)
 
-                        val message = FloatingWindowService.weakReferenceHandler.obtainMessage()
+                        val handler = FloatingWindowService.weakReferenceHandler ?: return
+                        val message = handler.obtainMessage()
                         message.what = 2024071702
                         message.obj = time
-                        FloatingWindowService.weakReferenceHandler.sendMessage(message)
+                        handler.sendMessage(message)
                     }
                 }).build().show()
         }

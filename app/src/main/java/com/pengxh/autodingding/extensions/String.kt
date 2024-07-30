@@ -32,7 +32,7 @@ fun String.convertToWeek(): String {
 
 fun String.isEarlierThenCurrent(): Boolean {
     try {
-        val dateFormat = SimpleDateFormat("yyyy-MM-dd HH:mm", Locale.CHINA)
+        val dateFormat = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.CHINA)
         val date = dateFormat.parse(this)!!
         val t1 = date.time
         val t2 = System.currentTimeMillis()
@@ -50,7 +50,7 @@ fun String.diffCurrentMillis(): Long {
     if (this.isBlank()) {
         return 0
     }
-    val simpleDateFormat = SimpleDateFormat("yyyy-MM-dd HH:mm", Locale.CHINA)
+    val simpleDateFormat = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.CHINA)
     val date = simpleDateFormat.parse(this)!!
     return abs(System.currentTimeMillis() - date.time)
 }
