@@ -16,7 +16,7 @@ fun Activity.showDatePicker(isShowTime: Boolean, callback: OnDateSelectedCallbac
         val layout = datePicker.wheelLayout
         layout.setDateMode(DateMode.YEAR_MONTH_DAY)
         layout.setDateLabel("年", "月", "日")
-        layout.setTimeMode(TimeMode.HOUR_24_HAS_SECOND)
+        layout.setTimeMode(TimeMode.HOUR_24_NO_SECOND)
         layout.setTimeLabel("时", "分", "秒")
         layout.setSelectedTextColor(R.color.colorAppThemeLight.convertColor(this))
         layout.setSelectedTextBold(true)

@@ -18,6 +18,7 @@ import com.pengxh.autodingding.utils.Constant
 import com.pengxh.autodingding.utils.OnDateSelectedCallback
 import com.pengxh.kt.lite.base.KotlinBaseFragment
 import com.pengxh.kt.lite.divider.RecyclerViewItemOffsets
+import com.pengxh.kt.lite.extensions.appendZero
 import com.pengxh.kt.lite.extensions.dp2px
 import com.pengxh.kt.lite.widget.dialog.AlertControlDialog
 import java.util.UUID
@@ -88,7 +89,8 @@ class DingDingFragment : KotlinBaseFragment<FragmentDingdingBinding>() {
                                             val dateTimeBean = dataBeans[position]
 
                                             dateTimeBean.date = "${args[0]}-${args[1]}-${args[2]}"
-                                            dateTimeBean.time = "${args[3]}:${args[4]}:${args[5]}"
+                                            dateTimeBean.time =
+                                                "${args[3]}:${args[4]}:${randomSeconds()}"
                                             dateTimeBean.weekDay = dateTimeBean.date.convertToWeek()
 
                                             dateTimeBeanDao.update(dateTimeBean)
@@ -162,7 +164,7 @@ class DingDingFragment : KotlinBaseFragment<FragmentDingdingBinding>() {
                     val bean = DateTimeBean()
                     bean.uuid = UUID.randomUUID().toString()
                     bean.date = "${args[0]}-${args[1]}-${args[2]}"
-                    bean.time = "${args[3]}:${args[4]}:${args[5]}"
+                    bean.time = "${args[3]}:${args[4]}:${randomSeconds()}"
                     bean.weekDay = bean.date.convertToWeek()
 
                     dateTimeBeanDao.insert(bean)
@@ -178,5 +180,12 @@ class DingDingFragment : KotlinBaseFragment<FragmentDingdingBinding>() {
         dataBeans.forEach {
             dateTimeAdapter.stopCountDownTimer(it)
         }
+    }
+
+    /**
+     * 产生随机秒数
+     * */
+    private fun randomSeconds(): String {
+        return (0 until 60).random().appendZero()
     }
 }
