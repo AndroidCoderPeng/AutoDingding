@@ -9,7 +9,7 @@ class DateChangeReceiver : BroadcastReceiver() {
     override fun onReceive(context: Context?, intent: Intent?) {
         val action = intent?.action ?: return
         if (action == Intent.ACTION_DATE_CHANGED) {
-            AutoDingDingFragment.weakReferenceHandler.sendEmptyMessage(2024070801)
+            AutoDingDingFragment.weakReferenceHandler?.sendEmptyMessage(2024070801)
         }
     }
 }

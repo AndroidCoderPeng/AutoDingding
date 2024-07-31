@@ -27,6 +27,7 @@ import com.pengxh.autodingding.vm.DateDayViewModel
 import com.pengxh.autodingding.widget.BottomSelectTimeSheet
 import com.pengxh.kt.lite.base.KotlinBaseFragment
 import com.pengxh.kt.lite.divider.RecyclerViewItemOffsets
+import com.pengxh.kt.lite.extensions.appendZero
 import com.pengxh.kt.lite.extensions.createLogFile
 import com.pengxh.kt.lite.extensions.dp2px
 import com.pengxh.kt.lite.extensions.getSystemService
@@ -37,7 +38,6 @@ import com.pengxh.kt.lite.extensions.writeToFile
 import com.pengxh.kt.lite.utils.WeakReferenceHandler
 import com.pengxh.kt.lite.widget.dialog.AlertControlDialog
 import java.text.SimpleDateFormat
-import java.util.Calendar
 import java.util.Date
 import java.util.LinkedList
 import java.util.Locale
@@ -53,7 +53,7 @@ import kotlin.math.abs
 class AutoDingDingFragment : KotlinBaseFragment<FragmentAutoDingdingBinding>(), Handler.Callback {
 
     companion object {
-        lateinit var weakReferenceHandler: WeakReferenceHandler
+        var weakReferenceHandler: WeakReferenceHandler? = null
     }
 
     private val kTag = "AutoDingDingFragment"
@@ -83,47 +83,46 @@ class AutoDingDingFragment : KotlinBaseFragment<FragmentAutoDingdingBinding>(), 
 
     override fun initEvent() {
         binding.executeTaskButton.setOnClickListener {
-            if (taskBeans.isEmpty()) {
-                "请先添加任务".show(requireContext())
-                return@setOnClickListener
-            }
-
             if (isTaskStarted) {
-                alarmManager?.cancel(pendingIntent)
+//                alarmManager?.cancel(pendingIntent)
                 //清空任务队列
                 taskQueue.clear()
                 //停止仅在进行的任务
                 countDownTimer?.cancel()
-                //重置任务状态
-                isTaskStarted = false
                 binding.executeTaskButton.setImageResource(R.drawable.ic_play_fill)
+                //重置任务状态
                 binding.nextTaskTimeView.text = "--:--"
+                isTaskStarted = false
             } else {
                 isTaskStarted = true
                 binding.executeTaskButton.setImageResource(R.drawable.ic_stop_fill)
 
                 //集合转队列
-                taskQueue = LinkedList(taskBeans)
-
-                val calendar = Calendar.getInstance()
-                calendar.timeInMillis = System.currentTimeMillis()
-                calendar.set(Calendar.HOUR_OF_DAY, 0)
-                calendar.set(Calendar.MINUTE, 0)
-                calendar.set(Calendar.SECOND, 0)
-                calendar.set(Calendar.MILLISECOND, 0)
-
-                // 如果当前时间已经过了午夜，则闹钟将在第二天的午夜触发
-                if (calendar.before(Calendar.getInstance())) {
-                    calendar.add(Calendar.DAY_OF_YEAR, 1)
-                }
-
-                alarmManager?.setRepeating(
-                    AlarmManager.RTC_WAKEUP,
-                    calendar.timeInMillis,
-                    AlarmManager.INTERVAL_DAY,
-                    pendingIntent
+                taskQueue = LinkedList(
+                    taskTimeBeanDao.queryBuilder().orderAsc(
+                        TaskTimeBeanDao.Properties.StartTime
+                    ).list()
                 )
 
+//                val calendar = Calendar.getInstance()
+//                calendar.timeInMillis = System.currentTimeMillis()
+//                calendar.set(Calendar.HOUR_OF_DAY, 0)
+//                calendar.set(Calendar.MINUTE, 0)
+//                calendar.set(Calendar.SECOND, 0)
+//                calendar.set(Calendar.MILLISECOND, 0)
+//
+//                // 如果当前时间已经过了午夜，则闹钟将在第二天的午夜触发
+//                if (calendar.before(Calendar.getInstance())) {
+//                    calendar.add(Calendar.DAY_OF_YEAR, 1)
+//                }
+//
+//                alarmManager?.setRepeating(
+//                    AlarmManager.RTC_WAKEUP,
+//                    calendar.timeInMillis,
+//                    AlarmManager.INTERVAL_DAY,
+//                    pendingIntent
+//                )
+//
                 executeTaskByDay()
             }
         }
@@ -138,7 +137,6 @@ class AutoDingDingFragment : KotlinBaseFragment<FragmentAutoDingdingBinding>(), 
         val currentDateTime = "${System.currentTimeMillis().timestampToDate()} $taskRealTime"
         if (currentDateTime.isEarlierThenCurrent()) {
             Log.d(kTag, "${currentDateTime}已过时")
-            binding.nextTaskTimeView.text = "今天${taskRealTime}已过"
             executeTaskByDay()
             return
         }
@@ -151,6 +149,11 @@ class AutoDingDingFragment : KotlinBaseFragment<FragmentAutoDingdingBinding>(), 
 
             override fun onFinish() {
                 Log.d(kTag, "onFinish: $currentDateTime")
+                taskQueue = LinkedList(
+                    taskTimeBeanDao.queryBuilder().orderAsc(
+                        TaskTimeBeanDao.Properties.StartTime
+                    ).list()
+                )
                 executeTaskByDay()
             }
         }.start()
@@ -170,8 +173,8 @@ class AutoDingDingFragment : KotlinBaseFragment<FragmentAutoDingdingBinding>(), 
         val realMinute = random.nextInt(interval)
 
         //将开始时间偏移计算出来的任务真实分钟
-        val dateFormat = SimpleDateFormat("HH:mm", Locale.CHINA)
-        return dateFormat.format(Date(startTime.time + realMinute * 60 * 1000))
+        val dateFormat = SimpleDateFormat("HH:mm:ss", Locale.CHINA)
+        return dateFormat.format(Date(startTime.time + realMinute * 60 * 1000 + (0 until 60).random() * 1000))
     }
 
     override fun initOnCreate(savedInstanceState: Bundle?) {
@@ -225,12 +228,11 @@ class AutoDingDingFragment : KotlinBaseFragment<FragmentAutoDingdingBinding>(), 
                     BottomSelectTimeSheet(
                         requireContext(), object : BottomSelectTimeSheet.OnTimeSelectedCallback {
                             override fun onTimePicked(startTime: String, endTime: String) {
-                                //onTimePicked: 22:34 ~ 22:34
                                 //保存数据
                                 val bean = TaskTimeBean()
                                 bean.uuid = UUID.randomUUID().toString()
-                                bean.startTime = startTime
-                                bean.endTime = endTime
+                                bean.startTime = "$startTime:${randomSeconds()}"
+                                bean.endTime = "$endTime:${randomSeconds()}"
 
                                 taskTimeBeanDao.insert(bean)
                                 //刷新列表
@@ -248,11 +250,10 @@ class AutoDingDingFragment : KotlinBaseFragment<FragmentAutoDingdingBinding>(), 
                     BottomSelectTimeSheet(
                         requireContext(), object : BottomSelectTimeSheet.OnTimeSelectedCallback {
                             override fun onTimePicked(startTime: String, endTime: String) {
-                                //onTimePicked: 22:34 ~ 22:34
                                 //修改数据
                                 val bean = taskBeans[position]
-                                bean.startTime = startTime
-                                bean.endTime = endTime
+                                bean.startTime = "$startTime:${randomSeconds()}"
+                                bean.endTime = "$endTime:${randomSeconds()}"
 
                                 taskTimeBeanDao.update(bean)
                                 //刷新列表
@@ -311,5 +312,12 @@ class AutoDingDingFragment : KotlinBaseFragment<FragmentAutoDingdingBinding>(), 
 
     override fun setupTopBarLayout() {
         binding.rootView.initImmersionBar(this, true, R.color.white)
+    }
+
+    /**
+     * 产生随机秒数
+     * */
+    private fun randomSeconds(): String {
+        return (0 until 60).random().appendZero()
     }
 }
