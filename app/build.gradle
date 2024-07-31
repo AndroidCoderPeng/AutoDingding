@@ -134,4 +134,6 @@ dependencies {
     implementation 'com.google.code.gson:gson:2.10.1'
     //异常日志记录
     implementation 'com.tencent.bugly:crashreport:latest.release'
+    //定时任务
+    implementation 'androidx.work:work-runtime:2.9.0'
 }
