@@ -42,14 +42,6 @@
         </service>
 
         <service android:name=".service.FloatingWindowService" />
-
-        <receiver
-            android:name=".utils.DateChangeReceiver"
-            android:exported="true">
-            <intent-filter>
-                <action android:name="android.intent.action.DATE_CHANGED" />
-            </intent-filter>
-        </receiver>
     </application>
 
     <queries>
