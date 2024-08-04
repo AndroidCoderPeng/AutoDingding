@@ -40,7 +40,7 @@ import com.pengxh.kt.lite.widget.dialog.BottomActionSheet
 class SettingsFragment : KotlinBaseFragment<FragmentSettingsBinding>(), Handler.Callback {
 
     private val kTag = "SettingsFragment"
-    private val timeArray = arrayListOf("15s", "30s", "45s", "60s", "120s")
+    private val timeArray = arrayListOf("15s", "30s", "45s", "60s")
 
     companion object {
         var weakReferenceHandler: WeakReferenceHandler? = null
