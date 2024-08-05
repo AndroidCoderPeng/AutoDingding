@@ -135,5 +135,5 @@ dependencies {
     //异常日志记录
     implementation 'com.tencent.bugly:crashreport:latest.release'
     //定时任务
-    implementation 'androidx.work:work-runtime:2.9.0'
+    implementation 'androidx.work:work-runtime:2.7.1'
 }

@@ -10,7 +10,7 @@ import java.util.Locale;
 
 public class TimeConvert implements PropertyConverter<String, Date> {
 
-    private final DateFormat format = new SimpleDateFormat("HH:mm", Locale.CHINA);
+    private final DateFormat format = new SimpleDateFormat("HH:mm:ss", Locale.CHINA);
 
     /**
      * 转成对象的属性
