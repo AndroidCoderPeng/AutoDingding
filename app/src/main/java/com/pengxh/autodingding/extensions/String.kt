@@ -1,5 +1,7 @@
 package com.pengxh.autodingding.extensions
 
+import android.content.Context
+import android.widget.Toast
 import com.pengxh.autodingding.bean.MailInfo
 import com.pengxh.autodingding.utils.Constant
 import com.pengxh.kt.lite.extensions.timestampToDate
@@ -90,4 +92,8 @@ fun String.createAttachFileMail(toAddress: String, imagePath: String): MailInfo 
     //附件
     mailInfo.attachFile = File(imagePath)
     return mailInfo
+}
+
+fun String.show(context: Context) {
+    Toast.makeText(context, this, Toast.LENGTH_SHORT).show()
 }
