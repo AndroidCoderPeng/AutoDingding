@@ -13,6 +13,7 @@ import com.pengxh.autodingding.extensions.convertToWeek
 import com.pengxh.autodingding.extensions.initImmersionBar
 import com.pengxh.autodingding.extensions.openApplication
 import com.pengxh.autodingding.extensions.showDatePicker
+import com.pengxh.autodingding.extensions.showDateTimePicker
 import com.pengxh.autodingding.greendao.DateTimeBeanDao
 import com.pengxh.autodingding.utils.Constant
 import com.pengxh.autodingding.utils.OnDateSelectedCallback
@@ -83,11 +84,10 @@ class DingDingFragment : KotlinBaseFragment<FragmentDingdingBinding>() {
                         .setOnDialogButtonClickListener(object :
                             AlertControlDialog.OnDialogButtonClickListener {
                             override fun onConfirmClick() {
-                                requireActivity().showDatePicker(
-                                    true, object : OnDateSelectedCallback {
+                                val dateTimeBean = dataBeans[position]
+                                requireActivity().showDateTimePicker(
+                                    dateTimeBean, object : OnDateSelectedCallback {
                                         override fun onTimePicked(vararg args: String) {
-                                            val dateTimeBean = dataBeans[position]
-
                                             dateTimeBean.date = "${args[0]}-${args[1]}-${args[2]}"
                                             dateTimeBean.time =
                                                 "${args[3]}:${args[4]}:${randomSeconds()}"
@@ -101,11 +101,10 @@ class DingDingFragment : KotlinBaseFragment<FragmentDingdingBinding>() {
                             }
 
                             override fun onCancelClick() {
+                                val dateTimeBean = dataBeans[position]
                                 requireActivity().showDatePicker(
-                                    false, object : OnDateSelectedCallback {
+                                    dateTimeBean, object : OnDateSelectedCallback {
                                         override fun onTimePicked(vararg args: String) {
-                                            val dateTimeBean = dataBeans[position]
-
                                             dateTimeBean.date = "${args[0]}-${args[1]}-${args[2]}"
                                             dateTimeBean.weekDay = dateTimeBean.date.convertToWeek()
 
@@ -159,7 +158,7 @@ class DingDingFragment : KotlinBaseFragment<FragmentDingdingBinding>() {
 
     override fun initEvent() {
         binding.addTimerButton.setOnClickListener {
-            requireActivity().showDatePicker(true, object : OnDateSelectedCallback {
+            requireActivity().showDateTimePicker(null, object : OnDateSelectedCallback {
                 override fun onTimePicked(vararg args: String) {
                     val bean = DateTimeBean()
                     bean.uuid = UUID.randomUUID().toString()
