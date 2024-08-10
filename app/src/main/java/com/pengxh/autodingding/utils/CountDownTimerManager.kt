@@ -10,9 +10,9 @@ import androidx.lifecycle.LifecycleRegistry
 import androidx.lifecycle.lifecycleScope
 import com.pengxh.autodingding.extensions.createTextMail
 import com.pengxh.autodingding.extensions.sendTextMail
+import com.pengxh.autodingding.extensions.show
 import com.pengxh.autodingding.service.FloatingWindowService
 import com.pengxh.autodingding.ui.MainActivity
-import com.pengxh.kt.lite.extensions.show
 import com.pengxh.kt.lite.utils.SaveKeyValues
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
@@ -71,10 +71,9 @@ class CountDownTimerManager private constructor() : LifecycleOwner {
                         return@launch
                     }
 
-                    "未监听到打卡成功通知，即将发送异常日志邮件，请注意查收".show(context)
+                    "未监听到打卡通知，即将发送异常日志邮件，请注意查收".show(context)
                     withContext(Dispatchers.IO) {
-                        "未监听到打卡成功通知，请手动检查".createTextMail(emailAddress)
-                            .sendTextMail()
+                        "未监听到打卡通知，请手动检查".createTextMail(emailAddress).sendTextMail()
                     }
                 }
             }

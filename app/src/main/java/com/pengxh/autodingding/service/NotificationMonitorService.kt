@@ -16,14 +16,15 @@ import com.pengxh.autodingding.bean.NotificationBean
 import com.pengxh.autodingding.extensions.createTextMail
 import com.pengxh.autodingding.extensions.openApplication
 import com.pengxh.autodingding.extensions.sendTextMail
+import com.pengxh.autodingding.extensions.show
 import com.pengxh.autodingding.fragment.SettingsFragment
 import com.pengxh.autodingding.ui.MainActivity
 import com.pengxh.autodingding.utils.Constant
 import com.pengxh.autodingding.utils.CountDownTimerManager
-import com.pengxh.kt.lite.extensions.show
 import com.pengxh.kt.lite.extensions.timestampToCompleteDate
 import com.pengxh.kt.lite.utils.SaveKeyValues
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.util.UUID
@@ -82,7 +83,9 @@ class NotificationMonitorService : NotificationListenerService(), LifecycleOwner
 
         if (packageName == Constant.DING_DING) {
             if (notice.contains("成功")) {
-                backToMainActivity()
+                lifecycleScope.launch(Dispatchers.Main) {
+                    backToMainActivity()
+                }
 
                 val emailAddress = SaveKeyValues.getValue(Constant.EMAIL_ADDRESS, "") as String
                 if (emailAddress.isEmpty()) {
@@ -102,8 +105,18 @@ class NotificationMonitorService : NotificationListenerService(), LifecycleOwner
         }
     }
 
-    private fun backToMainActivity() {
+    private suspend fun backToMainActivity() {
         CountDownTimerManager.get.cancelTimer()
+
+        //模拟点击Home键
+        val home = Intent(Intent.ACTION_MAIN)
+        home.flags = Intent.FLAG_ACTIVITY_NEW_TASK
+        home.addCategory(Intent.CATEGORY_HOME)
+        startActivity(home)
+        Log.d(kTag, "onFinish: 模拟点击Home键")
+
+        delay(1000)
+
         val intent = Intent(this, MainActivity::class.java)
         intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
         startActivity(intent)

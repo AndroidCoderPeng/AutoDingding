@@ -19,6 +19,7 @@ import com.pengxh.autodingding.R
 import com.pengxh.autodingding.databinding.FragmentSettingsBinding
 import com.pengxh.autodingding.extensions.initImmersionBar
 import com.pengxh.autodingding.extensions.notificationEnable
+import com.pengxh.autodingding.extensions.show
 import com.pengxh.autodingding.service.FloatingWindowService
 import com.pengxh.autodingding.service.NotificationMonitorService
 import com.pengxh.autodingding.ui.NoticeRecordActivity
@@ -28,7 +29,6 @@ import com.pengxh.kt.lite.base.KotlinBaseFragment
 import com.pengxh.kt.lite.extensions.convertColor
 import com.pengxh.kt.lite.extensions.navigatePageTo
 import com.pengxh.kt.lite.extensions.setScreenBrightness
-import com.pengxh.kt.lite.extensions.show
 import com.pengxh.kt.lite.utils.LoadingDialogHub
 import com.pengxh.kt.lite.utils.SaveKeyValues
 import com.pengxh.kt.lite.utils.WeakReferenceHandler

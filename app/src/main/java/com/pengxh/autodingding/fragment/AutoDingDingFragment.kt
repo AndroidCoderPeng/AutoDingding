@@ -18,6 +18,7 @@ import com.pengxh.autodingding.adapter.TaskTimeAdapter
 import com.pengxh.autodingding.bean.TaskTimeBean
 import com.pengxh.autodingding.databinding.FragmentAutoDingdingBinding
 import com.pengxh.autodingding.extensions.initImmersionBar
+import com.pengxh.autodingding.extensions.show
 import com.pengxh.autodingding.greendao.TaskTimeBeanDao
 import com.pengxh.autodingding.utils.DailyTaskWorker
 import com.pengxh.autodingding.vm.DateDayViewModel
@@ -26,7 +27,6 @@ import com.pengxh.kt.lite.base.KotlinBaseFragment
 import com.pengxh.kt.lite.divider.RecyclerViewItemOffsets
 import com.pengxh.kt.lite.extensions.appendZero
 import com.pengxh.kt.lite.extensions.dp2px
-import com.pengxh.kt.lite.extensions.show
 import com.pengxh.kt.lite.utils.WeakReferenceHandler
 import com.pengxh.kt.lite.widget.dialog.AlertControlDialog
 import java.util.UUID
