@@ -70,7 +70,7 @@ class AutoDingDingFragment : KotlinBaseFragment<FragmentAutoDingdingBinding>(), 
                     DailyTaskWorker::class.java, 1, TimeUnit.DAYS
                 ).setConstraints(constraints).build()
                 workManager.enqueueUniquePeriodicWork(
-                    "DailyTaskWorker", ExistingPeriodicWorkPolicy.UPDATE, workRequest
+                    "DailyTaskWorker", ExistingPeriodicWorkPolicy.REPLACE, workRequest
                 )
             }
         }
@@ -79,6 +79,8 @@ class AutoDingDingFragment : KotlinBaseFragment<FragmentAutoDingdingBinding>(), 
     override fun handleMessage(msg: Message): Boolean {
         if (msg.what == 2024070801) {
             binding.nextTaskTimeView.text = msg.obj as String
+        } else if (msg.what == 2024070802) {
+            binding.countDownTextView.text = "${msg.obj as String}秒后执行定时任务"
         }
         return true
     }

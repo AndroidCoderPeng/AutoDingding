@@ -3,6 +3,10 @@ package com.pengxh.autodingding.utils
 import android.content.Context
 import android.os.CountDownTimer
 import android.util.Log
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.LifecycleOwner
+import androidx.lifecycle.LifecycleRegistry
+import androidx.lifecycle.lifecycleScope
 import androidx.work.Worker
 import androidx.work.WorkerParameters
 import com.pengxh.autodingding.BaseApplication
@@ -12,6 +16,8 @@ import com.pengxh.autodingding.extensions.isEarlierThenCurrent
 import com.pengxh.autodingding.fragment.AutoDingDingFragment
 import com.pengxh.autodingding.greendao.TaskTimeBeanDao
 import com.pengxh.kt.lite.extensions.timestampToDate
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.LinkedList
@@ -21,14 +27,19 @@ import java.util.Random
 import kotlin.math.abs
 
 class DailyTaskWorker(context: Context, workerParams: WorkerParameters) :
-    Worker(context, workerParams) {
+    Worker(context, workerParams), LifecycleOwner {
 
     private val kTag = "DailyTaskWorker"
     private val taskTimeBeanDao by lazy { BaseApplication.get().daoSession.taskTimeBeanDao }
     private val format by lazy { SimpleDateFormat("HH:mm", Locale.CHINA) }
     private val random by lazy { Random() }
+    private val registry = LifecycleRegistry(this)
     private lateinit var taskQueue: Queue<TaskTimeBean>
     private var countDownTimer: CountDownTimer? = null
+
+    override fun getLifecycle(): Lifecycle {
+        return registry
+    }
 
     override fun doWork(): Result {
         taskQueue = LinkedList(
@@ -58,21 +69,26 @@ class DailyTaskWorker(context: Context, workerParams: WorkerParameters) :
         handler.sendMessage(message)
 
         val diffCurrentMillis = currentDateTime.diffCurrentMillis()
-        countDownTimer = object : CountDownTimer(diffCurrentMillis, 1000) {
-            override fun onTick(millisUntilFinished: Long) {
-                Log.d(kTag, "onTick: ${millisUntilFinished / 1000}")
-            }
+        lifecycleScope.launch(Dispatchers.Main) {
+            object : CountDownTimer(diffCurrentMillis, 1000) {
+                override fun onTick(millisUntilFinished: Long) {
+                    val msg = handler.obtainMessage()
+                    msg.what = 2024070802
+                    msg.obj = "${millisUntilFinished / 1000}"
+                    handler.sendMessage(msg)
+                }
 
-            override fun onFinish() {
-                Log.d(kTag, "onFinish: $currentDateTime")
-                taskQueue = LinkedList(
-                    taskTimeBeanDao.queryBuilder().orderAsc(
-                        TaskTimeBeanDao.Properties.StartTime
-                    ).list()
-                )
-                executeTaskByDay()
-            }
-        }.start()
+                override fun onFinish() {
+                    Log.d(kTag, "onFinish: $currentDateTime")
+                    taskQueue = LinkedList(
+                        taskTimeBeanDao.queryBuilder().orderAsc(
+                            TaskTimeBeanDao.Properties.StartTime
+                        ).list()
+                    )
+                    executeTaskByDay()
+                }
+            }.start()
+        }
     }
 
     /**
