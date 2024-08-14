@@ -39,9 +39,16 @@ class FloatingWindowService : Service(), Handler.Callback {
     @SuppressLint("ClickableViewAccessibility")
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         weakReferenceHandler = WeakReferenceHandler(this)
-        val layoutType = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY
+        val layoutType = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N_MR1) {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                //8.0
+                WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY
+            } else {
+                //7.1.1
+                WindowManager.LayoutParams.TYPE_PHONE
+            }
         } else {
+            //其他版本
             WindowManager.LayoutParams.TYPE_TOAST
         }
         val floatLayoutParams = WindowManager.LayoutParams(
@@ -83,6 +90,8 @@ class FloatingWindowService : Service(), Handler.Callback {
                 false
             }
         } catch (e: IllegalStateException) {
+            e.printStackTrace()
+        } catch (e: WindowManager.BadTokenException) {
             e.printStackTrace()
         }
         return START_STICKY
