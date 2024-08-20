@@ -7,11 +7,10 @@ import android.content.pm.ResolveInfo
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
-import android.os.Handler
-import android.os.Message
 import android.provider.Settings
 import android.text.TextUtils
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
 import android.view.WindowManager
 import com.pengxh.autodingding.BuildConfig
@@ -29,22 +28,15 @@ import com.pengxh.kt.lite.base.KotlinBaseFragment
 import com.pengxh.kt.lite.extensions.convertColor
 import com.pengxh.kt.lite.extensions.navigatePageTo
 import com.pengxh.kt.lite.extensions.setScreenBrightness
-import com.pengxh.kt.lite.utils.LoadingDialogHub
 import com.pengxh.kt.lite.utils.SaveKeyValues
-import com.pengxh.kt.lite.utils.WeakReferenceHandler
 import com.pengxh.kt.lite.widget.dialog.AlertInputDialog
-import com.pengxh.kt.lite.widget.dialog.AlertMessageDialog
 import com.pengxh.kt.lite.widget.dialog.BottomActionSheet
 
 
-class SettingsFragment : KotlinBaseFragment<FragmentSettingsBinding>(), Handler.Callback {
+class SettingsFragment : KotlinBaseFragment<FragmentSettingsBinding>() {
 
     private val kTag = "SettingsFragment"
     private val timeArray = arrayListOf("15s", "30s", "45s", "60s")
-
-    companion object {
-        var weakReferenceHandler: WeakReferenceHandler? = null
-    }
 
     override fun setupTopBarLayout() {
         binding.rootView.initImmersionBar(this, true, R.color.white)
@@ -61,8 +53,6 @@ class SettingsFragment : KotlinBaseFragment<FragmentSettingsBinding>(), Handler.
     }
 
     override fun initOnCreate(savedInstanceState: Bundle?) {
-        weakReferenceHandler = WeakReferenceHandler(this)
-
         val emailAddress = SaveKeyValues.getValue(Constant.EMAIL_ADDRESS, "") as String
         if (!TextUtils.isEmpty(emailAddress)) {
             binding.emailTextView.text = emailAddress
@@ -121,39 +111,7 @@ class SettingsFragment : KotlinBaseFragment<FragmentSettingsBinding>(), Handler.
         }
 
         binding.noticeSwitch.setOnClickListener {
-            if (!requireContext().notificationEnable()) {
-                startActivity(Intent(Settings.ACTION_NOTIFICATION_LISTENER_SETTINGS))
-            }
-
-            if (binding.noticeSwitch.isChecked) {
-                LoadingDialogHub.show(requireActivity(), "服务器启动中，请稍后...")
-                binding.noticeSwitch.isChecked = false
-            } else {
-                AlertMessageDialog.Builder()
-                    .setContext(requireContext())
-                    .setTitle("警告")
-                    .setMessage("关闭此服务，将不会监听打卡通知")
-                    .setPositiveButton("知道了")
-                    .setOnDialogButtonClickListener(object :
-                        AlertMessageDialog.OnDialogButtonClickListener {
-                        override fun onConfirmClick() {
-                            binding.noticeSwitch.isChecked = false
-                        }
-                    }).build().show()
-            }
-
-            val component = ComponentName(requireContext(), NotificationMonitorService::class.java)
-            requireContext().packageManager.setComponentEnabledSetting(
-                component,
-                PackageManager.COMPONENT_ENABLED_STATE_DISABLED,
-                PackageManager.DONT_KILL_APP
-            )
-
-            requireContext().packageManager.setComponentEnabledSetting(
-                component,
-                PackageManager.COMPONENT_ENABLED_STATE_ENABLED,
-                PackageManager.DONT_KILL_APP
-            )
+            startActivityForResult(Intent(Settings.ACTION_NOTIFICATION_LISTENER_SETTINGS), 100)
         }
 
         binding.openTestLayout.setOnClickListener {
@@ -221,22 +179,34 @@ class SettingsFragment : KotlinBaseFragment<FragmentSettingsBinding>(), Handler.
         }
     }
 
-    override fun handleMessage(msg: Message): Boolean {
-        when (msg.what) {
-            2024060601 -> {
-                try {
-                    LoadingDialogHub.dismiss()
-                } catch (e: UninitializedPropertyAccessException) {
-                    e.printStackTrace()
-                }
-                binding.noticeSwitch.isChecked = true
-            }
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if (requestCode == 100) {
+            if (requireContext().notificationEnable()) {
+                requireContext().packageManager.setComponentEnabledSetting(
+                    ComponentName(
+                        requireContext(), NotificationMonitorService::class.java
+                    ),
+                    PackageManager.COMPONENT_ENABLED_STATE_DISABLED,
+                    PackageManager.DONT_KILL_APP
+                )
 
-            2024060602 -> {
+                Thread.sleep(1000)
+
+                requireContext().packageManager.setComponentEnabledSetting(
+                    ComponentName(
+                        requireContext(), NotificationMonitorService::class.java
+                    ),
+                    PackageManager.COMPONENT_ENABLED_STATE_ENABLED,
+                    PackageManager.DONT_KILL_APP
+                )
+                binding.noticeSwitch.isChecked = true
+                binding.tipsView.visibility = View.GONE
+            } else {
                 binding.noticeSwitch.isChecked = false
+                binding.tipsView.visibility = View.VISIBLE
             }
         }
-        return true
     }
 
     private fun openFloatWindowPermission() {
@@ -261,6 +231,11 @@ class SettingsFragment : KotlinBaseFragment<FragmentSettingsBinding>(), Handler.
             requireContext().startService(
                 Intent(requireContext(), FloatingWindowService::class.java)
             )
+        }
+
+        if (requireContext().notificationEnable()) {
+            binding.noticeSwitch.isChecked = true
+            binding.tipsView.visibility = View.GONE
         }
 
         val b = SaveKeyValues.getValue(Constant.CHANGE_VERSION, false) as Boolean
