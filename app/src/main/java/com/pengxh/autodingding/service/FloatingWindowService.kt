@@ -31,13 +31,15 @@ class FloatingWindowService : Service(), Handler.Callback {
         LayoutInflater.from(this).inflate(R.layout.window_floating, null)
     }
     private val textView by lazy { floatView.findViewById<TextView>(R.id.timeView) }
+    private lateinit var floatLayoutParams: WindowManager.LayoutParams
 
     override fun onBind(intent: Intent?): IBinder? {
         return null
     }
 
     @SuppressLint("ClickableViewAccessibility")
-    override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
+    override fun onCreate() {
+        super.onCreate()
         weakReferenceHandler = WeakReferenceHandler(this)
         val layoutType = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N_MR1) {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
@@ -51,7 +53,7 @@ class FloatingWindowService : Service(), Handler.Callback {
             //其他版本
             WindowManager.LayoutParams.TYPE_TOAST
         }
-        val floatLayoutParams = WindowManager.LayoutParams(
+        floatLayoutParams = WindowManager.LayoutParams(
             WindowManager.LayoutParams.WRAP_CONTENT,
             WindowManager.LayoutParams.WRAP_CONTENT,
             layoutType,
@@ -60,8 +62,6 @@ class FloatingWindowService : Service(), Handler.Callback {
         )
 
         try {
-            val time = SaveKeyValues.getValue(Constant.TIMEOUT, "15s") as String
-            textView.text = time
             windowManager?.addView(floatView, floatLayoutParams)
 
             var lastX = 0
@@ -94,6 +94,11 @@ class FloatingWindowService : Service(), Handler.Callback {
         } catch (e: WindowManager.BadTokenException) {
             e.printStackTrace()
         }
+    }
+
+    override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
+        val time = SaveKeyValues.getValue(Constant.TIMEOUT, "15s") as String
+        textView.text = time
         return START_STICKY
     }
 
