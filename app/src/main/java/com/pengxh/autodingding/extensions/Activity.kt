@@ -5,6 +5,7 @@ import com.github.gzuliyujiang.wheelpicker.DatePicker
 import com.github.gzuliyujiang.wheelpicker.DatimePicker
 import com.github.gzuliyujiang.wheelpicker.annotation.DateMode
 import com.github.gzuliyujiang.wheelpicker.annotation.TimeMode
+import com.github.gzuliyujiang.wheelpicker.entity.DatimeEntity
 import com.pengxh.autodingding.R
 import com.pengxh.autodingding.bean.DateTimeBean
 import com.pengxh.autodingding.utils.OnDateSelectedCallback
@@ -15,7 +16,7 @@ fun Activity.showDateTimePicker(dateTimeBean: DateTimeBean?, callback: OnDateSel
     val datePicker = DatimePicker(this)
     val layout = datePicker.wheelLayout
     if (dateTimeBean != null) {
-        layout.setRange(dateTimeBean.convertToDateTimeEntity(), null)
+        layout.setRange(dateTimeBean.convertToDateTimeEntity(), DatimeEntity.monthOnFuture(1))
     }
     layout.setDateMode(DateMode.YEAR_MONTH_DAY)
     layout.setDateLabel("年", "月", "日")
