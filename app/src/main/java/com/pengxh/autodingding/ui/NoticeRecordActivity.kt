@@ -12,11 +12,11 @@ import com.pengxh.autodingding.bean.NotificationBean
 import com.pengxh.autodingding.databinding.ActivityNoticeBinding
 import com.pengxh.autodingding.extensions.initImmersionBar
 import com.pengxh.autodingding.greendao.NotificationBeanDao
+import com.pengxh.autodingding.utils.ActivityStackManager
 import com.pengxh.kt.lite.adapter.NormalRecyclerAdapter
 import com.pengxh.kt.lite.adapter.ViewHolder
 import com.pengxh.kt.lite.base.KotlinBaseActivity
 import com.pengxh.kt.lite.divider.RecyclerViewItemDivider
-import com.pengxh.kt.lite.utils.ActivityStackManager
 import com.pengxh.kt.lite.utils.WeakReferenceHandler
 import com.pengxh.kt.lite.widget.TitleBarView
 
