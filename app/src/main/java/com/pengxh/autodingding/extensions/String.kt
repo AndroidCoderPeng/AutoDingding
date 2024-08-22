@@ -57,7 +57,7 @@ fun String.diffCurrentMillis(): Long {
     return abs(System.currentTimeMillis() - date.time)
 }
 
-fun String.createTextMail(toAddress: String): MailInfo {
+fun String.createTextMail(subject: String, toAddress: String): MailInfo {
     val mailInfo = MailInfo()
     mailInfo.mailServerHost = "smtp.qq.com" //发送方邮箱服务器
     mailInfo.mailServerPort = "587" //发送方邮箱端口号
@@ -66,7 +66,7 @@ fun String.createTextMail(toAddress: String): MailInfo {
     mailInfo.password = Constant.PERMISSION_CODE
     mailInfo.toAddress = toAddress // 接收者邮箱
     mailInfo.fromAddress = Constant.MAIL_FROM_ADDRESS
-    mailInfo.subject = "自动打卡通知" // 邮件主题
+    mailInfo.subject = subject // 邮件主题
     val content = if (this == "") {
         "未监听到打卡成功的通知，请手动登录检查" + System.currentTimeMillis().timestampToDate()
     } else {
@@ -77,7 +77,7 @@ fun String.createTextMail(toAddress: String): MailInfo {
     return mailInfo
 }
 
-fun String.createAttachFileMail(toAddress: String, imagePath: String): MailInfo {
+fun String.createAttachFileMail(subject: String, toAddress: String, imagePath: String): MailInfo {
     val mailInfo = MailInfo()
     mailInfo.mailServerHost = "smtp.qq.com" //发送方邮箱服务器
     mailInfo.mailServerPort = "587" //发送方邮箱端口号
@@ -86,7 +86,7 @@ fun String.createAttachFileMail(toAddress: String, imagePath: String): MailInfo 
     mailInfo.password = Constant.PERMISSION_CODE
     mailInfo.toAddress = toAddress // 接收者邮箱
     mailInfo.fromAddress = Constant.MAIL_FROM_ADDRESS
-    mailInfo.subject = "自动打卡通知" // 邮件主题
+    mailInfo.subject = subject // 邮件主题
     // 邮件文本
     mailInfo.content = this
     //附件

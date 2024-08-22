@@ -36,7 +36,7 @@ class DateDayViewModel : BaseViewModel() {
             //返回值为空，发送邮件
             CoroutineScope(context).launch(Dispatchers.IO) {
                 "工作日判断接口返回值异常，无法确定自动打卡日期，请及时手动打卡！"
-                    .createTextMail(emailAddress).sendTextMail()
+                    .createTextMail("", emailAddress).sendTextMail()
             }
         }
 
@@ -53,7 +53,7 @@ class DateDayViewModel : BaseViewModel() {
             //请求失败，发送邮件
             CoroutineScope(context).launch(Dispatchers.IO) {
                 "工作日判断接口请求异常，错误码：${code}，无法确定自动打卡日期，请及时手动打卡！"
-                    .createTextMail(emailAddress).sendTextMail()
+                    .createTextMail("", emailAddress).sendTextMail()
             }
         }
     }, {
