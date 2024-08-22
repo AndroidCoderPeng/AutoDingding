@@ -2,6 +2,7 @@ package com.pengxh.autodingding.service
 
 import android.app.Notification
 import android.content.Intent
+import android.os.BatteryManager
 import android.service.notification.NotificationListenerService
 import android.service.notification.StatusBarNotification
 import android.util.Log
@@ -18,6 +19,7 @@ import com.pengxh.autodingding.extensions.show
 import com.pengxh.autodingding.ui.MainActivity
 import com.pengxh.autodingding.utils.Constant
 import com.pengxh.autodingding.utils.CountDownTimerManager
+import com.pengxh.kt.lite.extensions.getSystemService
 import com.pengxh.kt.lite.extensions.timestampToCompleteDate
 import com.pengxh.kt.lite.utils.SaveKeyValues
 import kotlinx.coroutines.Dispatchers
@@ -42,6 +44,7 @@ class NotificationMonitorService : NotificationListenerService(), LifecycleOwner
     }
 
     private val notificationBeanDao by lazy { BaseApplication.get().daoSession.notificationBeanDao }
+    private val batteryManager by lazy { getSystemService<BatteryManager>() }
 
     /**
      * 有可用的并且和通知管理器连接成功时回调
@@ -74,27 +77,39 @@ class NotificationMonitorService : NotificationListenerService(), LifecycleOwner
         notificationBean.postTime = System.currentTimeMillis().timestampToCompleteDate()
         notificationBeanDao.save(notificationBean)
 
+        val emailAddress = SaveKeyValues.getValue(Constant.EMAIL_ADDRESS, "") as String
+        if (emailAddress.isEmpty()) {
+            "邮箱地址为空".show(this)
+            return
+        }
+
         if (packageName == Constant.DING_DING) {
             if (notice.contains("成功")) {
                 lifecycleScope.launch(Dispatchers.Main) {
                     backToMainActivity()
                 }
-
-                val emailAddress = SaveKeyValues.getValue(Constant.EMAIL_ADDRESS, "") as String
-                if (emailAddress.isEmpty()) {
-                    "邮箱地址为空".show(this)
-                    return
-                }
                 //发送打卡成功的邮件
                 lifecycleScope.launch(Dispatchers.Main) {
                     "即将发送通知邮件，请注意查收".show(this@NotificationMonitorService)
                     withContext(Dispatchers.IO) {
-                        notice.createTextMail(emailAddress).sendTextMail()
+                        notice.createTextMail("自动打卡结果通知", emailAddress).sendTextMail()
                     }
                 }
             }
         } else if (packageName == Constant.WECHAT || packageName == Constant.QQ || packageName == Constant.TIM) {
-            openApplication(Constant.DING_DING)
+            if (notice.contains("电量")) {
+                val capacity = batteryManager?.getIntProperty(
+                    BatteryManager.BATTERY_PROPERTY_CAPACITY
+                )
+                //发送剩余电量的邮件
+                lifecycleScope.launch(Dispatchers.IO) {
+                    "当前手机剩余电量为：${capacity}%".createTextMail(
+                        "打卡手机电量查询通知", emailAddress
+                    ).sendTextMail()
+                }
+            } else {
+                openApplication(Constant.DING_DING)
+            }
         }
     }
 
