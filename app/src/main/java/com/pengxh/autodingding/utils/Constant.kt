@@ -15,11 +15,7 @@ object Constant {
     //发送者邮箱地址
     const val MAIL_FROM_ADDRESS = "2570806855@qq.com"
 
-    //工作日判断
-    const val DATE_DAY_API = "https://date.appworlds.cn/"
-
     const val EMAIL_ADDRESS = "emailAddress"
-    const val CHANGE_VERSION = "changeVersion"
     const val TIMEOUT = "timeout"
 
     const val DING_DING = "com.alibaba.android.rimet"

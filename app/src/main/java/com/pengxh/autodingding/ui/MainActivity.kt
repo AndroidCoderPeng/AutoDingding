@@ -4,17 +4,13 @@ import android.os.Bundle
 import android.view.KeyEvent
 import android.view.MenuItem
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.lifecycleScope
 import androidx.viewpager.widget.ViewPager
 import com.gyf.immersionbar.ImmersionBar
 import com.pengxh.autodingding.R
 import com.pengxh.autodingding.adapter.BaseFragmentAdapter
 import com.pengxh.autodingding.databinding.ActivityMainBinding
-import com.pengxh.autodingding.extensions.createTextMail
 import com.pengxh.autodingding.extensions.isAppAvailable
-import com.pengxh.autodingding.extensions.sendTextMail
 import com.pengxh.autodingding.extensions.show
-import com.pengxh.autodingding.fragment.AutoDingDingFragment
 import com.pengxh.autodingding.fragment.DingDingFragment
 import com.pengxh.autodingding.fragment.SettingsFragment
 import com.pengxh.autodingding.utils.ActivityStackManager
@@ -22,12 +18,9 @@ import com.pengxh.autodingding.utils.Constant
 import com.pengxh.kt.lite.base.KotlinBaseActivity
 import com.pengxh.kt.lite.utils.SaveKeyValues
 import com.pengxh.kt.lite.widget.dialog.AlertMessageDialog
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
 
 class MainActivity : KotlinBaseActivity<ActivityMainBinding>() {
 
-    private val kTag = "MainActivity"
     private var menuItem: MenuItem? = null
     private var clickTime: Long = 0
 
@@ -48,13 +41,9 @@ class MainActivity : KotlinBaseActivity<ActivityMainBinding>() {
         }
 
         val fragmentPages = ArrayList<Fragment>()
-        val b = SaveKeyValues.getValue(Constant.CHANGE_VERSION, false) as Boolean
-        if (b) {
-            fragmentPages.add(AutoDingDingFragment())
-        } else {
-            fragmentPages.add(DingDingFragment())
-        }
+        fragmentPages.add(DingDingFragment())
         fragmentPages.add(SettingsFragment())
+
         val fragmentAdapter = BaseFragmentAdapter(supportFragmentManager, fragmentPages)
         binding.viewPager.adapter = fragmentAdapter
         binding.viewPager.offscreenPageLimit = fragmentPages.size
@@ -138,23 +127,5 @@ class MainActivity : KotlinBaseActivity<ActivityMainBinding>() {
                 super.onKeyDown(keyCode, event)
             }
         } else super.onKeyDown(keyCode, event)
-    }
-
-    override fun onStop() {
-        super.onStop()
-        if (ActivityStackManager.getStackActivityCount() == 0) {
-            val emailAddress = SaveKeyValues.getValue(Constant.EMAIL_ADDRESS, "") as String
-            if (emailAddress.isEmpty()) {
-                "邮箱地址为空".show(this)
-                return
-            }
-
-            //应用已被杀死
-            lifecycleScope.launch(Dispatchers.IO) {
-                "应用已被杀死，请提前手动打卡".createTextMail(
-                    "${resources.getString(R.string.app_name)}状态异常通知", emailAddress
-                ).sendTextMail()
-            }
-        }
     }
 }
