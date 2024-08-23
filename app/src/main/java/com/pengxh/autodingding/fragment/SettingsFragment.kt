@@ -104,9 +104,21 @@ class SettingsFragment : KotlinBaseFragment<FragmentSettingsBinding>() {
                 }).build().show()
         }
 
-        binding.floatSwitch.setOnCheckedChangeListener { _, isChecked ->
-            if (isChecked) {
-                openFloatWindowPermission()
+        binding.floatSwitch.setOnClickListener {
+            val sdkInt = Build.VERSION.SDK_INT
+            if (sdkInt >= Build.VERSION_CODES.M) {
+                //6.0+
+                if (sdkInt >= Build.VERSION_CODES.O) {
+                    //8.0+
+                    val intent = Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION)
+                    startActivityForResult(intent, 101)
+                } else {
+                    val intent = Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION)
+                    intent.data = Uri.parse("package:${requireContext().packageName}")
+                    startActivityForResult(intent, 101)
+                }
+            } else {
+                "手机系统版本太低".show(requireContext())
             }
         }
 
@@ -180,19 +192,8 @@ class SettingsFragment : KotlinBaseFragment<FragmentSettingsBinding>() {
                 binding.noticeSwitch.isChecked = false
                 binding.tipsView.visibility = View.VISIBLE
             }
-        }
-    }
-
-    private fun openFloatWindowPermission() {
-        if (!Settings.canDrawOverlays(requireContext())) {
-            val sdkInt = Build.VERSION.SDK_INT
-            if (sdkInt >= Build.VERSION_CODES.O) {
-                startActivity(Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION))
-            } else if (sdkInt >= Build.VERSION_CODES.M) {
-                val intent = Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION)
-                intent.data = Uri.parse("package:${requireContext().packageName}")
-                startActivity(intent)
-            }
+        } else if (requestCode == 101) {
+            binding.floatSwitch.isChecked = Settings.canDrawOverlays(requireContext())
         }
     }
 
