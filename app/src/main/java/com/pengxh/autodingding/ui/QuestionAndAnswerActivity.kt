@@ -9,12 +9,12 @@ import com.pengxh.autodingding.R
 import com.pengxh.autodingding.databinding.ActivityQuestionAndAnswerBinding
 import com.pengxh.autodingding.extensions.initImmersionBar
 import com.pengxh.autodingding.model.QuestionAnAnswerModel
-import com.pengxh.autodingding.utils.ActivityStackManager
 import com.pengxh.kt.lite.adapter.NormalRecyclerAdapter
 import com.pengxh.kt.lite.adapter.ViewHolder
 import com.pengxh.kt.lite.base.KotlinBaseActivity
 import com.pengxh.kt.lite.divider.RecyclerViewItemDivider
 import com.pengxh.kt.lite.extensions.readAssetsFile
+import com.pengxh.kt.lite.utils.ActivityStackManager
 import com.pengxh.kt.lite.utils.HtmlRenderEngine
 import com.pengxh.kt.lite.widget.TitleBarView
 

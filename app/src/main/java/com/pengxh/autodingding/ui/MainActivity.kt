@@ -13,9 +13,9 @@ import com.pengxh.autodingding.extensions.isAppAvailable
 import com.pengxh.autodingding.extensions.show
 import com.pengxh.autodingding.fragment.DingDingFragment
 import com.pengxh.autodingding.fragment.SettingsFragment
-import com.pengxh.autodingding.utils.ActivityStackManager
 import com.pengxh.autodingding.utils.Constant
 import com.pengxh.kt.lite.base.KotlinBaseActivity
+import com.pengxh.kt.lite.utils.ActivityStackManager
 import com.pengxh.kt.lite.utils.SaveKeyValues
 import com.pengxh.kt.lite.widget.dialog.AlertMessageDialog
 
