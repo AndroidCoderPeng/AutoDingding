@@ -156,6 +156,10 @@ class SettingsFragment : KotlinBaseFragment<FragmentSettingsBinding>() {
             }
         }
 
+        binding.backToHomeSwitch.setOnCheckedChangeListener { _, isChecked ->
+            SaveKeyValues.putValue(Constant.BACK_TO_HOME, isChecked)
+        }
+
         binding.notificationLayout.setOnClickListener {
             requireContext().navigatePageTo<NoticeRecordActivity>()
         }
@@ -207,6 +211,10 @@ class SettingsFragment : KotlinBaseFragment<FragmentSettingsBinding>() {
                 Intent(requireContext(), FloatingWindowService::class.java)
             )
         }
+
+        binding.backToHomeSwitch.isChecked = SaveKeyValues.getValue(
+            Constant.BACK_TO_HOME, false
+        ) as Boolean
 
         if (requireContext().notificationEnable()) {
             binding.noticeSwitch.isChecked = true

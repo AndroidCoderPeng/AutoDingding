@@ -116,14 +116,16 @@ class NotificationMonitorService : NotificationListenerService(), LifecycleOwner
     private suspend fun backToMainActivity() {
         CountDownTimerManager.get.cancelTimer()
 
-        //模拟点击Home键
-        val home = Intent(Intent.ACTION_MAIN)
-        home.flags = Intent.FLAG_ACTIVITY_NEW_TASK
-        home.addCategory(Intent.CATEGORY_HOME)
-        startActivity(home)
-        Log.d(kTag, "onFinish: 模拟点击Home键")
+        if (SaveKeyValues.getValue(Constant.BACK_TO_HOME, false) as Boolean) {
+            //模拟点击Home键
+            val home = Intent(Intent.ACTION_MAIN)
+            home.flags = Intent.FLAG_ACTIVITY_NEW_TASK
+            home.addCategory(Intent.CATEGORY_HOME)
+            startActivity(home)
+            Log.d(kTag, "onFinish: 模拟点击Home键")
 
-        delay(1000)
+            delay(1000)
+        }
 
         val intent = Intent(this, MainActivity::class.java)
         intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK

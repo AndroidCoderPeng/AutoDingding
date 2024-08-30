@@ -181,8 +181,57 @@
             android:layout_width="match_parent"
             android:layout_height="1px"
             android:layout_marginHorizontal="@dimen/dp_10"
-            android:background="#CCC"
-            android:visibility="gone" />
+            android:background="#CCC" />
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/itemLayoutHeight"
+            android:background="@color/white"
+            android:paddingHorizontal="10dp">
+
+            <TextView
+                android:id="@+id/view"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:text="退回桌面"
+                android:textColor="@color/colorText"
+                android:textSize="@dimen/sp_16" />
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentEnd="true"
+                android:layout_centerVertical="true"
+                android:layout_marginStart="@dimen/dp_10"
+                android:layout_toEndOf="@id/view"
+                android:orientation="vertical">
+
+                <Switch
+                    android:id="@+id/backToHomeSwitch"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="end"
+                    android:thumb="@drawable/select_switch_circle"
+                    android:track="@drawable/select_switch_background"
+                    tools:ignore="UseSwitchCompatOrMaterialXml" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="end"
+                    android:layout_marginTop="@dimen/dp_3"
+                    android:singleLine="true"
+                    android:text="开启后，打卡倒计时结束，会先退回桌面再启动本应用"
+                    android:textSize="@dimen/sp_10" />
+            </LinearLayout>
+        </RelativeLayout>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1px"
+            android:layout_marginHorizontal="@dimen/dp_10"
+            android:background="#CCC" />
 
         <RelativeLayout
             android:id="@+id/openTestLayout"
