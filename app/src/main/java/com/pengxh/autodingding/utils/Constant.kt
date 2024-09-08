@@ -18,6 +18,7 @@ object Constant {
     const val EMAIL_ADDRESS = "emailAddress"
     const val TIMEOUT = "timeout"
     const val BACK_TO_HOME = "backToHome"
+    const val DING_DING_KEY = "dingDingKey"
 
     const val DING_DING = "com.alibaba.android.rimet"
     const val WECHAT = "com.tencent.mm"

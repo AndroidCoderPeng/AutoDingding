@@ -16,6 +16,7 @@ import com.pengxh.autodingding.extensions.createTextMail
 import com.pengxh.autodingding.extensions.openApplication
 import com.pengxh.autodingding.extensions.sendTextMail
 import com.pengxh.autodingding.extensions.show
+import com.pengxh.autodingding.fragment.SettingsFragment
 import com.pengxh.autodingding.ui.MainActivity
 import com.pengxh.autodingding.utils.Constant
 import com.pengxh.autodingding.utils.CountDownTimerManager
@@ -51,6 +52,7 @@ class NotificationMonitorService : NotificationListenerService(), LifecycleOwner
      */
     override fun onListenerConnected() {
         Log.d(kTag, "onListenerConnected: ")
+        SettingsFragment.weakReferenceHandler?.sendEmptyMessage(2024090801)
     }
 
     /**
@@ -108,7 +110,10 @@ class NotificationMonitorService : NotificationListenerService(), LifecycleOwner
                     ).sendTextMail()
                 }
             } else {
-                openApplication(Constant.DING_DING)
+                val key = SaveKeyValues.getValue(Constant.DING_DING_KEY, "打卡") as String
+                if (notice == key) {
+                    openApplication(Constant.DING_DING)
+                }
             }
         }
     }
@@ -139,5 +144,6 @@ class NotificationMonitorService : NotificationListenerService(), LifecycleOwner
 
     override fun onListenerDisconnected() {
         Log.d(kTag, "onListenerDisconnected: ")
+        SettingsFragment.weakReferenceHandler?.sendEmptyMessage(2024090802)
     }
 }

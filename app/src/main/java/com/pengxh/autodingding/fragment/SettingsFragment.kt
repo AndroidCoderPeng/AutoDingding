@@ -1,5 +1,6 @@
 package com.pengxh.autodingding.fragment
 
+import android.app.Activity
 import android.content.ComponentName
 import android.content.Intent
 import android.content.pm.PackageManager
@@ -7,12 +8,15 @@ import android.content.pm.ResolveInfo
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
+import android.os.Handler
+import android.os.Message
 import android.provider.Settings
 import android.text.TextUtils
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.WindowManager
+import androidx.activity.result.contract.ActivityResultContracts
 import com.pengxh.autodingding.BuildConfig
 import com.pengxh.autodingding.R
 import com.pengxh.autodingding.databinding.FragmentSettingsBinding
@@ -29,11 +33,16 @@ import com.pengxh.kt.lite.extensions.convertColor
 import com.pengxh.kt.lite.extensions.navigatePageTo
 import com.pengxh.kt.lite.extensions.setScreenBrightness
 import com.pengxh.kt.lite.utils.SaveKeyValues
+import com.pengxh.kt.lite.utils.WeakReferenceHandler
 import com.pengxh.kt.lite.widget.dialog.AlertInputDialog
 import com.pengxh.kt.lite.widget.dialog.BottomActionSheet
 
 
-class SettingsFragment : KotlinBaseFragment<FragmentSettingsBinding>() {
+class SettingsFragment : KotlinBaseFragment<FragmentSettingsBinding>(), Handler.Callback {
+
+    companion object {
+        var weakReferenceHandler: WeakReferenceHandler? = null
+    }
 
     private val kTag = "SettingsFragment"
     private val timeArray = arrayListOf("15s", "30s", "45s", "60s")
@@ -53,6 +62,8 @@ class SettingsFragment : KotlinBaseFragment<FragmentSettingsBinding>() {
     }
 
     override fun initOnCreate(savedInstanceState: Bundle?) {
+        weakReferenceHandler = WeakReferenceHandler(this)
+
         val emailAddress = SaveKeyValues.getValue(Constant.EMAIL_ADDRESS, "") as String
         if (!TextUtils.isEmpty(emailAddress)) {
             binding.emailTextView.text = emailAddress
@@ -104,6 +115,28 @@ class SettingsFragment : KotlinBaseFragment<FragmentSettingsBinding>() {
                 }).build().show()
         }
 
+        binding.keyLayout.setOnClickListener {
+            AlertInputDialog.Builder()
+                .setContext(requireContext())
+                .setTitle("设置打卡口令")
+                .setHintMessage("请输入打卡口令，如：打卡")
+                .setNegativeButton("取消")
+                .setPositiveButton("确定")
+                .setOnDialogButtonClickListener(object :
+                    AlertInputDialog.OnDialogButtonClickListener {
+                    override fun onConfirmClick(value: String) {
+                        if (!TextUtils.isEmpty(value)) {
+                            SaveKeyValues.putValue(Constant.DING_DING_KEY, value)
+                            binding.keyTextView.text = value
+                        } else {
+                            "什么都还没输入呢！".show(requireContext())
+                        }
+                    }
+
+                    override fun onCancelClick() {}
+                }).build().show()
+        }
+
         binding.floatSwitch.setOnClickListener {
             val sdkInt = Build.VERSION.SDK_INT
             if (sdkInt >= Build.VERSION_CODES.M) {
@@ -123,7 +156,9 @@ class SettingsFragment : KotlinBaseFragment<FragmentSettingsBinding>() {
         }
 
         binding.noticeSwitch.setOnClickListener {
-            startActivityForResult(Intent(Settings.ACTION_NOTIFICATION_LISTENER_SETTINGS), 100)
+            Intent(Settings.ACTION_NOTIFICATION_LISTENER_SETTINGS).also {
+                openNoticeSettingsLauncher.launch(it)
+            }
         }
 
         binding.openTestLayout.setOnClickListener {
@@ -169,9 +204,10 @@ class SettingsFragment : KotlinBaseFragment<FragmentSettingsBinding>() {
         }
     }
 
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
-        if (requestCode == 100) {
+    private val openNoticeSettingsLauncher = registerForActivityResult(
+        ActivityResultContracts.StartActivityForResult()
+    ) { result ->
+        if (result?.resultCode == Activity.RESULT_OK) {
             if (requireContext().notificationEnable()) {
                 requireContext().packageManager.setComponentEnabledSetting(
                     ComponentName(
@@ -181,8 +217,6 @@ class SettingsFragment : KotlinBaseFragment<FragmentSettingsBinding>() {
                     PackageManager.DONT_KILL_APP
                 )
 
-                Thread.sleep(1000)
-
                 requireContext().packageManager.setComponentEnabledSetting(
                     ComponentName(
                         requireContext(), NotificationMonitorService::class.java
@@ -190,20 +224,32 @@ class SettingsFragment : KotlinBaseFragment<FragmentSettingsBinding>() {
                     PackageManager.COMPONENT_ENABLED_STATE_ENABLED,
                     PackageManager.DONT_KILL_APP
                 )
-                binding.noticeSwitch.isChecked = true
-                binding.tipsView.visibility = View.GONE
-            } else {
-                binding.noticeSwitch.isChecked = false
-                binding.tipsView.visibility = View.VISIBLE
             }
-        } else if (requestCode == 101) {
+        }
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if (requestCode == 101) {
             binding.floatSwitch.isChecked = Settings.canDrawOverlays(requireContext())
         }
+    }
+
+    override fun handleMessage(msg: Message): Boolean {
+        if (msg.what == 2024090801) {
+            binding.noticeSwitch.isChecked = true
+            binding.tipsView.visibility = View.GONE
+        } else if (msg.what == 2024090802) {
+            binding.noticeSwitch.isChecked = false
+            binding.tipsView.visibility = View.VISIBLE
+        }
+        return true
     }
 
     override fun onResume() {
         super.onResume()
         binding.timeoutTextView.text = SaveKeyValues.getValue(Constant.TIMEOUT, "15s") as String
+        binding.keyTextView.text = SaveKeyValues.getValue(Constant.DING_DING_KEY, "打卡") as String
 
         binding.floatSwitch.isChecked = Settings.canDrawOverlays(requireContext())
         if (binding.floatSwitch.isChecked) {
@@ -217,8 +263,11 @@ class SettingsFragment : KotlinBaseFragment<FragmentSettingsBinding>() {
         ) as Boolean
 
         if (requireContext().notificationEnable()) {
-            binding.noticeSwitch.isChecked = true
-            binding.tipsView.visibility = View.GONE
+            binding.tipsView.text = "通知监听服务状态查询中，请稍后"
+            binding.tipsView.setTextColor(R.color.purple_500.convertColor(requireContext()))
+        } else {
+            binding.tipsView.text = "通知监听服务未开启，无法监听打卡通知"
+            binding.tipsView.setTextColor(R.color.red.convertColor(requireContext()))
         }
     }
 }

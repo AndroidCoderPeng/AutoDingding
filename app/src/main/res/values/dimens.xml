@@ -46,9 +46,6 @@
     <!--普通列表Item Layout高度-->
     <dimen name="itemLayoutHeight">56dp</dimen>
 
-    <!--折线/饼图/柱状图高度-->
-    <dimen name="AndroidChartHeight">255dp</dimen>
-
     <!--png图标大小-->
     <dimen name="pngSize" tools:ignore="PxUsage">80px</dimen>
     <dimen name="homePngSize" tools:ignore="PxUsage">128px</dimen>
