@@ -51,7 +51,7 @@ class NotificationMonitorService : NotificationListenerService(), LifecycleOwner
      * 有可用的并且和通知管理器连接成功时回调
      */
     override fun onListenerConnected() {
-        Log.d(kTag, "onListenerConnected: ")
+        Log.d(kTag, "onListenerConnected: 通知监听服务运行中")
         SettingsFragment.weakReferenceHandler?.sendEmptyMessage(2024090801)
     }
 
@@ -70,6 +70,7 @@ class NotificationMonitorService : NotificationListenerService(), LifecycleOwner
             return
         }
         Log.d(kTag, "onNotificationPosted: $notice")
+        SettingsFragment.weakReferenceHandler?.sendEmptyMessage(2024090801)
 
         val notificationBean = NotificationBean()
         notificationBean.uuid = UUID.randomUUID().toString()
@@ -143,7 +144,7 @@ class NotificationMonitorService : NotificationListenerService(), LifecycleOwner
     override fun onNotificationRemoved(sbn: StatusBarNotification) {}
 
     override fun onListenerDisconnected() {
-        Log.d(kTag, "onListenerDisconnected: ")
+        Log.d(kTag, "onListenerDisconnected: 通知监听服务已关闭")
         SettingsFragment.weakReferenceHandler?.sendEmptyMessage(2024090802)
     }
 }

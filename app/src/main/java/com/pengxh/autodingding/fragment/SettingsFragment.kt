@@ -1,6 +1,5 @@
 package com.pengxh.autodingding.fragment
 
-import android.app.Activity
 import android.content.ComponentName
 import android.content.Intent
 import android.content.pm.PackageManager
@@ -16,7 +15,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.WindowManager
-import androidx.activity.result.contract.ActivityResultContracts
 import com.pengxh.autodingding.BuildConfig
 import com.pengxh.autodingding.R
 import com.pengxh.autodingding.databinding.FragmentSettingsBinding
@@ -156,9 +154,7 @@ class SettingsFragment : KotlinBaseFragment<FragmentSettingsBinding>(), Handler.
         }
 
         binding.noticeSwitch.setOnClickListener {
-            Intent(Settings.ACTION_NOTIFICATION_LISTENER_SETTINGS).also {
-                openNoticeSettingsLauncher.launch(it)
-            }
+            startActivityForResult(Intent(Settings.ACTION_NOTIFICATION_LISTENER_SETTINGS), 100)
         }
 
         binding.openTestLayout.setOnClickListener {
@@ -204,42 +200,36 @@ class SettingsFragment : KotlinBaseFragment<FragmentSettingsBinding>(), Handler.
         }
     }
 
-    private val openNoticeSettingsLauncher = registerForActivityResult(
-        ActivityResultContracts.StartActivityForResult()
-    ) { result ->
-        if (result?.resultCode == Activity.RESULT_OK) {
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if (requestCode == 100) {
             if (requireContext().notificationEnable()) {
                 requireContext().packageManager.setComponentEnabledSetting(
-                    ComponentName(
-                        requireContext(), NotificationMonitorService::class.java
-                    ),
+                    ComponentName(requireContext(), NotificationMonitorService::class.java),
                     PackageManager.COMPONENT_ENABLED_STATE_DISABLED,
                     PackageManager.DONT_KILL_APP
                 )
 
+                Thread.sleep(1000)
+
                 requireContext().packageManager.setComponentEnabledSetting(
-                    ComponentName(
-                        requireContext(), NotificationMonitorService::class.java
-                    ),
+                    ComponentName(requireContext(), NotificationMonitorService::class.java),
                     PackageManager.COMPONENT_ENABLED_STATE_ENABLED,
                     PackageManager.DONT_KILL_APP
                 )
             }
-        }
-    }
-
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
-        if (requestCode == 101) {
+        } else if (requestCode == 101) {
             binding.floatSwitch.isChecked = Settings.canDrawOverlays(requireContext())
         }
     }
 
     override fun handleMessage(msg: Message): Boolean {
         if (msg.what == 2024090801) {
+            "通知监听服务运行中".show(requireContext())
             binding.noticeSwitch.isChecked = true
             binding.tipsView.visibility = View.GONE
         } else if (msg.what == 2024090802) {
+            "通知监听服务已关闭".show(requireContext())
             binding.noticeSwitch.isChecked = false
             binding.tipsView.visibility = View.VISIBLE
         }
