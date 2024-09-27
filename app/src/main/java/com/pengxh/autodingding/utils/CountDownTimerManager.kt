@@ -75,7 +75,10 @@ class CountDownTimerManager private constructor() : LifecycleOwner {
 
                     "未监听到打卡通知，即将发送异常日志邮件，请注意查收".show(context)
                     withContext(Dispatchers.IO) {
-                        "".createTextMail("自动打卡结果通知", emailAddress).sendTextMail()
+                        val subject = SaveKeyValues.getValue(
+                            Constant.EMAIL_TITLE, "打卡结果通知"
+                        ) as String
+                        "".createTextMail(subject, emailAddress).sendTextMail()
                     }
                 }
             }

@@ -61,12 +61,6 @@ class SettingsFragment : KotlinBaseFragment<FragmentSettingsBinding>(), Handler.
 
     override fun initOnCreate(savedInstanceState: Bundle?) {
         weakReferenceHandler = WeakReferenceHandler(this)
-
-        val emailAddress = SaveKeyValues.getValue(Constant.EMAIL_ADDRESS, "") as String
-        if (!TextUtils.isEmpty(emailAddress)) {
-            binding.emailTextView.text = emailAddress
-        }
-
         binding.appVersion.text = BuildConfig.VERSION_NAME
     }
 
@@ -84,6 +78,28 @@ class SettingsFragment : KotlinBaseFragment<FragmentSettingsBinding>(), Handler.
                         if (!TextUtils.isEmpty(value)) {
                             SaveKeyValues.putValue(Constant.EMAIL_ADDRESS, value)
                             binding.emailTextView.text = value
+                        } else {
+                            "什么都还没输入呢！".show(requireContext())
+                        }
+                    }
+
+                    override fun onCancelClick() {}
+                }).build().show()
+        }
+
+        binding.emailTitleLayout.setOnClickListener {
+            AlertInputDialog.Builder()
+                .setContext(requireContext())
+                .setTitle("设置邮件标题")
+                .setHintMessage("请输入邮件标题")
+                .setNegativeButton("取消")
+                .setPositiveButton("确定")
+                .setOnDialogButtonClickListener(object :
+                    AlertInputDialog.OnDialogButtonClickListener {
+                    override fun onConfirmClick(value: String) {
+                        if (!TextUtils.isEmpty(value)) {
+                            SaveKeyValues.putValue(Constant.EMAIL_TITLE, value)
+                            binding.emailTitleView.text = value
                         } else {
                             "什么都还没输入呢！".show(requireContext())
                         }
@@ -238,6 +254,10 @@ class SettingsFragment : KotlinBaseFragment<FragmentSettingsBinding>(), Handler.
 
     override fun onResume() {
         super.onResume()
+        binding.emailTextView.text = SaveKeyValues.getValue(Constant.EMAIL_ADDRESS, "") as String
+        binding.emailTitleView.text = SaveKeyValues.getValue(
+            Constant.EMAIL_TITLE, "打卡结果通知"
+        ) as String
         binding.timeoutTextView.text = SaveKeyValues.getValue(Constant.TIMEOUT, "15s") as String
         binding.keyTextView.text = SaveKeyValues.getValue(Constant.DING_DING_KEY, "打卡") as String
 

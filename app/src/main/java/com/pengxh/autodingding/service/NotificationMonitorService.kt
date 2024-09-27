@@ -95,7 +95,10 @@ class NotificationMonitorService : NotificationListenerService(), LifecycleOwner
                 lifecycleScope.launch(Dispatchers.Main) {
                     "即将发送通知邮件，请注意查收".show(this@NotificationMonitorService)
                     withContext(Dispatchers.IO) {
-                        notice.createTextMail("自动打卡结果通知", emailAddress).sendTextMail()
+                        val subject = SaveKeyValues.getValue(
+                            Constant.EMAIL_TITLE, "打卡结果通知"
+                        ) as String
+                        notice.createTextMail(subject, emailAddress).sendTextMail()
                     }
                 }
             }
@@ -107,7 +110,7 @@ class NotificationMonitorService : NotificationListenerService(), LifecycleOwner
                 //发送剩余电量的邮件
                 lifecycleScope.launch(Dispatchers.IO) {
                     "当前手机剩余电量为：${capacity}%".createTextMail(
-                        "打卡手机电量查询通知", emailAddress
+                        "查询手机电量通知", emailAddress
                     ).sendTextMail()
                 }
             } else {
