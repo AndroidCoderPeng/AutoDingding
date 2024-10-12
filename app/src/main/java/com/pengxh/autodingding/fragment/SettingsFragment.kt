@@ -262,10 +262,11 @@ class SettingsFragment : KotlinBaseFragment<FragmentSettingsBinding>(), Handler.
         binding.keyTextView.text = SaveKeyValues.getValue(Constant.DING_DING_KEY, "打卡") as String
 
         binding.floatSwitch.isChecked = Settings.canDrawOverlays(requireContext())
+        val serviceIntent = Intent(requireContext(), FloatingWindowService::class.java)
         if (binding.floatSwitch.isChecked) {
-            requireContext().startService(
-                Intent(requireContext(), FloatingWindowService::class.java)
-            )
+            requireContext().startService(serviceIntent)
+        } else {
+            requireContext().stopService(serviceIntent)
         }
 
         binding.backToHomeSwitch.isChecked = SaveKeyValues.getValue(

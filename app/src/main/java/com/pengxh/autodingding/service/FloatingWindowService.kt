@@ -96,6 +96,11 @@ class FloatingWindowService : Service(), Handler.Callback {
         }
     }
 
+    override fun onDestroy() {
+        super.onDestroy()
+        windowManager?.removeView(floatView)
+    }
+
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         val time = SaveKeyValues.getValue(Constant.TIMEOUT, "15s") as String
         textView.text = time
