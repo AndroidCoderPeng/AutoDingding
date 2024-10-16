@@ -102,7 +102,7 @@ class NotificationMonitorService : NotificationListenerService(), LifecycleOwner
                     }
                 }
             }
-        } else if (packageName == Constant.WECHAT || packageName == Constant.QQ || packageName == Constant.TIM) {
+        } else if (packageName == Constant.WECHAT || packageName == Constant.QQ || packageName == Constant.TIM || packageName == Constant.ZFB) {
             if (notice.contains("电量")) {
                 val capacity = batteryManager?.getIntProperty(
                     BatteryManager.BATTERY_PROPERTY_CAPACITY
@@ -115,7 +115,7 @@ class NotificationMonitorService : NotificationListenerService(), LifecycleOwner
                 }
             } else {
                 val key = SaveKeyValues.getValue(Constant.DING_DING_KEY, "打卡") as String
-                if (notice == key) {
+                if (notice.contains(key)) {
                     openApplication(Constant.DING_DING)
                 }
             }

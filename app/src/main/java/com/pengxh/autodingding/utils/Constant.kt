@@ -25,4 +25,5 @@ object Constant {
     const val WECHAT = "com.tencent.mm"
     const val QQ = "com.tencent.mobileqq"
     const val TIM = "com.tencent.tim"
+    const val ZFB = "com.eg.android.AlipayGphone"
 }
