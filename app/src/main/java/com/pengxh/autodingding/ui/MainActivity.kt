@@ -10,11 +10,11 @@ import com.pengxh.autodingding.R
 import com.pengxh.autodingding.adapter.BaseFragmentAdapter
 import com.pengxh.autodingding.databinding.ActivityMainBinding
 import com.pengxh.autodingding.extensions.isAppAvailable
-import com.pengxh.autodingding.extensions.show
 import com.pengxh.autodingding.fragment.DingDingFragment
 import com.pengxh.autodingding.fragment.SettingsFragment
 import com.pengxh.autodingding.utils.Constant
 import com.pengxh.kt.lite.base.KotlinBaseActivity
+import com.pengxh.kt.lite.extensions.show
 import com.pengxh.kt.lite.utils.ActivityStackManager
 import com.pengxh.kt.lite.utils.SaveKeyValues
 import com.pengxh.kt.lite.widget.dialog.AlertMessageDialog

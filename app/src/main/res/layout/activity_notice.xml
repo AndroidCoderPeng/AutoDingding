@@ -13,12 +13,8 @@
         android:layout_height="wrap_content"
         android:background="@color/white"
         app:tbv_left_image="@drawable/ic_title_left_black"
-        app:tbv_only_show_title="false"
-        app:tbv_show_left_image="true"
-        app:tbv_show_right_image="false"
         app:tbv_text="所有通知"
-        app:tbv_text_color="@color/black"
-        app:tbv_text_size="@dimen/sp_16" />
+        app:tbv_text_color="@color/black" />
 
     <com.scwang.smartrefresh.layout.SmartRefreshLayout
         android:id="@+id/refreshLayout"

@@ -10,9 +10,9 @@ import androidx.lifecycle.LifecycleRegistry
 import androidx.lifecycle.lifecycleScope
 import com.pengxh.autodingding.extensions.createTextMail
 import com.pengxh.autodingding.extensions.sendTextMail
-import com.pengxh.autodingding.extensions.show
 import com.pengxh.autodingding.service.FloatingWindowService
 import com.pengxh.autodingding.ui.MainActivity
+import com.pengxh.kt.lite.extensions.show
 import com.pengxh.kt.lite.utils.SaveKeyValues
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay

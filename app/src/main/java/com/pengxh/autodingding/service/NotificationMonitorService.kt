@@ -15,12 +15,12 @@ import com.pengxh.autodingding.bean.NotificationBean
 import com.pengxh.autodingding.extensions.createTextMail
 import com.pengxh.autodingding.extensions.openApplication
 import com.pengxh.autodingding.extensions.sendTextMail
-import com.pengxh.autodingding.extensions.show
 import com.pengxh.autodingding.fragment.SettingsFragment
 import com.pengxh.autodingding.ui.MainActivity
 import com.pengxh.autodingding.utils.Constant
 import com.pengxh.autodingding.utils.CountDownTimerManager
 import com.pengxh.kt.lite.extensions.getSystemService
+import com.pengxh.kt.lite.extensions.show
 import com.pengxh.kt.lite.extensions.timestampToCompleteDate
 import com.pengxh.kt.lite.utils.SaveKeyValues
 import kotlinx.coroutines.Dispatchers
