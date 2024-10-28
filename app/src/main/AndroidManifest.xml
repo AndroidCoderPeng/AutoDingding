@@ -30,6 +30,7 @@
         <activity android:name=".ui.NoticeRecordActivity" />
         <activity android:name=".ui.QuestionAndAnswerActivity" />
 
+        <service android:name=".service.ForegroundRunningService" />
         <service
             android:name=".service.NotificationMonitorService"
             android:enabled="true"

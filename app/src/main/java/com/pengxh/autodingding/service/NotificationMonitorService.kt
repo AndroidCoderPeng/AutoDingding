@@ -69,16 +69,18 @@ class NotificationMonitorService : NotificationListenerService(), LifecycleOwner
         if (notice.isNullOrBlank()) {
             return
         }
-        Log.d(kTag, "onNotificationPosted: $notice")
         SettingsFragment.weakReferenceHandler?.sendEmptyMessage(2024090801)
 
-        val notificationBean = NotificationBean()
-        notificationBean.uuid = UUID.randomUUID().toString()
-        notificationBean.packageName = packageName
-        notificationBean.notificationTitle = title
-        notificationBean.notificationMsg = notice
-        notificationBean.postTime = System.currentTimeMillis().timestampToCompleteDate()
-        notificationBeanDao.save(notificationBean)
+        if (notice != "为降低被系统杀死的可能性，请勿关闭此通知") {
+            val notificationBean = NotificationBean()
+            notificationBean.uuid = UUID.randomUUID().toString()
+            notificationBean.packageName = packageName
+            notificationBean.notificationTitle = title
+            notificationBean.notificationMsg = notice
+            notificationBean.postTime = System.currentTimeMillis().timestampToCompleteDate()
+            notificationBeanDao.save(notificationBean)
+            Log.d(kTag, "onNotificationPosted: $notice")
+        }
 
         val emailAddress = SaveKeyValues.getValue(Constant.EMAIL_ADDRESS, "") as String
         if (emailAddress.isEmpty()) {

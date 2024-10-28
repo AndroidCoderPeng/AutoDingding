@@ -241,11 +241,9 @@ class SettingsFragment : KotlinBaseFragment<FragmentSettingsBinding>(), Handler.
 
     override fun handleMessage(msg: Message): Boolean {
         if (msg.what == 2024090801) {
-            "通知监听服务运行中".show(requireContext())
             binding.noticeSwitch.isChecked = true
             binding.tipsView.visibility = View.GONE
         } else if (msg.what == 2024090802) {
-            "通知监听服务已关闭".show(requireContext())
             binding.noticeSwitch.isChecked = false
             binding.tipsView.visibility = View.VISIBLE
         }

@@ -1,5 +1,6 @@
 package com.pengxh.autodingding.ui
 
+import android.content.Intent
 import android.os.Bundle
 import android.view.KeyEvent
 import android.view.MenuItem
@@ -12,6 +13,7 @@ import com.pengxh.autodingding.databinding.ActivityMainBinding
 import com.pengxh.autodingding.extensions.isAppAvailable
 import com.pengxh.autodingding.fragment.DingDingFragment
 import com.pengxh.autodingding.fragment.SettingsFragment
+import com.pengxh.autodingding.service.ForegroundRunningService
 import com.pengxh.autodingding.utils.Constant
 import com.pengxh.kt.lite.base.KotlinBaseActivity
 import com.pengxh.kt.lite.extensions.show
@@ -62,6 +64,8 @@ class MainActivity : KotlinBaseActivity<ActivityMainBinding>() {
                     }
                 }).build().show()
         }
+
+        startService(Intent(this, ForegroundRunningService::class.java))
     }
 
     override fun initEvent() {
