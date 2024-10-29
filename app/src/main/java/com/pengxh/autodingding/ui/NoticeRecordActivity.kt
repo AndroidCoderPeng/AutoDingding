@@ -19,6 +19,7 @@ import com.pengxh.kt.lite.divider.RecyclerViewItemDivider
 import com.pengxh.kt.lite.utils.ActivityStackManager
 import com.pengxh.kt.lite.utils.WeakReferenceHandler
 import com.pengxh.kt.lite.widget.TitleBarView
+import com.pengxh.kt.lite.widget.dialog.AlertMessageDialog
 
 class NoticeRecordActivity : KotlinBaseActivity<ActivityNoticeBinding>(), Handler.Callback {
 
@@ -42,7 +43,19 @@ class NoticeRecordActivity : KotlinBaseActivity<ActivityNoticeBinding>(), Handle
             }
 
             override fun onRightClick() {
-
+                AlertMessageDialog.Builder()
+                    .setContext(this@NoticeRecordActivity)
+                    .setTitle("温馨提示")
+                    .setMessage("此操作将会清空所有通知记录，且不可恢复")
+                    .setPositiveButton("知道了")
+                    .setOnDialogButtonClickListener(object :
+                        AlertMessageDialog.OnDialogButtonClickListener {
+                        override fun onConfirmClick() {
+                            notificationBeanDao.deleteAll()
+                            binding.emptyView.visibility = View.VISIBLE
+                            binding.notificationView.visibility = View.GONE
+                        }
+                    }).build().show()
             }
         })
     }
@@ -97,8 +110,10 @@ class NoticeRecordActivity : KotlinBaseActivity<ActivityNoticeBinding>(), Handle
             } else { //首次加载数据
                 if (dataBeans.size == 0) {
                     binding.emptyView.visibility = View.VISIBLE
+                    binding.notificationView.visibility = View.GONE
                 } else {
                     binding.emptyView.visibility = View.GONE
+                    binding.notificationView.visibility = View.VISIBLE
                     noticeAdapter = object : NormalRecyclerAdapter<NotificationBean>(
                         R.layout.item_notice_rv_l, dataBeans
                     ) {

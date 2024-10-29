@@ -13,6 +13,8 @@
         android:layout_height="wrap_content"
         android:background="@color/white"
         app:tbv_left_image="@drawable/ic_title_left_black"
+        app:tbv_right_image="@drawable/ic_clear"
+        app:tbv_show_right_image="true"
         app:tbv_text="所有通知"
         app:tbv_text_color="@color/black" />
 
