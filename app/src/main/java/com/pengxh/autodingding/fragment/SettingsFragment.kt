@@ -15,6 +15,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.WindowManager
+import androidx.lifecycle.lifecycleScope
 import com.pengxh.autodingding.BuildConfig
 import com.pengxh.autodingding.R
 import com.pengxh.autodingding.databinding.FragmentSettingsBinding
@@ -34,6 +35,9 @@ import com.pengxh.kt.lite.utils.SaveKeyValues
 import com.pengxh.kt.lite.utils.WeakReferenceHandler
 import com.pengxh.kt.lite.widget.dialog.AlertInputDialog
 import com.pengxh.kt.lite.widget.dialog.BottomActionSheet
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 
 
 class SettingsFragment : KotlinBaseFragment<FragmentSettingsBinding>(), Handler.Callback {
@@ -272,16 +276,18 @@ class SettingsFragment : KotlinBaseFragment<FragmentSettingsBinding>(), Handler.
     }
 
     private fun turnOnNotificationMonitorService() {
-        requireContext().packageManager.setComponentEnabledSetting(
-            ComponentName(requireContext(), NotificationMonitorService::class.java),
-            PackageManager.COMPONENT_ENABLED_STATE_DISABLED, PackageManager.DONT_KILL_APP
-        )
+        lifecycleScope.launch(Dispatchers.IO){
+            requireContext().packageManager.setComponentEnabledSetting(
+                ComponentName(requireContext(), NotificationMonitorService::class.java),
+                PackageManager.COMPONENT_ENABLED_STATE_DISABLED, PackageManager.DONT_KILL_APP
+            )
 
-        Thread.sleep(1000)
+            delay(1000)
 
-        requireContext().packageManager.setComponentEnabledSetting(
-            ComponentName(requireContext(), NotificationMonitorService::class.java),
-            PackageManager.COMPONENT_ENABLED_STATE_ENABLED, PackageManager.DONT_KILL_APP
-        )
+            requireContext().packageManager.setComponentEnabledSetting(
+                ComponentName(requireContext(), NotificationMonitorService::class.java),
+                PackageManager.COMPONENT_ENABLED_STATE_ENABLED, PackageManager.DONT_KILL_APP
+            )
+        }
     }
 }
