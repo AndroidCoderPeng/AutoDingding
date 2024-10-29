@@ -220,19 +220,7 @@ class SettingsFragment : KotlinBaseFragment<FragmentSettingsBinding>(), Handler.
         super.onActivityResult(requestCode, resultCode, data)
         if (requestCode == 100) {
             if (requireContext().notificationEnable()) {
-                requireContext().packageManager.setComponentEnabledSetting(
-                    ComponentName(requireContext(), NotificationMonitorService::class.java),
-                    PackageManager.COMPONENT_ENABLED_STATE_DISABLED,
-                    PackageManager.DONT_KILL_APP
-                )
-
-                Thread.sleep(1000)
-
-                requireContext().packageManager.setComponentEnabledSetting(
-                    ComponentName(requireContext(), NotificationMonitorService::class.java),
-                    PackageManager.COMPONENT_ENABLED_STATE_ENABLED,
-                    PackageManager.DONT_KILL_APP
-                )
+                turnOnNotificationMonitorService()
             }
         } else if (requestCode == 101) {
             binding.floatSwitch.isChecked = Settings.canDrawOverlays(requireContext())
@@ -274,9 +262,24 @@ class SettingsFragment : KotlinBaseFragment<FragmentSettingsBinding>(), Handler.
         if (requireContext().notificationEnable()) {
             binding.tipsView.text = "通知监听服务状态查询中，请稍后"
             binding.tipsView.setTextColor(R.color.purple_500.convertColor(requireContext()))
+            turnOnNotificationMonitorService()
         } else {
             binding.tipsView.text = "通知监听服务未开启，无法监听打卡通知"
             binding.tipsView.setTextColor(R.color.red.convertColor(requireContext()))
         }
+    }
+
+    private fun turnOnNotificationMonitorService() {
+        requireContext().packageManager.setComponentEnabledSetting(
+            ComponentName(requireContext(), NotificationMonitorService::class.java),
+            PackageManager.COMPONENT_ENABLED_STATE_DISABLED, PackageManager.DONT_KILL_APP
+        )
+
+        Thread.sleep(1000)
+
+        requireContext().packageManager.setComponentEnabledSetting(
+            ComponentName(requireContext(), NotificationMonitorService::class.java),
+            PackageManager.COMPONENT_ENABLED_STATE_ENABLED, PackageManager.DONT_KILL_APP
+        )
     }
 }
