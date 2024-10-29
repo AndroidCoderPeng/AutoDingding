@@ -15,9 +15,7 @@ import com.pengxh.autodingding.ui.MainActivity
 import com.pengxh.kt.lite.extensions.show
 import com.pengxh.kt.lite.utils.SaveKeyValues
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 
 
 class CountDownTimerManager private constructor() : LifecycleOwner {
@@ -51,35 +49,32 @@ class CountDownTimerManager private constructor() : LifecycleOwner {
 
             override fun onFinish() {
                 //如果倒计时结束，那么表明没有收到打卡成功的通知，需要将异常日志保存
-                lifecycleScope.launch(Dispatchers.Main) {
-                    if (SaveKeyValues.getValue(Constant.BACK_TO_HOME, false) as Boolean) {
-                        //模拟点击Home键
-                        val home = Intent(Intent.ACTION_MAIN)
-                        home.flags = Intent.FLAG_ACTIVITY_NEW_TASK
-                        home.addCategory(Intent.CATEGORY_HOME)
-                        context.startActivity(home)
-                        Log.d(kTag, "onFinish: 模拟点击Home键")
+                if (SaveKeyValues.getValue(Constant.BACK_TO_HOME, false) as Boolean) {
+                    //模拟点击Home键
+                    val home = Intent(Intent.ACTION_MAIN)
+                    home.flags = Intent.FLAG_ACTIVITY_NEW_TASK
+                    home.addCategory(Intent.CATEGORY_HOME)
+                    context.startActivity(home)
+                    Log.d(kTag, "onFinish: 模拟点击Home键")
+                    Thread.sleep(2000)
+                }
 
-                        delay(1000)
-                    }
+                val intent = Intent(context, MainActivity::class.java)
+                intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
+                context.startActivity(intent)
 
-                    val intent = Intent(context, MainActivity::class.java)
-                    intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
-                    context.startActivity(intent)
+                val emailAddress = SaveKeyValues.getValue(Constant.EMAIL_ADDRESS, "") as String
+                if (emailAddress.isEmpty()) {
+                    "邮箱地址为空".show(context)
+                    return
+                }
 
-                    val emailAddress = SaveKeyValues.getValue(Constant.EMAIL_ADDRESS, "") as String
-                    if (emailAddress.isEmpty()) {
-                        "邮箱地址为空".show(context)
-                        return@launch
-                    }
-
-                    "未监听到打卡通知，即将发送异常日志邮件，请注意查收".show(context)
-                    withContext(Dispatchers.IO) {
-                        val subject = SaveKeyValues.getValue(
-                            Constant.EMAIL_TITLE, "打卡结果通知"
-                        ) as String
-                        "".createTextMail(subject, emailAddress).sendTextMail()
-                    }
+                "未监听到打卡通知，即将发送异常日志邮件，请注意查收".show(context)
+                lifecycleScope.launch(Dispatchers.IO) {
+                    val subject = SaveKeyValues.getValue(
+                        Constant.EMAIL_TITLE, "打卡结果通知"
+                    ) as String
+                    "".createTextMail(subject, emailAddress).sendTextMail()
                 }
             }
         }.start()

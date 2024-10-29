@@ -74,7 +74,7 @@ class ForegroundRunningService : Service(), Handler.Callback {
         val minutes = (elapsedTime % (1000 * 60 * 60) / (1000 * 60)).toInt()
         val seconds = (elapsedTime % (1000 * 60) / 1000).toInt()
 
-        notificationBuilder?.setContentTitle("应用已运行${hours}小时${minutes}分钟${seconds}秒")
+        notificationBuilder?.setContentTitle("已运行${hours}小时${minutes}分钟${seconds}秒")
         val notification = notificationBuilder?.build()
         notificationManager?.notify(notificationId, notification)
     }

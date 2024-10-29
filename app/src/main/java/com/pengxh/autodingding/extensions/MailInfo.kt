@@ -1,5 +1,6 @@
 package com.pengxh.autodingding.extensions
 
+import android.util.Log
 import com.pengxh.autodingding.BuildConfig
 import com.pengxh.autodingding.bean.MailInfo
 import com.pengxh.autodingding.utils.EmailAuthenticator
@@ -42,6 +43,7 @@ fun MailInfo.sendTextMail() {
         val mailContent = "${this.content}，工具本版：${BuildConfig.VERSION_NAME}"
         mailMessage.setText(mailContent)
         Transport.send(mailMessage)
+        Log.d("kTag", "sendTextMail: 成功")
     } catch (ex: MessagingException) {
         ex.printStackTrace()
     }
