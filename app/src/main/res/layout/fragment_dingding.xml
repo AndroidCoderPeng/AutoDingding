@@ -4,7 +4,7 @@
     android:id="@+id/rootView"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/white"
+    android:background="@color/mainBackground"
     android:keepScreenOn="true"
     android:orientation="vertical">
 
@@ -17,10 +17,11 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginVertical="@dimen/dp_50"
+            android:fontFamily="@font/ds_digital"
             android:format24Hour="HH:mm:ss"
             android:gravity="center_horizontal"
             android:textColor="@color/black"
-            android:textSize="48sp" />
+            android:textSize="64sp" />
 
         <RelativeLayout
             android:layout_width="match_parent"

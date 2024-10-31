@@ -5,12 +5,10 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import com.pengxh.autodingding.BaseApplication
-import com.pengxh.autodingding.R
 import com.pengxh.autodingding.adapter.DateTimeAdapter
 import com.pengxh.autodingding.bean.DateTimeBean
 import com.pengxh.autodingding.databinding.FragmentDingdingBinding
 import com.pengxh.autodingding.extensions.convertToWeek
-import com.pengxh.autodingding.extensions.initImmersionBar
 import com.pengxh.autodingding.extensions.openApplication
 import com.pengxh.autodingding.extensions.showDatePicker
 import com.pengxh.autodingding.extensions.showDateTimePicker
@@ -34,7 +32,7 @@ class DingDingFragment : KotlinBaseFragment<FragmentDingdingBinding>() {
     private var clickedPosition = 0
 
     override fun setupTopBarLayout() {
-        binding.rootView.initImmersionBar(this, true, R.color.white)
+
     }
 
     override fun observeRequestState() {

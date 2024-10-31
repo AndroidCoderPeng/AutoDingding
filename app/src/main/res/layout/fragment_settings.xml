@@ -119,7 +119,7 @@
                 android:layout_height="wrap_content"
                 android:layout_centerVertical="true"
                 android:gravity="center_vertical"
-                android:text="打卡口令"
+                android:text="任务口令"
                 android:textColor="@color/colorText"
                 android:textSize="@dimen/sp_16" />
 

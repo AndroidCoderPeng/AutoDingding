@@ -19,7 +19,6 @@ import androidx.lifecycle.lifecycleScope
 import com.pengxh.autodingding.BuildConfig
 import com.pengxh.autodingding.R
 import com.pengxh.autodingding.databinding.FragmentSettingsBinding
-import com.pengxh.autodingding.extensions.initImmersionBar
 import com.pengxh.autodingding.extensions.notificationEnable
 import com.pengxh.autodingding.extensions.show
 import com.pengxh.autodingding.service.FloatingWindowService
@@ -50,7 +49,7 @@ class SettingsFragment : KotlinBaseFragment<FragmentSettingsBinding>(), Handler.
     private val timeArray = arrayListOf("15s", "30s", "45s", "60s")
 
     override fun setupTopBarLayout() {
-        binding.rootView.initImmersionBar(this, true, R.color.white)
+
     }
 
     override fun observeRequestState() {
