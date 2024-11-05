@@ -19,10 +19,10 @@ import com.pengxh.kt.lite.utils.WeakReferenceHandler
 class ForegroundRunningService : Service(), Handler.Callback {
 
     private val notificationId = 1
+    private val weakReferenceHandler by lazy { WeakReferenceHandler(this) }
     private var notificationManager: NotificationManager? = null
     private var notificationBuilder: NotificationCompat.Builder? = null
     private var runningTime = 0L
-    private lateinit var weakReferenceHandler: WeakReferenceHandler
     private lateinit var updateRunnable: Runnable
 
     override fun handleMessage(msg: Message): Boolean {
@@ -43,8 +43,8 @@ class ForegroundRunningService : Service(), Handler.Callback {
         }
         notificationBuilder = NotificationCompat.Builder(this, "foreground_running_service_channel")
             .setSmallIcon(R.mipmap.logo_round)
-            .setContentTitle("已运行0小时0分钟0秒")
-            .setContentText("为降低被系统杀死的可能性，请勿关闭此通知")
+            .setContentTitle("已运行0小时0分钟")
+            .setContentText("为降低被系统杀死的概率，请勿关闭此通知")
             .setPriority(NotificationCompat.PRIORITY_HIGH) // 设置通知优先级
             .setOngoing(true)
             .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
@@ -56,11 +56,10 @@ class ForegroundRunningService : Service(), Handler.Callback {
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         //记录通知被创建的时间
         runningTime = System.currentTimeMillis()
-        weakReferenceHandler = WeakReferenceHandler(this)
         updateRunnable = object : Runnable {
             override fun run() {
                 updateNotification()
-                weakReferenceHandler.postDelayed(this, 1000)
+                weakReferenceHandler.postDelayed(this, 1000L * 60)
             }
         }
         weakReferenceHandler.post(updateRunnable)
@@ -72,9 +71,8 @@ class ForegroundRunningService : Service(), Handler.Callback {
         val elapsedTime = System.currentTimeMillis() - runningTime
         val hours = (elapsedTime / (1000 * 60 * 60)).toInt()
         val minutes = (elapsedTime % (1000 * 60 * 60) / (1000 * 60)).toInt()
-        val seconds = (elapsedTime % (1000 * 60) / 1000).toInt()
 
-        notificationBuilder?.setContentTitle("已运行${hours}小时${minutes}分钟${seconds}秒")
+        notificationBuilder?.setContentTitle("已运行${hours}小时${minutes}分钟")
         val notification = notificationBuilder?.build()
         notificationManager?.notify(notificationId, notification)
     }

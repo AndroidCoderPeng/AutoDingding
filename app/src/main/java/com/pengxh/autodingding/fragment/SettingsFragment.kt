@@ -46,7 +46,7 @@ class SettingsFragment : KotlinBaseFragment<FragmentSettingsBinding>(), Handler.
     }
 
     private val kTag = "SettingsFragment"
-    private val timeArray = arrayListOf("15s", "30s", "45s", "60s")
+    private val timeArray = arrayListOf("15s", "30s", "45s")
 
     override fun setupTopBarLayout() {
 
