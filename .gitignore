@@ -71,3 +71,4 @@ lint/tmp/
 # lint/reports/
 
 /apk/auto/release/*.json
+*.zip

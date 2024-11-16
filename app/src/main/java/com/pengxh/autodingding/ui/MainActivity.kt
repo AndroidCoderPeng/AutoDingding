@@ -4,6 +4,7 @@ import android.content.Intent
 import android.os.Bundle
 import android.view.KeyEvent
 import android.view.MenuItem
+import android.view.WindowManager
 import androidx.fragment.app.Fragment
 import androidx.viewpager.widget.ViewPager
 import com.pengxh.autodingding.R
@@ -32,6 +33,7 @@ class MainActivity : KotlinBaseActivity<ActivityMainBinding>() {
 
     override fun setupTopBarLayout() {
         binding.rootView.initImmersionBar(this, true, R.color.mainBackground)
+        window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
     }
 
     override fun initOnCreate(savedInstanceState: Bundle?) {
