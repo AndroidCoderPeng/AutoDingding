@@ -5,7 +5,6 @@ import android.widget.Toast
 import com.pengxh.autodingding.bean.MailInfo
 import com.pengxh.autodingding.utils.Constant
 import com.pengxh.kt.lite.extensions.timestampToDate
-import java.io.File
 import java.text.ParseException
 import java.text.SimpleDateFormat
 import java.util.Calendar
@@ -59,8 +58,8 @@ fun String.diffCurrentMillis(): Long {
 
 fun String.createTextMail(subject: String, toAddress: String): MailInfo {
     val mailInfo = MailInfo()
-    mailInfo.mailServerHost = "smtp.qq.com" //发送方邮箱服务器
-    mailInfo.mailServerPort = "587" //发送方邮箱端口号
+    mailInfo.mailServerHost = Constant.MAIL_SERVER //发送方邮箱服务器
+    mailInfo.mailServerPort = Constant.MAIL_SERVER_PORT //发送方邮箱端口号
     mailInfo.isValidate = true
     mailInfo.userName = Constant.USER_MAIL_ACCOUNT
     mailInfo.password = Constant.PERMISSION_CODE
@@ -74,23 +73,6 @@ fun String.createTextMail(subject: String, toAddress: String): MailInfo {
     }
     // 邮件文本
     mailInfo.content = content
-    return mailInfo
-}
-
-fun String.createAttachFileMail(subject: String, toAddress: String, imagePath: String): MailInfo {
-    val mailInfo = MailInfo()
-    mailInfo.mailServerHost = "smtp.qq.com" //发送方邮箱服务器
-    mailInfo.mailServerPort = "587" //发送方邮箱端口号
-    mailInfo.isValidate = true
-    mailInfo.userName = Constant.USER_MAIL_ACCOUNT
-    mailInfo.password = Constant.PERMISSION_CODE
-    mailInfo.toAddress = toAddress // 接收者邮箱
-    mailInfo.fromAddress = Constant.MAIL_FROM_ADDRESS
-    mailInfo.subject = subject // 邮件主题
-    // 邮件文本
-    mailInfo.content = this
-    //附件
-    mailInfo.attachFile = File(imagePath)
     return mailInfo
 }
 
