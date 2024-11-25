@@ -119,11 +119,11 @@ class FloatingWindowService : Service(), Handler.Callback {
                 textView.text = time
             }
 
-            2024112501 -> {
+            Constant.SHOW_FLOATING_WINDOW_CODE -> {
                 floatView.alpha = 1.0f
             }
 
-            2024112502 -> {
+            Constant.HIDE_FLOATING_WINDOW_CODE -> {
                 floatView.alpha = 0.0f
             }
         }

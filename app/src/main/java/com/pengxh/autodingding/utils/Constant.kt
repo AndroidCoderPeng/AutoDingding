@@ -25,6 +25,9 @@ object Constant {
     const val BACK_TO_HOME = "backToHome"
     const val DING_DING_KEY = "dingDingKey"
 
+    const val HIDE_FLOATING_WINDOW_CODE = 2024112501
+    const val SHOW_FLOATING_WINDOW_CODE = 2024112502
+
     const val DING_DING = "com.alibaba.android.rimet"
     const val WECHAT = "com.tencent.mm"
     const val QQ = "com.tencent.mobileqq"
