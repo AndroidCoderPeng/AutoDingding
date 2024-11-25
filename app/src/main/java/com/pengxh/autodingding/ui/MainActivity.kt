@@ -4,7 +4,13 @@ import android.content.Intent
 import android.os.Bundle
 import android.view.KeyEvent
 import android.view.MenuItem
+import android.view.View
 import android.view.WindowManager
+import android.view.animation.ScaleAnimation
+import androidx.core.view.WindowCompat
+import androidx.core.view.WindowInsetsCompat
+import androidx.core.view.WindowInsetsControllerCompat
+import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.viewpager.widget.ViewPager
 import com.pengxh.autodingding.R
@@ -14,9 +20,11 @@ import com.pengxh.autodingding.extensions.initImmersionBar
 import com.pengxh.autodingding.extensions.isAppAvailable
 import com.pengxh.autodingding.fragment.DingDingFragment
 import com.pengxh.autodingding.fragment.SettingsFragment
+import com.pengxh.autodingding.service.FloatingWindowService
 import com.pengxh.autodingding.service.ForegroundRunningService
 import com.pengxh.autodingding.utils.Constant
 import com.pengxh.kt.lite.base.KotlinBaseActivity
+import com.pengxh.kt.lite.extensions.setScreenBrightness
 import com.pengxh.kt.lite.extensions.show
 import com.pengxh.kt.lite.utils.ActivityStackManager
 import com.pengxh.kt.lite.utils.SaveKeyValues
@@ -24,6 +32,8 @@ import com.pengxh.kt.lite.widget.dialog.AlertMessageDialog
 
 class MainActivity : KotlinBaseActivity<ActivityMainBinding>() {
 
+    private val kTag = "MainActivity"
+    private lateinit var insetsController: WindowInsetsControllerCompat
     private var menuItem: MenuItem? = null
     private var clickTime: Long = 0
 
@@ -32,6 +42,7 @@ class MainActivity : KotlinBaseActivity<ActivityMainBinding>() {
     }
 
     override fun setupTopBarLayout() {
+        insetsController = WindowCompat.getInsetsController(window, binding.rootView)
         binding.rootView.initImmersionBar(this, true, R.color.mainBackground)
         window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
     }
@@ -124,14 +135,54 @@ class MainActivity : KotlinBaseActivity<ActivityMainBinding>() {
     }
 
     override fun onKeyDown(keyCode: Int, event: KeyEvent?): Boolean {
-        return if (keyCode == KeyEvent.KEYCODE_BACK) {
-            if (System.currentTimeMillis() - clickTime > 2000) {
-                "再按一次退出应用".show(this)
-                clickTime = System.currentTimeMillis()
-                true
-            } else {
-                super.onKeyDown(keyCode, event)
+        when (keyCode) {
+            KeyEvent.KEYCODE_VOLUME_DOWN -> {
+                if (binding.maskView.isVisible) {
+                    //恢复状态栏显示
+                    insetsController.show(WindowInsetsCompat.Type.statusBars())
+
+                    //隐藏蒙层
+                    binding.maskView.visibility = View.GONE
+                    val invisibleAction = ScaleAnimation(1.0f, 1.0f, 1.0f, 0.0f)
+                    invisibleAction.duration = 500
+                    binding.maskView.startAnimation(invisibleAction)
+                    window.setScreenBrightness(WindowManager.LayoutParams.BRIGHTNESS_OVERRIDE_NONE)
+
+                    //显示任务界面
+                    binding.rootView.visibility = View.VISIBLE
+
+                    //恢复悬浮窗显示
+                    FloatingWindowService.weakReferenceHandler?.sendEmptyMessage(2024112501)
+                } else {
+                    //隐藏状态栏显示
+                    insetsController.hide(WindowInsetsCompat.Type.statusBars())
+
+                    //显示蒙层
+                    binding.maskView.visibility = View.VISIBLE
+                    val visibleAction = ScaleAnimation(1.0f, 1.0f, 0.0f, 1.0f)
+                    visibleAction.duration = 500
+                    binding.maskView.startAnimation(visibleAction)
+                    window.setScreenBrightness(WindowManager.LayoutParams.BRIGHTNESS_OVERRIDE_OFF)
+
+                    //隐藏任务界面
+                    binding.rootView.visibility = View.GONE
+
+                    //隐藏悬浮窗显示
+                    FloatingWindowService.weakReferenceHandler?.sendEmptyMessage(2024112502)
+                }
+                return true
             }
-        } else super.onKeyDown(keyCode, event)
+
+            KeyEvent.KEYCODE_BACK -> {
+                return if (System.currentTimeMillis() - clickTime > 2000) {
+                    "再按一次退出应用".show(this)
+                    clickTime = System.currentTimeMillis()
+                    true
+                } else {
+                    super.onKeyDown(keyCode, event)
+                }
+            }
+        }
+        return super.onKeyDown(keyCode, event)
     }
 }

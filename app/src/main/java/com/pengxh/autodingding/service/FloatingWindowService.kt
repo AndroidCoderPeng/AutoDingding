@@ -118,6 +118,14 @@ class FloatingWindowService : Service(), Handler.Callback {
                 val time = msg.obj as String
                 textView.text = time
             }
+
+            2024112501 -> {
+                floatView.alpha = 1.0f
+            }
+
+            2024112502 -> {
+                floatView.alpha = 0.0f
+            }
         }
         return true
     }
