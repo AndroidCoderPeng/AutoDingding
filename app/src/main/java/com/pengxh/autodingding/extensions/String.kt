@@ -56,6 +56,20 @@ fun String.diffCurrentMillis(): Long {
     return abs(System.currentTimeMillis() - date.time)
 }
 
+/**
+ * 时间差-秒
+ * */
+fun String.diffSeconds(time: String): Long {
+    if (this.isBlank()) {
+        return 0
+    }
+    val simpleDateFormat = SimpleDateFormat("HH:mm:ss", Locale.CHINA)
+    val currentTime = simpleDateFormat.parse(this)!!
+    val nextTime = simpleDateFormat.parse(time)!!
+    val diffSeconds = abs(nextTime.time - currentTime.time)
+    return diffSeconds / 1000
+}
+
 fun String.createTextMail(subject: String, toAddress: String): MailInfo {
     val mailInfo = MailInfo()
     mailInfo.mailServerHost = Constant.MAIL_SERVER //发送方邮箱服务器
