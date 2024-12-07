@@ -71,7 +71,7 @@ class NotificationMonitorService : NotificationListenerService(), LifecycleOwner
         }
         SettingsFragment.weakReferenceHandler?.sendEmptyMessage(2024090801)
 
-        if (notice != "为降低被系统杀死的可能性，请勿关闭此通知") {
+        if (notice != Constant.FOREGROUND_RUNNING_SERVICE_TITLE) {
             val notificationBean = NotificationBean()
             notificationBean.uuid = UUID.randomUUID().toString()
             notificationBean.packageName = packageName

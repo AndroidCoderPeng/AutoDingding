@@ -11,6 +11,7 @@ import android.os.IBinder
 import android.os.Message
 import androidx.core.app.NotificationCompat
 import com.pengxh.autodingding.R
+import com.pengxh.autodingding.utils.Constant
 import com.pengxh.kt.lite.utils.WeakReferenceHandler
 
 /**
@@ -44,7 +45,7 @@ class ForegroundRunningService : Service(), Handler.Callback {
         notificationBuilder = NotificationCompat.Builder(this, "foreground_running_service_channel")
             .setSmallIcon(R.mipmap.logo_round)
             .setContentTitle("已运行0小时0分钟")
-            .setContentText("为降低被系统杀死的概率，请勿关闭此通知")
+            .setContentText(Constant.FOREGROUND_RUNNING_SERVICE_TITLE)
             .setPriority(NotificationCompat.PRIORITY_HIGH) // 设置通知优先级
             .setOngoing(true)
             .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)

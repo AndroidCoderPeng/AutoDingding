@@ -33,4 +33,6 @@ object Constant {
     const val QQ = "com.tencent.mobileqq"
     const val TIM = "com.tencent.tim"
     const val ZFB = "com.eg.android.AlipayGphone"
+
+    const val FOREGROUND_RUNNING_SERVICE_TITLE = "应用前台保活服务，请勿关闭此通知"
 }
