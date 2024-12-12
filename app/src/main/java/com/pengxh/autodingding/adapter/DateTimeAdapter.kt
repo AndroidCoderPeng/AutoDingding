@@ -1,32 +1,24 @@
 package com.pengxh.autodingding.adapter
 
-import android.annotation.SuppressLint
 import android.content.Context
-import android.graphics.Color
-import android.os.CountDownTimer
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
-import com.google.android.material.progressindicator.LinearProgressIndicator
 import com.pengxh.autodingding.R
 import com.pengxh.autodingding.bean.DateTimeBean
-import com.pengxh.autodingding.extensions.diffCurrentMillis
-import com.pengxh.autodingding.extensions.isEarlierThenCurrent
 
 class DateTimeAdapter(context: Context, private val dataBeans: MutableList<DateTimeBean>) :
     RecyclerView.Adapter<DateTimeAdapter.ItemViewHolder>() {
 
     private val kTag = "DateTimeAdapter"
-    private val countDownTimerHashMap by lazy { HashMap<String, CountDownTimer>() }
     private var layoutInflater = LayoutInflater.from(context)
 
-    @SuppressLint("NotifyDataSetChanged")
-    fun setRefreshData(dataRows: MutableList<DateTimeBean>) {
-        this.dataBeans.clear()
-        this.dataBeans.addAll(dataRows)
+    private var mPosition = -1
+
+    fun updateCurrentTaskState(position: Int) {
+        this.mPosition = position
         notifyDataSetChanged()
     }
 
@@ -56,44 +48,7 @@ class DateTimeAdapter(context: Context, private val dataBeans: MutableList<DateT
             true
         }
 
-        val time = "${timeBean.date} ${timeBean.time}"
-        if (time.isEarlierThenCurrent()) {
-            holder.countDownTextView.text = "任务已过期"
-            holder.countDownTextView.setTextColor(Color.RED)
-        } else {
-            val diffCurrentMillis = time.diffCurrentMillis()
-
-            holder.countDownTextView.setTextColor(Color.BLUE)
-
-            holder.countDownProgress.max = diffCurrentMillis.toInt()
-            //刷新列表先停止之前的定时器，否则会出现重复计时问题
-            stopCountDownTimer(timeBean)
-
-            //重新计时
-            val countDownTimer = object : CountDownTimer(diffCurrentMillis, 1) {
-                override fun onTick(millisUntilFinished: Long) {
-                    holder.countDownProgress.progress =
-                        (diffCurrentMillis - millisUntilFinished).toInt()
-
-                    holder.countDownTextView.text = "${millisUntilFinished / 1000}秒后执行定时任务"
-                }
-
-                override fun onFinish() {
-                    itemClickListener?.onCountDownFinish()
-                    holder.countDownTextView.text = "任务已过期"
-                    holder.countDownTextView.setTextColor(Color.RED)
-                }
-            }.start()
-            countDownTimerHashMap[timeBean.uuid] = countDownTimer
-        }
-    }
-
-    fun stopCountDownTimer(bean: DateTimeBean) {
-        val downTimer = countDownTimerHashMap[bean.uuid]
-        if (downTimer != null) {
-            downTimer.cancel()
-            Log.d(kTag, "stopCountDownTimer: ${bean.weekDay} ${bean.date} ${bean.time}")
-        }
+        holder.itemView.isSelected = position == mPosition
     }
 
     private var itemClickListener: OnItemClickListener? = null
@@ -106,17 +61,11 @@ class DateTimeAdapter(context: Context, private val dataBeans: MutableList<DateT
         fun onItemClick(position: Int)
 
         fun onItemLongClick(position: Int)
-
-        fun onCountDownFinish()
     }
 
     inner class ItemViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         var timeView: TextView = itemView.findViewById(R.id.timeView)
         var dateView: TextView = itemView.findViewById(R.id.dateView)
         var weekDayView: TextView = itemView.findViewById(R.id.weekDayView)
-        var countDownTextView: TextView = itemView.findViewById(R.id.countDownTextView)
-        var countDownProgress: LinearProgressIndicator = itemView.findViewById(
-            R.id.countDownProgress
-        )
     }
 }

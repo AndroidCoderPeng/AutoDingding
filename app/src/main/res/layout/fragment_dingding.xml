@@ -13,15 +13,84 @@
         android:layout_height="match_parent"
         android:orientation="vertical">
 
-        <TextClock
+        <androidx.cardview.widget.CardView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginVertical="@dimen/dp_50"
-            android:fontFamily="@font/ds_digital"
-            android:format24Hour="HH:mm:ss"
-            android:gravity="center_horizontal"
-            android:textColor="@color/black"
-            android:textSize="64sp" />
+            android:layout_margin="@dimen/dp_10"
+            app:cardCornerRadius="@dimen/dp_10">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:orientation="vertical"
+                    android:paddingVertical="@dimen/dp_50">
+
+                    <TextClock
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="@font/ds_digital"
+                        android:format24Hour="HH:mm:ss"
+                        android:gravity="center_horizontal"
+                        android:textColor="@color/black"
+                        android:textSize="56sp" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:padding="@dimen/dp_10">
+
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:orientation="vertical">
+
+                        <TextView
+                            android:id="@+id/tipsView"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:fontFamily="sans-serif-condensed"
+                            android:hint="请点击右侧按钮开始执行任务"
+                            android:textColor="@color/purple_500"
+                            android:textColorHint="@color/lib_hint_color"
+                            android:textSize="@dimen/sp_16"
+                            android:textStyle="bold" />
+
+                        <TextView
+                            android:id="@+id/countDownTimeView"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="@dimen/dp_7"
+                            android:text="0秒后执行任务" />
+                    </LinearLayout>
+
+                    <androidx.appcompat.widget.AppCompatImageView
+                        android:id="@+id/executeTaskButton"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_vertical"
+                        android:src="@drawable/ic_start" />
+                </LinearLayout>
+
+                <com.google.android.material.progressindicator.LinearProgressIndicator
+                    android:id="@+id/countDownPgr"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginHorizontal="@dimen/dp_10"
+                    android:layout_marginBottom="@dimen/dp_10"
+                    android:indeterminate="false"
+                    app:trackCornerRadius="@dimen/dp_3"
+                    app:trackThickness="@dimen/dp_7" />
+            </LinearLayout>
+        </androidx.cardview.widget.CardView>
 
         <RelativeLayout
             android:layout_width="match_parent"
@@ -48,6 +117,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal|bottom"
-        android:layout_margin="@dimen/dp_30"
+        android:layout_margin="@dimen/dp_20"
+        android:contentDescription="@string/app_name"
         android:src="@drawable/ic_add" />
 </FrameLayout>

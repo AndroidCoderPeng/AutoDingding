@@ -10,6 +10,7 @@ import androidx.lifecycle.LifecycleRegistry
 import androidx.lifecycle.lifecycleScope
 import com.pengxh.autodingding.extensions.createTextMail
 import com.pengxh.autodingding.extensions.sendTextMail
+import com.pengxh.autodingding.fragment.DingDingFragment
 import com.pengxh.autodingding.service.FloatingWindowService
 import com.pengxh.autodingding.ui.MainActivity
 import com.pengxh.kt.lite.extensions.show
@@ -37,7 +38,6 @@ class CountDownTimerManager private constructor() : LifecycleOwner {
 
     fun startTimer(context: Context, millisInFuture: Long, countDownInterval: Long) {
         Log.d(kTag, "startTimer: 开始倒计时")
-        FloatingWindowService.weakReferenceHandler?.sendEmptyMessage(Constant.SHOW_FLOATING_WINDOW_CODE)
         timer = object : CountDownTimer(millisInFuture, countDownInterval) {
             override fun onTick(millisUntilFinished: Long) {
                 val tick = millisUntilFinished / 1000
@@ -64,7 +64,7 @@ class CountDownTimerManager private constructor() : LifecycleOwner {
                 intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
                 context.startActivity(intent)
 
-                FloatingWindowService.weakReferenceHandler?.sendEmptyMessage(Constant.HIDE_FLOATING_WINDOW_CODE)
+                DingDingFragment.weakReferenceHandler?.sendEmptyMessage(Constant.EXECUTE_NEXT_TASK_CODE)
 
                 val emailAddress = SaveKeyValues.getValue(Constant.EMAIL_ADDRESS, "") as String
                 if (emailAddress.isEmpty()) {

@@ -28,6 +28,11 @@ object Constant {
     const val HIDE_FLOATING_WINDOW_CODE = 2024112501
     const val SHOW_FLOATING_WINDOW_CODE = 2024112502
 
+    const val EXECUTE_ONLY_ONE_TASK_CODE = 2024120801
+    const val EXECUTE_MULTIPLE_TASK_CODE = 2024120802
+    const val EXECUTE_NEXT_TASK_CODE = 2024120803
+    const val COMPLETED_ALL_TASK_CODE = 2024120804
+
     const val DING_DING = "com.alibaba.android.rimet"
     const val WECHAT = "com.tencent.mm"
     const val QQ = "com.tencent.mobileqq"

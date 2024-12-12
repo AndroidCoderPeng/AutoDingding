@@ -52,3 +52,21 @@ fun DateTimeBean.convertToTimeEntity(): TimeEntity {
     val date = dateFormat.parse("${this.date} ${this.time}")!!
     return TimeEntity.target(date)
 }
+
+fun DateTimeBean.isLateThenCurrent(): Boolean {
+    //获取当前日期，拼给任务时间，不然不好计算时间差
+    val simpleDateFormat = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault())
+    val taskTime = "${this.date} ${this.time}"
+    val taskDate = simpleDateFormat.parse(taskTime) ?: return false
+    val currentMillis = System.currentTimeMillis()
+    return taskDate.time > currentMillis
+}
+
+fun DateTimeBean.diffCurrent(): Long {
+    //获取当前日期，拼给任务时间，不然不好计算时间差
+    val simpleDateFormat = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault())
+    val taskTime = "${this.date} ${this.time}"
+    val taskDate = simpleDateFormat.parse(taskTime) ?: return 0
+    val currentMillis = System.currentTimeMillis()
+    return (taskDate.time - currentMillis) / 1000
+}

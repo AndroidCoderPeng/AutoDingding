@@ -1,68 +1,33 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    app:cardCornerRadius="@dimen/dp_10">
+    android:layout_height="@dimen/dp_80"
+    android:background="@drawable/selector_stroke_layout_radius_10"
+    android:gravity="center_vertical"
+    android:paddingHorizontal="@dimen/dp_10">
 
-    <LinearLayout
-        android:layout_width="match_parent"
+    <TextView
+        android:id="@+id/dateView"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:paddingHorizontal="@dimen/dp_7">
+        android:layout_centerVertical="true"
+        android:text="2023-04-28" />
 
-        <RelativeLayout
-            android:layout_width="match_parent"
-            android:layout_height="@dimen/dp_80"
-            android:gravity="center_vertical">
+    <TextView
+        android:id="@+id/timeView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:text="08:00"
+        android:textColor="@color/black"
+        android:textSize="30sp" />
 
-            <TextView
-                android:id="@+id/dateView"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_centerVertical="true"
-                android:text="2023-04-28" />
-
-            <TextView
-                android:id="@+id/timeView"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_centerInParent="true"
-                android:text="08:00"
-                android:textColor="@color/black"
-                android:textSize="@dimen/sp_20" />
-
-            <TextView
-                android:id="@+id/weekDayView"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentEnd="true"
-                android:layout_centerVertical="true"
-                android:text="周一" />
-        </RelativeLayout>
-
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="1px"
-            android:layout_marginBottom="@dimen/dp_7"
-            android:background="@color/gray" />
-
-        <TextView
-            android:id="@+id/countDownTextView"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="0秒后自动打卡" />
-
-        <com.google.android.material.progressindicator.LinearProgressIndicator
-            android:id="@+id/countDownProgress"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginVertical="@dimen/dp_7"
-            android:indeterminate="false"
-            app:indicatorColor="@color/colorAppThemeLight"
-            app:trackColor="@color/mainBackground"
-            app:trackCornerRadius="@dimen/dp_3"
-            app:trackThickness="@dimen/dp_7" />
-    </LinearLayout>
-</androidx.cardview.widget.CardView>
+    <TextView
+        android:id="@+id/weekDayView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:layout_centerVertical="true"
+        android:text="周一" />
+</RelativeLayout>
 

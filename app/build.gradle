@@ -11,8 +11,8 @@ android {
         applicationId "com.pengxh.autodingding"
         minSdkVersion 23
         targetSdkVersion 33
-        versionCode 1590
-        versionName "1.5.9"
+        versionCode 1600
+        versionName "1.6.0"
         flavorDimensions "versionCode"
     }
 
