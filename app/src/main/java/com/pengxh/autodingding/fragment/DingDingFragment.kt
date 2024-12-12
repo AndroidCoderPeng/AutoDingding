@@ -191,7 +191,7 @@ class DingDingFragment : KotlinBaseFragment<FragmentDingdingBinding>(), Handler.
                 isTaskStarted = true
                 binding.executeTaskButton.setImageResource(R.drawable.ic_stop)
             } else {
-                dailyTaskHandler.post(dailyTaskRunnable)
+                dailyTaskHandler.removeCallbacks(dailyTaskRunnable)
                 Log.d(kTag, "initEvent: 取消串行任务Runnable")
                 timerKit?.cancel()
                 isTaskStarted = false
