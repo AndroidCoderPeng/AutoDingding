@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="@dimen/dp_75"
     android:background="@drawable/selector_stroke_layout_radius_10">
@@ -10,6 +11,23 @@
         android:layout_gravity="center"
         android:layout_marginHorizontal="@dimen/dp_20"
         android:orientation="horizontal">
+
+        <androidx.cardview.widget.CardView
+            android:id="@+id/taskStateView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:backgroundTint="@color/iOSGreen"
+            android:visibility="gone"
+            app:cardCornerRadius="@dimen/dp_5">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="@dimen/dp_5"
+                android:text="计划时间"
+                android:textColor="@color/white" />
+        </androidx.cardview.widget.CardView>
 
         <TextView
             android:id="@+id/timeView"

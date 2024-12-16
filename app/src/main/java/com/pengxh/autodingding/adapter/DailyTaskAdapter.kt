@@ -5,6 +5,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
+import androidx.cardview.widget.CardView
 import androidx.recyclerview.widget.RecyclerView
 import com.pengxh.autodingding.R
 import com.pengxh.autodingding.bean.DailyTaskBean
@@ -45,7 +46,13 @@ class DailyTaskAdapter(context: Context, private val dataBeans: MutableList<Dail
             true
         }
 
-        holder.itemView.isSelected = position == mPosition
+        if (position == mPosition) {
+            holder.itemView.isSelected = true
+            holder.taskStateView.visibility = View.VISIBLE
+        } else {
+            holder.itemView.isSelected = false
+            holder.taskStateView.visibility = View.GONE
+        }
     }
 
     private var itemClickListener: OnItemClickListener? = null
@@ -61,6 +68,7 @@ class DailyTaskAdapter(context: Context, private val dataBeans: MutableList<Dail
     }
 
     inner class ItemViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+        var taskStateView: CardView = itemView.findViewById(R.id.taskStateView)
         var timeView: TextView = itemView.findViewById(R.id.timeView)
     }
 }
