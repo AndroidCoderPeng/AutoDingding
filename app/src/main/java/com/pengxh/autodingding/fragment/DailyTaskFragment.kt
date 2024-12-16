@@ -283,9 +283,8 @@ class DailyTaskFragment : KotlinBaseFragment<FragmentDailyTaskBinding>(), Handle
                         R.color.colorAppThemeLight.convertColor(requireContext())
                     )
 
-                    dailyTaskAdapter.updateCurrentTaskState(0)
-
                     val pair = task.random()
+                    dailyTaskAdapter.updateCurrentTaskState(0, pair.first)
                     binding.actualTimeView.text = pair.first
                     val diff = pair.second
                     binding.countDownPgr.max = diff.toInt()
@@ -319,9 +318,8 @@ class DailyTaskFragment : KotlinBaseFragment<FragmentDailyTaskBinding>(), Handle
                 binding.tipsView.text = "即将执行第 ${index + 1} 个任务"
                 binding.tipsView.setTextColor(R.color.colorAppThemeLight.convertColor(requireContext()))
 
-                dailyTaskAdapter.updateCurrentTaskState(index)
-
                 val pair = task.random()
+                dailyTaskAdapter.updateCurrentTaskState(index, pair.first)
                 binding.actualTimeView.text = pair.first
                 val diff = pair.second
                 binding.countDownPgr.max = diff.toInt()

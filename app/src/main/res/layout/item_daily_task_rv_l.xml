@@ -2,15 +2,16 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="@dimen/dp_75"
-    android:background="@drawable/selector_stroke_layout_radius_10">
+    android:layout_height="wrap_content"
+    android:background="@drawable/selector_stroke_layout_radius_10"
+    android:orientation="vertical"
+    android:paddingVertical="@dimen/dp_20">
 
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
-        android:layout_marginHorizontal="@dimen/dp_20"
-        android:orientation="horizontal">
+        android:layout_marginHorizontal="@dimen/dp_20">
 
         <androidx.cardview.widget.CardView
             android:id="@+id/taskStateView"
@@ -36,6 +37,41 @@
             android:layout_centerInParent="true"
             android:gravity="center"
             android:text="08:00"
+            android:textColor="@color/black"
+            android:textSize="30sp" />
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/actualTimeCardView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_marginHorizontal="@dimen/dp_20"
+        android:layout_marginTop="@dimen/dp_10"
+        android:visibility="gone">
+
+        <androidx.cardview.widget.CardView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:backgroundTint="@color/colorAppThemeLight"
+            app:cardCornerRadius="@dimen/dp_5">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="@dimen/dp_5"
+                android:text="实际时间"
+                android:textColor="@color/white" />
+        </androidx.cardview.widget.CardView>
+
+        <TextView
+            android:id="@+id/actualTimeView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:gravity="center"
+            android:text="--:--:--"
             android:textColor="@color/black"
             android:textSize="30sp" />
     </RelativeLayout>

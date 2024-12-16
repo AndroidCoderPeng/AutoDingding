@@ -4,21 +4,32 @@ import android.content.Context
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.RelativeLayout
 import android.widget.TextView
 import androidx.cardview.widget.CardView
 import androidx.recyclerview.widget.RecyclerView
 import com.pengxh.autodingding.R
 import com.pengxh.autodingding.bean.DailyTaskBean
+import com.pengxh.kt.lite.extensions.convertColor
 
-class DailyTaskAdapter(context: Context, private val dataBeans: MutableList<DailyTaskBean>) :
-    RecyclerView.Adapter<DailyTaskAdapter.ItemViewHolder>() {
+class DailyTaskAdapter(
+    private val context: Context,
+    private val dataBeans: MutableList<DailyTaskBean>
+) : RecyclerView.Adapter<DailyTaskAdapter.ItemViewHolder>() {
 
     private val kTag = "DailyTaskAdapter"
     private var layoutInflater = LayoutInflater.from(context)
     private var mPosition = -1
+    private var actualTime = "--:--:--"
 
     fun updateCurrentTaskState(position: Int) {
         this.mPosition = position
+        notifyDataSetChanged()
+    }
+
+    fun updateCurrentTaskState(position: Int, actualTime: String) {
+        this.mPosition = position
+        this.actualTime = actualTime
         notifyDataSetChanged()
     }
 
@@ -49,9 +60,15 @@ class DailyTaskAdapter(context: Context, private val dataBeans: MutableList<Dail
         if (position == mPosition) {
             holder.itemView.isSelected = true
             holder.taskStateView.visibility = View.VISIBLE
+            holder.actualTimeCardView.visibility = View.VISIBLE
+            holder.actualTimeView.text = actualTime
+            holder.timeView.setTextColor(R.color.lib_hint_color.convertColor(context))
         } else {
             holder.itemView.isSelected = false
             holder.taskStateView.visibility = View.GONE
+            holder.actualTimeCardView.visibility = View.GONE
+            holder.actualTimeView.text = "--:--:--"
+            holder.timeView.setTextColor(R.color.black.convertColor(context))
         }
     }
 
@@ -68,6 +85,8 @@ class DailyTaskAdapter(context: Context, private val dataBeans: MutableList<Dail
     }
 
     inner class ItemViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+        var actualTimeCardView: RelativeLayout = itemView.findViewById(R.id.actualTimeCardView)
+        var actualTimeView: TextView = itemView.findViewById(R.id.actualTimeView)
         var taskStateView: CardView = itemView.findViewById(R.id.taskStateView)
         var timeView: TextView = itemView.findViewById(R.id.timeView)
     }

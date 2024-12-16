@@ -45,10 +45,10 @@
                     android:layout_gravity="center"
                     android:orientation="horizontal"
                     android:paddingHorizontal="@dimen/dp_20"
-                    android:paddingVertical="@dimen/dp_40">
+                    android:paddingVertical="@dimen/dp_40"
+                    android:visibility="gone">
 
                     <androidx.cardview.widget.CardView
-                        android:id="@+id/taskStateView"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_centerVertical="true"
@@ -73,6 +73,16 @@
                         android:textColor="@color/black"
                         android:textSize="30sp" />
                 </RelativeLayout>
+
+                <TextClock
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:fontFamily="@font/ds_digital"
+                    android:format24Hour="HH:mm:ss"
+                    android:paddingVertical="@dimen/dp_40"
+                    android:textColor="@color/black"
+                    android:textSize="56sp" />
 
                 <LinearLayout
                     android:layout_width="match_parent"
