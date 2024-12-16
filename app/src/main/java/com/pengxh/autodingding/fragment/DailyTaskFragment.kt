@@ -28,7 +28,6 @@ import com.pengxh.autodingding.utils.OnTimeSelectedCallback
 import com.pengxh.autodingding.utils.TimeKit
 import com.pengxh.kt.lite.base.KotlinBaseFragment
 import com.pengxh.kt.lite.divider.RecyclerViewItemOffsets
-import com.pengxh.kt.lite.extensions.appendZero
 import com.pengxh.kt.lite.extensions.convertColor
 import com.pengxh.kt.lite.extensions.createLogFile
 import com.pengxh.kt.lite.extensions.dp2px
@@ -277,7 +276,9 @@ class DailyTaskFragment : KotlinBaseFragment<FragmentDailyTaskBinding>(), Handle
                         requireContext().createLogFile()
                     )
                     binding.tipsView.text = "只有 1 个任务"
-                    binding.tipsView.setTextColor(R.color.colorAppThemeLight.convertColor(requireContext()))
+                    binding.tipsView.setTextColor(
+                        R.color.colorAppThemeLight.convertColor(requireContext())
+                    )
 
                     dailyTaskAdapter.updateCurrentTaskState(0)
 
@@ -347,12 +348,5 @@ class DailyTaskFragment : KotlinBaseFragment<FragmentDailyTaskBinding>(), Handle
             }
         }
         return true
-    }
-
-    /**
-     * 产生随机秒数
-     * */
-    private fun randomSeconds(): String {
-        return (0 until 60).random().appendZero()
     }
 }

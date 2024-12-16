@@ -6,7 +6,6 @@ import com.github.gzuliyujiang.wheelpicker.annotation.TimeMode
 import com.pengxh.autodingding.R
 import com.pengxh.autodingding.bean.DailyTaskBean
 import com.pengxh.autodingding.utils.OnTimeSelectedCallback
-import com.pengxh.kt.lite.extensions.appendZero
 import com.pengxh.kt.lite.extensions.convertColor
 
 /**
@@ -15,15 +14,14 @@ import com.pengxh.kt.lite.extensions.convertColor
 fun Activity.showTimePicker(dailyTaskBean: DailyTaskBean, callback: OnTimeSelectedCallback) {
     val timePicker = TimePicker(this)
     val layout = timePicker.wheelLayout
-    layout.setTimeMode(TimeMode.HOUR_24_NO_SECOND)
+    layout.setTimeMode(TimeMode.HOUR_24_HAS_SECOND)
     layout.setTimeLabel("时", "分", "秒")
     layout.setDefaultValue(dailyTaskBean.convertToTimeEntity())
     layout.setSelectedTextColor(R.color.colorAppThemeLight.convertColor(this))
     layout.setSelectedTextBold(true)
 
-    timePicker.setOnTimePickedListener { hour, minute, second ->
-        val time = "${hour.appendZero()}:${minute.appendZero()}:${second.appendZero()}"
-        callback.onTimePicked(time)
+    timePicker.setOnTimePickedListener { hour, minute, _ ->
+        callback.onTimePicked(String.format("%02d:%02d:%02d", hour, minute, (0 until 60).random()))
     }
     timePicker.show()
 }
@@ -34,14 +32,13 @@ fun Activity.showTimePicker(dailyTaskBean: DailyTaskBean, callback: OnTimeSelect
 fun Activity.showTimePicker(callback: OnTimeSelectedCallback) {
     val timePicker = TimePicker(this)
     val layout = timePicker.wheelLayout
-    layout.setTimeMode(TimeMode.HOUR_24_NO_SECOND)
+    layout.setTimeMode(TimeMode.HOUR_24_HAS_SECOND)
     layout.setTimeLabel("时", "分", "秒")
     layout.setSelectedTextColor(R.color.colorAppThemeLight.convertColor(this))
     layout.setSelectedTextBold(true)
 
-    timePicker.setOnTimePickedListener { hour, minute, second ->
-        val time = "${hour.appendZero()}:${minute.appendZero()}:${second.appendZero()}"
-        callback.onTimePicked(time)
+    timePicker.setOnTimePickedListener { hour, minute, _ ->
+        callback.onTimePicked(String.format("%02d:%02d:%02d", hour, minute, (0 until 60).random()))
     }
     timePicker.show()
 }
