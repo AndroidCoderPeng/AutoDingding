@@ -1,2 +1,2 @@
-rootProject.name = "AutoDingding"
+rootProject.name = "AutoTask"
 include ':app'

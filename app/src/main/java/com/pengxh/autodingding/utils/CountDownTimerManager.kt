@@ -10,7 +10,7 @@ import androidx.lifecycle.LifecycleRegistry
 import androidx.lifecycle.lifecycleScope
 import com.pengxh.autodingding.extensions.createTextMail
 import com.pengxh.autodingding.extensions.sendTextMail
-import com.pengxh.autodingding.fragment.DingDingFragment
+import com.pengxh.autodingding.fragment.DailyTaskFragment
 import com.pengxh.autodingding.service.FloatingWindowService
 import com.pengxh.autodingding.ui.MainActivity
 import com.pengxh.kt.lite.extensions.show
@@ -64,7 +64,7 @@ class CountDownTimerManager private constructor() : LifecycleOwner {
                 intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
                 context.startActivity(intent)
 
-                DingDingFragment.weakReferenceHandler?.sendEmptyMessage(Constant.EXECUTE_NEXT_TASK_CODE)
+                DailyTaskFragment.weakReferenceHandler?.sendEmptyMessage(Constant.EXECUTE_NEXT_TASK_CODE)
 
                 val emailAddress = SaveKeyValues.getValue(Constant.EMAIL_ADDRESS, "") as String
                 if (emailAddress.isEmpty()) {

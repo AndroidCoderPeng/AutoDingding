@@ -11,8 +11,8 @@ android {
         applicationId "com.pengxh.autodingding"
         minSdkVersion 23
         targetSdkVersion 33
-        versionCode 1600
-        versionName "1.6.0"
+        versionCode 2000
+        versionName "2.0.0"
         flavorDimensions "versionCode"
     }
 
@@ -71,7 +71,7 @@ android {
 
     applicationVariants.configureEach { variant ->
         variant.outputs.configureEach {
-            outputFileName = "AUTO_" + getBuildDate() + "_" + defaultConfig.versionName + ".apk"
+            outputFileName = "AT_" + getBuildDate() + "_" + defaultConfig.versionName + ".apk"
         }
     }
 }

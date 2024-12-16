@@ -39,6 +39,13 @@
                         android:gravity="center_horizontal"
                         android:textColor="@color/black"
                         android:textSize="56sp" />
+
+                    <TextView
+                        android:id="@+id/repeatTimeView"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="0秒后刷新每日任务"
+                        android:textColor="@color/purple_500" />
                 </LinearLayout>
 
                 <LinearLayout
@@ -59,7 +66,7 @@
                             android:layout_height="wrap_content"
                             android:fontFamily="sans-serif-condensed"
                             android:hint="请点击右侧按钮开始执行任务"
-                            android:textColor="@color/purple_500"
+                            android:textColor="@color/colorAppThemeLight"
                             android:textColorHint="@color/lib_hint_color"
                             android:textSize="@dimen/sp_16"
                             android:textStyle="bold" />

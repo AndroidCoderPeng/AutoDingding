@@ -18,7 +18,7 @@ import com.pengxh.autodingding.adapter.BaseFragmentAdapter
 import com.pengxh.autodingding.databinding.ActivityMainBinding
 import com.pengxh.autodingding.extensions.initImmersionBar
 import com.pengxh.autodingding.extensions.isAppAvailable
-import com.pengxh.autodingding.fragment.DingDingFragment
+import com.pengxh.autodingding.fragment.DailyTaskFragment
 import com.pengxh.autodingding.fragment.SettingsFragment
 import com.pengxh.autodingding.service.FloatingWindowService
 import com.pengxh.autodingding.service.ForegroundRunningService
@@ -56,7 +56,7 @@ class MainActivity : KotlinBaseActivity<ActivityMainBinding>() {
         }
 
         val fragmentPages = ArrayList<Fragment>()
-        fragmentPages.add(DingDingFragment())
+        fragmentPages.add(DailyTaskFragment())
         fragmentPages.add(SettingsFragment())
 
         val fragmentAdapter = BaseFragmentAdapter(supportFragmentManager, fragmentPages)

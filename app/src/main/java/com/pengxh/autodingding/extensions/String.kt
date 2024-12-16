@@ -9,7 +9,6 @@ import java.text.ParseException
 import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Locale
-import kotlin.math.abs
 
 fun String.convertToWeek(): String {
     val format = SimpleDateFormat("yyyy-MM-dd", Locale.CHINA)
@@ -29,45 +28,6 @@ fun String.convertToWeek(): String {
         7 -> return "周六"
         else -> "错误"
     }
-}
-
-fun String.isEarlierThenCurrent(): Boolean {
-    try {
-        val dateFormat = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.CHINA)
-        val date = dateFormat.parse(this)!!
-        val t1 = date.time
-        val t2 = System.currentTimeMillis()
-        return (t1 - t2) < 0
-    } catch (e: ParseException) {
-        e.printStackTrace()
-    }
-    return false
-}
-
-/**
- * 时间差-秒
- * */
-fun String.diffCurrentMillis(): Long {
-    if (this.isBlank()) {
-        return 0
-    }
-    val simpleDateFormat = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.CHINA)
-    val date = simpleDateFormat.parse(this)!!
-    return abs(System.currentTimeMillis() - date.time)
-}
-
-/**
- * 时间差-秒
- * */
-fun String.diffSeconds(time: String): Long {
-    if (this.isBlank()) {
-        return 0
-    }
-    val simpleDateFormat = SimpleDateFormat("HH:mm:ss", Locale.CHINA)
-    val currentTime = simpleDateFormat.parse(this)!!
-    val nextTime = simpleDateFormat.parse(time)!!
-    val diffSeconds = abs(nextTime.time - currentTime.time)
-    return diffSeconds / 1000
 }
 
 fun String.createTextMail(subject: String, toAddress: String): MailInfo {

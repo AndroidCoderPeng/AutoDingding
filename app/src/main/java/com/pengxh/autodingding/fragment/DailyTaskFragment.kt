@@ -11,21 +11,20 @@ import android.view.View
 import android.view.ViewGroup
 import com.pengxh.autodingding.BaseApplication
 import com.pengxh.autodingding.R
-import com.pengxh.autodingding.adapter.DateTimeAdapter
-import com.pengxh.autodingding.bean.DateTimeBean
-import com.pengxh.autodingding.databinding.FragmentDingdingBinding
-import com.pengxh.autodingding.extensions.convertToWeek
+import com.pengxh.autodingding.adapter.DailyTaskAdapter
+import com.pengxh.autodingding.bean.DailyTaskBean
+import com.pengxh.autodingding.databinding.FragmentDailyTaskBinding
 import com.pengxh.autodingding.extensions.diffCurrent
+import com.pengxh.autodingding.extensions.formatTime
 import com.pengxh.autodingding.extensions.getTaskIndex
 import com.pengxh.autodingding.extensions.isLateThenCurrent
 import com.pengxh.autodingding.extensions.openApplication
-import com.pengxh.autodingding.extensions.showDatePicker
-import com.pengxh.autodingding.extensions.showDateTimePicker
-import com.pengxh.autodingding.greendao.DateTimeBeanDao
+import com.pengxh.autodingding.extensions.showTimePicker
+import com.pengxh.autodingding.greendao.DailyTaskBeanDao
 import com.pengxh.autodingding.utils.Constant
 import com.pengxh.autodingding.utils.CountDownTimerKit
-import com.pengxh.autodingding.utils.OnDateSelectedCallback
 import com.pengxh.autodingding.utils.OnTimeCountDownCallback
+import com.pengxh.autodingding.utils.OnTimeSelectedCallback
 import com.pengxh.autodingding.utils.TimeKit
 import com.pengxh.kt.lite.base.KotlinBaseFragment
 import com.pengxh.kt.lite.divider.RecyclerViewItemOffsets
@@ -41,19 +40,22 @@ import com.pengxh.kt.lite.widget.dialog.AlertControlDialog
 import java.util.UUID
 
 @SuppressLint("NotifyDataSetChanged", "SetTextI18n")
-class DingDingFragment : KotlinBaseFragment<FragmentDingdingBinding>(), Handler.Callback {
+class DailyTaskFragment : KotlinBaseFragment<FragmentDailyTaskBinding>(), Handler.Callback {
 
     companion object {
         var weakReferenceHandler: WeakReferenceHandler? = null
     }
 
     private val kTag = "DingDingFragment"
-    private val dateTimeBeanDao by lazy { BaseApplication.get().daoSession.dateTimeBeanDao }
+    private val dailyTaskBeanDao by lazy { BaseApplication.get().daoSession.dailyTaskBeanDao }
     private val marginOffset by lazy { 10.dp2px(requireContext()) }
+    private val repeatTaskHandler = Handler(Looper.getMainLooper())
     private val dailyTaskHandler = Handler(Looper.getMainLooper())
-    private lateinit var dateTimeAdapter: DateTimeAdapter
-    private var dataBeans: MutableList<DateTimeBean> = ArrayList()
+    private lateinit var dailyTaskAdapter: DailyTaskAdapter
+    private var taskBeans: MutableList<DailyTaskBean> = ArrayList()
+    private var diffSeconds = 0L
     private var isTaskStarted = false
+    private var repeatTimes = 0
     private var timerKit: CountDownTimerKit? = null
 
     override fun setupTopBarLayout() {
@@ -66,86 +68,54 @@ class DingDingFragment : KotlinBaseFragment<FragmentDingdingBinding>(), Handler.
 
     override fun initViewBinding(
         inflater: LayoutInflater, container: ViewGroup?
-    ): FragmentDingdingBinding {
-        return FragmentDingdingBinding.inflate(inflater, container, false)
+    ): FragmentDailyTaskBinding {
+        return FragmentDailyTaskBinding.inflate(inflater, container, false)
     }
 
     override fun initOnCreate(savedInstanceState: Bundle?) {
         weakReferenceHandler = WeakReferenceHandler(this)
-        dataBeans = dateTimeBeanDao.queryBuilder().orderDesc(
-            DateTimeBeanDao.Properties.Date
+        taskBeans = dailyTaskBeanDao.queryBuilder().orderAsc(
+            DailyTaskBeanDao.Properties.Time
         ).list()
 
-        if (dataBeans.size == 0) {
+        if (taskBeans.size == 0) {
             binding.emptyView.visibility = View.VISIBLE
         } else {
             binding.emptyView.visibility = View.GONE
         }
 
-        dateTimeAdapter = DateTimeAdapter(requireContext(), dataBeans)
-        binding.recyclerView.adapter = dateTimeAdapter
+        dailyTaskAdapter = DailyTaskAdapter(requireContext(), taskBeans)
+        binding.recyclerView.adapter = dailyTaskAdapter
         binding.recyclerView.addItemDecoration(
             RecyclerViewItemOffsets(
                 marginOffset, marginOffset shr 1, marginOffset, marginOffset shr 1
             )
         )
-        dateTimeAdapter.setOnItemClickListener(object : DateTimeAdapter.OnItemClickListener {
+        dailyTaskAdapter.setOnItemClickListener(object : DailyTaskAdapter.OnItemClickListener {
             override fun onItemClick(position: Int) {
                 if (isTaskStarted) {
                     "任务进行中，无法修改，请先取消当前任务".show(requireContext())
                     return
                 }
-                AlertControlDialog.Builder()
-                    .setContext(requireContext())
-                    .setTitle("修改打卡任务")
-                    .setMessage("是否需要调整打卡时间？")
-                    .setNegativeButton("取消")
-                    .setPositiveButton("确定")
-                    .setOnDialogButtonClickListener(object :
+                AlertControlDialog.Builder().setContext(requireContext()).setTitle("修改打卡任务")
+                    .setMessage("是否需要调整打卡时间？").setNegativeButton("取消")
+                    .setPositiveButton("确定").setOnDialogButtonClickListener(object :
                         AlertControlDialog.OnDialogButtonClickListener {
                         override fun onConfirmClick() {
-                            val dateTimeBean = dataBeans[position]
-                            requireActivity().showDateTimePicker(dateTimeBean,
-                                object : OnDateSelectedCallback {
-                                    override fun onTimePicked(vararg args: String) {
-                                        dateTimeBean.date = "${args[0]}-${args[1]}-${args[2]}"
-                                        dateTimeBean.time =
-                                            "${args[3]}:${args[4]}:${randomSeconds()}"
-                                        dateTimeBean.weekDay = dateTimeBean.date.convertToWeek()
-
-                                        dateTimeBeanDao.update(dateTimeBean)
-                                        dataBeans.sortWith { x, y ->
-                                            compareBy<DateTimeBean> {
-                                                it.date
-                                            }.thenBy {
-                                                it.time
-                                            }.compare(x, y)
-                                        }
-                                        dateTimeAdapter.notifyDataSetChanged()
+                            val taskBean = taskBeans[position]
+                            requireActivity().showTimePicker(
+                                taskBean, object : OnTimeSelectedCallback {
+                                    override fun onTimePicked(time: String) {
+                                        taskBean.time = time
+                                        dailyTaskBeanDao.update(taskBean)
+                                        taskBeans.sortBy { x -> x.time }
+                                        dailyTaskAdapter.notifyDataSetChanged()
                                     }
-                                }
-                            )
+                                })
                         }
 
                         override fun onCancelClick() {
-                            val dateTimeBean = dataBeans[position]
-                            requireActivity().showDatePicker(dateTimeBean,
-                                object : OnDateSelectedCallback {
-                                    override fun onTimePicked(vararg args: String) {
-                                        dateTimeBean.date = "${args[0]}-${args[1]}-${args[2]}"
-                                        dateTimeBean.weekDay = dateTimeBean.date.convertToWeek()
 
-                                        dateTimeBeanDao.update(dateTimeBean)
-                                        dataBeans.sortWith { x, y ->
-                                            compareBy<DateTimeBean> {
-                                                it.date
-                                            }.thenBy {
-                                                it.time
-                                            }.compare(x, y)
-                                        }
-                                        dateTimeAdapter.notifyDataSetChanged()
-                                    }
-                                })
                         }
                     }).build().show()
             }
@@ -160,10 +130,10 @@ class DingDingFragment : KotlinBaseFragment<FragmentDingdingBinding>(), Handler.
                     .setPositiveButton("确定").setOnDialogButtonClickListener(object :
                         AlertControlDialog.OnDialogButtonClickListener {
                         override fun onConfirmClick() {
-                            dateTimeBeanDao.delete(dataBeans[position])
-                            dataBeans.removeAt(position)
-                            dateTimeAdapter.notifyDataSetChanged()
-                            if (dataBeans.size == 0) {
+                            dailyTaskBeanDao.delete(taskBeans[position])
+                            taskBeans.removeAt(position)
+                            dailyTaskAdapter.notifyDataSetChanged()
+                            if (taskBeans.size == 0) {
                                 binding.emptyView.visibility = View.VISIBLE
                             } else {
                                 binding.emptyView.visibility = View.GONE
@@ -180,26 +150,30 @@ class DingDingFragment : KotlinBaseFragment<FragmentDingdingBinding>(), Handler.
 
     override fun initEvent() {
         binding.executeTaskButton.setOnClickListener {
-            if (dateTimeBeanDao.loadAll().isEmpty()) {
+            if (dailyTaskBeanDao.loadAll().isEmpty()) {
                 "请先添加任务时间点".show(requireContext())
                 return@setOnClickListener
             }
 
             if (!isTaskStarted) {
-                dailyTaskHandler.post(dailyTaskRunnable)
-                Log.d(kTag, "initEvent: 开启串行任务Runnable")
+                //计算当前时间距离0点的时间差
+                diffSeconds = TimeKit.getNextMidnightSeconds()
+                repeatTaskHandler.post(repeatTaskRunnable)
+                Log.d(kTag, "initEvent: 开启周期任务Runnable")
                 isTaskStarted = true
                 binding.executeTaskButton.setImageResource(R.drawable.ic_stop)
             } else {
-                dailyTaskHandler.removeCallbacks(dailyTaskRunnable)
-                Log.d(kTag, "initEvent: 取消串行任务Runnable")
+                repeatTaskHandler.removeCallbacks(repeatTaskRunnable)
+                Log.d(kTag, "initEvent: 取消周期任务Runnable")
                 timerKit?.cancel()
                 isTaskStarted = false
+                repeatTimes = 0
+                binding.repeatTimeView.text = "0秒后刷新每日任务"
                 binding.executeTaskButton.setImageResource(R.drawable.ic_start)
                 binding.tipsView.text = ""
                 binding.countDownTimeView.text = "0秒后执行任务"
                 binding.countDownPgr.progress = 0
-                dateTimeAdapter.updateCurrentTaskState(-1)
+                dailyTaskAdapter.updateCurrentTaskState(-1)
             }
         }
 
@@ -208,20 +182,24 @@ class DingDingFragment : KotlinBaseFragment<FragmentDingdingBinding>(), Handler.
                 "任务进行中，无法添加，请先取消当前任务".show(requireContext())
                 return@setOnClickListener
             }
-            requireActivity().showDateTimePicker(null, object : OnDateSelectedCallback {
-                override fun onTimePicked(vararg args: String) {
-                    val bean = DateTimeBean()
+            requireActivity().showTimePicker(object : OnTimeSelectedCallback {
+                override fun onTimePicked(time: String) {
+                    val bean = DailyTaskBean()
                     bean.uuid = UUID.randomUUID().toString()
-                    bean.date = "${args[0]}-${args[1]}-${args[2]}"
-                    bean.time = "${args[3]}:${args[4]}:${randomSeconds()}"
-                    bean.weekDay = bean.date.convertToWeek()
+                    bean.time = time
 
-                    dateTimeBeanDao.insert(bean)
-                    dataBeans.add(bean)
-                    dataBeans.sortWith { x, y ->
-                        compareBy<DateTimeBean> { it.date }.thenBy { it.time }.compare(x, y)
+                    val count = dailyTaskBeanDao.queryBuilder().where(
+                        DailyTaskBeanDao.Properties.Time.eq(time)
+                    ).count()
+                    if (count > 1) {
+                        "任务时间点已存在".show(requireContext())
+                        return
                     }
-                    dateTimeAdapter.notifyDataSetChanged()
+
+                    dailyTaskBeanDao.insert(bean)
+                    taskBeans.add(bean)
+                    taskBeans.sortBy { x -> x.time }
+                    dailyTaskAdapter.notifyDataSetChanged()
                     binding.emptyView.visibility = View.GONE
                 }
             })
@@ -229,15 +207,50 @@ class DingDingFragment : KotlinBaseFragment<FragmentDingdingBinding>(), Handler.
     }
 
     /**
+     * 循环任务Runnable
+     * */
+    private val repeatTaskRunnable = object : Runnable {
+        override fun run() {
+            diffSeconds--
+            if (diffSeconds > 0) {
+                requireActivity().runOnUiThread {
+                    binding.repeatTimeView.text = "${diffSeconds.formatTime()}后刷新每日任务"
+                }
+                repeatTaskHandler.postDelayed(this, 1000)
+            } else {
+                //零点，刷新任务，并重启repeatTaskRunnable
+                repeatTimes = 0
+                diffSeconds = TimeKit.getNextMidnightSeconds()
+                repeatTaskHandler.post(this)
+                Log.d(kTag, "run: 零点，刷新任务，并重启repeatTaskRunnable")
+                "${TimeKit.getCurrentTime()}: 零点，刷新任务，并重启repeatTaskRunnable".writeToFile(
+                    requireContext().createLogFile()
+                )
+            }
+
+            if (repeatTimes == 0) {
+                updateDailyTask()
+            }
+        }
+    }
+
+    private fun updateDailyTask() {
+        Log.d(kTag, "updateDailyTask: 执行周期任务")
+        "${TimeKit.getCurrentTime()}：执行周期任务".writeToFile(requireContext().createLogFile())
+        dailyTaskHandler.post(dailyTaskRunnable)
+        repeatTimes++
+    }
+
+    /**
      * 当日串行任务Runnable
      * */
     private val dailyTaskRunnable = object : Runnable {
         override fun run() {
-            val taskIndex = dataBeans.getTaskIndex()
+            val taskIndex = taskBeans.getTaskIndex()
             Log.d(kTag, "run: taskIndex => $taskIndex")
             val handler = weakReferenceHandler ?: return
             //如果只有一个任务，直接执行，不用考虑顺序
-            if (dataBeans.count() == 1) {
+            if (taskBeans.count() == 1) {
                 val message = handler.obtainMessage()
                 message.what = Constant.EXECUTE_ONLY_ONE_TASK_CODE
                 message.obj = taskIndex
@@ -258,21 +271,22 @@ class DingDingFragment : KotlinBaseFragment<FragmentDingdingBinding>(), Handler.
     override fun handleMessage(msg: Message): Boolean {
         when (msg.what) {
             Constant.EXECUTE_ONLY_ONE_TASK_CODE -> {
-                val task = dataBeans.first()
+                val task = taskBeans.first()
                 if (task.isLateThenCurrent()) {
                     "${TimeKit.getCurrentTime()}：只有 1 个任务: ${task.toJson()}，直接按时执行".writeToFile(
                         requireContext().createLogFile()
                     )
                     binding.tipsView.text = "只有 1 个任务"
-                    binding.tipsView.setTextColor(R.color.purple_500.convertColor(requireContext()))
+                    binding.tipsView.setTextColor(R.color.colorAppThemeLight.convertColor(requireContext()))
 
-                    dateTimeAdapter.updateCurrentTaskState(0)
+                    dailyTaskAdapter.updateCurrentTaskState(0)
 
                     val diffSeconds = task.diffCurrent()
                     binding.countDownPgr.max = diffSeconds.toInt()
                     timerKit = CountDownTimerKit(diffSeconds, object : OnTimeCountDownCallback {
                         override fun updateCountDownSeconds(remainingSeconds: Long) {
-                            binding.countDownTimeView.text = "$remainingSeconds 秒后执行任务"
+                            binding.countDownTimeView.text =
+                                "${remainingSeconds.formatTime()}后执行任务"
                             binding.countDownPgr.progress = (diffSeconds - remainingSeconds).toInt()
                         }
 
@@ -280,7 +294,7 @@ class DingDingFragment : KotlinBaseFragment<FragmentDingdingBinding>(), Handler.
                             "${TimeKit.getCurrentTime()}：执行任务".writeToFile(requireContext().createLogFile())
                             binding.countDownTimeView.text = "0秒后执行任务"
                             binding.countDownPgr.progress = 0
-                            dateTimeAdapter.updateCurrentTaskState(-1)
+                            dailyTaskAdapter.updateCurrentTaskState(-1)
                             requireContext().openApplication(Constant.DING_DING)
                         }
                     })
@@ -292,21 +306,22 @@ class DingDingFragment : KotlinBaseFragment<FragmentDingdingBinding>(), Handler.
 
             Constant.EXECUTE_MULTIPLE_TASK_CODE -> {
                 val index = msg.obj as Int
-                val task = dataBeans[index]
+                val task = taskBeans[index]
                 "${TimeKit.getCurrentTime()}：即将执行第 ${index + 1} 个任务: ${task.toJson()}".writeToFile(
                     requireContext().createLogFile()
                 )
                 binding.tipsView.text = "即将执行第 ${index + 1} 个任务"
-                binding.tipsView.setTextColor(R.color.purple_500.convertColor(requireContext()))
+                binding.tipsView.setTextColor(R.color.colorAppThemeLight.convertColor(requireContext()))
 
-                dateTimeAdapter.updateCurrentTaskState(index)
+                dailyTaskAdapter.updateCurrentTaskState(index)
 
                 //计算任务时间和当前时间的差值
                 val diffSeconds = task.diffCurrent()
                 binding.countDownPgr.max = diffSeconds.toInt()
                 timerKit = CountDownTimerKit(diffSeconds, object : OnTimeCountDownCallback {
                     override fun updateCountDownSeconds(remainingSeconds: Long) {
-                        binding.countDownTimeView.text = "$remainingSeconds 秒后执行任务"
+                        binding.countDownTimeView.text =
+                            "${remainingSeconds.formatTime()}后执行任务"
                         binding.countDownPgr.progress = (diffSeconds - remainingSeconds).toInt()
                     }
 
@@ -328,7 +343,7 @@ class DingDingFragment : KotlinBaseFragment<FragmentDingdingBinding>(), Handler.
                 "${TimeKit.getCurrentTime()}：当天所有任务已执行完毕".writeToFile(requireContext().createLogFile())
                 binding.tipsView.text = "当天所有任务已执行完毕"
                 binding.tipsView.setTextColor(R.color.iOSGreen.convertColor(requireContext()))
-                dateTimeAdapter.updateCurrentTaskState(-1)
+                dailyTaskAdapter.updateCurrentTaskState(-1)
             }
         }
         return true

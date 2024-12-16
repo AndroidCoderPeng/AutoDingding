@@ -7,14 +7,13 @@ import android.view.ViewGroup
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.pengxh.autodingding.R
-import com.pengxh.autodingding.bean.DateTimeBean
+import com.pengxh.autodingding.bean.DailyTaskBean
 
-class DateTimeAdapter(context: Context, private val dataBeans: MutableList<DateTimeBean>) :
-    RecyclerView.Adapter<DateTimeAdapter.ItemViewHolder>() {
+class DailyTaskAdapter(context: Context, private val dataBeans: MutableList<DailyTaskBean>) :
+    RecyclerView.Adapter<DailyTaskAdapter.ItemViewHolder>() {
 
-    private val kTag = "DateTimeAdapter"
+    private val kTag = "DailyTaskAdapter"
     private var layoutInflater = LayoutInflater.from(context)
-
     private var mPosition = -1
 
     fun updateCurrentTaskState(position: Int) {
@@ -28,15 +27,13 @@ class DateTimeAdapter(context: Context, private val dataBeans: MutableList<DateT
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ItemViewHolder {
         return ItemViewHolder(
-            layoutInflater.inflate(R.layout.item_timer_rv_l, parent, false)
+            layoutInflater.inflate(R.layout.item_daily_task_rv_l, parent, false)
         )
     }
 
     override fun onBindViewHolder(holder: ItemViewHolder, position: Int) {
         val timeBean = dataBeans[position]
-        holder.dateView.text = timeBean.date
         holder.timeView.text = timeBean.time
-        holder.weekDayView.text = timeBean.weekDay
 
         holder.itemView.setOnClickListener {
             itemClickListener?.onItemClick(position)
@@ -65,7 +62,5 @@ class DateTimeAdapter(context: Context, private val dataBeans: MutableList<DateT
 
     inner class ItemViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         var timeView: TextView = itemView.findViewById(R.id.timeView)
-        var dateView: TextView = itemView.findViewById(R.id.dateView)
-        var weekDayView: TextView = itemView.findViewById(R.id.weekDayView)
     }
 }

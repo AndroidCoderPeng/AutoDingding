@@ -5,26 +5,22 @@ import org.greenrobot.greendao.annotation.Generated;
 import org.greenrobot.greendao.annotation.Id;
 
 @Entity
-public class DateTimeBean {
+public class DailyTaskBean {
     @Id(autoincrement = true)
     private Long id;//主键ID
 
     private String uuid;
-    private String date;
     private String time;
-    private String weekDay;
 
-    @Generated(hash = 590077470)
-    public DateTimeBean(Long id, String uuid, String date, String time, String weekDay) {
+    @Generated(hash = 547825290)
+    public DailyTaskBean(Long id, String uuid, String time) {
         this.id = id;
         this.uuid = uuid;
-        this.date = date;
         this.time = time;
-        this.weekDay = weekDay;
     }
 
-    @Generated(hash = 1790840121)
-    public DateTimeBean() {
+    @Generated(hash = 542839617)
+    public DailyTaskBean() {
     }
 
     public Long getId() {
@@ -43,27 +39,11 @@ public class DateTimeBean {
         this.uuid = uuid;
     }
 
-    public String getDate() {
-        return this.date;
-    }
-
-    public void setDate(String date) {
-        this.date = date;
-    }
-
     public String getTime() {
         return this.time;
     }
 
     public void setTime(String time) {
         this.time = time;
-    }
-
-    public String getWeekDay() {
-        return this.weekDay;
-    }
-
-    public void setWeekDay(String weekDay) {
-        this.weekDay = weekDay;
     }
 }
