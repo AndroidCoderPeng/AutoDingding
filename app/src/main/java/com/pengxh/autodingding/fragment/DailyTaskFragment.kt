@@ -14,11 +14,11 @@ import com.pengxh.autodingding.R
 import com.pengxh.autodingding.adapter.DailyTaskAdapter
 import com.pengxh.autodingding.bean.DailyTaskBean
 import com.pengxh.autodingding.databinding.FragmentDailyTaskBinding
-import com.pengxh.autodingding.extensions.diffCurrent
 import com.pengxh.autodingding.extensions.formatTime
 import com.pengxh.autodingding.extensions.getTaskIndex
 import com.pengxh.autodingding.extensions.isLateThenCurrent
 import com.pengxh.autodingding.extensions.openApplication
+import com.pengxh.autodingding.extensions.random
 import com.pengxh.autodingding.extensions.showTimePicker
 import com.pengxh.autodingding.greendao.DailyTaskBeanDao
 import com.pengxh.autodingding.utils.Constant
@@ -167,7 +167,9 @@ class DailyTaskFragment : KotlinBaseFragment<FragmentDailyTaskBinding>(), Handle
                 timerKit?.cancel()
                 isTaskStarted = false
                 repeatTimes = 0
+                binding.actualTimeView.text = "--:--:--"
                 binding.repeatTimeView.text = "0秒后刷新每日任务"
+                binding.repeatTimeView.visibility = View.INVISIBLE
                 binding.executeTaskButton.setImageResource(R.drawable.ic_start)
                 binding.tipsView.text = ""
                 binding.countDownTimeView.text = "0秒后执行任务"
@@ -213,6 +215,7 @@ class DailyTaskFragment : KotlinBaseFragment<FragmentDailyTaskBinding>(), Handle
             diffSeconds--
             if (diffSeconds > 0) {
                 requireActivity().runOnUiThread {
+                    binding.repeatTimeView.visibility = View.VISIBLE
                     binding.repeatTimeView.text = "${diffSeconds.formatTime()}后刷新每日任务"
                 }
                 repeatTaskHandler.postDelayed(this, 1000)
@@ -282,13 +285,15 @@ class DailyTaskFragment : KotlinBaseFragment<FragmentDailyTaskBinding>(), Handle
 
                     dailyTaskAdapter.updateCurrentTaskState(0)
 
-                    val diffSeconds = task.diffCurrent()
-                    binding.countDownPgr.max = diffSeconds.toInt()
-                    timerKit = CountDownTimerKit(diffSeconds, object : OnTimeCountDownCallback {
+                    val pair = task.random()
+                    binding.actualTimeView.text = pair.first
+                    val diff = pair.second
+                    binding.countDownPgr.max = diff.toInt()
+                    timerKit = CountDownTimerKit(diff, object : OnTimeCountDownCallback {
                         override fun updateCountDownSeconds(remainingSeconds: Long) {
                             binding.countDownTimeView.text =
                                 "${remainingSeconds.formatTime()}后执行任务"
-                            binding.countDownPgr.progress = (diffSeconds - remainingSeconds).toInt()
+                            binding.countDownPgr.progress = (diff - remainingSeconds).toInt()
                         }
 
                         override fun onFinish() {
@@ -316,14 +321,15 @@ class DailyTaskFragment : KotlinBaseFragment<FragmentDailyTaskBinding>(), Handle
 
                 dailyTaskAdapter.updateCurrentTaskState(index)
 
-                //计算任务时间和当前时间的差值
-                val diffSeconds = task.diffCurrent()
-                binding.countDownPgr.max = diffSeconds.toInt()
-                timerKit = CountDownTimerKit(diffSeconds, object : OnTimeCountDownCallback {
+                val pair = task.random()
+                binding.actualTimeView.text = pair.first
+                val diff = pair.second
+                binding.countDownPgr.max = diff.toInt()
+                timerKit = CountDownTimerKit(diff, object : OnTimeCountDownCallback {
                     override fun updateCountDownSeconds(remainingSeconds: Long) {
                         binding.countDownTimeView.text =
                             "${remainingSeconds.formatTime()}后执行任务"
-                        binding.countDownPgr.progress = (diffSeconds - remainingSeconds).toInt()
+                        binding.countDownPgr.progress = (diff - remainingSeconds).toInt()
                     }
 
                     override fun onFinish() {

@@ -17,6 +17,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_margin="@dimen/dp_10"
+            android:backgroundTint="@color/white"
             app:cardCornerRadius="@dimen/dp_10">
 
             <LinearLayout
@@ -24,29 +25,54 @@
                 android:layout_height="wrap_content"
                 android:orientation="vertical">
 
-                <LinearLayout
+                <TextView
+                    android:id="@+id/repeatTimeView"
+                    android:layout_width="wrap_content"
+                    android:layout_height="24dp"
+                    android:layout_gravity="center"
+                    android:background="@drawable/bg_solid_layout_black_radius_5"
+                    android:drawablePadding="@dimen/dp_5"
+                    android:gravity="center"
+                    android:paddingHorizontal="@dimen/dp_10"
+                    android:text="0秒后刷新每日任务"
+                    android:textColor="@color/white"
+                    android:visibility="invisible"
+                    app:drawableStartCompat="@drawable/ic_sand" />
+
+                <RelativeLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:gravity="center"
-                    android:orientation="vertical"
-                    android:paddingVertical="@dimen/dp_50">
+                    android:layout_gravity="center"
+                    android:orientation="horizontal"
+                    android:paddingHorizontal="@dimen/dp_20"
+                    android:paddingVertical="@dimen/dp_40">
 
-                    <TextClock
+                    <androidx.cardview.widget.CardView
+                        android:id="@+id/taskStateView"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:fontFamily="@font/ds_digital"
-                        android:format24Hour="HH:mm:ss"
-                        android:gravity="center_horizontal"
-                        android:textColor="@color/black"
-                        android:textSize="56sp" />
+                        android:layout_centerVertical="true"
+                        android:backgroundTint="@color/colorAppThemeLight"
+                        app:cardCornerRadius="@dimen/dp_5">
+
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_margin="@dimen/dp_5"
+                            android:text="实际时间"
+                            android:textColor="@color/white" />
+                    </androidx.cardview.widget.CardView>
 
                     <TextView
-                        android:id="@+id/repeatTimeView"
+                        android:id="@+id/actualTimeView"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="0秒后刷新每日任务"
-                        android:textColor="@color/purple_500" />
-                </LinearLayout>
+                        android:layout_centerInParent="true"
+                        android:gravity="center"
+                        android:text="--:--:--"
+                        android:textColor="@color/black"
+                        android:textSize="30sp" />
+                </RelativeLayout>
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -101,7 +127,8 @@
 
         <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            android:layout_height="0dp"
+            android:layout_weight="1">
 
             <ImageView
                 android:id="@+id/emptyView"
@@ -124,7 +151,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal|bottom"
-        android:layout_margin="@dimen/dp_20"
+        android:layout_margin="@dimen/dp_10"
         android:contentDescription="@string/app_name"
         android:src="@drawable/ic_add" />
 </FrameLayout>
