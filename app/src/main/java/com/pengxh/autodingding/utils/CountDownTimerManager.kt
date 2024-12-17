@@ -60,7 +60,8 @@ class CountDownTimerManager private constructor() : LifecycleOwner {
                 }
 
                 val intent = Intent(context, MainActivity::class.java)
-                intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
+                intent.flags =
+                    Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_REORDER_TO_FRONT
                 context.startActivity(intent)
 
                 DailyTaskFragment.weakReferenceHandler?.sendEmptyMessage(Constant.EXECUTE_NEXT_TASK_CODE)
