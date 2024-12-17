@@ -6,6 +6,7 @@ import android.content.Intent
 import android.content.pm.ApplicationInfo
 import android.content.pm.ResolveInfo
 import androidx.core.app.NotificationManagerCompat
+import com.pengxh.autodingding.service.FloatingWindowService
 import com.pengxh.autodingding.utils.Constant
 import com.pengxh.autodingding.utils.CountDownTimerManager
 import com.pengxh.kt.lite.utils.SaveKeyValues
@@ -39,6 +40,7 @@ fun Context.isAppAvailable(packageName: String): Boolean {
  * 打开指定包名的apk
  */
 fun Context.openApplication(packageName: String) {
+    FloatingWindowService.weakReferenceHandler?.sendEmptyMessage(Constant.SHOW_FLOATING_WINDOW_CODE)
     /***跳转钉钉开始*****************************************/
     val packageManager = this.packageManager
     val resolveIntent = Intent(Intent.ACTION_MAIN, null)

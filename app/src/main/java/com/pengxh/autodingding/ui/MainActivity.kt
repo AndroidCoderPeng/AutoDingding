@@ -185,4 +185,11 @@ class MainActivity : KotlinBaseActivity<ActivityMainBinding>() {
         }
         return super.onKeyDown(keyCode, event)
     }
+
+    override fun onResume() {
+        super.onResume()
+        if (binding.maskView.isVisible) {
+            FloatingWindowService.weakReferenceHandler?.sendEmptyMessage(Constant.HIDE_FLOATING_WINDOW_CODE)
+        }
+    }
 }
