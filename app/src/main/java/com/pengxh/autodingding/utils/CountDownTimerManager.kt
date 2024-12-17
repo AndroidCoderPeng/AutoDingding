@@ -37,7 +37,6 @@ class CountDownTimerManager private constructor() : LifecycleOwner {
     private var timer: CountDownTimer? = null
 
     fun startTimer(context: Context, millisInFuture: Long, countDownInterval: Long) {
-        Log.d(kTag, "startTimer: 开始倒计时")
         timer = object : CountDownTimer(millisInFuture, countDownInterval) {
             override fun onTick(millisUntilFinished: Long) {
                 val tick = millisUntilFinished / 1000

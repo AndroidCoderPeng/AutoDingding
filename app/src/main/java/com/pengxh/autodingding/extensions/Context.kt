@@ -58,7 +58,7 @@ fun Context.openApplication(packageName: String) {
     )
     this.startActivity(intent)
 
-    val time = SaveKeyValues.getValue(Constant.TIMEOUT, "15s") as String
+    val time = SaveKeyValues.getValue(Constant.TIMEOUT, "45s") as String
     //去掉时间的s
     val timeValue = time.dropLast(1).toInt()
     /***倒计时，记录在钉钉界面停留的时间，超过设定的超时时间，自动回到打卡工具，并记录异常日志***/

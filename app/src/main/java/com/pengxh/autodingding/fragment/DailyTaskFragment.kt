@@ -45,7 +45,7 @@ class DailyTaskFragment : KotlinBaseFragment<FragmentDailyTaskBinding>(), Handle
         var weakReferenceHandler: WeakReferenceHandler? = null
     }
 
-    private val kTag = "DingDingFragment"
+    private val kTag = "DailyTaskFragment"
     private val dailyTaskBeanDao by lazy { BaseApplication.get().daoSession.dailyTaskBeanDao }
     private val marginOffset by lazy { 10.dp2px(requireContext()) }
     private val repeatTaskHandler = Handler(Looper.getMainLooper())

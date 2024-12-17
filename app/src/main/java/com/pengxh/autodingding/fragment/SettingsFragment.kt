@@ -250,7 +250,7 @@ class SettingsFragment : KotlinBaseFragment<FragmentSettingsBinding>(), Handler.
         binding.emailTitleView.text = SaveKeyValues.getValue(
             Constant.EMAIL_TITLE, "打卡结果通知"
         ) as String
-        binding.timeoutTextView.text = SaveKeyValues.getValue(Constant.TIMEOUT, "15s") as String
+        binding.timeoutTextView.text = SaveKeyValues.getValue(Constant.TIMEOUT, "45s") as String
         binding.keyTextView.text = SaveKeyValues.getValue(Constant.DING_DING_KEY, "打卡") as String
 
         binding.floatSwitch.isChecked = Settings.canDrawOverlays(requireContext())
