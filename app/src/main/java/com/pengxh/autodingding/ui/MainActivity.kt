@@ -26,13 +26,11 @@ import com.pengxh.autodingding.utils.Constant
 import com.pengxh.kt.lite.base.KotlinBaseActivity
 import com.pengxh.kt.lite.extensions.setScreenBrightness
 import com.pengxh.kt.lite.extensions.show
-import com.pengxh.kt.lite.utils.ActivityStackManager
 import com.pengxh.kt.lite.utils.SaveKeyValues
 import com.pengxh.kt.lite.widget.dialog.AlertMessageDialog
 
 class MainActivity : KotlinBaseActivity<ActivityMainBinding>() {
 
-    private val kTag = "MainActivity"
     private lateinit var insetsController: WindowInsetsControllerCompat
     private var menuItem: MenuItem? = null
     private var clickTime: Long = 0
@@ -48,8 +46,6 @@ class MainActivity : KotlinBaseActivity<ActivityMainBinding>() {
     }
 
     override fun initOnCreate(savedInstanceState: Bundle?) {
-        ActivityStackManager.addActivity(this)
-
         if (!isAppAvailable(Constant.DING_DING)) {
             showAlertDialog()
             return

@@ -109,12 +109,12 @@ class FloatingWindowService : Service(), Handler.Callback {
 
     override fun handleMessage(msg: Message): Boolean {
         when (msg.what) {
-            2024071701 -> {
+            Constant.TICK_TIME_CODE -> {
                 val time = msg.obj as Long
                 textView.text = "${time}s"
             }
 
-            2024071702 -> {
+            Constant.UPDATE_TICK_TIME_CODE -> {
                 val time = msg.obj as String
                 textView.text = time
             }

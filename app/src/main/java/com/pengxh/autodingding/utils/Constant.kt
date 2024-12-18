@@ -25,6 +25,12 @@ object Constant {
     const val BACK_TO_HOME = "backToHome"
     const val DING_DING_KEY = "dingDingKey"
 
+    const val TICK_TIME_CODE = 2024071701
+    const val UPDATE_TICK_TIME_CODE = 2024071702
+
+    const val NOTICE_LISTENER_CONNECTED_CODE = 2024090801
+    const val NOTICE_LISTENER_DISCONNECTED_CODE = 2024090802
+
     const val HIDE_FLOATING_WINDOW_CODE = 2024112501
     const val SHOW_FLOATING_WINDOW_CODE = 2024112502
 
@@ -32,6 +38,9 @@ object Constant {
     const val EXECUTE_MULTIPLE_TASK_CODE = 2024120802
     const val EXECUTE_NEXT_TASK_CODE = 2024120803
     const val COMPLETED_ALL_TASK_CODE = 2024120804
+
+    const val START_COUNT_DOWN_TIMER_CODE = 2024121801
+    const val CANCEL_COUNT_DOWN_TIMER_CODE = 2024121802
 
     const val DING_DING = "com.alibaba.android.rimet"
     const val WECHAT = "com.tencent.mm"

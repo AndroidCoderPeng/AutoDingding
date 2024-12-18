@@ -128,7 +128,7 @@ class SettingsFragment : KotlinBaseFragment<FragmentSettingsBinding>(), Handler.
 
                         val handler = FloatingWindowService.weakReferenceHandler ?: return
                         val message = handler.obtainMessage()
-                        message.what = 2024071702
+                        message.what = Constant.UPDATE_TICK_TIME_CODE
                         message.obj = time
                         handler.sendMessage(message)
                     }
@@ -234,10 +234,10 @@ class SettingsFragment : KotlinBaseFragment<FragmentSettingsBinding>(), Handler.
     }
 
     override fun handleMessage(msg: Message): Boolean {
-        if (msg.what == 2024090801) {
+        if (msg.what == Constant.NOTICE_LISTENER_CONNECTED_CODE) {
             binding.noticeSwitch.isChecked = true
             binding.tipsView.visibility = View.GONE
-        } else if (msg.what == 2024090802) {
+        } else if (msg.what == Constant.NOTICE_LISTENER_DISCONNECTED_CODE) {
             binding.noticeSwitch.isChecked = false
             binding.tipsView.visibility = View.VISIBLE
         }
