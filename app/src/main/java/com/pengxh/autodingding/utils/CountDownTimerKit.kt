@@ -2,23 +2,26 @@ package com.pengxh.autodingding.utils
 
 import android.os.Handler
 import android.os.Looper
+import android.util.Log
+import java.lang.ref.WeakReference
 
-class CountDownTimerKit(
-    private val secondsInFuture: Int, private val callback: OnTimeCountDownCallback
-) {
+class CountDownTimerKit(private val secondsInFuture: Int, callback: OnTimeCountDownCallback) {
+    private val kTag = "CountDownTimerKit"
     private val handler = Handler(Looper.getMainLooper())
     private var isTimerRunning = false
+    private val weakCallback = WeakReference(callback)
 
     private val runnable = object : Runnable {
         var remainingSeconds = secondsInFuture
         override fun run() {
             remainingSeconds--
             if (remainingSeconds > 0) {
-                callback.updateCountDownSeconds(remainingSeconds)
+                weakCallback.get()?.updateCountDownSeconds(remainingSeconds)
                 handler.postDelayed(this, 1000)
             } else {
-                callback.onFinish()
+                weakCallback.get()?.onFinish()
                 isTimerRunning = false
+                Log.d(kTag, "Countdown finished")
             }
         }
     }
@@ -29,10 +32,12 @@ class CountDownTimerKit(
         }
         handler.post(runnable)
         isTimerRunning = true
+        Log.d(kTag, "Countdown started")
     }
 
     fun cancel() {
         handler.removeCallbacks(runnable)
         isTimerRunning = false
+        Log.d(kTag, "Countdown cancelled")
     }
 }

@@ -14,7 +14,6 @@ import com.pengxh.kt.lite.adapter.ViewHolder
 import com.pengxh.kt.lite.base.KotlinBaseActivity
 import com.pengxh.kt.lite.divider.RecyclerViewItemDivider
 import com.pengxh.kt.lite.extensions.readAssetsFile
-import com.pengxh.kt.lite.utils.ActivityStackManager
 import com.pengxh.kt.lite.utils.HtmlRenderEngine
 import com.pengxh.kt.lite.widget.TitleBarView
 
@@ -28,8 +27,6 @@ class QuestionAndAnswerActivity : KotlinBaseActivity<ActivityQuestionAndAnswerBi
     }
 
     override fun initOnCreate(savedInstanceState: Bundle?) {
-        ActivityStackManager.addActivity(this)
-
         binding.marqueeView.requestFocus()
 
         val assetsFile = readAssetsFile("QuestionAndAnswer.json")

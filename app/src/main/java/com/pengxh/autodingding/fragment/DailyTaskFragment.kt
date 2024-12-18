@@ -303,10 +303,9 @@ class DailyTaskFragment : KotlinBaseFragment<FragmentDailyTaskBinding>(), Handle
                     val diff = pair.second
                     binding.countDownPgr.max = diff
                     timerKit = CountDownTimerKit(diff, object : OnTimeCountDownCallback {
-                        override fun updateCountDownSeconds(remainingSeconds: Int) {
-                            binding.countDownTimeView.text =
-                                "${remainingSeconds.formatTime()}后执行任务"
-                            binding.countDownPgr.progress = diff - remainingSeconds
+                        override fun updateCountDownSeconds(seconds: Int) {
+                            binding.countDownTimeView.text = "${seconds.formatTime()}后执行任务"
+                            binding.countDownPgr.progress = diff - seconds
                         }
 
                         override fun onFinish() {
@@ -338,10 +337,9 @@ class DailyTaskFragment : KotlinBaseFragment<FragmentDailyTaskBinding>(), Handle
                 val diff = pair.second
                 binding.countDownPgr.max = diff
                 timerKit = CountDownTimerKit(diff, object : OnTimeCountDownCallback {
-                    override fun updateCountDownSeconds(remainingSeconds: Int) {
-                        binding.countDownTimeView.text =
-                            "${remainingSeconds.formatTime()}后执行任务"
-                        binding.countDownPgr.progress = diff - remainingSeconds
+                    override fun updateCountDownSeconds(seconds: Int) {
+                        binding.countDownTimeView.text = "${seconds.formatTime()}后执行任务"
+                        binding.countDownPgr.progress = diff - seconds
                     }
 
                     override fun onFinish() {
