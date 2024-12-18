@@ -39,7 +39,7 @@ import com.pengxh.kt.lite.widget.dialog.AlertControlDialog
 import java.util.UUID
 import java.util.concurrent.atomic.AtomicInteger
 
-@SuppressLint("SetTextI18n")
+@SuppressLint("NotifyDataSetChanged", "SetTextI18n")
 class DailyTaskFragment : KotlinBaseFragment<FragmentDailyTaskBinding>(), Handler.Callback {
 
     companion object {
@@ -91,8 +91,9 @@ class DailyTaskFragment : KotlinBaseFragment<FragmentDailyTaskBinding>(), Handle
                 marginOffset, marginOffset shr 1, marginOffset, marginOffset shr 1
             )
         )
-        dailyTaskAdapter.setOnItemClickListener(object : DailyTaskAdapter.OnItemClickListener {
-            override fun onItemClick(position: Int) {
+        dailyTaskAdapter.setOnItemClickListener(object :
+            DailyTaskAdapter.OnItemClickListener<DailyTaskBean> {
+            override fun onItemClick(item: DailyTaskBean, position: Int) {
                 if (isTaskStarted) {
                     "任务进行中，无法修改，请先取消当前任务".show(requireContext())
                     return
@@ -102,29 +103,14 @@ class DailyTaskFragment : KotlinBaseFragment<FragmentDailyTaskBinding>(), Handle
                     .setPositiveButton("确定").setOnDialogButtonClickListener(object :
                         AlertControlDialog.OnDialogButtonClickListener {
                         override fun onConfirmClick() {
-                            val taskBean = taskBeans[position]
-                            requireActivity().showTimePicker(
-                                taskBean, object : OnTimeSelectedCallback {
-                                    override fun onTimePicked(time: String) {
-                                        taskBean.time = time
-                                        dailyTaskBeanDao.update(taskBean)
-
-                                        // 移除旧位置的任务
-                                        taskBeans.removeAt(position)
-                                        dailyTaskAdapter.notifyItemRemoved(position)
-
-                                        // 使用二分查找找到合适的位置插入更新后的任务
-                                        val newIndex = taskBeans.binarySearch { it.time.compareTo(taskBean.time) }
-                                        if (newIndex < 0) {
-                                            val insertionIndex = -(newIndex + 1)
-                                            taskBeans.add(insertionIndex, taskBean)
-                                            dailyTaskAdapter.notifyItemInserted(insertionIndex)
-                                        } else {
-                                            taskBeans.add(newIndex, taskBean)
-                                            dailyTaskAdapter.notifyItemInserted(newIndex)
-                                        }
-                                    }
-                                })
+                            requireActivity().showTimePicker(item, object : OnTimeSelectedCallback {
+                                override fun onTimePicked(time: String) {
+                                    item.time = time
+                                    dailyTaskBeanDao.update(item)
+                                    taskBeans.sortBy { x -> x.time }
+                                    dailyTaskAdapter.notifyDataSetChanged()
+                                }
+                            })
                         }
 
                         override fun onCancelClick() {
@@ -133,7 +119,7 @@ class DailyTaskFragment : KotlinBaseFragment<FragmentDailyTaskBinding>(), Handle
                     }).build().show()
             }
 
-            override fun onItemLongClick(position: Int) {
+            override fun onItemLongClick(item: DailyTaskBean, position: Int) {
                 if (isTaskStarted) {
                     "任务进行中，无法删除，请先取消当前任务".show(requireContext())
                     return
@@ -143,13 +129,12 @@ class DailyTaskFragment : KotlinBaseFragment<FragmentDailyTaskBinding>(), Handle
                     .setPositiveButton("确定").setOnDialogButtonClickListener(object :
                         AlertControlDialog.OnDialogButtonClickListener {
                         override fun onConfirmClick() {
-                            dailyTaskBeanDao.delete(taskBeans[position])
-                            taskBeans.removeAt(position)
-                            dailyTaskAdapter.notifyItemRemoved(position)
-                            if (taskBeans.size == 0) {
-                                binding.emptyView.visibility = View.VISIBLE
+                            dailyTaskBeanDao.delete(item)
+                            if (taskBeans.remove(item)) {
+                                dailyTaskAdapter.notifyDataSetChanged()
+                                updateEmptyViewVisibility()
                             } else {
-                                binding.emptyView.visibility = View.GONE
+                                "任务已不在列表中".show(requireContext())
                             }
                         }
 
@@ -159,6 +144,10 @@ class DailyTaskFragment : KotlinBaseFragment<FragmentDailyTaskBinding>(), Handle
                     }).build().show()
             }
         })
+    }
+
+    private fun updateEmptyViewVisibility() {
+        binding.emptyView.visibility = if (taskBeans.isEmpty()) View.VISIBLE else View.GONE
     }
 
     override fun initEvent() {
@@ -212,17 +201,9 @@ class DailyTaskFragment : KotlinBaseFragment<FragmentDailyTaskBinding>(), Handle
                     }
 
                     dailyTaskBeanDao.insert(bean)
-
-                    // 使用二分查找找到合适的位置插入新任务
-                    val index = taskBeans.binarySearch { it.time.compareTo(bean.time) }
-                    if (index < 0) {
-                        val insertionIndex = -(index + 1)
-                        taskBeans.add(insertionIndex, bean)
-                        dailyTaskAdapter.notifyItemInserted(insertionIndex)
-                    } else {
-                        taskBeans.add(index, bean)
-                        dailyTaskAdapter.notifyItemInserted(index)
-                    }
+                    taskBeans.add(bean)
+                    taskBeans.sortBy { x -> x.time }
+                    dailyTaskAdapter.notifyDataSetChanged()
 
                     binding.emptyView.visibility = View.GONE
                 }

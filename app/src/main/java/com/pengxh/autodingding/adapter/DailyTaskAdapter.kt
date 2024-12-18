@@ -44,16 +44,16 @@ class DailyTaskAdapter(
     }
 
     override fun onBindViewHolder(holder: ItemViewHolder, position: Int) {
-        val timeBean = dataBeans[position]
-        holder.timeView.text = timeBean.time
+        val taskBean = dataBeans[position]
+        holder.taskTimeView.text = taskBean.time
 
         holder.itemView.setOnClickListener {
-            itemClickListener?.onItemClick(position)
+            itemClickListener?.onItemClick(taskBean, position)
         }
 
         // 长按监听
         holder.itemView.setOnLongClickListener {
-            itemClickListener?.onItemLongClick(position)
+            itemClickListener?.onItemLongClick(taskBean, position)
             true
         }
 
@@ -62,32 +62,32 @@ class DailyTaskAdapter(
             holder.taskStateView.visibility = View.VISIBLE
             holder.actualTimeCardView.visibility = View.VISIBLE
             holder.actualTimeView.text = actualTime
-            holder.timeView.setTextColor(R.color.lib_hint_color.convertColor(context))
+            holder.taskTimeView.setTextColor(R.color.lib_hint_color.convertColor(context))
         } else {
             holder.itemView.isSelected = false
             holder.taskStateView.visibility = View.GONE
             holder.actualTimeCardView.visibility = View.GONE
             holder.actualTimeView.text = "--:--:--"
-            holder.timeView.setTextColor(R.color.black.convertColor(context))
+            holder.taskTimeView.setTextColor(R.color.black.convertColor(context))
         }
     }
 
-    private var itemClickListener: OnItemClickListener? = null
+    private var itemClickListener: OnItemClickListener<DailyTaskBean>? = null
 
-    fun setOnItemClickListener(listener: OnItemClickListener?) {
+    fun setOnItemClickListener(listener: OnItemClickListener<DailyTaskBean>) {
         this.itemClickListener = listener
     }
 
-    interface OnItemClickListener {
-        fun onItemClick(position: Int)
+    interface OnItemClickListener<T> {
+        fun onItemClick(item: T, position: Int)
 
-        fun onItemLongClick(position: Int)
+        fun onItemLongClick(item: T, position: Int)
     }
 
     inner class ItemViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         var actualTimeCardView: RelativeLayout = itemView.findViewById(R.id.actualTimeCardView)
         var actualTimeView: TextView = itemView.findViewById(R.id.actualTimeView)
         var taskStateView: CardView = itemView.findViewById(R.id.taskStateView)
-        var timeView: TextView = itemView.findViewById(R.id.timeView)
+        var taskTimeView: TextView = itemView.findViewById(R.id.taskTimeView)
     }
 }
