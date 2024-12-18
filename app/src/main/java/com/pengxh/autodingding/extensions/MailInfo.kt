@@ -34,9 +34,11 @@ fun MailInfo.sendTextMail() {
         val mailSubject = this.subject
         mailMessage.subject = mailSubject
         mailMessage.sentDate = Date()
-        val mailContent = "${this.content}，工具本版：${BuildConfig.VERSION_NAME}"
+        val mailContent = "${this.content}，版本号：${BuildConfig.VERSION_NAME}"
         mailMessage.setText(mailContent)
-        Transport.send(mailMessage)
+        Thread {
+            Transport.send(mailMessage)
+        }.start()
     } catch (ex: MessagingException) {
         ex.printStackTrace()
     }

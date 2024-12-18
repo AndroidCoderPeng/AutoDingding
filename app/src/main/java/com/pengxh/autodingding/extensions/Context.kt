@@ -6,9 +6,10 @@ import android.content.Intent
 import android.content.pm.ApplicationInfo
 import android.content.pm.ResolveInfo
 import androidx.core.app.NotificationManagerCompat
+import com.pengxh.autodingding.fragment.DailyTaskFragment
 import com.pengxh.autodingding.service.FloatingWindowService
+import com.pengxh.autodingding.ui.MainActivity
 import com.pengxh.autodingding.utils.Constant
-import com.pengxh.autodingding.utils.CountDownTimerManager
 import com.pengxh.kt.lite.utils.SaveKeyValues
 
 /**
@@ -59,10 +60,21 @@ fun Context.openApplication(packageName: String) {
         resolveInfo.activityInfo.packageName, resolveInfo.activityInfo.name
     )
     this.startActivity(intent)
+    DailyTaskFragment.weakReferenceHandler?.sendEmptyMessage(Constant.START_COUNT_DOWN_TIMER_CODE)
+}
 
-    val time = SaveKeyValues.getValue(Constant.TIMEOUT, "45s") as String
-    //去掉时间的s
-    val timeValue = time.dropLast(1).toInt()
-    /***倒计时，记录在钉钉界面停留的时间，超过设定的超时时间，自动回到打卡工具，并记录异常日志***/
-    CountDownTimerManager.get.startTimer(this, timeValue * 1000L, 1000)
+fun Context.backToMainActivity() {
+    DailyTaskFragment.weakReferenceHandler?.sendEmptyMessage(Constant.CANCEL_COUNT_DOWN_TIMER_CODE)
+    if (SaveKeyValues.getValue(Constant.BACK_TO_HOME, false) as Boolean) {
+        //模拟点击Home键
+        val home = Intent(Intent.ACTION_MAIN)
+        home.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_REORDER_TO_FRONT
+        home.addCategory(Intent.CATEGORY_HOME)
+        this.startActivity(home)
+        Thread.sleep(2000)
+    }
+
+    val intent = Intent(this, MainActivity::class.java)
+    intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_REORDER_TO_FRONT
+    this.startActivity(intent)
 }

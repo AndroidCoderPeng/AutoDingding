@@ -2,6 +2,7 @@ package com.pengxh.autodingding.fragment
 
 import android.annotation.SuppressLint
 import android.os.Bundle
+import android.os.CountDownTimer
 import android.os.Handler
 import android.os.Looper
 import android.os.Message
@@ -14,13 +15,17 @@ import com.pengxh.autodingding.R
 import com.pengxh.autodingding.adapter.DailyTaskAdapter
 import com.pengxh.autodingding.bean.DailyTaskBean
 import com.pengxh.autodingding.databinding.FragmentDailyTaskBinding
+import com.pengxh.autodingding.extensions.backToMainActivity
+import com.pengxh.autodingding.extensions.createTextMail
 import com.pengxh.autodingding.extensions.formatTime
 import com.pengxh.autodingding.extensions.getTaskIndex
 import com.pengxh.autodingding.extensions.isLateThenCurrent
 import com.pengxh.autodingding.extensions.openApplication
 import com.pengxh.autodingding.extensions.random
+import com.pengxh.autodingding.extensions.sendTextMail
 import com.pengxh.autodingding.extensions.showTimePicker
 import com.pengxh.autodingding.greendao.DailyTaskBeanDao
+import com.pengxh.autodingding.service.FloatingWindowService
 import com.pengxh.autodingding.utils.Constant
 import com.pengxh.autodingding.utils.CountDownTimerKit
 import com.pengxh.autodingding.utils.OnTimeCountDownCallback
@@ -34,6 +39,7 @@ import com.pengxh.kt.lite.extensions.dp2px
 import com.pengxh.kt.lite.extensions.show
 import com.pengxh.kt.lite.extensions.toJson
 import com.pengxh.kt.lite.extensions.writeToFile
+import com.pengxh.kt.lite.utils.SaveKeyValues
 import com.pengxh.kt.lite.utils.WeakReferenceHandler
 import com.pengxh.kt.lite.widget.dialog.AlertControlDialog
 import java.util.UUID
@@ -57,6 +63,7 @@ class DailyTaskFragment : KotlinBaseFragment<FragmentDailyTaskBinding>(), Handle
     private var repeatTimes = AtomicInteger(0)
     private var isTaskStarted = false
     private var timerKit: CountDownTimerKit? = null
+    private var timeoutTimer: CountDownTimer? = null
 
     override fun setupTopBarLayout() {
 
@@ -361,6 +368,50 @@ class DailyTaskFragment : KotlinBaseFragment<FragmentDailyTaskBinding>(), Handle
                 binding.tipsView.text = "当天所有任务已执行完毕"
                 binding.tipsView.setTextColor(R.color.iOSGreen.convertColor(requireContext()))
                 dailyTaskAdapter.updateCurrentTaskState(-1)
+            }
+
+            Constant.START_COUNT_DOWN_TIMER_CODE -> {
+                Log.d(kTag, "handleMessage: 开始超时倒计时")
+                val time = SaveKeyValues.getValue(Constant.TIMEOUT, "45s") as String
+                //去掉时间的s
+                val timeValue = time.dropLast(1).toInt()
+                timeoutTimer = object : CountDownTimer(timeValue * 1000L, 1000) {
+                    override fun onTick(millisUntilFinished: Long) {
+                        val tick = millisUntilFinished / 1000
+                        val handler = FloatingWindowService.weakReferenceHandler ?: return
+                        val message = handler.obtainMessage()
+                        message.what = Constant.TICK_TIME_CODE
+                        message.obj = tick
+                        handler.sendMessage(message)
+                    }
+
+                    override fun onFinish() {
+                        //如果倒计时结束，那么表明没有收到打卡成功的通知
+                        requireContext().backToMainActivity()
+                        weakReferenceHandler?.sendEmptyMessage(Constant.EXECUTE_NEXT_TASK_CODE)
+
+                        val emailAddress = SaveKeyValues.getValue(
+                            Constant.EMAIL_ADDRESS, ""
+                        ) as String
+                        if (emailAddress.isEmpty()) {
+                            "邮箱地址为空".show(requireContext())
+                            return
+                        }
+
+                        "未监听到打卡通知，即将发送异常日志邮件，请注意查收".show(requireContext())
+                        val subject = SaveKeyValues.getValue(
+                            Constant.EMAIL_TITLE, "打卡结果通知"
+                        ) as String
+                        "".createTextMail(subject, emailAddress).sendTextMail()
+                    }
+                }
+                timeoutTimer?.start()
+            }
+
+            Constant.CANCEL_COUNT_DOWN_TIMER_CODE -> {
+                timeoutTimer?.cancel()
+                timeoutTimer = null
+                Log.d(kTag, "handleMessage: 取消超时定时器")
             }
         }
         return true
