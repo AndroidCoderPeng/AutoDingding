@@ -4,7 +4,7 @@ import android.os.Handler
 import android.os.Looper
 
 class CountDownTimerKit(
-    private val secondsInFuture: Long, private val callback: OnTimeCountDownCallback
+    private val secondsInFuture: Int, private val callback: OnTimeCountDownCallback
 ) {
     private val handler = Handler(Looper.getMainLooper())
     private var isTimerRunning = false

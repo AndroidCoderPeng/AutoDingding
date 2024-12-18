@@ -1,6 +1,6 @@
 package com.pengxh.autodingding.extensions
 
-fun Long.formatTime(): String {
+fun Int.formatTime(): String {
     val hours = this / 3600
     val minutes = (this % 3600) / 60
     val secs = this % 60

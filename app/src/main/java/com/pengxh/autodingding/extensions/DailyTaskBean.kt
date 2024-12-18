@@ -22,7 +22,7 @@ fun DailyTaskBean.isLateThenCurrent(): Boolean {
     return taskDate.time > currentMillis
 }
 
-fun DailyTaskBean.random(): Pair<String, Long> {
+fun DailyTaskBean.random(): Pair<String, Int> {
     //18:00:59
     val array = this.time.split(":")
 
@@ -51,5 +51,5 @@ fun DailyTaskBean.random(): Pair<String, Long> {
     val taskDate = simpleDateFormat.parse(taskTime) ?: return Pair(newTime, 0)
     val currentMillis = System.currentTimeMillis()
     val diffSeconds = (taskDate.time - currentMillis) / 1000
-    return Pair(newTime, diffSeconds)
+    return Pair(newTime, diffSeconds.toInt())
 }

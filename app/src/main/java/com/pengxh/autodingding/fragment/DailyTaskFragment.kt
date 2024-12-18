@@ -37,8 +37,9 @@ import com.pengxh.kt.lite.extensions.writeToFile
 import com.pengxh.kt.lite.utils.WeakReferenceHandler
 import com.pengxh.kt.lite.widget.dialog.AlertControlDialog
 import java.util.UUID
+import java.util.concurrent.atomic.AtomicInteger
 
-@SuppressLint("NotifyDataSetChanged", "SetTextI18n")
+@SuppressLint("SetTextI18n")
 class DailyTaskFragment : KotlinBaseFragment<FragmentDailyTaskBinding>(), Handler.Callback {
 
     companion object {
@@ -52,9 +53,9 @@ class DailyTaskFragment : KotlinBaseFragment<FragmentDailyTaskBinding>(), Handle
     private val dailyTaskHandler = Handler(Looper.getMainLooper())
     private lateinit var dailyTaskAdapter: DailyTaskAdapter
     private var taskBeans: MutableList<DailyTaskBean> = ArrayList()
-    private var diffSeconds = 0L
+    private var diffSeconds = AtomicInteger(0)
+    private var repeatTimes = AtomicInteger(0)
     private var isTaskStarted = false
-    private var repeatTimes = 0
     private var timerKit: CountDownTimerKit? = null
 
     override fun setupTopBarLayout() {
@@ -107,8 +108,21 @@ class DailyTaskFragment : KotlinBaseFragment<FragmentDailyTaskBinding>(), Handle
                                     override fun onTimePicked(time: String) {
                                         taskBean.time = time
                                         dailyTaskBeanDao.update(taskBean)
-                                        taskBeans.sortBy { x -> x.time }
-                                        dailyTaskAdapter.notifyDataSetChanged()
+
+                                        // 移除旧位置的任务
+                                        taskBeans.removeAt(position)
+                                        dailyTaskAdapter.notifyItemRemoved(position)
+
+                                        // 使用二分查找找到合适的位置插入更新后的任务
+                                        val newIndex = taskBeans.binarySearch { it.time.compareTo(taskBean.time) }
+                                        if (newIndex < 0) {
+                                            val insertionIndex = -(newIndex + 1)
+                                            taskBeans.add(insertionIndex, taskBean)
+                                            dailyTaskAdapter.notifyItemInserted(insertionIndex)
+                                        } else {
+                                            taskBeans.add(newIndex, taskBean)
+                                            dailyTaskAdapter.notifyItemInserted(newIndex)
+                                        }
                                     }
                                 })
                         }
@@ -131,7 +145,7 @@ class DailyTaskFragment : KotlinBaseFragment<FragmentDailyTaskBinding>(), Handle
                         override fun onConfirmClick() {
                             dailyTaskBeanDao.delete(taskBeans[position])
                             taskBeans.removeAt(position)
-                            dailyTaskAdapter.notifyDataSetChanged()
+                            dailyTaskAdapter.notifyItemRemoved(position)
                             if (taskBeans.size == 0) {
                                 binding.emptyView.visibility = View.VISIBLE
                             } else {
@@ -156,7 +170,7 @@ class DailyTaskFragment : KotlinBaseFragment<FragmentDailyTaskBinding>(), Handle
 
             if (!isTaskStarted) {
                 //计算当前时间距离0点的时间差
-                diffSeconds = TimeKit.getNextMidnightSeconds()
+                diffSeconds.set(TimeKit.getNextMidnightSeconds())
                 repeatTaskHandler.post(repeatTaskRunnable)
                 Log.d(kTag, "initEvent: 开启周期任务Runnable")
                 isTaskStarted = true
@@ -166,7 +180,7 @@ class DailyTaskFragment : KotlinBaseFragment<FragmentDailyTaskBinding>(), Handle
                 Log.d(kTag, "initEvent: 取消周期任务Runnable")
                 timerKit?.cancel()
                 isTaskStarted = false
-                repeatTimes = 0
+                repeatTimes.set(0)
                 binding.actualTimeView.text = "--:--:--"
                 binding.repeatTimeView.text = "0秒后刷新每日任务"
                 binding.repeatTimeView.visibility = View.INVISIBLE
@@ -198,9 +212,18 @@ class DailyTaskFragment : KotlinBaseFragment<FragmentDailyTaskBinding>(), Handle
                     }
 
                     dailyTaskBeanDao.insert(bean)
-                    taskBeans.add(bean)
-                    taskBeans.sortBy { x -> x.time }
-                    dailyTaskAdapter.notifyDataSetChanged()
+
+                    // 使用二分查找找到合适的位置插入新任务
+                    val index = taskBeans.binarySearch { it.time.compareTo(bean.time) }
+                    if (index < 0) {
+                        val insertionIndex = -(index + 1)
+                        taskBeans.add(insertionIndex, bean)
+                        dailyTaskAdapter.notifyItemInserted(insertionIndex)
+                    } else {
+                        taskBeans.add(index, bean)
+                        dailyTaskAdapter.notifyItemInserted(index)
+                    }
+
                     binding.emptyView.visibility = View.GONE
                 }
             })
@@ -212,17 +235,21 @@ class DailyTaskFragment : KotlinBaseFragment<FragmentDailyTaskBinding>(), Handle
      * */
     private val repeatTaskRunnable = object : Runnable {
         override fun run() {
-            diffSeconds--
-            if (diffSeconds > 0) {
-                requireActivity().runOnUiThread {
-                    binding.repeatTimeView.visibility = View.VISIBLE
-                    binding.repeatTimeView.text = "${diffSeconds.formatTime()}后刷新每日任务"
+            val currentDiffSeconds = diffSeconds.decrementAndGet()
+            if (currentDiffSeconds > 0) {
+                val activity = requireActivity()
+                if (!activity.isFinishing && !activity.isDestroyed) {
+                    activity.runOnUiThread {
+                        binding.repeatTimeView.visibility = View.VISIBLE
+                        binding.repeatTimeView.text =
+                            "${currentDiffSeconds.formatTime()}后刷新每日任务"
+                    }
                 }
                 repeatTaskHandler.postDelayed(this, 1000)
             } else {
                 //零点，刷新任务，并重启repeatTaskRunnable
-                repeatTimes = 0
-                diffSeconds = TimeKit.getNextMidnightSeconds()
+                repeatTimes.set(0)
+                diffSeconds.set(TimeKit.getNextMidnightSeconds())
                 repeatTaskHandler.post(this)
                 Log.d(kTag, "run: 零点，刷新任务，并重启repeatTaskRunnable")
                 "${TimeKit.getCurrentTime()}: 零点，刷新任务，并重启repeatTaskRunnable".writeToFile(
@@ -230,7 +257,7 @@ class DailyTaskFragment : KotlinBaseFragment<FragmentDailyTaskBinding>(), Handle
                 )
             }
 
-            if (repeatTimes == 0) {
+            if (repeatTimes.get() == 0) {
                 updateDailyTask()
             }
         }
@@ -240,7 +267,7 @@ class DailyTaskFragment : KotlinBaseFragment<FragmentDailyTaskBinding>(), Handle
         Log.d(kTag, "updateDailyTask: 执行周期任务")
         "${TimeKit.getCurrentTime()}：执行周期任务".writeToFile(requireContext().createLogFile())
         dailyTaskHandler.post(dailyTaskRunnable)
-        repeatTimes++
+        repeatTimes.incrementAndGet()
     }
 
     /**
@@ -249,22 +276,28 @@ class DailyTaskFragment : KotlinBaseFragment<FragmentDailyTaskBinding>(), Handle
     private val dailyTaskRunnable = object : Runnable {
         override fun run() {
             val taskIndex = taskBeans.getTaskIndex()
-            Log.d(kTag, "run: taskIndex => $taskIndex")
-            val handler = weakReferenceHandler ?: return
-            //如果只有一个任务，直接执行，不用考虑顺序
-            if (taskBeans.count() == 1) {
-                val message = handler.obtainMessage()
-                message.what = Constant.EXECUTE_ONLY_ONE_TASK_CODE
-                message.obj = taskIndex
-                handler.sendMessage(message)
-            } else {
-                if (taskIndex == -1) {
-                    handler.sendEmptyMessage(Constant.COMPLETED_ALL_TASK_CODE)
-                } else {
+            val handler = weakReferenceHandler ?: run {
+                "${TimeKit.getCurrentTime()}：Handler is null, cannot send message".writeToFile(
+                    requireContext().createLogFile()
+                )
+                return
+            }
+            synchronized(taskBeans) {
+                //如果只有一个任务，直接执行，不用考虑顺序
+                if (taskBeans.count() == 1) {
                     val message = handler.obtainMessage()
-                    message.what = Constant.EXECUTE_MULTIPLE_TASK_CODE
+                    message.what = Constant.EXECUTE_ONLY_ONE_TASK_CODE
                     message.obj = taskIndex
                     handler.sendMessage(message)
+                } else {
+                    if (taskIndex == -1) {
+                        handler.sendEmptyMessage(Constant.COMPLETED_ALL_TASK_CODE)
+                    } else {
+                        val message = handler.obtainMessage()
+                        message.what = Constant.EXECUTE_MULTIPLE_TASK_CODE
+                        message.obj = taskIndex
+                        handler.sendMessage(message)
+                    }
                 }
             }
         }
@@ -287,12 +320,12 @@ class DailyTaskFragment : KotlinBaseFragment<FragmentDailyTaskBinding>(), Handle
                     dailyTaskAdapter.updateCurrentTaskState(0, pair.first)
                     binding.actualTimeView.text = pair.first
                     val diff = pair.second
-                    binding.countDownPgr.max = diff.toInt()
+                    binding.countDownPgr.max = diff
                     timerKit = CountDownTimerKit(diff, object : OnTimeCountDownCallback {
-                        override fun updateCountDownSeconds(remainingSeconds: Long) {
+                        override fun updateCountDownSeconds(remainingSeconds: Int) {
                             binding.countDownTimeView.text =
                                 "${remainingSeconds.formatTime()}后执行任务"
-                            binding.countDownPgr.progress = (diff - remainingSeconds).toInt()
+                            binding.countDownPgr.progress = diff - remainingSeconds
                         }
 
                         override fun onFinish() {
@@ -322,12 +355,12 @@ class DailyTaskFragment : KotlinBaseFragment<FragmentDailyTaskBinding>(), Handle
                 dailyTaskAdapter.updateCurrentTaskState(index, pair.first)
                 binding.actualTimeView.text = pair.first
                 val diff = pair.second
-                binding.countDownPgr.max = diff.toInt()
+                binding.countDownPgr.max = diff
                 timerKit = CountDownTimerKit(diff, object : OnTimeCountDownCallback {
-                    override fun updateCountDownSeconds(remainingSeconds: Long) {
+                    override fun updateCountDownSeconds(remainingSeconds: Int) {
                         binding.countDownTimeView.text =
                             "${remainingSeconds.formatTime()}后执行任务"
-                        binding.countDownPgr.progress = (diff - remainingSeconds).toInt()
+                        binding.countDownPgr.progress = diff - remainingSeconds
                     }
 
                     override fun onFinish() {

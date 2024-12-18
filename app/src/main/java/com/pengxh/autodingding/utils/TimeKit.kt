@@ -16,7 +16,7 @@ object TimeKit {
         return dateFormat.format(Date())
     }
 
-    fun getNextMidnightSeconds(): Long {
+    fun getNextMidnightSeconds(): Int {
         val nextMidnightMillis = Calendar.getInstance().apply {
             set(Calendar.HOUR_OF_DAY, 0)
             set(Calendar.MINUTE, 0)
@@ -24,6 +24,7 @@ object TimeKit {
             set(Calendar.MILLISECOND, 0)
             add(Calendar.DATE, 1)
         }.timeInMillis
-        return (nextMidnightMillis - System.currentTimeMillis()) / 1000
+        val delta = (nextMidnightMillis - System.currentTimeMillis()) / 1000
+        return delta.toInt()
     }
 }
