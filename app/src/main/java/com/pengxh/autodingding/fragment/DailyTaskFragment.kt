@@ -60,7 +60,6 @@ class DailyTaskFragment : KotlinBaseFragment<FragmentDailyTaskBinding>(), Handle
     private lateinit var dailyTaskAdapter: DailyTaskAdapter
     private var taskBeans: MutableList<DailyTaskBean> = ArrayList()
     private var diffSeconds = AtomicInteger(0)
-    private var repeatTimes = AtomicInteger(0)
     private var isTaskStarted = false
     private var timerKit: CountDownTimerKit? = null
     private var timeoutTimer: CountDownTimer? = null
@@ -169,6 +168,7 @@ class DailyTaskFragment : KotlinBaseFragment<FragmentDailyTaskBinding>(), Handle
                 diffSeconds.set(TimeKit.getNextMidnightSeconds())
                 repeatTaskHandler.post(repeatTaskRunnable)
                 Log.d(kTag, "initEvent: 开启周期任务Runnable")
+                executeDailyTask()
                 isTaskStarted = true
                 binding.executeTaskButton.setImageResource(R.drawable.ic_stop)
             } else {
@@ -176,7 +176,6 @@ class DailyTaskFragment : KotlinBaseFragment<FragmentDailyTaskBinding>(), Handle
                 Log.d(kTag, "initEvent: 取消周期任务Runnable")
                 timerKit?.cancel()
                 isTaskStarted = false
-                repeatTimes.set(0)
                 binding.actualTimeView.text = "--:--:--"
                 binding.repeatTimeView.text = "0秒后刷新每日任务"
                 binding.repeatTimeView.visibility = View.INVISIBLE
@@ -236,26 +235,21 @@ class DailyTaskFragment : KotlinBaseFragment<FragmentDailyTaskBinding>(), Handle
                 repeatTaskHandler.postDelayed(this, 1000)
             } else {
                 //零点，刷新任务，并重启repeatTaskRunnable
-                repeatTimes.set(0)
                 diffSeconds.set(TimeKit.getNextMidnightSeconds())
                 repeatTaskHandler.post(this)
-                Log.d(kTag, "run: 零点，刷新任务，并重启repeatTaskRunnable")
-                "${TimeKit.getCurrentTime()}: 零点，刷新任务，并重启repeatTaskRunnable".writeToFile(
+                Log.d(kTag, "run: 零点，刷新任务，并重新执行repeatTaskRunnable")
+                "${TimeKit.getCurrentTime()}: 零点，刷新任务，并重新执行repeatTaskRunnable".writeToFile(
                     requireContext().createLogFile()
                 )
-            }
-
-            if (repeatTimes.get() == 0) {
-                updateDailyTask()
+                executeDailyTask()
             }
         }
     }
 
-    private fun updateDailyTask() {
-        Log.d(kTag, "updateDailyTask: 执行周期任务")
+    private fun executeDailyTask() {
+        Log.d(kTag, "executeDailyTask: 执行周期任务")
         "${TimeKit.getCurrentTime()}：执行周期任务".writeToFile(requireContext().createLogFile())
         dailyTaskHandler.post(dailyTaskRunnable)
-        repeatTimes.incrementAndGet()
     }
 
     /**
@@ -270,22 +264,20 @@ class DailyTaskFragment : KotlinBaseFragment<FragmentDailyTaskBinding>(), Handle
                 )
                 return
             }
-            synchronized(taskBeans) {
-                //如果只有一个任务，直接执行，不用考虑顺序
-                if (taskBeans.count() == 1) {
+            //如果只有一个任务，直接执行，不用考虑顺序
+            if (taskBeans.count() == 1) {
+                val message = handler.obtainMessage()
+                message.what = Constant.EXECUTE_ONLY_ONE_TASK_CODE
+                message.obj = taskIndex
+                handler.sendMessage(message)
+            } else {
+                if (taskIndex == -1) {
+                    handler.sendEmptyMessage(Constant.COMPLETED_ALL_TASK_CODE)
+                } else {
                     val message = handler.obtainMessage()
-                    message.what = Constant.EXECUTE_ONLY_ONE_TASK_CODE
+                    message.what = Constant.EXECUTE_MULTIPLE_TASK_CODE
                     message.obj = taskIndex
                     handler.sendMessage(message)
-                } else {
-                    if (taskIndex == -1) {
-                        handler.sendEmptyMessage(Constant.COMPLETED_ALL_TASK_CODE)
-                    } else {
-                        val message = handler.obtainMessage()
-                        message.what = Constant.EXECUTE_MULTIPLE_TASK_CODE
-                        message.obj = taskIndex
-                        handler.sendMessage(message)
-                    }
                 }
             }
         }
@@ -368,6 +360,7 @@ class DailyTaskFragment : KotlinBaseFragment<FragmentDailyTaskBinding>(), Handle
                 binding.tipsView.text = "当天所有任务已执行完毕"
                 binding.tipsView.setTextColor(R.color.iOSGreen.convertColor(requireContext()))
                 dailyTaskAdapter.updateCurrentTaskState(-1)
+                dailyTaskHandler.removeCallbacks(dailyTaskRunnable)
             }
 
             Constant.START_COUNT_DOWN_TIMER_CODE -> {
