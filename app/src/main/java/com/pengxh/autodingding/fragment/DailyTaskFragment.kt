@@ -84,11 +84,7 @@ class DailyTaskFragment : KotlinBaseFragment<FragmentDailyTaskBinding>(), Handle
             DailyTaskBeanDao.Properties.Time
         ).list()
 
-        if (taskBeans.size == 0) {
-            binding.emptyView.visibility = View.VISIBLE
-        } else {
-            binding.emptyView.visibility = View.GONE
-        }
+        updateEmptyViewVisibility()
 
         dailyTaskAdapter = DailyTaskAdapter(requireContext(), taskBeans)
         binding.recyclerView.adapter = dailyTaskAdapter
