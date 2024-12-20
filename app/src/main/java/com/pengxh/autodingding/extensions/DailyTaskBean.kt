@@ -13,15 +13,6 @@ fun DailyTaskBean.convertToTimeEntity(): TimeEntity {
     return TimeEntity.target(date)
 }
 
-fun DailyTaskBean.isLateThenCurrent(): Boolean {
-    //获取当前日期，拼给任务时间，不然不好计算时间差
-    val simpleDateFormat = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.CHINA)
-    val taskTime = "${TimeKit.getTodayDate()} ${this.time}"
-    val taskDate = simpleDateFormat.parse(taskTime) ?: return false
-    val currentMillis = System.currentTimeMillis()
-    return taskDate.time > currentMillis
-}
-
 fun DailyTaskBean.random(): Pair<String, Int> {
     //18:00:59
     val array = this.time.split(":")

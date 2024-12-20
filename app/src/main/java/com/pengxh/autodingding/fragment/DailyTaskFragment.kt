@@ -19,7 +19,6 @@ import com.pengxh.autodingding.extensions.backToMainActivity
 import com.pengxh.autodingding.extensions.createTextMail
 import com.pengxh.autodingding.extensions.formatTime
 import com.pengxh.autodingding.extensions.getTaskIndex
-import com.pengxh.autodingding.extensions.isLateThenCurrent
 import com.pengxh.autodingding.extensions.openApplication
 import com.pengxh.autodingding.extensions.random
 import com.pengxh.autodingding.extensions.sendTextMail
@@ -260,64 +259,20 @@ class DailyTaskFragment : KotlinBaseFragment<FragmentDailyTaskBinding>(), Handle
                 )
                 return
             }
-            //如果只有一个任务，直接执行，不用考虑顺序
-            if (taskBeans.count() == 1) {
+            if (taskIndex == -1) {
+                handler.sendEmptyMessage(Constant.COMPLETED_ALL_TASK_CODE)
+            } else {
                 val message = handler.obtainMessage()
-                message.what = Constant.EXECUTE_ONLY_ONE_TASK_CODE
+                message.what = Constant.START_TASK_CODE
                 message.obj = taskIndex
                 handler.sendMessage(message)
-            } else {
-                if (taskIndex == -1) {
-                    handler.sendEmptyMessage(Constant.COMPLETED_ALL_TASK_CODE)
-                } else {
-                    val message = handler.obtainMessage()
-                    message.what = Constant.EXECUTE_MULTIPLE_TASK_CODE
-                    message.obj = taskIndex
-                    handler.sendMessage(message)
-                }
             }
         }
     }
 
     override fun handleMessage(msg: Message): Boolean {
         when (msg.what) {
-            Constant.EXECUTE_ONLY_ONE_TASK_CODE -> {
-                val task = taskBeans.first()
-                if (task.isLateThenCurrent()) {
-                    "${TimeKit.getCurrentTime()}：只有 1 个任务: ${task.toJson()}，直接按时执行".writeToFile(
-                        requireContext().createLogFile()
-                    )
-                    binding.tipsView.text = "只有 1 个任务"
-                    binding.tipsView.setTextColor(
-                        R.color.colorAppThemeLight.convertColor(requireContext())
-                    )
-
-                    val pair = task.random()
-                    dailyTaskAdapter.updateCurrentTaskState(0, pair.first)
-                    binding.actualTimeView.text = pair.first
-                    val diff = pair.second
-                    binding.countDownPgr.max = diff
-                    timerKit = CountDownTimerKit(diff, object : OnTimeCountDownCallback {
-                        override fun updateCountDownSeconds(seconds: Int) {
-                            binding.countDownTimeView.text = "${seconds.formatTime()}后执行任务"
-                            binding.countDownPgr.progress = diff - seconds
-                        }
-
-                        override fun onFinish() {
-                            "${TimeKit.getCurrentTime()}：执行任务".writeToFile(requireContext().createLogFile())
-                            binding.countDownTimeView.text = "0秒后执行任务"
-                            binding.countDownPgr.progress = 0
-                            dailyTaskAdapter.updateCurrentTaskState(-1)
-                            requireContext().openApplication(Constant.DING_DING, true)
-                        }
-                    })
-                    timerKit?.start()
-                } else {
-                    weakReferenceHandler?.sendEmptyMessage(Constant.COMPLETED_ALL_TASK_CODE)
-                }
-            }
-
-            Constant.EXECUTE_MULTIPLE_TASK_CODE -> {
+            Constant.START_TASK_CODE -> {
                 val index = msg.obj as Int
                 val task = taskBeans[index]
                 "${TimeKit.getCurrentTime()}：即将执行第 ${index + 1} 个任务: ${task.toJson()}".writeToFile(
