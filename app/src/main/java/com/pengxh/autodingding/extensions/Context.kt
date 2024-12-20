@@ -6,12 +6,13 @@ import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Build
 import androidx.core.app.NotificationManagerCompat
-import com.pengxh.autodingding.fragment.DailyTaskFragment
 import com.pengxh.autodingding.service.FloatingWindowService
 import com.pengxh.autodingding.ui.MainActivity
 import com.pengxh.autodingding.utils.Constant
+import com.pengxh.autodingding.utils.MessageEvent
 import com.pengxh.kt.lite.utils.SaveKeyValues
 import com.pengxh.kt.lite.widget.dialog.AlertMessageDialog
+import org.greenrobot.eventbus.EventBus
 
 /**
  * 检测通知监听服务是否被授权
@@ -50,7 +51,7 @@ fun Context.openApplication(packageName: String, needEmail: Boolean) {
             }).build().show()
         return
     }
-    FloatingWindowService.weakReferenceHandler?.sendEmptyMessage(Constant.SHOW_FLOATING_WINDOW_CODE)
+    FloatingWindowService.weakReferenceHandler.sendEmptyMessage(Constant.SHOW_FLOATING_WINDOW_CODE)
     /***跳转钉钉开始*****************************************/
     val resolveIntent = Intent(Intent.ACTION_MAIN, null).apply {
         addCategory(Intent.CATEGORY_LAUNCHER)
@@ -67,12 +68,12 @@ fun Context.openApplication(packageName: String, needEmail: Boolean) {
     this.startActivity(intent)
     /***跳转钉钉结束*****************************************/
     if (needEmail) {
-        DailyTaskFragment.weakReferenceHandler?.sendEmptyMessage(Constant.START_COUNT_DOWN_TIMER_CODE)
+        EventBus.getDefault().post(MessageEvent(Constant.START_COUNT_DOWN_TIMER_CODE))
     }
 }
 
 fun Context.backToMainActivity() {
-    DailyTaskFragment.weakReferenceHandler?.sendEmptyMessage(Constant.CANCEL_COUNT_DOWN_TIMER_CODE)
+    EventBus.getDefault().post(MessageEvent(Constant.CANCEL_COUNT_DOWN_TIMER_CODE))
     if (SaveKeyValues.getValue(Constant.BACK_TO_HOME, false) as Boolean) {
         //模拟点击Home键
         val home = Intent(Intent.ACTION_MAIN)

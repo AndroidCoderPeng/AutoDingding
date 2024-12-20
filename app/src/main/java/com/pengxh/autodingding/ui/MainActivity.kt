@@ -51,24 +51,20 @@ class MainActivity : KotlinBaseActivity<ActivityMainBinding>() {
     }
 
     override fun initOnCreate(savedInstanceState: Bundle?) {
+        startService(Intent(this, ForegroundRunningService::class.java))
         val fragmentAdapter = BaseFragmentAdapter(supportFragmentManager, fragmentPages)
         binding.viewPager.adapter = fragmentAdapter
         val isFirst = SaveKeyValues.getValue("isFirst", true) as Boolean
         if (isFirst) {
-            AlertMessageDialog.Builder()
-                .setContext(this)
-                .setTitle("温馨提醒")
+            AlertMessageDialog.Builder().setContext(this).setTitle("温馨提醒")
                 .setMessage("本软件仅供内部使用，严禁商用或者用作其他非法用途")
-                .setPositiveButton("知道了")
-                .setOnDialogButtonClickListener(object :
+                .setPositiveButton("知道了").setOnDialogButtonClickListener(object :
                     AlertMessageDialog.OnDialogButtonClickListener {
                     override fun onConfirmClick() {
                         SaveKeyValues.putValue("isFirst", false)
                     }
                 }).build().show()
         }
-
-        startService(Intent(this, ForegroundRunningService::class.java))
     }
 
     override fun initEvent() {
@@ -124,7 +120,7 @@ class MainActivity : KotlinBaseActivity<ActivityMainBinding>() {
                     binding.rootView.visibility = View.VISIBLE
 
                     //恢复悬浮窗显示
-                    FloatingWindowService.weakReferenceHandler?.sendEmptyMessage(Constant.SHOW_FLOATING_WINDOW_CODE)
+                    FloatingWindowService.weakReferenceHandler.sendEmptyMessage(Constant.SHOW_FLOATING_WINDOW_CODE)
                 } else {
                     //隐藏状态栏显示
                     insetsController.hide(WindowInsetsCompat.Type.statusBars())
@@ -140,7 +136,7 @@ class MainActivity : KotlinBaseActivity<ActivityMainBinding>() {
                     binding.rootView.visibility = View.GONE
 
                     //隐藏悬浮窗显示
-                    FloatingWindowService.weakReferenceHandler?.sendEmptyMessage(Constant.HIDE_FLOATING_WINDOW_CODE)
+                    FloatingWindowService.weakReferenceHandler.sendEmptyMessage(Constant.HIDE_FLOATING_WINDOW_CODE)
                 }
                 return true
             }
@@ -161,7 +157,7 @@ class MainActivity : KotlinBaseActivity<ActivityMainBinding>() {
     override fun onResume() {
         super.onResume()
         if (binding.maskView.isVisible) {
-            FloatingWindowService.weakReferenceHandler?.sendEmptyMessage(Constant.HIDE_FLOATING_WINDOW_CODE)
+            FloatingWindowService.weakReferenceHandler.sendEmptyMessage(Constant.HIDE_FLOATING_WINDOW_CODE)
         }
     }
 }

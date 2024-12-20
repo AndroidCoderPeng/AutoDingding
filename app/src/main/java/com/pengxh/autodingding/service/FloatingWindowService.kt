@@ -22,7 +22,7 @@ import com.pengxh.kt.lite.utils.WeakReferenceHandler
 class FloatingWindowService : Service(), Handler.Callback {
 
     companion object {
-        var weakReferenceHandler: WeakReferenceHandler? = null
+        lateinit var weakReferenceHandler: WeakReferenceHandler
     }
 
     private val kTag = "FloatingWindowService"
