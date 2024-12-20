@@ -308,7 +308,7 @@ class DailyTaskFragment : KotlinBaseFragment<FragmentDailyTaskBinding>(), Handle
                             binding.countDownTimeView.text = "0秒后执行任务"
                             binding.countDownPgr.progress = 0
                             dailyTaskAdapter.updateCurrentTaskState(-1)
-                            requireContext().openApplication(Constant.DING_DING)
+                            requireContext().openApplication(Constant.DING_DING, true)
                         }
                     })
                     timerKit?.start()
@@ -341,7 +341,7 @@ class DailyTaskFragment : KotlinBaseFragment<FragmentDailyTaskBinding>(), Handle
                         "${TimeKit.getCurrentTime()}：执行任务".writeToFile(requireContext().createLogFile())
                         binding.countDownTimeView.text = "0秒后执行任务"
                         binding.countDownPgr.progress = 0
-                        requireContext().openApplication(Constant.DING_DING)
+                        requireContext().openApplication(Constant.DING_DING, true)
                     }
                 })
                 timerKit?.start()

@@ -17,7 +17,6 @@ import com.pengxh.autodingding.R
 import com.pengxh.autodingding.adapter.BaseFragmentAdapter
 import com.pengxh.autodingding.databinding.ActivityMainBinding
 import com.pengxh.autodingding.extensions.initImmersionBar
-import com.pengxh.autodingding.extensions.isAppAvailable
 import com.pengxh.autodingding.fragment.DailyTaskFragment
 import com.pengxh.autodingding.fragment.SettingsFragment
 import com.pengxh.autodingding.service.FloatingWindowService
@@ -31,9 +30,15 @@ import com.pengxh.kt.lite.widget.dialog.AlertMessageDialog
 
 class MainActivity : KotlinBaseActivity<ActivityMainBinding>() {
 
+    private val fragmentPages = ArrayList<Fragment>()
     private lateinit var insetsController: WindowInsetsControllerCompat
     private var menuItem: MenuItem? = null
     private var clickTime: Long = 0
+
+    init {
+        fragmentPages.add(DailyTaskFragment())
+        fragmentPages.add(SettingsFragment())
+    }
 
     override fun initViewBinding(): ActivityMainBinding {
         return ActivityMainBinding.inflate(layoutInflater)
@@ -46,19 +51,8 @@ class MainActivity : KotlinBaseActivity<ActivityMainBinding>() {
     }
 
     override fun initOnCreate(savedInstanceState: Bundle?) {
-        if (!isAppAvailable(Constant.DING_DING)) {
-            showAlertDialog()
-            return
-        }
-
-        val fragmentPages = ArrayList<Fragment>()
-        fragmentPages.add(DailyTaskFragment())
-        fragmentPages.add(SettingsFragment())
-
         val fragmentAdapter = BaseFragmentAdapter(supportFragmentManager, fragmentPages)
         binding.viewPager.adapter = fragmentAdapter
-        binding.viewPager.offscreenPageLimit = fragmentPages.size
-
         val isFirst = SaveKeyValues.getValue("isFirst", true) as Boolean
         if (isFirst) {
             AlertMessageDialog.Builder()
@@ -81,11 +75,7 @@ class MainActivity : KotlinBaseActivity<ActivityMainBinding>() {
         binding.bottomNavigation.setOnItemSelectedListener { item ->
             val itemId: Int = item.itemId
             if (itemId == R.id.nav_dingding) {
-                if (isAppAvailable(Constant.DING_DING)) {
-                    binding.viewPager.currentItem = 0
-                } else {
-                    showAlertDialog()
-                }
+                binding.viewPager.currentItem = 0
             } else if (itemId == R.id.nav_settings) {
                 binding.viewPager.currentItem = 1
             }
@@ -114,20 +104,6 @@ class MainActivity : KotlinBaseActivity<ActivityMainBinding>() {
 
     override fun observeRequestState() {
 
-    }
-
-    private fun showAlertDialog() {
-        AlertMessageDialog.Builder()
-            .setContext(this)
-            .setTitle("温馨提醒")
-            .setMessage("手机没有安装《钉钉》软件，无法自动打卡")
-            .setPositiveButton("知道了")
-            .setOnDialogButtonClickListener(object :
-                AlertMessageDialog.OnDialogButtonClickListener {
-                override fun onConfirmClick() {
-
-                }
-            }).build().show()
     }
 
     override fun onKeyDown(keyCode: Int, event: KeyEvent?): Boolean {

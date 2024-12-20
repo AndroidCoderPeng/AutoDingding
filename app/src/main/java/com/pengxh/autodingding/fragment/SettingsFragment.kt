@@ -3,7 +3,6 @@ package com.pengxh.autodingding.fragment
 import android.content.ComponentName
 import android.content.Intent
 import android.content.pm.PackageManager
-import android.content.pm.ResolveInfo
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
@@ -20,6 +19,7 @@ import com.pengxh.autodingding.BuildConfig
 import com.pengxh.autodingding.R
 import com.pengxh.autodingding.databinding.FragmentSettingsBinding
 import com.pengxh.autodingding.extensions.notificationEnable
+import com.pengxh.autodingding.extensions.openApplication
 import com.pengxh.autodingding.extensions.show
 import com.pengxh.autodingding.service.FloatingWindowService
 import com.pengxh.autodingding.service.NotificationMonitorService
@@ -180,23 +180,7 @@ class SettingsFragment : KotlinBaseFragment<FragmentSettingsBinding>(), Handler.
         }
 
         binding.openTestLayout.setOnClickListener {
-            val packageManager = requireContext().packageManager
-            val resolveIntent = Intent(Intent.ACTION_MAIN, null)
-            resolveIntent.addCategory(Intent.CATEGORY_LAUNCHER)
-            resolveIntent.setPackage(Constant.DING_DING)
-            val apps = packageManager.queryIntentActivities(resolveIntent, 0)
-            val iterator: Iterator<ResolveInfo> = apps.iterator()
-            if (!iterator.hasNext()) {
-                return@setOnClickListener
-            }
-            val resolveInfo = iterator.next()
-            val intent = Intent(Intent.ACTION_MAIN)
-            intent.addCategory(Intent.CATEGORY_LAUNCHER)
-            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-            intent.component = ComponentName(
-                resolveInfo.activityInfo.packageName, resolveInfo.activityInfo.name
-            )
-            startActivity(intent)
+            requireContext().openApplication(Constant.DING_DING, false)
         }
 
         binding.turnoffLightSwitch.setOnCheckedChangeListener { _, isChecked ->
@@ -275,7 +259,7 @@ class SettingsFragment : KotlinBaseFragment<FragmentSettingsBinding>(), Handler.
     }
 
     private fun turnOnNotificationMonitorService() {
-        lifecycleScope.launch(Dispatchers.IO){
+        lifecycleScope.launch(Dispatchers.IO) {
             requireContext().packageManager.setComponentEnabledSetting(
                 ComponentName(requireContext(), NotificationMonitorService::class.java),
                 PackageManager.COMPONENT_ENABLED_STATE_DISABLED, PackageManager.DONT_KILL_APP
