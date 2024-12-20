@@ -43,7 +43,7 @@ class ForegroundRunningService : Service(), Handler.Callback {
             notificationManager?.createNotificationChannel(channel)
         }
         notificationBuilder = NotificationCompat.Builder(this, "foreground_running_service_channel")
-            .setSmallIcon(R.mipmap.logo_round)
+            .setSmallIcon(R.mipmap.ic_launcher)
             .setContentTitle("已运行0小时0分钟")
             .setContentText(Constant.FOREGROUND_RUNNING_SERVICE_TITLE)
             .setPriority(NotificationCompat.PRIORITY_HIGH) // 设置通知优先级
