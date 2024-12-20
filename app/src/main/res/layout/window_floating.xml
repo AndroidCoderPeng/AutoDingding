@@ -18,13 +18,13 @@
             android:id="@+id/backView"
             android:layout_width="@dimen/dp_30"
             android:layout_height="@dimen/dp_30"
+            android:padding="@dimen/dp_3"
             android:src="@mipmap/ic_launcher_round" />
 
         <View
             android:layout_width="@dimen/dividerLine"
             android:layout_height="match_parent"
             android:layout_marginVertical="@dimen/dp_7"
-            android:layout_marginStart="@dimen/dp_5"
             android:background="@color/white" />
 
         <TextView

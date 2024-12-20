@@ -166,7 +166,7 @@ class DailyTaskFragment : KotlinBaseFragment<FragmentDailyTaskBinding>(), Handle
                 Log.d(kTag, "initEvent: 开启周期任务Runnable")
                 executeDailyTask()
                 isTaskStarted = true
-                binding.executeTaskButton.setImageResource(R.drawable.ic_stop)
+                binding.executeTaskButton.setImageResource(R.mipmap.ic_stop)
             } else {
                 repeatTaskHandler.removeCallbacks(repeatTaskRunnable)
                 Log.d(kTag, "initEvent: 取消周期任务Runnable")
@@ -175,7 +175,7 @@ class DailyTaskFragment : KotlinBaseFragment<FragmentDailyTaskBinding>(), Handle
                 binding.actualTimeView.text = "--:--:--"
                 binding.repeatTimeView.text = "0秒后刷新每日任务"
                 binding.repeatTimeView.visibility = View.INVISIBLE
-                binding.executeTaskButton.setImageResource(R.drawable.ic_start)
+                binding.executeTaskButton.setImageResource(R.mipmap.ic_start)
                 binding.tipsView.text = ""
                 binding.countDownTimeView.text = "0秒后执行任务"
                 binding.countDownPgr.progress = 0
