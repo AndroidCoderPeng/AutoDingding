@@ -115,6 +115,8 @@
             android:layout_height="wrap_content"
             android:layout_alignParentEnd="true"
             android:layout_centerVertical="true"
+            android:layout_marginVertical="@dimen/dp_10"
+            android:background="@drawable/button_border_main_5"
             android:text="发送"
             android:textColor="@color/colorAppThemeLight"
             android:textSize="@dimen/sp_16" />
