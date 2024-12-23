@@ -1,11 +1,19 @@
 package com.pengxh.autodingding.utils
 
+import android.content.Context
+import com.google.gson.Gson
+import com.google.gson.reflect.TypeToken
+import com.pengxh.autodingding.model.HolidayModel
+import com.pengxh.kt.lite.extensions.readAssetsFile
 import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Date
 import java.util.Locale
 
 object TimeKit {
+
+    private val gson by lazy { Gson() }
+
     fun getTodayDate(): String {
         val dateFormat = SimpleDateFormat("yyyy-MM-dd", Locale.CHINA)
         return dateFormat.format(Date())
@@ -26,5 +34,20 @@ object TimeKit {
         }.timeInMillis
         val delta = (nextMidnightMillis - System.currentTimeMillis()) / 1000
         return delta.toInt()
+    }
+
+    fun todayIsWorkDay(context: Context): Boolean {
+        val assetsFile = context.readAssetsFile("Holiday.json")
+        val holidays = gson.fromJson<MutableList<HolidayModel>>(
+            assetsFile, object : TypeToken<MutableList<HolidayModel>>() {}.type
+        )
+        val result = holidays.find { x -> x.date == getTodayDate() }
+        return if (result == null) {
+            val calendar = Calendar.getInstance()
+            calendar[Calendar.DAY_OF_WEEK] == Calendar.SATURDAY || calendar[Calendar.DAY_OF_WEEK] == Calendar.SUNDAY
+        } else {
+            // 节假日
+            false
+        }
     }
 }

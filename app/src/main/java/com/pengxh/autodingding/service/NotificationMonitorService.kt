@@ -14,6 +14,7 @@ import com.pengxh.autodingding.extensions.sendTextMail
 import com.pengxh.autodingding.fragment.SettingsFragment
 import com.pengxh.autodingding.utils.Constant
 import com.pengxh.autodingding.utils.KeyValueKit
+import com.pengxh.autodingding.utils.TimeKit
 import com.pengxh.kt.lite.extensions.getSystemService
 import com.pengxh.kt.lite.extensions.show
 import com.pengxh.kt.lite.extensions.timestampToCompleteDate
@@ -92,7 +93,14 @@ class NotificationMonitorService : NotificationListenerService() {
             } else {
                 val key = SaveKeyValues.getValue(Constant.DING_DING_KEY, "打卡") as String
                 if (notice.contains(key)) {
-                    openApplication(Constant.DING_DING, true)
+                    //判断周末、节假日
+                    if (TimeKit.todayIsWorkDay(this)) {
+                        openApplication(Constant.DING_DING, true)
+                    } else {
+                        "今天休息哦~，已经帮你跳过打卡任务".createTextMail(
+                            "放假通知", emailAddress
+                        ).sendTextMail()
+                    }
                 }
             }
         }

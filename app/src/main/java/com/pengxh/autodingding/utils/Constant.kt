@@ -24,6 +24,8 @@ object Constant {
     const val TIMEOUT = "timeout"
     const val BACK_TO_HOME = "backToHome"
     const val DING_DING_KEY = "dingDingKey"
+    const val SKIP_WEEKEND_KEY = "skipWeekend"
+    const val SKIP_HOLIDAY_KEY = "skipHoliday"
 
     const val TICK_TIME_CODE = 2024071701
     const val UPDATE_TICK_TIME_CODE = 2024071702
@@ -48,4 +50,6 @@ object Constant {
     const val ZFB = "com.eg.android.AlipayGphone"
 
     const val FOREGROUND_RUNNING_SERVICE_TITLE = "应用前台保活服务，请勿关闭此通知"
+
+    //https://timor.tech/api/holiday/year/2025/
 }

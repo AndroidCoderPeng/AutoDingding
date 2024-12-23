@@ -16,6 +16,7 @@
             android:id="@+id/emailConfigLayout"
             android:layout_width="match_parent"
             android:layout_height="@dimen/itemLayoutHeight"
+            android:layout_marginTop="@dimen/dp_10"
             android:background="@color/white"
             android:paddingHorizontal="10dp">
 

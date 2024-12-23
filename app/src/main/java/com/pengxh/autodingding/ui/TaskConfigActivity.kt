@@ -20,6 +20,12 @@ class TaskConfigActivity : KotlinBaseActivity<ActivityTaskConfigBinding>() {
     override fun initOnCreate(savedInstanceState: Bundle?) {
         binding.timeoutTextView.text = SaveKeyValues.getValue(Constant.TIMEOUT, "45s") as String
         binding.keyTextView.text = SaveKeyValues.getValue(Constant.DING_DING_KEY, "打卡") as String
+        binding.skipWeekendSwitch.isChecked = SaveKeyValues.getValue(
+            Constant.SKIP_WEEKEND_KEY, true
+        ) as Boolean
+        binding.skipHolidaySwitch.isChecked = SaveKeyValues.getValue(
+            Constant.SKIP_HOLIDAY_KEY, true
+        ) as Boolean
     }
 
     override fun initViewBinding(): ActivityTaskConfigBinding {
@@ -81,6 +87,14 @@ class TaskConfigActivity : KotlinBaseActivity<ActivityTaskConfigBinding>() {
 
                     override fun onCancelClick() {}
                 }).build().show()
+        }
+
+        binding.skipWeekendSwitch.setOnCheckedChangeListener { _, isChecked ->
+            SaveKeyValues.putValue(Constant.SKIP_WEEKEND_KEY, isChecked)
+        }
+
+        binding.skipHolidaySwitch.setOnCheckedChangeListener { _, isChecked ->
+            SaveKeyValues.putValue(Constant.SKIP_HOLIDAY_KEY, isChecked)
         }
     }
 }

@@ -96,7 +96,7 @@ class EmailConfigActivity : KotlinBaseActivity<ActivityEmailConfigBinding>() {
                 return@setOnClickListener
             }
 
-            "这是一封测试邮件，不必回复".createTextMail("邮箱测试", emailAddress).sendTextMail()
+            "这是一封测试邮件，不必关注".createTextMail("邮箱测试", emailAddress).sendTextMail()
         }
     }
 }
