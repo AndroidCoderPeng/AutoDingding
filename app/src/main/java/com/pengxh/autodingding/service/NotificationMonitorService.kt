@@ -68,8 +68,7 @@ class NotificationMonitorService : NotificationListenerService() {
         }
 
         val emailAddress = KeyValueKit.getEmailAddress()
-        if (emailAddress.isEmpty()) {
-            "邮箱地址为空".show(this)
+        if (emailAddress == "") {
             return
         }
 

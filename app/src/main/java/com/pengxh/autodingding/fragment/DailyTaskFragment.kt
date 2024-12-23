@@ -339,8 +339,7 @@ class DailyTaskFragment : KotlinBaseFragment<FragmentDailyTaskBinding>(), Handle
                         //如果倒计时结束，那么表明没有收到打卡成功的通知
                         requireContext().backToMainActivity()
                         val emailAddress = KeyValueKit.getEmailAddress()
-                        if (emailAddress.isEmpty()) {
-                            "邮箱地址为空".show(requireContext())
+                        if (emailAddress == "") {
                             return
                         }
 
