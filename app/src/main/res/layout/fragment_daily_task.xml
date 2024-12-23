@@ -96,22 +96,50 @@
                         android:layout_weight="1"
                         android:orientation="vertical">
 
-                        <TextView
-                            android:id="@+id/tipsView"
-                            android:layout_width="wrap_content"
+                        <LinearLayout
+                            android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:fontFamily="sans-serif-condensed"
-                            android:hint="请点击右侧按钮开始执行任务"
-                            android:textColor="@color/colorAppThemeLight"
-                            android:textColorHint="@color/lib_hint_color"
-                            android:textSize="@dimen/sp_16"
-                            android:textStyle="bold" />
+                            android:orientation="horizontal">
+
+                            <androidx.cardview.widget.CardView
+                                android:id="@+id/taskDayView"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_gravity="center"
+                                android:backgroundTint="@color/lib_hint_color"
+                                app:cardCornerRadius="@dimen/dp_5">
+
+                                <TextView
+                                    android:id="@+id/taskDayTextView"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:paddingHorizontal="@dimen/dp_7"
+                                    android:paddingVertical="@dimen/dp_3"
+                                    android:text="未执行"
+                                    android:textColor="@color/white" />
+                            </androidx.cardview.widget.CardView>
+
+                            <TextView
+                                android:id="@+id/tipsView"
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_gravity="center"
+                                android:layout_marginStart="@dimen/dp_5"
+                                android:layout_weight="1"
+                                android:fontFamily="sans-serif-condensed"
+                                android:hint="请点击右侧按钮开始执行任务"
+                                android:singleLine="true"
+                                android:textColor="@color/colorAppThemeLight"
+                                android:textColorHint="@color/lib_hint_color"
+                                android:textSize="@dimen/sp_16"
+                                android:textStyle="bold" />
+                        </LinearLayout>
 
                         <TextView
                             android:id="@+id/countDownTimeView"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:layout_marginTop="@dimen/dp_7"
+                            android:layout_marginTop="@dimen/dp_5"
                             android:text="0秒后执行任务" />
                     </LinearLayout>
 
@@ -120,6 +148,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_gravity="center_vertical"
+                        android:layout_marginStart="@dimen/dp_10"
                         android:src="@mipmap/ic_start" />
                 </LinearLayout>
 

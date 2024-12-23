@@ -1,6 +1,7 @@
 package com.pengxh.autodingding.fragment
 
 import android.annotation.SuppressLint
+import android.content.res.ColorStateList
 import android.os.Bundle
 import android.os.CountDownTimer
 import android.os.Handler
@@ -177,6 +178,10 @@ class DailyTaskFragment : KotlinBaseFragment<FragmentDailyTaskBinding>(), Handle
                 binding.repeatTimeView.text = "0秒后刷新每日任务"
                 binding.repeatTimeView.visibility = View.INVISIBLE
                 binding.executeTaskButton.setImageResource(R.mipmap.ic_start)
+                binding.taskDayView.backgroundTintList = ColorStateList.valueOf(
+                    R.color.lib_hint_color.convertColor(requireContext())
+                )
+                binding.taskDayTextView.text = "未执行"
                 binding.tipsView.text = ""
                 binding.countDownTimeView.text = "0秒后执行任务"
                 binding.countDownPgr.progress = 0
@@ -244,6 +249,17 @@ class DailyTaskFragment : KotlinBaseFragment<FragmentDailyTaskBinding>(), Handle
     }
 
     private fun executeDailyTask() {
+        if (TimeKit.todayIsWorkDay(requireContext())) {
+            binding.taskDayView.backgroundTintList = ColorStateList.valueOf(
+                R.color.iOSGreen.convertColor(requireContext())
+            )
+            binding.taskDayTextView.text = "休息日"
+        } else {
+            binding.taskDayView.backgroundTintList = ColorStateList.valueOf(
+                R.color.colorAppThemeLight.convertColor(requireContext())
+            )
+            binding.taskDayTextView.text = "工作日"
+        }
         Log.d(kTag, "executeDailyTask: 执行周期任务")
         "${TimeKit.getCurrentTime()}：执行周期任务".writeToFile(requireContext().createLogFile())
         dailyTaskHandler.post(dailyTaskRunnable)
