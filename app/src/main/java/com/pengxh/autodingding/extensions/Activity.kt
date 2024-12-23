@@ -20,8 +20,8 @@ fun Activity.showTimePicker(dailyTaskBean: DailyTaskBean, callback: OnTimeSelect
     layout.setSelectedTextColor(R.color.colorAppThemeLight.convertColor(this))
     layout.setSelectedTextBold(true)
 
-    timePicker.setOnTimePickedListener { hour, minute, _ ->
-        callback.onTimePicked(String.format("%02d:%02d:%02d", hour, minute, (0 until 60).random()))
+    timePicker.setOnTimePickedListener { hour, minute, seconds ->
+        callback.onTimePicked(String.format("%02d:%02d:%02d", hour, minute, seconds))
     }
     timePicker.show()
 }
@@ -37,8 +37,8 @@ fun Activity.showTimePicker(callback: OnTimeSelectedCallback) {
     layout.setSelectedTextColor(R.color.colorAppThemeLight.convertColor(this))
     layout.setSelectedTextBold(true)
 
-    timePicker.setOnTimePickedListener { hour, minute, _ ->
-        callback.onTimePicked(String.format("%02d:%02d:%02d", hour, minute, (0 until 60).random()))
+    timePicker.setOnTimePickedListener { hour, minute, seconds ->
+        callback.onTimePicked(String.format("%02d:%02d:%02d", hour, minute, seconds))
     }
     timePicker.show()
 }
