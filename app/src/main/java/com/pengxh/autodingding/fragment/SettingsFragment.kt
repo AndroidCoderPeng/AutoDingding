@@ -11,7 +11,6 @@ import android.os.Bundle
 import android.os.Handler
 import android.os.Message
 import android.provider.Settings
-import android.text.TextUtils
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -110,12 +109,8 @@ class SettingsFragment : KotlinBaseFragment<FragmentSettingsBinding>(), Handler.
                 .setOnDialogButtonClickListener(object :
                     AlertInputDialog.OnDialogButtonClickListener {
                     override fun onConfirmClick(value: String) {
-                        if (!TextUtils.isEmpty(value)) {
-                            SaveKeyValues.putValue(Constant.DING_DING_KEY, value)
-                            binding.keyTextView.text = value
-                        } else {
-                            "什么都还没输入呢！".show(requireContext())
-                        }
+                        SaveKeyValues.putValue(Constant.DING_DING_KEY, value)
+                        binding.keyTextView.text = value
                     }
 
                     override fun onCancelClick() {}

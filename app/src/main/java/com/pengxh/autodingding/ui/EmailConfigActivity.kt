@@ -1,7 +1,6 @@
 package com.pengxh.autodingding.ui
 
 import android.os.Bundle
-import android.text.TextUtils
 import com.pengxh.autodingding.R
 import com.pengxh.autodingding.databinding.ActivityEmailConfigBinding
 import com.pengxh.autodingding.extensions.createTextMail
@@ -10,6 +9,7 @@ import com.pengxh.autodingding.extensions.sendTextMail
 import com.pengxh.autodingding.utils.Constant
 import com.pengxh.autodingding.utils.KeyValueKit
 import com.pengxh.kt.lite.base.KotlinBaseActivity
+import com.pengxh.kt.lite.extensions.isEmail
 import com.pengxh.kt.lite.extensions.show
 import com.pengxh.kt.lite.utils.SaveKeyValues
 import com.pengxh.kt.lite.widget.TitleBarView
@@ -58,12 +58,13 @@ class EmailConfigActivity : KotlinBaseActivity<ActivityEmailConfigBinding>() {
                 .setOnDialogButtonClickListener(object :
                     AlertInputDialog.OnDialogButtonClickListener {
                     override fun onConfirmClick(value: String) {
-                        if (!TextUtils.isEmpty(value)) {
-                            SaveKeyValues.putValue(Constant.EMAIL_ADDRESS, value)
-                            binding.emailTextView.text = value
-                        } else {
-                            "什么都还没输入呢！".show(context)
+                        if (!value.isEmail()) {
+                            "输入的邮箱格式不对，请检查".show(context)
+                            return
                         }
+
+                        SaveKeyValues.putValue(Constant.EMAIL_ADDRESS, value)
+                        binding.emailTextView.text = value
                     }
 
                     override fun onCancelClick() {}
@@ -80,12 +81,8 @@ class EmailConfigActivity : KotlinBaseActivity<ActivityEmailConfigBinding>() {
                 .setOnDialogButtonClickListener(object :
                     AlertInputDialog.OnDialogButtonClickListener {
                     override fun onConfirmClick(value: String) {
-                        if (!TextUtils.isEmpty(value)) {
-                            SaveKeyValues.putValue(Constant.EMAIL_TITLE, value)
-                            binding.emailTitleView.text = value
-                        } else {
-                            "什么都还没输入呢！".show(context)
-                        }
+                        SaveKeyValues.putValue(Constant.EMAIL_TITLE, value)
+                        binding.emailTitleView.text = value
                     }
 
                     override fun onCancelClick() {}
