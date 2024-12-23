@@ -64,7 +64,6 @@ class NotificationMonitorService : NotificationListenerService() {
             notificationBean.notificationMsg = notice
             notificationBean.postTime = System.currentTimeMillis().timestampToCompleteDate()
             notificationBeanDao.save(notificationBean)
-            Log.d(kTag, "onNotificationPosted: $notice")
         }
 
         val emailAddress = SaveKeyValues.getValue(Constant.EMAIL_ADDRESS, "") as String

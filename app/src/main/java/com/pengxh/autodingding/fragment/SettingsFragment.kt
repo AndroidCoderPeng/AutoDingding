@@ -3,6 +3,8 @@ package com.pengxh.autodingding.fragment
 import android.content.ComponentName
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.content.res.ColorStateList
+import android.graphics.Color
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
@@ -18,11 +20,14 @@ import androidx.lifecycle.lifecycleScope
 import com.pengxh.autodingding.BuildConfig
 import com.pengxh.autodingding.R
 import com.pengxh.autodingding.databinding.FragmentSettingsBinding
+import com.pengxh.autodingding.extensions.createTextMail
 import com.pengxh.autodingding.extensions.notificationEnable
 import com.pengxh.autodingding.extensions.openApplication
+import com.pengxh.autodingding.extensions.sendTextMail
 import com.pengxh.autodingding.extensions.show
 import com.pengxh.autodingding.service.FloatingWindowService
 import com.pengxh.autodingding.service.NotificationMonitorService
+import com.pengxh.autodingding.ui.EmailConfigActivity
 import com.pengxh.autodingding.ui.NoticeRecordActivity
 import com.pengxh.autodingding.ui.QuestionAndAnswerActivity
 import com.pengxh.autodingding.utils.Constant
@@ -72,47 +77,7 @@ class SettingsFragment : KotlinBaseFragment<FragmentSettingsBinding>(), Handler.
 
     override fun initEvent() {
         binding.emailLayout.setOnClickListener {
-            AlertInputDialog.Builder()
-                .setContext(requireContext())
-                .setTitle("设置邮箱")
-                .setHintMessage("请输入邮箱")
-                .setNegativeButton("取消")
-                .setPositiveButton("确定")
-                .setOnDialogButtonClickListener(object :
-                    AlertInputDialog.OnDialogButtonClickListener {
-                    override fun onConfirmClick(value: String) {
-                        if (!TextUtils.isEmpty(value)) {
-                            SaveKeyValues.putValue(Constant.EMAIL_ADDRESS, value)
-                            binding.emailTextView.text = value
-                        } else {
-                            "什么都还没输入呢！".show(requireContext())
-                        }
-                    }
-
-                    override fun onCancelClick() {}
-                }).build().show()
-        }
-
-        binding.emailTitleLayout.setOnClickListener {
-            AlertInputDialog.Builder()
-                .setContext(requireContext())
-                .setTitle("设置邮件标题")
-                .setHintMessage("请输入邮件标题")
-                .setNegativeButton("取消")
-                .setPositiveButton("确定")
-                .setOnDialogButtonClickListener(object :
-                    AlertInputDialog.OnDialogButtonClickListener {
-                    override fun onConfirmClick(value: String) {
-                        if (!TextUtils.isEmpty(value)) {
-                            SaveKeyValues.putValue(Constant.EMAIL_TITLE, value)
-                            binding.emailTitleView.text = value
-                        } else {
-                            "什么都还没输入呢！".show(requireContext())
-                        }
-                    }
-
-                    override fun onCancelClick() {}
-                }).build().show()
+            requireContext().navigatePageTo<EmailConfigActivity>()
         }
 
         binding.timeoutLayout.setOnClickListener {
@@ -127,6 +92,17 @@ class SettingsFragment : KotlinBaseFragment<FragmentSettingsBinding>(), Handler.
                         SaveKeyValues.putValue(Constant.TIMEOUT, time)
 
                         val handler = FloatingWindowService.weakReferenceHandler
+                        if (handler == null) {
+                            val emailAddress =
+                                SaveKeyValues.getValue(Constant.EMAIL_ADDRESS, "") as String
+                            if (emailAddress.isEmpty()) {
+                                return
+                            }
+                            "悬浮窗未开启，软件已停止运行，请及早手动打卡".createTextMail(
+                                "软件异常通知", emailAddress
+                            ).sendTextMail()
+                            return
+                        }
                         val message = handler.obtainMessage()
                         message.what = Constant.UPDATE_TICK_TIME_CODE
                         message.obj = time
@@ -230,10 +206,13 @@ class SettingsFragment : KotlinBaseFragment<FragmentSettingsBinding>(), Handler.
 
     override fun onResume() {
         super.onResume()
-        binding.emailTextView.text = SaveKeyValues.getValue(Constant.EMAIL_ADDRESS, "") as String
-        binding.emailTitleView.text = SaveKeyValues.getValue(
-            Constant.EMAIL_TITLE, "打卡结果通知"
-        ) as String
+        val emailAddress = SaveKeyValues.getValue(Constant.EMAIL_ADDRESS, "") as String
+        if (emailAddress == "") {
+            binding.emailTagView.backgroundTintList = ColorStateList.valueOf(Color.RED)
+        } else {
+            binding.emailTagView.backgroundTintList =
+                ColorStateList.valueOf(R.color.iOSGreen.convertColor(requireContext()))
+        }
         binding.timeoutTextView.text = SaveKeyValues.getValue(Constant.TIMEOUT, "45s") as String
         binding.keyTextView.text = SaveKeyValues.getValue(Constant.DING_DING_KEY, "打卡") as String
 

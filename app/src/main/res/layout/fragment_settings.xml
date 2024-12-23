@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/rootView"
     android:layout_width="match_parent"
@@ -18,74 +19,27 @@
             android:background="@color/white"
             android:paddingHorizontal="10dp">
 
-            <LinearLayout
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_centerVertical="true"
-                android:orientation="vertical">
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="邮箱设置"
-                    android:textColor="@color/colorText"
-                    android:textSize="@dimen/sp_16" />
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="有效期到2025/05/21"
-                    android:textColor="@color/red"
-                    android:textSize="@dimen/sp_10" />
-            </LinearLayout>
-
-            <TextView
-                android:id="@+id/emailTextView"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentEnd="true"
-                android:layout_centerVertical="true"
-                android:gravity="center_vertical"
-                android:textSize="@dimen/sp_16" />
-        </RelativeLayout>
-
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="1px"
-            android:layout_marginHorizontal="@dimen/dp_10"
-            android:background="#CCC" />
-
-        <RelativeLayout
-            android:id="@+id/emailTitleLayout"
-            android:layout_width="match_parent"
-            android:layout_height="@dimen/itemLayoutHeight"
-            android:background="@color/white"
-            android:paddingHorizontal="10dp">
-
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_centerVertical="true"
-                android:gravity="center_vertical"
-                android:text="邮件标题"
+                android:text="邮箱配置"
                 android:textColor="@color/colorText"
                 android:textSize="@dimen/sp_16" />
 
-            <TextView
-                android:id="@+id/emailTitleView"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+            <androidx.cardview.widget.CardView
+                android:id="@+id/emailTagView"
+                android:layout_width="@dimen/dp_20"
+                android:layout_height="@dimen/dp_20"
                 android:layout_alignParentEnd="true"
                 android:layout_centerVertical="true"
-                android:gravity="center_vertical"
-                android:textSize="@dimen/sp_16" />
+                android:backgroundTint="@color/red"
+                app:cardCornerRadius="@dimen/dp_10" />
         </RelativeLayout>
 
         <View
             android:layout_width="match_parent"
-            android:layout_height="1px"
-            android:layout_marginHorizontal="@dimen/dp_10"
-            android:background="#CCC" />
+            android:layout_height="@dimen/dp_10" />
 
         <RelativeLayout
             android:id="@+id/timeoutLayout"
