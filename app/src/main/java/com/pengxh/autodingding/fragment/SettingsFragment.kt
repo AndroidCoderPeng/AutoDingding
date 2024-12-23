@@ -20,21 +20,20 @@ import androidx.lifecycle.lifecycleScope
 import com.pengxh.autodingding.BuildConfig
 import com.pengxh.autodingding.R
 import com.pengxh.autodingding.databinding.FragmentSettingsBinding
-import com.pengxh.autodingding.extensions.createTextMail
 import com.pengxh.autodingding.extensions.notificationEnable
 import com.pengxh.autodingding.extensions.openApplication
-import com.pengxh.autodingding.extensions.sendTextMail
-import com.pengxh.autodingding.extensions.show
 import com.pengxh.autodingding.service.FloatingWindowService
 import com.pengxh.autodingding.service.NotificationMonitorService
 import com.pengxh.autodingding.ui.EmailConfigActivity
 import com.pengxh.autodingding.ui.NoticeRecordActivity
 import com.pengxh.autodingding.ui.QuestionAndAnswerActivity
 import com.pengxh.autodingding.utils.Constant
+import com.pengxh.autodingding.utils.KeyValueKit
 import com.pengxh.kt.lite.base.KotlinBaseFragment
 import com.pengxh.kt.lite.extensions.convertColor
 import com.pengxh.kt.lite.extensions.navigatePageTo
 import com.pengxh.kt.lite.extensions.setScreenBrightness
+import com.pengxh.kt.lite.extensions.show
 import com.pengxh.kt.lite.utils.SaveKeyValues
 import com.pengxh.kt.lite.utils.WeakReferenceHandler
 import com.pengxh.kt.lite.widget.dialog.AlertInputDialog
@@ -92,17 +91,6 @@ class SettingsFragment : KotlinBaseFragment<FragmentSettingsBinding>(), Handler.
                         SaveKeyValues.putValue(Constant.TIMEOUT, time)
 
                         val handler = FloatingWindowService.weakReferenceHandler
-                        if (handler == null) {
-                            val emailAddress =
-                                SaveKeyValues.getValue(Constant.EMAIL_ADDRESS, "") as String
-                            if (emailAddress.isEmpty()) {
-                                return
-                            }
-                            "悬浮窗未开启，软件已停止运行，请及早手动打卡".createTextMail(
-                                "软件异常通知", emailAddress
-                            ).sendTextMail()
-                            return
-                        }
                         val message = handler.obtainMessage()
                         message.what = Constant.UPDATE_TICK_TIME_CODE
                         message.obj = time
@@ -206,7 +194,7 @@ class SettingsFragment : KotlinBaseFragment<FragmentSettingsBinding>(), Handler.
 
     override fun onResume() {
         super.onResume()
-        val emailAddress = SaveKeyValues.getValue(Constant.EMAIL_ADDRESS, "") as String
+        val emailAddress = KeyValueKit.getEmailAddress()
         if (emailAddress == "") {
             binding.emailTagView.backgroundTintList = ColorStateList.valueOf(Color.RED)
         } else {

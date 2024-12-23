@@ -27,6 +27,7 @@ import com.pengxh.autodingding.greendao.DailyTaskBeanDao
 import com.pengxh.autodingding.service.FloatingWindowService
 import com.pengxh.autodingding.utils.Constant
 import com.pengxh.autodingding.utils.CountDownTimerKit
+import com.pengxh.autodingding.utils.KeyValueKit
 import com.pengxh.autodingding.utils.MessageEvent
 import com.pengxh.autodingding.utils.OnTimeCountDownCallback
 import com.pengxh.autodingding.utils.OnTimeSelectedCallback
@@ -337,9 +338,7 @@ class DailyTaskFragment : KotlinBaseFragment<FragmentDailyTaskBinding>(), Handle
                     override fun onFinish() {
                         //如果倒计时结束，那么表明没有收到打卡成功的通知
                         requireContext().backToMainActivity()
-                        val emailAddress = SaveKeyValues.getValue(
-                            Constant.EMAIL_ADDRESS, ""
-                        ) as String
+                        val emailAddress = KeyValueKit.getEmailAddress()
                         if (emailAddress.isEmpty()) {
                             "邮箱地址为空".show(requireContext())
                             return

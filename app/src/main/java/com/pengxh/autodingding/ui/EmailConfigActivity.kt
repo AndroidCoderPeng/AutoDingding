@@ -4,10 +4,13 @@ import android.os.Bundle
 import android.text.TextUtils
 import com.pengxh.autodingding.R
 import com.pengxh.autodingding.databinding.ActivityEmailConfigBinding
+import com.pengxh.autodingding.extensions.createTextMail
 import com.pengxh.autodingding.extensions.initImmersionBar
-import com.pengxh.autodingding.extensions.show
+import com.pengxh.autodingding.extensions.sendTextMail
 import com.pengxh.autodingding.utils.Constant
+import com.pengxh.autodingding.utils.KeyValueKit
 import com.pengxh.kt.lite.base.KotlinBaseActivity
+import com.pengxh.kt.lite.extensions.show
 import com.pengxh.kt.lite.utils.SaveKeyValues
 import com.pengxh.kt.lite.widget.TitleBarView
 import com.pengxh.kt.lite.widget.dialog.AlertInputDialog
@@ -17,7 +20,7 @@ class EmailConfigActivity : KotlinBaseActivity<ActivityEmailConfigBinding>() {
     private val context = this
 
     override fun initOnCreate(savedInstanceState: Bundle?) {
-        binding.emailTextView.text = SaveKeyValues.getValue(Constant.EMAIL_ADDRESS, "") as String
+        binding.emailTextView.text = KeyValueKit.getEmailAddress()
         binding.emailTitleView.text = SaveKeyValues.getValue(
             Constant.EMAIL_TITLE, "打卡结果通知"
         ) as String
@@ -87,6 +90,16 @@ class EmailConfigActivity : KotlinBaseActivity<ActivityEmailConfigBinding>() {
 
                     override fun onCancelClick() {}
                 }).build().show()
+        }
+
+        binding.sendEmailButton.setOnClickListener {
+            val emailAddress = KeyValueKit.getEmailAddress()
+            if (emailAddress.isEmpty()) {
+                "邮箱地址为空".show(context)
+                return@setOnClickListener
+            }
+
+            "这是一封测试邮件，不必回复".createTextMail("邮箱测试", emailAddress).sendTextMail()
         }
     }
 }

@@ -13,6 +13,7 @@ import com.pengxh.autodingding.extensions.openApplication
 import com.pengxh.autodingding.extensions.sendTextMail
 import com.pengxh.autodingding.fragment.SettingsFragment
 import com.pengxh.autodingding.utils.Constant
+import com.pengxh.autodingding.utils.KeyValueKit
 import com.pengxh.kt.lite.extensions.getSystemService
 import com.pengxh.kt.lite.extensions.show
 import com.pengxh.kt.lite.extensions.timestampToCompleteDate
@@ -66,7 +67,7 @@ class NotificationMonitorService : NotificationListenerService() {
             notificationBeanDao.save(notificationBean)
         }
 
-        val emailAddress = SaveKeyValues.getValue(Constant.EMAIL_ADDRESS, "") as String
+        val emailAddress = KeyValueKit.getEmailAddress()
         if (emailAddress.isEmpty()) {
             "邮箱地址为空".show(this)
             return

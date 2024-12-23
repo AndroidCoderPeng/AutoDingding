@@ -1,7 +1,5 @@
 package com.pengxh.autodingding.extensions
 
-import android.content.Context
-import android.widget.Toast
 import com.pengxh.autodingding.bean.MailInfo
 import com.pengxh.autodingding.utils.Constant
 import com.pengxh.kt.lite.extensions.timestampToDate
@@ -48,8 +46,4 @@ fun String.createTextMail(subject: String, toAddress: String): MailInfo {
     // 邮件文本
     mailInfo.content = content
     return mailInfo
-}
-
-fun String.show(context: Context) {
-    Toast.makeText(context, this, Toast.LENGTH_SHORT).show()
 }
