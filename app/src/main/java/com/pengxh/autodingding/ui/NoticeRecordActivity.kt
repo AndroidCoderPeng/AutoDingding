@@ -23,7 +23,7 @@ import com.pengxh.kt.lite.widget.dialog.AlertMessageDialog
 class NoticeRecordActivity : KotlinBaseActivity<ActivityNoticeBinding>(), Handler.Callback {
 
     private val notificationBeanDao by lazy { BaseApplication.get().daoSession.notificationBeanDao }
-    private lateinit var weakReferenceHandler: WeakReferenceHandler
+    private val weakReferenceHandler by lazy { WeakReferenceHandler(this) }
     private lateinit var noticeAdapter: NormalRecyclerAdapter<NotificationBean>
     private var dataBeans: MutableList<NotificationBean> = ArrayList()
     private var isRefresh = false
@@ -60,7 +60,6 @@ class NoticeRecordActivity : KotlinBaseActivity<ActivityNoticeBinding>(), Handle
     }
 
     override fun initOnCreate(savedInstanceState: Bundle?) {
-        weakReferenceHandler = WeakReferenceHandler(this)
         dataBeans = queryNotificationRecord()
         weakReferenceHandler.sendEmptyMessage(2022061901)
     }
