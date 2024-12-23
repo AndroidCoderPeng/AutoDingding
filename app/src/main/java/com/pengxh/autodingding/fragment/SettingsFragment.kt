@@ -26,6 +26,7 @@ import com.pengxh.autodingding.service.NotificationMonitorService
 import com.pengxh.autodingding.ui.EmailConfigActivity
 import com.pengxh.autodingding.ui.NoticeRecordActivity
 import com.pengxh.autodingding.ui.QuestionAndAnswerActivity
+import com.pengxh.autodingding.ui.TaskConfigActivity
 import com.pengxh.autodingding.utils.Constant
 import com.pengxh.autodingding.utils.KeyValueKit
 import com.pengxh.kt.lite.base.KotlinBaseFragment
@@ -35,8 +36,6 @@ import com.pengxh.kt.lite.extensions.setScreenBrightness
 import com.pengxh.kt.lite.extensions.show
 import com.pengxh.kt.lite.utils.SaveKeyValues
 import com.pengxh.kt.lite.utils.WeakReferenceHandler
-import com.pengxh.kt.lite.widget.dialog.AlertInputDialog
-import com.pengxh.kt.lite.widget.dialog.BottomActionSheet
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -47,9 +46,6 @@ class SettingsFragment : KotlinBaseFragment<FragmentSettingsBinding>(), Handler.
     companion object {
         var weakReferenceHandler: WeakReferenceHandler? = null
     }
-
-    private val kTag = "SettingsFragment"
-    private val timeArray = arrayListOf("15s", "30s", "45s")
 
     override fun setupTopBarLayout() {
 
@@ -74,47 +70,12 @@ class SettingsFragment : KotlinBaseFragment<FragmentSettingsBinding>(), Handler.
     }
 
     override fun initEvent() {
-        binding.emailLayout.setOnClickListener {
+        binding.emailConfigLayout.setOnClickListener {
             requireContext().navigatePageTo<EmailConfigActivity>()
         }
 
-        binding.timeoutLayout.setOnClickListener {
-            BottomActionSheet.Builder()
-                .setContext(requireContext())
-                .setActionItemTitle(timeArray)
-                .setItemTextColor(R.color.colorAppThemeLight.convertColor(requireContext()))
-                .setOnActionSheetListener(object : BottomActionSheet.OnActionSheetListener {
-                    override fun onActionItemClick(position: Int) {
-                        val time = timeArray[position]
-                        binding.timeoutTextView.text = time
-                        SaveKeyValues.putValue(Constant.TIMEOUT, time)
-
-                        FloatingWindowService.weakReferenceHandler?.apply {
-                            val message = obtainMessage()
-                            message.what = Constant.UPDATE_TICK_TIME_CODE
-                            message.obj = time
-                            sendMessage(message)
-                        }
-                    }
-                }).build().show()
-        }
-
-        binding.keyLayout.setOnClickListener {
-            AlertInputDialog.Builder()
-                .setContext(requireContext())
-                .setTitle("设置打卡口令")
-                .setHintMessage("请输入打卡口令，如：打卡")
-                .setNegativeButton("取消")
-                .setPositiveButton("确定")
-                .setOnDialogButtonClickListener(object :
-                    AlertInputDialog.OnDialogButtonClickListener {
-                    override fun onConfirmClick(value: String) {
-                        SaveKeyValues.putValue(Constant.DING_DING_KEY, value)
-                        binding.keyTextView.text = value
-                    }
-
-                    override fun onCancelClick() {}
-                }).build().show()
+        binding.taskConfigLayout.setOnClickListener {
+            requireContext().navigatePageTo<TaskConfigActivity>()
         }
 
         binding.floatSwitch.setOnClickListener {
@@ -197,8 +158,6 @@ class SettingsFragment : KotlinBaseFragment<FragmentSettingsBinding>(), Handler.
             binding.emailTagView.backgroundTintList =
                 ColorStateList.valueOf(R.color.iOSGreen.convertColor(requireContext()))
         }
-        binding.timeoutTextView.text = SaveKeyValues.getValue(Constant.TIMEOUT, "45s") as String
-        binding.keyTextView.text = SaveKeyValues.getValue(Constant.DING_DING_KEY, "打卡") as String
 
         binding.floatSwitch.isChecked = Settings.canDrawOverlays(requireContext())
         val serviceIntent = Intent(requireContext(), FloatingWindowService::class.java)
