@@ -10,7 +10,7 @@
 
     <item android:state_selected="true">
         <shape>
-            <stroke android:width="@dimen/dp_3" android:color="@color/iOSGreen" />
+            <stroke android:width="@dimen/dp_3" android:color="@color/colorAppThemeLight" />
             <corners android:radius="@dimen/dp_10" />
             <solid android:color="@color/white" />
         </shape>
