@@ -102,7 +102,7 @@ class FloatingWindowService : Service(), Handler.Callback {
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
-        val time = SaveKeyValues.getValue(Constant.TIMEOUT, "45s") as String
+        val time = SaveKeyValues.getValue(Constant.STAY_DD_TIMEOUT_KEY, "45s") as String
         textView.text = time
         return START_STICKY
     }

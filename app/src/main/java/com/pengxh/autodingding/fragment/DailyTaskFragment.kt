@@ -17,18 +17,16 @@ import com.pengxh.autodingding.adapter.DailyTaskAdapter
 import com.pengxh.autodingding.bean.DailyTaskBean
 import com.pengxh.autodingding.databinding.FragmentDailyTaskBinding
 import com.pengxh.autodingding.extensions.backToMainActivity
-import com.pengxh.autodingding.extensions.createTextMail
 import com.pengxh.autodingding.extensions.formatTime
 import com.pengxh.autodingding.extensions.getTaskIndex
 import com.pengxh.autodingding.extensions.openApplication
 import com.pengxh.autodingding.extensions.random
-import com.pengxh.autodingding.extensions.sendTextMail
+import com.pengxh.autodingding.extensions.sendEmail
 import com.pengxh.autodingding.extensions.showTimePicker
 import com.pengxh.autodingding.greendao.DailyTaskBeanDao
 import com.pengxh.autodingding.service.FloatingWindowService
 import com.pengxh.autodingding.utils.Constant
 import com.pengxh.autodingding.utils.CountDownTimerKit
-import com.pengxh.autodingding.utils.KeyValueKit
 import com.pengxh.autodingding.utils.MessageEvent
 import com.pengxh.autodingding.utils.OnTimeCountDownCallback
 import com.pengxh.autodingding.utils.OnTimeSelectedCallback
@@ -300,13 +298,9 @@ class DailyTaskFragment : KotlinBaseFragment<FragmentDailyTaskBinding>(), Handle
                         if (isSkipHoliday) {
                             if (TimeKit.todayIsHoliday(requireContext())) {
                                 //休息
-                                val emailAddress = KeyValueKit.getEmailAddress()
-                                if (emailAddress == "") {
-                                    return
-                                }
-                                "今天休息哦~，已经帮你跳过打卡任务".createTextMail(
-                                    "放假通知", emailAddress
-                                ).sendTextMail()
+                                "今天休息哦~，已经帮你跳过打卡任务".sendEmail(
+                                    requireContext(), "放假通知"
+                                )
                                 dailyTaskHandler.post(dailyTaskRunnable)
                             } else {
                                 binding.countDownTimeView.text = "0秒后执行任务"
@@ -348,7 +342,7 @@ class DailyTaskFragment : KotlinBaseFragment<FragmentDailyTaskBinding>(), Handle
         when (event.code) {
             Constant.START_COUNT_DOWN_TIMER_CODE -> {
                 Log.d(kTag, "onMessageEvent: 开始超时倒计时")
-                val time = SaveKeyValues.getValue(Constant.TIMEOUT, "45s") as String
+                val time = SaveKeyValues.getValue(Constant.STAY_DD_TIMEOUT_KEY, "45s") as String
                 //去掉时间的s
                 val timeValue = time.dropLast(1).toInt()
                 timeoutTimer = object : CountDownTimer(timeValue * 1000L, 1000) {
@@ -365,16 +359,8 @@ class DailyTaskFragment : KotlinBaseFragment<FragmentDailyTaskBinding>(), Handle
                     override fun onFinish() {
                         //如果倒计时结束，那么表明没有收到打卡成功的通知
                         requireContext().backToMainActivity()
-                        val emailAddress = KeyValueKit.getEmailAddress()
-                        if (emailAddress == "") {
-                            return
-                        }
-
                         "未监听到打卡通知，即将发送异常日志邮件，请注意查收".show(requireContext())
-                        val subject = SaveKeyValues.getValue(
-                            Constant.EMAIL_TITLE, "打卡结果通知"
-                        ) as String
-                        "".createTextMail(subject, emailAddress).sendTextMail()
+                        "".sendEmail(requireContext(), null)
                     }
                 }
                 timeoutTimer?.start()

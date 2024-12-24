@@ -6,25 +6,17 @@ package com.pengxh.autodingding.utils
  * @date: 2019/12/29 12:42
  */
 object Constant {
-    //发送者邮箱账号
-    const val USER_MAIL_ACCOUNT = "pengxh_net@163.com"
+    const val EMAIL_SEND_ADDRESS_KEY = "EMAIL_SEND_ADDRESS_KEY"
+    const val EMAIL_SEND_CODE_KEY = "EMAIL_SEND_CODE_KEY"
+    const val EMAIL_SEND_SERVER_KEY = "EMAIL_SEND_SERVER_KEY"
+    const val EMAIL_SEND_PORT_KEY = "EMAIL_SEND_PORT_KEY"
+    const val EMAIL_IN_BOX_KEY = "EMAIL_IN_BOX_KEY"
+    const val EMAIL_TITLE_KEY = "EMAIL_TITLE_KEY"
 
-    //邮箱授权码，不是密码（有效期180天）
-    const val PERMISSION_CODE = "FJYQrH3QVxKhZpQ3"
-
-    //发送者邮箱地址
-    const val MAIL_FROM_ADDRESS = "pengxh_net@163.com"
-
-    //发送者邮箱服务器
-    const val MAIL_SERVER = "smtp.163.com"
-    const val MAIL_SERVER_PORT = "25"
-
-    const val EMAIL_ADDRESS = "emailAddress"
-    const val EMAIL_TITLE = "emailTitle"
-    const val TIMEOUT = "timeout"
-    const val BACK_TO_HOME = "backToHome"
-    const val DING_DING_KEY = "dingDingKey"
-    const val SKIP_HOLIDAY_KEY = "skipHoliday"
+    const val STAY_DD_TIMEOUT_KEY = "STAY_DD_TIMEOUT_KEY"
+    const val BACK_TO_HOME_KEY = "BACK_TO_HOME_KEY"
+    const val DING_DING_KEY = "DING_DING_KEY"
+    const val SKIP_HOLIDAY_KEY = "SKIP_HOLIDAY_KEY"
 
     const val TICK_TIME_CODE = 2024071701
     const val UPDATE_TICK_TIME_CODE = 2024071702

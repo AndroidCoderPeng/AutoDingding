@@ -18,7 +18,7 @@ class TaskConfigActivity : KotlinBaseActivity<ActivityTaskConfigBinding>() {
     private val timeArray = arrayListOf("15s", "30s", "45s")
 
     override fun initOnCreate(savedInstanceState: Bundle?) {
-        binding.timeoutTextView.text = SaveKeyValues.getValue(Constant.TIMEOUT, "45s") as String
+        binding.timeoutTextView.text = SaveKeyValues.getValue(Constant.STAY_DD_TIMEOUT_KEY, "45s") as String
         binding.keyTextView.text = SaveKeyValues.getValue(Constant.DING_DING_KEY, "打卡") as String
         binding.skipHolidaySwitch.isChecked = SaveKeyValues.getValue(
             Constant.SKIP_HOLIDAY_KEY, true
@@ -56,7 +56,7 @@ class TaskConfigActivity : KotlinBaseActivity<ActivityTaskConfigBinding>() {
                     override fun onActionItemClick(position: Int) {
                         val time = timeArray[position]
                         binding.timeoutTextView.text = time
-                        SaveKeyValues.putValue(Constant.TIMEOUT, time)
+                        SaveKeyValues.putValue(Constant.STAY_DD_TIMEOUT_KEY, time)
 
                         FloatingWindowService.weakReferenceHandler?.apply {
                             val message = obtainMessage()

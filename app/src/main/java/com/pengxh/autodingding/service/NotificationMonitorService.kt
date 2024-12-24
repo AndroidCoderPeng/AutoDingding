@@ -8,12 +8,10 @@ import android.util.Log
 import com.pengxh.autodingding.BaseApplication
 import com.pengxh.autodingding.bean.NotificationBean
 import com.pengxh.autodingding.extensions.backToMainActivity
-import com.pengxh.autodingding.extensions.createTextMail
 import com.pengxh.autodingding.extensions.openApplication
-import com.pengxh.autodingding.extensions.sendTextMail
+import com.pengxh.autodingding.extensions.sendEmail
 import com.pengxh.autodingding.fragment.SettingsFragment
 import com.pengxh.autodingding.utils.Constant
-import com.pengxh.autodingding.utils.KeyValueKit
 import com.pengxh.autodingding.utils.TimeKit
 import com.pengxh.kt.lite.extensions.getSystemService
 import com.pengxh.kt.lite.extensions.show
@@ -68,28 +66,18 @@ class NotificationMonitorService : NotificationListenerService() {
             notificationBeanDao.save(notificationBean)
         }
 
-        val emailAddress = KeyValueKit.getEmailAddress()
-        if (emailAddress == "") {
-            return
-        }
-
         if (packageName == Constant.DING_DING) {
             if (notice.contains("成功")) {
                 backToMainActivity()
                 "即将发送通知邮件，请注意查收".show(this)
-                val subject = SaveKeyValues.getValue(
-                    Constant.EMAIL_TITLE, "打卡结果通知"
-                ) as String
-                notice.createTextMail(subject, emailAddress).sendTextMail()
+                notice.sendEmail(this, null)
             }
         } else if (packageName == Constant.WECHAT || packageName == Constant.QQ || packageName == Constant.TIM || packageName == Constant.ZFB) {
             if (notice.contains("电量")) {
                 val capacity = batteryManager?.getIntProperty(
                     BatteryManager.BATTERY_PROPERTY_CAPACITY
                 )
-                "当前手机剩余电量为：${capacity}%".createTextMail(
-                    "查询手机电量通知", emailAddress
-                ).sendTextMail()
+                "当前手机剩余电量为：${capacity}%".sendEmail(this, "查询手机电量通知")
             } else {
                 val key = SaveKeyValues.getValue(Constant.DING_DING_KEY, "打卡") as String
                 if (notice.contains(key)) {
@@ -99,9 +87,7 @@ class NotificationMonitorService : NotificationListenerService() {
                     if (isSkipHoliday) {
                         if (TimeKit.todayIsHoliday(this)) {
                             //休息
-                            "今天休息哦~，已经帮你跳过打卡任务".createTextMail(
-                                "放假通知", emailAddress
-                            ).sendTextMail()
+                            "今天休息哦~，已经帮你跳过打卡任务".sendEmail(this, "放假通知")
                         } else {
                             openApplication(Constant.DING_DING, true)
                         }

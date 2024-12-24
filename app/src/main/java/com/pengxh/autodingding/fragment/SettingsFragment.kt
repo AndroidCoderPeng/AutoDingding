@@ -28,7 +28,7 @@ import com.pengxh.autodingding.ui.NoticeRecordActivity
 import com.pengxh.autodingding.ui.QuestionAndAnswerActivity
 import com.pengxh.autodingding.ui.TaskConfigActivity
 import com.pengxh.autodingding.utils.Constant
-import com.pengxh.autodingding.utils.KeyValueKit
+import com.pengxh.autodingding.utils.EmailConfigKit
 import com.pengxh.kt.lite.base.KotlinBaseFragment
 import com.pengxh.kt.lite.extensions.convertColor
 import com.pengxh.kt.lite.extensions.navigatePageTo
@@ -115,7 +115,7 @@ class SettingsFragment : KotlinBaseFragment<FragmentSettingsBinding>(), Handler.
         }
 
         binding.backToHomeSwitch.setOnCheckedChangeListener { _, isChecked ->
-            SaveKeyValues.putValue(Constant.BACK_TO_HOME, isChecked)
+            SaveKeyValues.putValue(Constant.BACK_TO_HOME_KEY, isChecked)
         }
 
         binding.notificationLayout.setOnClickListener {
@@ -151,12 +151,11 @@ class SettingsFragment : KotlinBaseFragment<FragmentSettingsBinding>(), Handler.
 
     override fun onResume() {
         super.onResume()
-        val emailAddress = KeyValueKit.getEmailAddress()
-        if (emailAddress == "") {
-            binding.emailTagView.backgroundTintList = ColorStateList.valueOf(Color.RED)
-        } else {
+        if (EmailConfigKit.isEmailConfigured()) {
             binding.emailTagView.backgroundTintList =
                 ColorStateList.valueOf(R.color.iOSGreen.convertColor(requireContext()))
+        } else {
+            binding.emailTagView.backgroundTintList = ColorStateList.valueOf(Color.RED)
         }
 
         binding.floatSwitch.isChecked = Settings.canDrawOverlays(requireContext())
@@ -168,7 +167,7 @@ class SettingsFragment : KotlinBaseFragment<FragmentSettingsBinding>(), Handler.
         }
 
         binding.backToHomeSwitch.isChecked = SaveKeyValues.getValue(
-            Constant.BACK_TO_HOME, false
+            Constant.BACK_TO_HOME_KEY, false
         ) as Boolean
 
         if (requireContext().notificationEnable()) {

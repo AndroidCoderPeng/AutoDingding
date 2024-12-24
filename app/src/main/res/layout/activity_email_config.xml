@@ -13,48 +13,43 @@
         android:layout_height="wrap_content"
         android:background="@color/white"
         app:tbv_left_image="@drawable/ic_title_left_black"
-        app:tbv_show_right_image="false"
+        app:tbv_right_image="@drawable/ic_title_right_black"
+        app:tbv_show_right_image="true"
         app:tbv_text="邮箱配置"
         app:tbv_text_color="@color/black" />
 
-    <RelativeLayout
-        android:id="@+id/emailLayout"
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="@dimen/itemLayoutHeight"
         android:layout_marginTop="@dimen/dp_10"
         android:background="@color/white"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
         android:paddingHorizontal="10dp">
 
-        <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerVertical="true"
-            android:orientation="vertical">
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="邮箱设置"
-                android:textColor="@color/colorText"
-                android:textSize="@dimen/sp_16" />
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="有效期到2025/05/21"
-                android:textColor="@color/red"
-                android:textSize="@dimen/sp_10" />
-        </LinearLayout>
-
         <TextView
-            android:id="@+id/emailTextView"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentEnd="true"
-            android:layout_centerVertical="true"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
             android:gravity="center_vertical"
+            android:text="发件箱"
+            android:textColor="@color/colorText"
             android:textSize="@dimen/sp_16" />
-    </RelativeLayout>
+
+        <com.pengxh.kt.lite.widget.DeleteEditText
+            android:id="@+id/emailSendAddressView"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="2"
+            android:background="@null"
+            android:gravity="center_vertical|end"
+            android:hint="如：xxxxx@qq.com"
+            android:inputType="textEmailAddress"
+            android:paddingVertical="@dimen/dp_7"
+            android:singleLine="true"
+            android:textColorHint="@color/lib_hint_color"
+            android:textSize="@dimen/sp_16" />
+    </LinearLayout>
 
     <View
         android:layout_width="match_parent"
@@ -62,31 +57,172 @@
         android:layout_marginHorizontal="@dimen/dp_10"
         android:background="#CCC" />
 
-    <RelativeLayout
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/itemLayoutHeight"
+        android:background="@color/white"
+        android:orientation="horizontal"
+        android:paddingHorizontal="10dp">
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:gravity="center_vertical"
+            android:text="授权码"
+            android:textColor="@color/colorText"
+            android:textSize="@dimen/sp_16" />
+
+        <com.pengxh.kt.lite.widget.DeleteEditText
+            android:id="@+id/emailSendCodeView"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="2"
+            android:background="@null"
+            android:gravity="center_vertical|end"
+            android:hint="如：wkepaekhmlalbgji"
+            android:paddingVertical="@dimen/dp_7"
+            android:singleLine="true"
+            android:textColorHint="@color/lib_hint_color"
+            android:textSize="@dimen/sp_16" />
+    </LinearLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1px"
+        android:layout_marginHorizontal="@dimen/dp_10"
+        android:background="#CCC" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/itemLayoutHeight"
+        android:background="@color/white"
+        android:orientation="horizontal"
+        android:paddingHorizontal="10dp">
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:gravity="center_vertical"
+            android:text="服务器"
+            android:textColor="@color/colorText"
+            android:textSize="@dimen/sp_16" />
+
+        <com.pengxh.kt.lite.widget.DeleteEditText
+            android:id="@+id/emailSendServerView"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="2"
+            android:background="@null"
+            android:gravity="center_vertical|end"
+            android:hint="如：smtp.qq.com"
+            android:paddingVertical="@dimen/dp_7"
+            android:singleLine="true"
+            android:textColorHint="@color/lib_hint_color"
+            android:textSize="@dimen/sp_16" />
+    </LinearLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1px"
+        android:layout_marginHorizontal="@dimen/dp_10"
+        android:background="#CCC" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/itemLayoutHeight"
+        android:background="@color/white"
+        android:orientation="horizontal"
+        android:paddingHorizontal="10dp">
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:gravity="center_vertical"
+            android:text="端口号"
+            android:textColor="@color/colorText"
+            android:textSize="@dimen/sp_16" />
+
+        <com.pengxh.kt.lite.widget.DeleteEditText
+            android:id="@+id/emailSendPortView"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="2"
+            android:background="@null"
+            android:gravity="center_vertical|end"
+            android:hint="如：587"
+            android:inputType="number"
+            android:maxLength="5"
+            android:paddingVertical="@dimen/dp_7"
+            android:singleLine="true"
+            android:textColorHint="@color/lib_hint_color"
+            android:textSize="@dimen/sp_16" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/emailLayout"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/itemLayoutHeight"
+        android:layout_marginVertical="@dimen/dp_10"
+        android:background="@color/white"
+        android:gravity="center_vertical"
+        android:paddingHorizontal="10dp">
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:gravity="center_vertical"
+            android:text="收件箱"
+            android:textColor="@color/colorText"
+            android:textSize="@dimen/sp_16" />
+
+        <com.pengxh.kt.lite.widget.DeleteEditText
+            android:id="@+id/emailInboxView"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="2"
+            android:background="@null"
+            android:gravity="center_vertical|end"
+            android:hint="如：xxxxx@qq.com"
+            android:paddingVertical="@dimen/dp_7"
+            android:singleLine="true"
+            android:textColorHint="@color/lib_hint_color"
+            android:textSize="@dimen/sp_16" />
+    </LinearLayout>
+
+    <LinearLayout
         android:id="@+id/emailTitleLayout"
         android:layout_width="match_parent"
         android:layout_height="@dimen/itemLayoutHeight"
         android:background="@color/white"
+        android:gravity="center_vertical"
         android:paddingHorizontal="10dp">
 
         <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerVertical="true"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
             android:gravity="center_vertical"
             android:text="邮件标题"
             android:textColor="@color/colorText"
             android:textSize="@dimen/sp_16" />
 
-        <TextView
+        <com.pengxh.kt.lite.widget.DeleteEditText
             android:id="@+id/emailTitleView"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentEnd="true"
-            android:layout_centerVertical="true"
-            android:gravity="center_vertical"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="2"
+            android:background="@null"
+            android:gravity="center_vertical|end"
+            android:hint="如：打卡结果通知"
+            android:paddingVertical="@dimen/dp_7"
+            android:singleLine="true"
+            android:textColorHint="@color/lib_hint_color"
             android:textSize="@dimen/sp_16" />
-    </RelativeLayout>
+    </LinearLayout>
 
     <View
         android:layout_width="match_parent"
@@ -94,16 +230,17 @@
         android:layout_marginHorizontal="@dimen/dp_10"
         android:background="#CCC" />
 
-    <RelativeLayout
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="@dimen/itemLayoutHeight"
         android:background="@color/white"
+        android:gravity="center_vertical"
         android:paddingHorizontal="10dp">
 
         <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerVertical="true"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
             android:gravity="center_vertical"
             android:text="邮箱测试"
             android:textColor="@color/colorText"
@@ -113,12 +250,11 @@
             android:id="@+id/sendEmailButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignParentEnd="true"
-            android:layout_centerVertical="true"
             android:layout_marginVertical="@dimen/dp_10"
+            android:layout_marginStart="@dimen/dp_10"
             android:background="@drawable/button_border_main_5"
             android:text="发送"
             android:textColor="@color/colorAppThemeLight"
             android:textSize="@dimen/sp_16" />
-    </RelativeLayout>
+    </LinearLayout>
 </LinearLayout>

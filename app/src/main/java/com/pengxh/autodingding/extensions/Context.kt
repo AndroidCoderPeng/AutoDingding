@@ -76,7 +76,7 @@ fun Context.openApplication(packageName: String, needEmail: Boolean) {
 
 fun Context.backToMainActivity() {
     EventBus.getDefault().post(MessageEvent(Constant.CANCEL_COUNT_DOWN_TIMER_CODE))
-    if (SaveKeyValues.getValue(Constant.BACK_TO_HOME, false) as Boolean) {
+    if (SaveKeyValues.getValue(Constant.BACK_TO_HOME_KEY, false) as Boolean) {
         //模拟点击Home键
         val home = Intent(Intent.ACTION_MAIN)
         home.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_REORDER_TO_FRONT
