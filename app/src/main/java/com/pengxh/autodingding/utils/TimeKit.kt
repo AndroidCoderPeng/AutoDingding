@@ -1,6 +1,7 @@
 package com.pengxh.autodingding.utils
 
 import android.content.Context
+import android.util.Log
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import com.pengxh.autodingding.model.HolidayModel
@@ -12,6 +13,7 @@ import java.util.Locale
 
 object TimeKit {
 
+    private const val kTag = "TimeKit"
     private val gson by lazy { Gson() }
 
     fun getTodayDate(): String {
@@ -36,18 +38,24 @@ object TimeKit {
         return delta.toInt()
     }
 
-    fun todayIsWorkDay(context: Context): Boolean {
+    /**
+     * 先判断今天是否是法定节假日，再判断是否是周末
+     * */
+    fun todayIsHoliday(context: Context): Boolean {
         val assetsFile = context.readAssetsFile("Holiday.json")
         val holidays = gson.fromJson<MutableList<HolidayModel>>(
             assetsFile, object : TypeToken<MutableList<HolidayModel>>() {}.type
         )
         val result = holidays.find { x -> x.date == getTodayDate() }
-        return if (result == null) {
+        Log.d(kTag, "today's date: ${getTodayDate()}")
+        val isHoliday = if (result == null) {
+            //没在法定节假日找到当前日期，说明是工作日（包含周末），接下来判断周末
             val calendar = Calendar.getInstance()
             calendar[Calendar.DAY_OF_WEEK] == Calendar.SATURDAY || calendar[Calendar.DAY_OF_WEEK] == Calendar.SUNDAY
         } else {
-            // 节假日
-            false
+            //在法定节假日找到当前日期，说明是节假日
+            true
         }
+        return isHoliday
     }
 }

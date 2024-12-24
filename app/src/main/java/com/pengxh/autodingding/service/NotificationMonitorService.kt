@@ -93,13 +93,20 @@ class NotificationMonitorService : NotificationListenerService() {
             } else {
                 val key = SaveKeyValues.getValue(Constant.DING_DING_KEY, "打卡") as String
                 if (notice.contains(key)) {
-                    //判断周末、节假日
-                    if (TimeKit.todayIsWorkDay(this)) {
-                        openApplication(Constant.DING_DING, true)
+                    val isSkipHoliday = SaveKeyValues.getValue(
+                        Constant.SKIP_HOLIDAY_KEY, true
+                    ) as Boolean
+                    if (isSkipHoliday) {
+                        if (TimeKit.todayIsHoliday(this)) {
+                            //休息
+                            "今天休息哦~，已经帮你跳过打卡任务".createTextMail(
+                                "放假通知", emailAddress
+                            ).sendTextMail()
+                        } else {
+                            openApplication(Constant.DING_DING, true)
+                        }
                     } else {
-                        "今天休息哦~，已经帮你跳过打卡任务".createTextMail(
-                            "放假通知", emailAddress
-                        ).sendTextMail()
+                        openApplication(Constant.DING_DING, true)
                     }
                 }
             }

@@ -249,7 +249,7 @@ class DailyTaskFragment : KotlinBaseFragment<FragmentDailyTaskBinding>(), Handle
     }
 
     private fun executeDailyTask() {
-        if (TimeKit.todayIsWorkDay(requireContext())) {
+        if (TimeKit.todayIsHoliday(requireContext())) {
             binding.taskDayView.backgroundTintList = ColorStateList.valueOf(
                 R.color.iOSGreen.convertColor(requireContext())
             )
@@ -303,21 +303,31 @@ class DailyTaskFragment : KotlinBaseFragment<FragmentDailyTaskBinding>(), Handle
                     }
 
                     override fun onFinish() {
-                        //判断周末、节假日
-                        if (TimeKit.todayIsWorkDay(requireContext())) {
+                        val isSkipHoliday = SaveKeyValues.getValue(
+                            Constant.SKIP_HOLIDAY_KEY, true
+                        ) as Boolean
+                        if (isSkipHoliday) {
+                            if (TimeKit.todayIsHoliday(requireContext())) {
+                                //休息
+                                val emailAddress = KeyValueKit.getEmailAddress()
+                                if (emailAddress == "") {
+                                    return
+                                }
+                                "今天休息哦~，已经帮你跳过打卡任务".createTextMail(
+                                    "放假通知", emailAddress
+                                ).sendTextMail()
+                                weakReferenceHandler.sendEmptyMessage(Constant.EXECUTE_NEXT_TASK_CODE)
+                            } else {
+                                "${TimeKit.getCurrentTime()}：执行任务".writeToFile(requireContext().createLogFile())
+                                binding.countDownTimeView.text = "0秒后执行任务"
+                                binding.countDownPgr.progress = 0
+                                requireContext().openApplication(Constant.DING_DING, true)
+                            }
+                        } else {
                             "${TimeKit.getCurrentTime()}：执行任务".writeToFile(requireContext().createLogFile())
                             binding.countDownTimeView.text = "0秒后执行任务"
                             binding.countDownPgr.progress = 0
                             requireContext().openApplication(Constant.DING_DING, true)
-                        } else {
-                            val emailAddress = KeyValueKit.getEmailAddress()
-                            if (emailAddress == "") {
-                                return
-                            }
-                            "今天休息哦~，已经帮你跳过打卡任务".createTextMail(
-                                "放假通知", emailAddress
-                            ).sendTextMail()
-                            weakReferenceHandler.sendEmptyMessage(Constant.EXECUTE_NEXT_TASK_CODE)
                         }
                     }
                 })

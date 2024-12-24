@@ -24,7 +24,6 @@ object Constant {
     const val TIMEOUT = "timeout"
     const val BACK_TO_HOME = "backToHome"
     const val DING_DING_KEY = "dingDingKey"
-    const val SKIP_WEEKEND_KEY = "skipWeekend"
     const val SKIP_HOLIDAY_KEY = "skipHoliday"
 
     const val TICK_TIME_CODE = 2024071701
