@@ -4,7 +4,6 @@ import com.pengxh.autodingding.BuildConfig
 import com.pengxh.autodingding.bean.MailInfo
 import com.pengxh.autodingding.utils.EmailAuthenticator
 import java.util.Date
-import javax.mail.Address
 import javax.mail.Message
 import javax.mail.MessagingException
 import javax.mail.Session
@@ -29,7 +28,7 @@ fun MailInfo.sendTextMail() {
         val mailMessage = MimeMessage(sendMailSession)
         val from = InternetAddress(this.fromAddress)
         mailMessage.setFrom(from)
-        val to: Address = InternetAddress(this.toAddress)
+        val to = InternetAddress(this.toAddress)
         mailMessage.setRecipient(Message.RecipientType.TO, to)
         val mailSubject = this.subject
         mailMessage.subject = mailSubject

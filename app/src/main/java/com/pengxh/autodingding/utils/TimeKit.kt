@@ -47,7 +47,6 @@ object TimeKit {
             assetsFile, object : TypeToken<MutableList<HolidayModel>>() {}.type
         )
         val result = holidays.find { x -> x.date == getTodayDate() }
-        Log.d(kTag, "today's date: ${getTodayDate()}")
         val isHoliday = if (result == null) {
             //没在法定节假日找到当前日期，说明是工作日（包含周末），接下来判断周末
             val calendar = Calendar.getInstance()
@@ -56,6 +55,7 @@ object TimeKit {
             //在法定节假日找到当前日期，说明是节假日
             true
         }
+        Log.d(kTag, "today's date: ${getTodayDate()}, isHoliday: $isHoliday")
         return isHoliday
     }
 }

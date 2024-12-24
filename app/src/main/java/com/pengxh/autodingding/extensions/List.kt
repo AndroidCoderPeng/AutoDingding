@@ -9,9 +9,6 @@ import java.util.Locale
  * 找出任务中，第一个时间晚于当前时间的任务Index
  * */
 fun List<DailyTaskBean>.getTaskIndex(): Int {
-    if (this.count() == 1) {
-        return 0
-    }
     val timeFormat = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.CHINA)
     val currentMillis = System.currentTimeMillis()
     for ((index, task) in this.withIndex()) {

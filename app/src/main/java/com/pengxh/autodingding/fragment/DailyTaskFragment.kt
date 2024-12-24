@@ -36,11 +36,8 @@ import com.pengxh.autodingding.utils.TimeKit
 import com.pengxh.kt.lite.base.KotlinBaseFragment
 import com.pengxh.kt.lite.divider.RecyclerViewItemOffsets
 import com.pengxh.kt.lite.extensions.convertColor
-import com.pengxh.kt.lite.extensions.createLogFile
 import com.pengxh.kt.lite.extensions.dp2px
 import com.pengxh.kt.lite.extensions.show
-import com.pengxh.kt.lite.extensions.toJson
-import com.pengxh.kt.lite.extensions.writeToFile
 import com.pengxh.kt.lite.utils.SaveKeyValues
 import com.pengxh.kt.lite.utils.WeakReferenceHandler
 import com.pengxh.kt.lite.widget.dialog.AlertControlDialog
@@ -240,9 +237,6 @@ class DailyTaskFragment : KotlinBaseFragment<FragmentDailyTaskBinding>(), Handle
                 diffSeconds.set(TimeKit.getNextMidnightSeconds())
                 repeatTaskHandler.post(this)
                 Log.d(kTag, "run: 零点，刷新任务，并重新执行repeatTaskRunnable")
-                "${TimeKit.getCurrentTime()}: 零点，刷新任务，并重新执行repeatTaskRunnable".writeToFile(
-                    requireContext().createLogFile()
-                )
                 executeDailyTask()
             }
         }
@@ -261,7 +255,6 @@ class DailyTaskFragment : KotlinBaseFragment<FragmentDailyTaskBinding>(), Handle
             binding.taskDayTextView.text = "工作日"
         }
         Log.d(kTag, "executeDailyTask: 执行周期任务")
-        "${TimeKit.getCurrentTime()}：执行周期任务".writeToFile(requireContext().createLogFile())
         dailyTaskHandler.post(dailyTaskRunnable)
     }
 
@@ -270,6 +263,7 @@ class DailyTaskFragment : KotlinBaseFragment<FragmentDailyTaskBinding>(), Handle
      * */
     private val dailyTaskRunnable = Runnable {
         val taskIndex = taskBeans.getTaskIndex()
+        Log.d(kTag, "任务index是: $taskIndex")
         if (taskIndex == -1) {
             weakReferenceHandler.sendEmptyMessage(Constant.COMPLETED_ALL_TASK_CODE)
         } else {
@@ -285,9 +279,6 @@ class DailyTaskFragment : KotlinBaseFragment<FragmentDailyTaskBinding>(), Handle
             Constant.START_TASK_CODE -> {
                 val index = msg.obj as Int
                 val task = taskBeans[index]
-                "${TimeKit.getCurrentTime()}：即将执行第 ${index + 1} 个任务: ${task.toJson()}".writeToFile(
-                    requireContext().createLogFile()
-                )
                 binding.tipsView.text = "即将执行第 ${index + 1} 个任务"
                 binding.tipsView.setTextColor(R.color.colorAppThemeLight.convertColor(requireContext()))
 
@@ -316,15 +307,13 @@ class DailyTaskFragment : KotlinBaseFragment<FragmentDailyTaskBinding>(), Handle
                                 "今天休息哦~，已经帮你跳过打卡任务".createTextMail(
                                     "放假通知", emailAddress
                                 ).sendTextMail()
-                                weakReferenceHandler.sendEmptyMessage(Constant.EXECUTE_NEXT_TASK_CODE)
+                                dailyTaskHandler.post(dailyTaskRunnable)
                             } else {
-                                "${TimeKit.getCurrentTime()}：执行任务".writeToFile(requireContext().createLogFile())
                                 binding.countDownTimeView.text = "0秒后执行任务"
                                 binding.countDownPgr.progress = 0
                                 requireContext().openApplication(Constant.DING_DING, true)
                             }
                         } else {
-                            "${TimeKit.getCurrentTime()}：执行任务".writeToFile(requireContext().createLogFile())
                             binding.countDownTimeView.text = "0秒后执行任务"
                             binding.countDownPgr.progress = 0
                             requireContext().openApplication(Constant.DING_DING, true)
@@ -339,7 +328,6 @@ class DailyTaskFragment : KotlinBaseFragment<FragmentDailyTaskBinding>(), Handle
             }
 
             Constant.COMPLETED_ALL_TASK_CODE -> {
-                "${TimeKit.getCurrentTime()}：当天所有任务已执行完毕".writeToFile(requireContext().createLogFile())
                 binding.tipsView.text = "当天所有任务已执行完毕"
                 binding.tipsView.setTextColor(R.color.iOSGreen.convertColor(requireContext()))
                 dailyTaskAdapter.updateCurrentTaskState(-1)
