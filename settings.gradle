@@ -1,2 +1,2 @@
-rootProject.name = "AutoTask"
+rootProject.name = "DailyTask"
 include ':app'

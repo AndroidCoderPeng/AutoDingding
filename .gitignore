@@ -70,5 +70,5 @@ lint/outputs/
 lint/tmp/
 # lint/reports/
 
-/apk/auto/release/*.json
+apk/daily/release/*.json
 *.zip

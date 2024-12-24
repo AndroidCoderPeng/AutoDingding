@@ -18,7 +18,7 @@ android {
 
     signingConfigs {
         release {
-            storeFile file('autodingding.jks')
+            storeFile file('DailyTask.jks')
             storePassword '123456789'
             keyAlias 'key0'
             keyPassword '123456789'
@@ -34,7 +34,7 @@ android {
 
     def id = "com.alibaba.android.${createRandomCode()}"
     productFlavors {
-        auto {
+        daily {
             applicationId = id
         }
     }
@@ -71,7 +71,7 @@ android {
 
     applicationVariants.configureEach { variant ->
         variant.outputs.configureEach {
-            outputFileName = "AT_" + getBuildDate() + "_" + defaultConfig.versionName + ".apk"
+            outputFileName = "DT_" + getBuildDate() + "_" + defaultConfig.versionName + ".apk"
         }
     }
 }
