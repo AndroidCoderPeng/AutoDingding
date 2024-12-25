@@ -1,6 +1,8 @@
 package com.pengxh.autodingding.ui
 
 import android.os.Bundle
+import android.os.Handler
+import android.os.Message
 import com.pengxh.autodingding.R
 import com.pengxh.autodingding.databinding.ActivityEmailConfigBinding
 import com.pengxh.autodingding.extensions.initImmersionBar
@@ -10,15 +12,22 @@ import com.pengxh.autodingding.utils.EmailConfigKit
 import com.pengxh.kt.lite.base.KotlinBaseActivity
 import com.pengxh.kt.lite.extensions.isEmail
 import com.pengxh.kt.lite.extensions.show
+import com.pengxh.kt.lite.utils.LoadingDialog
 import com.pengxh.kt.lite.utils.SaveKeyValues
+import com.pengxh.kt.lite.utils.WeakReferenceHandler
 import com.pengxh.kt.lite.widget.TitleBarView
 import com.pengxh.kt.lite.widget.dialog.AlertMessageDialog
 
-class EmailConfigActivity : KotlinBaseActivity<ActivityEmailConfigBinding>() {
+class EmailConfigActivity : KotlinBaseActivity<ActivityEmailConfigBinding>(), Handler.Callback {
+
+    companion object {
+        lateinit var weakReferenceHandler: WeakReferenceHandler
+    }
 
     private val context = this
 
     override fun initOnCreate(savedInstanceState: Bundle?) {
+        weakReferenceHandler = WeakReferenceHandler(this)
         val config = EmailConfigKit.getConfig()
         binding.emailSendAddressView.setText(config.emailSender)
         binding.emailSendCodeView.setText(config.permissionCode)
@@ -109,7 +118,22 @@ class EmailConfigActivity : KotlinBaseActivity<ActivityEmailConfigBinding>() {
                 "请先保存邮箱配置".show(context)
                 return@setOnClickListener
             }
+            LoadingDialog.show(this, "邮件发送中，请稍后....")
             "这是一封测试邮件，不必关注".sendEmail(this, "邮箱测试")
         }
+    }
+
+    override fun handleMessage(msg: Message): Boolean {
+        LoadingDialog.dismiss()
+        when (msg.what) {
+            Constant.SEND_EMAIL_SUCCESS_CODE -> {
+                "发送成功，请注意查收".show(this)
+            }
+
+            Constant.SEND_EMAIL_FAILED_CODE -> {
+                "发送失败，请检查授权码、端口等配置".show(this)
+            }
+        }
+        return true
     }
 }

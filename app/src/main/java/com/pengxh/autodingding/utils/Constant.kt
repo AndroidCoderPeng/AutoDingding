@@ -34,6 +34,9 @@ object Constant {
     const val START_COUNT_DOWN_TIMER_CODE = 2024121801
     const val CANCEL_COUNT_DOWN_TIMER_CODE = 2024121802
 
+    const val SEND_EMAIL_SUCCESS_CODE = 2024122501
+    const val SEND_EMAIL_FAILED_CODE = 2024122502
+
     const val DING_DING = "com.alibaba.android.rimet"
     const val WECHAT = "com.tencent.mm"
     const val QQ = "com.tencent.mobileqq"
