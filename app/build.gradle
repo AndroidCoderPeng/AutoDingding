@@ -8,8 +8,8 @@ android {
     compileSdkVersion 33
 
     defaultConfig {
-        applicationId "com.pengxh.autodingding"
-        minSdkVersion 23
+        applicationId "com.pengxh.daily.app"
+        minSdkVersion 26 //Android 8.0
         targetSdkVersion 33
         versionCode 2000
         versionName "2.0.0"

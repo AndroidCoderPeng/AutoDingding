@@ -1,18 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
-<menu xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
 
     <item
-        android:id="@+id/nav_dingding"
+        android:id="@+id/nav_daily"
         android:enabled="true"
-        android:icon="@drawable/ic_tab_dingding"
-        android:title="定时任务"
-        app:showAsAction="always" />
+        android:icon="@drawable/ic_tab_ding"
+        android:title="周期任务" />
 
     <item
         android:id="@+id/nav_settings"
         android:enabled="true"
         android:icon="@drawable/ic_tab_settings"
-        android:title="其他设置"
-        app:showAsAction="always" />
+        android:title="其他设置" />
 </menu>
