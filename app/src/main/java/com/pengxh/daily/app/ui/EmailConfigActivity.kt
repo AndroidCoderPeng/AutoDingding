@@ -1,8 +1,11 @@
 package com.pengxh.daily.app.ui
 
+import android.annotation.SuppressLint
 import android.os.Bundle
 import android.os.Handler
 import android.os.Message
+import android.text.Editable
+import android.text.TextWatcher
 import com.pengxh.daily.app.R
 import com.pengxh.daily.app.databinding.ActivityEmailConfigBinding
 import com.pengxh.daily.app.extensions.initImmersionBar
@@ -113,6 +116,44 @@ class EmailConfigActivity : KotlinBaseActivity<ActivityEmailConfigBinding>(), Ha
     }
 
     override fun initEvent() {
+        binding.emailSendAddressView.addTextChangedListener(object : TextWatcher {
+            override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
+
+            }
+
+            override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
+
+            }
+
+            @SuppressLint("SetTextI18n")
+            override fun afterTextChanged(p0: Editable?) {
+                val emailAddress = p0.toString()
+                if (emailAddress == "") {
+                    binding.emailSendServerView.setText("")
+                    return
+                }
+                if (emailAddress.endsWith("@qq.com")) {
+                    binding.emailSendServerView.setText("smtp.qq.com")
+                    binding.emailSendPortView.setText("587")
+                } else if (emailAddress.endsWith("@163.com")) {
+                    binding.emailSendServerView.setText("smtp.163.com")
+                    binding.emailSendPortView.setText("25")
+                } else if (emailAddress.endsWith("@126.com")) {
+                    binding.emailSendServerView.setText("smtp.126.com")
+                    binding.emailSendPortView.setText("25")
+                } else if (emailAddress.endsWith("@188.com")) {
+                    binding.emailSendServerView.setText("smtp.188.com")
+                    binding.emailSendPortView.setText("25")
+                } else if (emailAddress.endsWith("@sina.com")) {
+                    binding.emailSendServerView.setText("smtp.sina.com")
+                    binding.emailSendPortView.setText("587")
+                } else {
+                    binding.emailSendServerView.setText("")
+                    binding.emailSendPortView.setText("")
+                }
+            }
+        })
+
         binding.sendEmailButton.setOnClickListener {
             if (!EmailConfigKit.isEmailConfigured()) {
                 "请先保存邮箱配置".show(context)
