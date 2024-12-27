@@ -130,6 +130,7 @@ class EmailConfigActivity : KotlinBaseActivity<ActivityEmailConfigBinding>(), Ha
                 val emailAddress = p0.toString()
                 if (emailAddress == "") {
                     binding.emailSendServerView.setText("")
+                    binding.emailSendPortView.setText("")
                     return
                 }
                 if (emailAddress.endsWith("@qq.com")) {

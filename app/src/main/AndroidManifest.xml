@@ -29,7 +29,6 @@
             </intent-filter>
         </activity>
         <activity android:name=".ui.EmailConfigActivity" />
-        <activity android:name=".ui.TaskConfigActivity" />
         <activity android:name=".ui.NoticeRecordActivity" />
         <activity android:name=".ui.QuestionAndAnswerActivity" />
 

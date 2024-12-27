@@ -12,7 +12,6 @@ import com.pengxh.daily.app.extensions.openApplication
 import com.pengxh.daily.app.extensions.sendEmail
 import com.pengxh.daily.app.fragment.SettingsFragment
 import com.pengxh.daily.app.utils.Constant
-import com.pengxh.daily.app.utils.TimeKit
 import com.pengxh.kt.lite.extensions.getSystemService
 import com.pengxh.kt.lite.extensions.show
 import com.pengxh.kt.lite.extensions.timestampToCompleteDate
@@ -81,19 +80,7 @@ class NotificationMonitorService : NotificationListenerService() {
             } else {
                 val key = SaveKeyValues.getValue(Constant.DING_DING_KEY, "打卡") as String
                 if (notice.contains(key)) {
-                    val isSkipHoliday = SaveKeyValues.getValue(
-                        Constant.SKIP_HOLIDAY_KEY, true
-                    ) as Boolean
-                    if (isSkipHoliday) {
-                        if (TimeKit.todayIsHoliday(this)) {
-                            //休息
-                            "今天休息哦~，已经帮你跳过打卡任务".sendEmail(this, "放假通知", false)
-                        } else {
-                            openApplication(Constant.DING_DING, true)
-                        }
-                    } else {
-                        openApplication(Constant.DING_DING, true)
-                    }
+                    openApplication(Constant.DING_DING, true)
                 }
             }
         }
