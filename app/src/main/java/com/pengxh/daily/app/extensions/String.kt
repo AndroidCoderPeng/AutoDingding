@@ -1,11 +1,13 @@
 package com.pengxh.daily.app.extensions
 
 import android.content.Context
+import android.os.BatteryManager
 import com.pengxh.daily.app.BuildConfig
 import com.pengxh.daily.app.ui.EmailConfigActivity
 import com.pengxh.daily.app.utils.Constant
 import com.pengxh.daily.app.utils.EmailAuthenticator
 import com.pengxh.daily.app.utils.EmailConfigKit
+import com.pengxh.kt.lite.extensions.getSystemService
 import com.pengxh.kt.lite.extensions.show
 import com.pengxh.kt.lite.extensions.timestampToDate
 import java.util.Date
@@ -49,7 +51,10 @@ fun String.sendEmail(context: Context, title: String?, isTest: Boolean) {
     } else {
         "${this}，版本号：${BuildConfig.VERSION_NAME}"
     }
-    mime.setText(mailContent)
+    val capacity = context.getSystemService<BatteryManager>()?.getIntProperty(
+        BatteryManager.BATTERY_PROPERTY_CAPACITY
+    )
+    mime.setText("$mailContent, 当前手机剩余电量为：${capacity}%")
     Thread {
         try {
             Transport.send(mime)
