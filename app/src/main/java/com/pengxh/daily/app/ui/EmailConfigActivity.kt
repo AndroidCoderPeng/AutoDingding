@@ -1,8 +1,6 @@
 package com.pengxh.daily.app.ui
 
 import android.annotation.SuppressLint
-import android.content.ClipData
-import android.content.ClipboardManager
 import android.os.Bundle
 import android.os.Handler
 import android.os.Message
@@ -15,7 +13,6 @@ import com.pengxh.daily.app.extensions.sendEmail
 import com.pengxh.daily.app.utils.Constant
 import com.pengxh.daily.app.utils.EmailConfigKit
 import com.pengxh.kt.lite.base.KotlinBaseActivity
-import com.pengxh.kt.lite.extensions.getSystemService
 import com.pengxh.kt.lite.extensions.isEmail
 import com.pengxh.kt.lite.extensions.show
 import com.pengxh.kt.lite.utils.LoadingDialog
@@ -31,7 +28,6 @@ class EmailConfigActivity : KotlinBaseActivity<ActivityEmailConfigBinding>(), Ha
     }
 
     private val context = this
-    private val clipboard by lazy { getSystemService<ClipboardManager>() }
 
     override fun initOnCreate(savedInstanceState: Bundle?) {
         weakReferenceHandler = WeakReferenceHandler(this)
@@ -120,29 +116,6 @@ class EmailConfigActivity : KotlinBaseActivity<ActivityEmailConfigBinding>(), Ha
     }
 
     override fun initEvent() {
-        binding.codeInfoView.setOnClickListener {
-            AlertMessageDialog.Builder().setContext(context).setTitle("温馨提醒")
-                .setMessage("长按右侧授权码可以复制")
-                .setPositiveButton("好的").setOnDialogButtonClickListener(object :
-                    AlertMessageDialog.OnDialogButtonClickListener {
-                    override fun onConfirmClick() {
-
-                    }
-                }).build().show()
-        }
-
-        binding.emailSendCodeView.setOnLongClickListener {
-            val emailSendCode = binding.emailSendCodeView.text.toString()
-            if (emailSendCode.isBlank()) {
-                "发件箱授权码为空".show(context)
-                return@setOnLongClickListener true
-            }
-            val cipData = ClipData.newPlainText("EmailSendCode", emailSendCode)
-            clipboard?.setPrimaryClip(cipData)
-            "授权码复制成功".show(this)
-            true
-        }
-
         binding.emailSendAddressView.addTextChangedListener(object : TextWatcher {
             override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
 

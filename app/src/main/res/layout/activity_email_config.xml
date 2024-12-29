@@ -65,15 +65,13 @@
         android:paddingHorizontal="10dp">
 
         <TextView
-            android:id="@+id/codeInfoView"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="match_parent"
-            android:drawablePadding="@dimen/dp_5"
+            android:layout_weight="1"
             android:gravity="center_vertical"
             android:text="授权码"
             android:textColor="@color/colorText"
-            android:textSize="@dimen/sp_16"
-            app:drawableEndCompat="@drawable/ic_info" />
+            android:textSize="@dimen/sp_16" />
 
         <com.pengxh.kt.lite.widget.DeleteEditText
             android:id="@+id/emailSendCodeView"
