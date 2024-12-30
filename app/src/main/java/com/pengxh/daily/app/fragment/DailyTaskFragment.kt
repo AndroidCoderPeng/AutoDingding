@@ -10,6 +10,8 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import com.google.gson.Gson
+import com.google.gson.reflect.TypeToken
 import com.pengxh.daily.app.BaseApplication
 import com.pengxh.daily.app.R
 import com.pengxh.daily.app.adapter.DailyTaskAdapter
@@ -38,6 +40,8 @@ import com.pengxh.kt.lite.extensions.show
 import com.pengxh.kt.lite.utils.SaveKeyValues
 import com.pengxh.kt.lite.utils.WeakReferenceHandler
 import com.pengxh.kt.lite.widget.dialog.AlertControlDialog
+import com.pengxh.kt.lite.widget.dialog.AlertInputDialog
+import com.pengxh.kt.lite.widget.dialog.BottomActionSheet
 import org.greenrobot.eventbus.EventBus
 import org.greenrobot.eventbus.Subscribe
 import org.greenrobot.eventbus.ThreadMode
@@ -51,6 +55,7 @@ class DailyTaskFragment : KotlinBaseFragment<FragmentDailyTaskBinding>(), Handle
     private val kTag = "DailyTaskFragment"
     private val dailyTaskBeanDao by lazy { BaseApplication.get().daoSession.dailyTaskBeanDao }
     private val marginOffset by lazy { 10.dp2px(requireContext()) }
+    private val gson by lazy { Gson() }
     private val weakReferenceHandler = WeakReferenceHandler(this)
     private val repeatTaskHandler = Handler(Looper.getMainLooper())
     private val dailyTaskHandler = Handler(Looper.getMainLooper())
@@ -184,29 +189,75 @@ class DailyTaskFragment : KotlinBaseFragment<FragmentDailyTaskBinding>(), Handle
                 "任务进行中，无法添加，请先取消当前任务".show(requireContext())
                 return@setOnClickListener
             }
-            requireActivity().showTimePicker(object : OnTimeSelectedCallback {
-                override fun onTimePicked(time: String) {
-                    val bean = DailyTaskBean()
-                    bean.uuid = UUID.randomUUID().toString()
-                    bean.time = time
 
-                    val count = dailyTaskBeanDao.queryBuilder().where(
-                        DailyTaskBeanDao.Properties.Time.eq(time)
-                    ).count()
-                    if (count > 1) {
-                        "任务时间点已存在".show(requireContext())
-                        return
+            if (taskBeans.isNotEmpty()) {
+                addTask()
+            } else {
+                BottomActionSheet.Builder()
+                    .setContext(requireContext())
+                    .setActionItemTitle(arrayListOf("添加任务", "导入任务"))
+                    .setItemTextColor(R.color.colorAppThemeLight.convertColor(requireContext()))
+                    .setOnActionSheetListener(object : BottomActionSheet.OnActionSheetListener {
+                        override fun onActionItemClick(position: Int) {
+                            when (position) {
+                                0 -> addTask()
+                                1 -> importTask()
+                            }
+                        }
+                    }).build().show()
+            }
+        }
+    }
+
+    private fun addTask() {
+        requireActivity().showTimePicker(object : OnTimeSelectedCallback {
+            override fun onTimePicked(time: String) {
+                val bean = DailyTaskBean()
+                bean.uuid = UUID.randomUUID().toString()
+                bean.time = time
+
+                val count = dailyTaskBeanDao.queryBuilder().where(
+                    DailyTaskBeanDao.Properties.Time.eq(time)
+                ).count()
+                if (count > 1) {
+                    "任务时间点已存在".show(requireContext())
+                    return
+                }
+
+                dailyTaskBeanDao.insert(bean)
+                taskBeans.add(bean)
+                taskBeans.sortBy { x -> x.time }
+                dailyTaskAdapter.notifyDataSetChanged()
+                binding.emptyView.visibility = View.GONE
+            }
+        })
+    }
+
+    private fun importTask() {
+        AlertInputDialog.Builder()
+            .setContext(requireContext())
+            .setTitle("导入任务")
+            .setHintMessage("请将导出的任务粘贴到这里")
+            .setNegativeButton("取消")
+            .setPositiveButton("确定")
+            .setOnDialogButtonClickListener(object :
+                AlertInputDialog.OnDialogButtonClickListener {
+                override fun onConfirmClick(value: String) {
+                    val tasks = gson.fromJson<List<DailyTaskBean>>(
+                        value, object : TypeToken<List<DailyTaskBean>>() {}.type
+                    )
+                    tasks.forEach {
+                        dailyTaskBeanDao.insert(it)
+                        taskBeans.add(it)
                     }
-
-                    dailyTaskBeanDao.insert(bean)
-                    taskBeans.add(bean)
                     taskBeans.sortBy { x -> x.time }
                     dailyTaskAdapter.notifyDataSetChanged()
-
                     binding.emptyView.visibility = View.GONE
+                    "任务导入成功".show(requireContext())
                 }
-            })
-        }
+
+                override fun onCancelClick() {}
+            }).build().show()
     }
 
     /**
