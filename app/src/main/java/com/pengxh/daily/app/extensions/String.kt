@@ -54,7 +54,7 @@ fun String.sendEmail(context: Context, title: String?, isTest: Boolean) {
     val capacity = context.getSystemService<BatteryManager>()?.getIntProperty(
         BatteryManager.BATTERY_PROPERTY_CAPACITY
     )
-    mime.setText("$mailContent, 当前手机剩余电量为：${capacity}%")
+    mime.setText("${mailContent}，当前手机剩余电量为：${capacity}%")
     Thread {
         try {
             Transport.send(mime)
