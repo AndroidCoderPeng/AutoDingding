@@ -11,6 +11,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import com.google.gson.Gson
+import com.google.gson.JsonSyntaxException
 import com.google.gson.reflect.TypeToken
 import com.pengxh.daily.app.BaseApplication
 import com.pengxh.daily.app.R
@@ -41,6 +42,7 @@ import com.pengxh.kt.lite.utils.SaveKeyValues
 import com.pengxh.kt.lite.utils.WeakReferenceHandler
 import com.pengxh.kt.lite.widget.dialog.AlertControlDialog
 import com.pengxh.kt.lite.widget.dialog.AlertInputDialog
+import com.pengxh.kt.lite.widget.dialog.AlertMessageDialog
 import com.pengxh.kt.lite.widget.dialog.BottomActionSheet
 import org.greenrobot.eventbus.EventBus
 import org.greenrobot.eventbus.Subscribe
@@ -243,17 +245,29 @@ class DailyTaskFragment : KotlinBaseFragment<FragmentDailyTaskBinding>(), Handle
             .setOnDialogButtonClickListener(object :
                 AlertInputDialog.OnDialogButtonClickListener {
                 override fun onConfirmClick(value: String) {
-                    val tasks = gson.fromJson<List<DailyTaskBean>>(
-                        value, object : TypeToken<List<DailyTaskBean>>() {}.type
-                    )
-                    tasks.forEach {
-                        dailyTaskBeanDao.insert(it)
-                        taskBeans.add(it)
+                    val type = object : TypeToken<List<DailyTaskBean>>() {}.type
+                    try {
+                        val tasks = gson.fromJson<List<DailyTaskBean>>(value, type)
+                        tasks.forEach {
+                            dailyTaskBeanDao.insert(it)
+                            taskBeans.add(it)
+                        }
+                        taskBeans.sortBy { x -> x.time }
+                        dailyTaskAdapter.notifyDataSetChanged()
+                        binding.emptyView.visibility = View.GONE
+                        "任务导入成功".show(requireContext())
+                    } catch (e: JsonSyntaxException) {
+                        e.printStackTrace()
+                        AlertMessageDialog.Builder().setContext(requireContext())
+                            .setTitle("温馨提醒")
+                            .setMessage("导入失败，请确认导入的是正确的任务数据")
+                            .setPositiveButton("好的").setOnDialogButtonClickListener(object :
+                                AlertMessageDialog.OnDialogButtonClickListener {
+                                override fun onConfirmClick() {
+
+                                }
+                            }).build().show()
                     }
-                    taskBeans.sortBy { x -> x.time }
-                    dailyTaskAdapter.notifyDataSetChanged()
-                    binding.emptyView.visibility = View.GONE
-                    "任务导入成功".show(requireContext())
                 }
 
                 override fun onCancelClick() {}
