@@ -138,7 +138,7 @@ class EmailConfigActivity : KotlinBaseActivity<ActivityEmailConfigBinding>(), Ha
                     binding.emailSendPortView.setText("587")
                 } else if (emailAddress.endsWith("@163.com")) {
                     binding.emailSendServerView.setText("smtp.163.com")
-                    binding.emailSendPortView.setText("25")
+                    binding.emailSendPortView.setText("587")
                 } else if (emailAddress.endsWith("@126.com")) {
                     binding.emailSendServerView.setText("smtp.126.com")
                     binding.emailSendPortView.setText("25")

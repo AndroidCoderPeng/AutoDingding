@@ -30,12 +30,15 @@ fun String.sendEmail(context: Context, title: String?, isTest: Boolean) {
     /*********************************发送邮件*************************************************/
     /*****************************************************************************************/
     val authenticator = EmailAuthenticator(config.emailSender, config.permissionCode)
-    val pro = Properties()
-    pro["mail.smtp.host"] = config.senderServer
-    pro["mail.smtp.port"] = config.emailPort
-    pro["mail.smtp.auth"] = true
-    pro["mail.smtp.starttls.enable"] = true
-    pro["mail.smtp.starttls.required"] = true
+    val pro = Properties().apply {
+        put("mail.smtp.host", config.senderServer)
+        put("mail.smtp.port", config.emailPort)
+        put("mail.smtp.auth", true)
+        put("mail.smtp.starttls.enable", true)
+        put("mail.smtp.starttls.required", true)
+        put("mail.smtp.socketFactory.class", "javax.net.ssl.SSLSocketFactory")
+        put("mail.smtp.socketFactory.fallback", false)
+    }
     val sendMailSession = Session.getDefaultInstance(pro, authenticator)
     val mime = MimeMessage(sendMailSession)
     mime.setFrom(InternetAddress(config.emailSender))

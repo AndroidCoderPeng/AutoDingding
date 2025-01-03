@@ -11,8 +11,8 @@ android {
         applicationId "com.pengxh.daily.app"
         minSdkVersion 26 //Android 8.0
         targetSdkVersion 33
-        versionCode 2000
-        versionName "2.0.0"
+        versionCode 2010
+        versionName "2.0.1"
         flavorDimensions "versionCode"
     }
 
