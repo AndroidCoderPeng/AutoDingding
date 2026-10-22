@@ -561,6 +561,7 @@ class MainActivity : KotlinBaseActivity<ActivityMainBinding>() {
                     DatabaseWrapper.loadAllTask()
                 }
                 dailyTaskAdapter.refresh(taskBeans)
+                checkMissedReset()
                 dialog.dismiss()
             }
         }
@@ -591,6 +592,7 @@ class MainActivity : KotlinBaseActivity<ActivityMainBinding>() {
                                     dailyTaskAdapter.refresh(taskBeans)
                                     binding.recyclerView.visibility = View.VISIBLE
                                     binding.emptyView.visibility = View.GONE
+                                    checkMissedReset()
                                 }
                                 "任务导入成功".show(context)
                             }
