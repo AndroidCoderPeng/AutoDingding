@@ -80,20 +80,30 @@ object TaskScheduler {
      * 启动每日任务调度
      * 时序：防重复 → 检查协程作用域 → 判断周末/节假日 → 构建排程 → 启动核心循环
      */
-    fun startTask() {
+    fun startTask(onStarted: ((Boolean) -> Unit)? = null): Boolean {
         if (_isRunning.value) {
             LogFileManager.writeLog("任务已在执行中，忽略重复启动")
-            return
+            onStarted?.invoke(true)
+            return true
         }
 
         val currentScope = scope
         if (currentScope == null) {
             LogFileManager.writeLog("TaskScheduler scope 未初始化")
-            return
+            onStarted?.invoke(false)
+            return false
         }
 
         _isRunning.value = true
         SaveKeyValues.saveBoolean(Constant.TASK_SCHEDULER_RUNNING_KEY, true)
+
+        var startReported = false
+        fun reportStart(success: Boolean) {
+            if (!startReported) {
+                startReported = true
+                onStarted?.invoke(success)
+            }
+        }
 
         val tempJob = currentScope.launch {
             while (isActive) {
@@ -101,12 +111,14 @@ object TaskScheduler {
 
                 // 今天已经处理过了，不再重复
                 if (lastProcessedDate == today) {
+                    reportStart(true)
                     LogFileManager.writeLog("今日已处理，等待下一次重置")
                     if (isActive) waitUntilNextReset()
                     continue
                 }
 
                 if (shouldSkipToday()) {
+                    reportStart(true)
                     _tipsEvent.emit(TipsEvent.Skip)
                     ForegroundRunningService.emitNotificationText("今日休息，任务已跳过")
                 } else {
@@ -116,6 +128,7 @@ object TaskScheduler {
                         return@launch
                     }
 
+                    reportStart(true)
                     LogFileManager.writeLog("开始执行每日任务，共 ${schedule.size} 个")
                     executeSchedule(schedule)
                 }
@@ -126,14 +139,16 @@ object TaskScheduler {
                 if (isActive) waitUntilNextReset()
             }
         }
+        job = tempJob
         tempJob.invokeOnCompletion {
             if (job === tempJob) {
                 job = null
                 _isRunning.value = false
                 SaveKeyValues.saveBoolean(Constant.TASK_SCHEDULER_RUNNING_KEY, false)
             }
+            reportStart(false)
         }
-        job = tempJob
+        return true
     }
 
     /**
