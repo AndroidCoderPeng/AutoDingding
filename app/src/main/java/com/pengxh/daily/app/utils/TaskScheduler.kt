@@ -63,9 +63,13 @@ object TaskScheduler {
     /**
      * 由 ForegroundRunningService 调用，注入协程作用域
      */
-    fun attach(serviceScope: CoroutineScope) {
+    fun attach(serviceScope: CoroutineScope, resumeTask: Boolean) {
         scope?.cancel()
         scope = serviceScope
+        if (resumeTask) {
+            _isRunning.value = false
+            startTask()
+        }
     }
 
     fun isRunning(): Boolean {
@@ -89,6 +93,7 @@ object TaskScheduler {
         }
 
         _isRunning.value = true
+        SaveKeyValues.saveBoolean(Constant.TASK_SCHEDULER_RUNNING_KEY, true)
 
         val tempJob = currentScope.launch {
             while (isActive) {
@@ -122,7 +127,11 @@ object TaskScheduler {
             }
         }
         tempJob.invokeOnCompletion {
-            _isRunning.value = false
+            if (job === tempJob) {
+                job = null
+                _isRunning.value = false
+                SaveKeyValues.saveBoolean(Constant.TASK_SCHEDULER_RUNNING_KEY, false)
+            }
         }
         job = tempJob
     }
@@ -313,6 +322,7 @@ object TaskScheduler {
         job?.cancel()
         job = null
         _isRunning.value = false
+        SaveKeyValues.saveBoolean(Constant.TASK_SCHEDULER_RUNNING_KEY, false)
         ForegroundRunningService.emitNotificationText("为保证程序正常运行，请勿移除此通知")
     }
 
@@ -329,6 +339,7 @@ object TaskScheduler {
         job?.cancel()
         job = null
         _isRunning.value = false
+        SaveKeyValues.saveBoolean(Constant.TASK_SCHEDULER_RUNNING_KEY, false)
     }
 
     /**

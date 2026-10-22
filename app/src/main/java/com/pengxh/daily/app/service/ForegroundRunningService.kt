@@ -77,7 +77,9 @@ class ForegroundRunningService : Service() {
     override fun onCreate() {
         super.onCreate()
         // 注入协程作用域给 TaskScheduler
-        TaskScheduler.attach(serviceScope)
+        val shouldResumeTask = TaskScheduler.isRunning() ||
+                SaveKeyValues.loadBoolean(Constant.TASK_SCHEDULER_RUNNING_KEY, false)
+        TaskScheduler.attach(serviceScope, shouldResumeTask)
         checkAndTriggerReset()
 
         val name = "${resources.getString(R.string.app_name)}前台服务"
