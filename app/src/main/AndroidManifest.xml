@@ -66,6 +66,10 @@
             android:name=".service.CaptureImageService"
             android:exported="false"
             android:foregroundServiceType="mediaProjection" />
+
+        <receiver
+            android:name=".utils.DailyResetAlarmReceiver"
+            android:exported="false" />
     </application>
 
     <queries>

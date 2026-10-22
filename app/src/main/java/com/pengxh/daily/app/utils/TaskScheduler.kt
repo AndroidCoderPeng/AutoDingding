@@ -296,24 +296,38 @@ object TaskScheduler {
     @Volatile
     var debugWaitSeconds: Long? = null
 
+    private const val RESET_CONFIG_CHECK_INTERVAL_SECONDS = 10 * 60L
+
     /**
      * 等待到下一个每日重置时间
      */
     private suspend fun waitUntilNextReset() {
-        val resetHour = SaveKeyValues.loadInt(
+        debugWaitSeconds?.let {
+            delay(it * 1000)
+            return
+        }
+
+        val initialResetHour = SaveKeyValues.loadInt(
             Constant.RESET_TIME_KEY, Constant.DEFAULT_RESET_HOUR
         )
-
-        val waitSeconds = debugWaitSeconds ?: calculateSecondsUntilReset(resetHour)
-        if (waitSeconds <= 0L) return  // 防御性代码：防止自旋
-
-        LogFileManager.writeLog("等待 ${waitSeconds}s 后进入下一个任务周期")
+        val initialWaitSeconds = calculateSecondsUntilReset(initialResetHour)
+        LogFileManager.writeLog("等待 ${initialWaitSeconds}s 后进入下一个任务周期")
 
         // 只发一次静态通知，不每秒刷新
         _tipsEvent.emit(TipsEvent.Completed)
         ForegroundRunningService.emitNotificationText("今日任务已执行完毕，等待下次任务")
 
-        delay(waitSeconds * 1000)
+        while (true) {
+            val resetHour = SaveKeyValues.loadInt(
+                Constant.RESET_TIME_KEY, Constant.DEFAULT_RESET_HOUR
+            )
+            val waitSeconds = calculateSecondsUntilReset(resetHour)
+            val delaySeconds = minOf(waitSeconds, RESET_CONFIG_CHECK_INTERVAL_SECONDS)
+            delay(delaySeconds * 1000)
+            if (delaySeconds == waitSeconds) {
+                return
+            }
+        }
     }
 
     /**

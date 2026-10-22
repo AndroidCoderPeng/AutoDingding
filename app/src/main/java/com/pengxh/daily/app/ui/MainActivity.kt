@@ -592,6 +592,7 @@ class MainActivity : KotlinBaseActivity<ActivityMainBinding>() {
                                     dailyTaskAdapter.refresh(taskBeans)
                                     binding.recyclerView.visibility = View.VISIBLE
                                     binding.emptyView.visibility = View.GONE
+                                    ForegroundRunningService.emitResetTaskTime()
                                     checkMissedReset()
                                 }
                                 "任务导入成功".show(context)

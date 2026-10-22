@@ -14,6 +14,7 @@ import android.os.IBinder
 import androidx.core.app.NotificationCompat
 import com.pengxh.daily.app.R
 import com.pengxh.daily.app.utils.Constant
+import com.pengxh.daily.app.utils.DailyResetAlarmScheduler
 import com.pengxh.daily.app.utils.MessageDispatcher
 import com.pengxh.daily.app.utils.TaskScheduler
 import com.pengxh.kt.lite.utils.SaveKeyValues
@@ -81,6 +82,7 @@ class ForegroundRunningService : Service() {
                 SaveKeyValues.loadBoolean(Constant.TASK_SCHEDULER_RUNNING_KEY, false)
         TaskScheduler.attach(serviceScope, shouldResumeTask)
         checkAndTriggerReset()
+        DailyResetAlarmScheduler.schedule(this)
 
         val name = "${resources.getString(R.string.app_name)}前台服务"
         val channel = NotificationChannel(
@@ -126,6 +128,7 @@ class ForegroundRunningService : Service() {
         serviceScope.launch {
             resetTaskTime.collect {
                 updateResetTimeView()
+                DailyResetAlarmScheduler.schedule(this@ForegroundRunningService)
             }
         }
 
@@ -148,6 +151,7 @@ class ForegroundRunningService : Service() {
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         checkAndTriggerReset()
+        DailyResetAlarmScheduler.schedule(this)
         checkLowBattery()
         return START_STICKY
     }
